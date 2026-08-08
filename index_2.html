@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>영업 대시보드</title>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+<style>
+  :root{
+    --blue: #2563eb;
+    --blue-light: #dbeafe;
+    --ink: #0f172a;
+    --sub: #64748b;
+    --line: #e5e7eb;
+    --bg: #ffffff;
+    --card: #ffffff;
+  }
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+  header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  header h1{
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+  header .updated{
+    font-size: 12px;
+    color: var(--sub);
+  }
+
+  /* ---- KPI cards ---- */
+  .kpi-row{
+    display:grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .kpi-label{
+    font-size: 12px;
+    color: var(--sub);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .kpi-value{
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .kpi-primary .kpi-value{ font-size: 34px; color: var(--blue); }
+  .kpi-sub{
+    font-size: 12px;
+    color: var(--sub);
+    margin-top: 6px;
+  }
+  .achieve-bar{
+    margin-top: 12px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--blue-light);
+    overflow: hidden;
+  }
+  .achieve-bar > div{
+    height: 100%;
+    background: var(--blue);
+    border-radius: 999px;
+    transition: width .6s ease;
+  }
+  .achieve-pct{
+    font-size: 12px;
+    color: var(--blue);
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  /* ---- main grid ---- */
+  .main-row{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .panel-title{
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 14px;
+  }
+  .rank-row{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  svg text{ font-family: inherit; }
+
+  .empty{
+    color: var(--sub);
+    font-size: 13px;
+    padding: 30px 0;
+    text-align: center;
+  }
+  .error-box{
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 860px){
+    .kpi-row{ grid-template-columns: 1fr 1fr; }
+    .main-row{ grid-template-columns: 1fr; }
+    .rank-row{ grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px){
+    .kpi-row{ grid-template-columns: 1fr; }
+    .kpi-primary .kpi-value{ font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>영업 대시보드</h1>
+    <span class="updated" id="updatedAt"></span>
+  </header>
+
+  <div id="errorBox"></div>
+
+  <section class="kpi-row" id="kpiRow">
+    <div class="card kpi-primary">
+      <div class="kpi-label">이번 달 매출</div>
+      <div class="kpi-value" id="kpiRevenue">-</div>
+      <div class="achieve-bar"><div id="achieveFill" style="width:0%"></div></div>
+      <div class="achieve-pct" id="achievePct">-</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">이번 달 목표</div>
+      <div class="kpi-value" id="kpiTarget">-</div>
+      <div class="kpi-sub" id="kpiRemain">-</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">객단가</div>
+      <div class="kpi-value" id="kpiUnitPrice">-</div>
+      <div class="kpi-sub">매출 ÷ 계약 건수</div>
+    </div>
+    <div class="card">
+      <div class="kpi-label">계약 건수</div>
+      <div class="kpi-value" id="kpiContracts">-</div>
+      <div class="kpi-sub">최종 단계 기준</div>
+    </div>
+  </section>
+
+  <section class="main-row">
+    <div class="card">
+      <div class="panel-title">월별 매출</div>
+      <div id="barChart"></div>
+    </div>
+    <div class="card">
+      <div class="panel-title">영업 단계 깔때기</div>
+      <div id="funnelChart"></div>
+    </div>
+  </section>
+
+  <section class="rank-row">
+    <div class="card">
+      <div class="panel-title">담당자별 순위</div>
+      <div id="rankPerson"></div>
+    </div>
+    <div class="card">
+      <div class="panel-title">상품별 순위</div>
+      <div id="rankProduct"></div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ── 여기에 Supabase 프로젝트 정보를 넣으세요 ──
+  const SUPABASE_URL = "https://gpzbjvumumkudarikbzm.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_cSQ-ScJu1p5DEsx23jlLXQ_fpi5vDhk";
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const fmt = (n) => Number(n || 0).toLocaleString('ko-KR');
+
+  function showError(msg){
+    document.getElementById('errorBox').innerHTML =
+      '<div class="error-box">데이터를 불러오지 못했습니다: ' + msg + '</div>';
+  }
+
+  function svg(el, width, height, inner){
+    return '<svg viewBox="0 0 ' + width + ' ' + height + '" width="100%" height="' + height +
+      '" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">' + inner + '</svg>';
+  }
+
+  // ---------- 월별 매출 막대그래프 ----------
+  function renderBarChart(rows){
+    const box = document.getElementById('barChart');
+    if(!rows.length){ box.innerHTML = '<div class="empty">데이터 없음</div>'; return; }
+
+    const W = 560, H = 240;
+    const padL = 44, padR = 12, padT = 16, padB = 30;
+    const chartW = W - padL - padR, chartH = H - padT - padB;
+
+    const maxVal = Math.max(...rows.map(r => Math.max(r.revenue, r.target))) * 1.15;
+    const lastIdx = rows.length - 1;
+    const target = rows[lastIdx].target;
+
+    const bw = chartW / rows.length;
+    const barW = Math.min(36, bw * 0.5);
+
+    let bars = '';
+    rows.forEach((r, i) => {
+      const x = padL + bw * i + (bw - barW) / 2;
+      const h = (r.revenue / maxVal) * chartH;
+      const y = padT + chartH - h;
+      const isLast = i === lastIdx;
+      bars += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + h +
+        '" rx="4" fill="' + (isLast ? '#2563eb' : '#bfdbfe') + '"></rect>';
+      bars += '<text x="' + (x + barW/2) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="11" font-weight="700" fill="' +
+        (isLast ? '#2563eb' : '#64748b') + '">' + fmt(r.revenue) + '</text>';
+      bars += '<text x="' + (x + barW/2) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="#64748b">' +
+        r.month + '</text>';
+    });
+
+    const targetY = padT + chartH - (target / maxVal) * chartH;
+    const targetLine = '<line x1="' + padL + '" y1="' + targetY + '" x2="' + (W - padR) + '" y2="' + targetY +
+      '" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"></line>' +
+      '<text x="' + (W - padR) + '" y="' + (targetY - 6) + '" text-anchor="end" font-size="11" fill="#64748b">목표 ' + fmt(target) + '</text>';
+
+    box.innerHTML = svg(box, W, H, bars + targetLine);
+  }
+
+  // ---------- 영업 단계 깔때기 ----------
+  function renderFunnel(rows){
+    const box = document.getElementById('funnelChart');
+    if(!rows.length){ box.innerHTML = '<div class="empty">데이터 없음</div>'; return; }
+
+    const W = 420, rowH = 56, gap = 26;
+    const H = rows.length * rowH + (rows.length - 1) * gap + 20;
+    const maxCount = rows[0].count;
+    const minW = 60;
+
+    let out = '';
+    rows.forEach((r, i) => {
+      const y = 10 + i * (rowH + gap);
+      const w = minW + (W - 40 - minW) * (r.count / maxCount);
+      const x = (W - w) / 2;
+      out += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + rowH +
+        '" rx="10" fill="' + (i === 0 ? '#2563eb' : '#93c5fd') + '"></rect>';
+      out += '<text x="' + (W/2) + '" y="' + (y + rowH/2 - 4) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">' +
+        r.stage + '</text>';
+      out += '<text x="' + (W/2) + '" y="' + (y + rowH/2 + 14) + '" text-anchor="middle" font-size="12" fill="#fff">' +
+        fmt(r.count) + '건</text>';
+
+      if(i < rows.length - 1){
+        const next = rows[i + 1];
+        const rate = ((next.count / r.count) * 100).toFixed(1);
+        const midY = y + rowH + gap / 2;
+        out += '<text x="' + (W/2) + '" y="' + (midY + 4) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#2563eb">↓ ' +
+          rate + '%</text>';
+      }
+    });
+
+    const finalRate = ((rows[rows.length - 1].count / rows[0].count) * 100).toFixed(1);
+    out += '<text x="' + (W/2) + '" y="' + (H + 4) + '" text-anchor="middle" font-size="12" fill="#64748b">최종 전환율 ' + finalRate + '%</text>';
+
+    box.innerHTML = svg(box, W, H + 22, out);
+  }
+
+  // ---------- 순위 막대 ----------
+  function renderRank(elId, rows){
+    const box = document.getElementById(elId);
+    if(!rows.length){ box.innerHTML = '<div class="empty">데이터 없음</div>'; return; }
+
+    const sorted = [...rows].sort((a,b) => b.amount - a.amount);
+    const W = 520;
+    const rowH = 34, gap = 12;
+    const H = sorted.length * (rowH + gap) - gap + 10;
+    const maxAmount = sorted[0].amount;
+    const labelW = 92;
+    const barMaxW = W - labelW - 90;
+
+    let out = '';
+    sorted.forEach((r, i) => {
+      const y = 6 + i * (rowH + gap);
+      const w = Math.max(6, (r.amount / maxAmount) * barMaxW);
+      out += '<text x="0" y="' + (y + rowH/2 + 4) + '" font-size="12" fill="#0f172a" font-weight="600">' + r.name + '</text>';
+      out += '<rect x="' + labelW + '" y="' + y + '" width="' + w + '" height="' + rowH +
+        '" rx="6" fill="#2563eb"></rect>';
+      out += '<text x="' + (labelW + w + 8) + '" y="' + (y + rowH/2 + 4) + '" font-size="12" font-weight="700" fill="#2563eb">' +
+        fmt(r.amount) + '</text>';
+    });
+
+    box.innerHTML = svg(box, W, H, out);
+  }
+
+  async function load(){
+    try{
+      const [monthlyRes, pipelineRes, rankRes] = await Promise.all([
+        db.from('sales_monthly').select('*').order('sort_order', { ascending: true }),
+        db.from('sales_pipeline').select('*').order('sort_order', { ascending: true }),
+        db.from('sales_rank').select('*')
+      ]);
+
+      if(monthlyRes.error) throw monthlyRes.error;
+      if(pipelineRes.error) throw pipelineRes.error;
+      if(rankRes.error) throw rankRes.error;
+
+      const monthly = monthlyRes.data || [];
+      const pipeline = pipelineRes.data || [];
+      const rank = rankRes.data || [];
+
+      // KPI
+      if(monthly.length){
+        const cur = monthly[monthly.length - 1];
+        const pct = cur.target ? Math.min(100, (cur.revenue / cur.target) * 100) : 0;
+        document.getElementById('kpiRevenue').textContent = fmt(cur.revenue);
+        document.getElementById('kpiTarget').textContent = fmt(cur.target);
+        document.getElementById('kpiRemain').textContent = '남은 금액 ' + fmt(Math.max(0, cur.target - cur.revenue));
+        document.getElementById('achieveFill').style.width = pct + '%';
+        document.getElementById('achievePct').textContent = '목표 대비 ' + pct.toFixed(1) + '%';
+
+        const contracts = pipeline.length ? pipeline[pipeline.length - 1].count : 0;
+        document.getElementById('kpiContracts').textContent = fmt(contracts);
+        document.getElementById('kpiUnitPrice').textContent = contracts ? fmt(Math.round(cur.revenue / contracts)) : '-';
+      }
+
+      renderBarChart(monthly);
+      renderFunnel(pipeline);
+      renderRank('rankPerson', rank.filter(r => r.kind === 'person'));
+      renderRank('rankProduct', rank.filter(r => r.kind === 'product'));
+
+      document.getElementById('updatedAt').textContent =
+        '업데이트 ' + new Date().toLocaleString('ko-KR', { hour12:false });
+
+    }catch(err){
+      showError(err.message || String(err));
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>
