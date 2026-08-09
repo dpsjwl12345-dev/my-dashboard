@@ -223,7 +223,21 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 </head>
 <body>
 
-<div class="brand"><span class="dot"></span>예산검토 대시보드</div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><span class="dot"></span>예산검토 대시보드</div>
+
+    <div class="group-label">대시보드</div>
+    <div class="side-item" id="nav-dashboard" onclick="showDashboard()">
+      <span>전체 현황</span>
+    </div>
+
+    <div class="group-label">예산</div>
+    <div id="nav-budget"></div>
+
+    <div class="group-label">결산</div>
+    <div id="nav-settlement"></div>
+  </aside>
 
   <main class="main">
 
