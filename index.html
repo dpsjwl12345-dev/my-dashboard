@@ -731,6 +731,18 @@ function computeFundSummary() {
   return computeFundSummaryGeneric('출연금', '출연금 총괄');
 }
 function computeWtgFundSummary() {
+  // 0) 도서관정책과 전용 4개 통계목(인건비/운영비/자산취득비/도서구입) 예외 처리
+  if (nav.instKey === 'talent' && state.dept === '도서관정책과') {
+    var rowsLib = [
+      { label: '인건비', y26: 9820826, y25: 9544862 },
+      { label: '운영비', y26: 7908245, y25: 8550000 },
+      { label: '자산취득비', y26: 277820, y25: 96862 },
+      { label: '도서구입', y26: 928940, y25: 1223000 }
+    ];
+    var totalLib = rowsLib.reduce(function (acc, r) { return { y26: acc.y26 + r.y26, y25: acc.y25 + r.y25 }; }, { y26: 0, y25: 0 });
+    return { title: '위탁금 총괄', rows: rowsLib, total: { label: '합계', y26: totalLib.y26, y25: totalLib.y25 }, note: '도서관정책과 연도별 위탁금 현황 자료 기준입니다.' };
+  }
+
   // 1) institution_funds에 저장된 화성시 총괄표 원본 수치가 있으면 그걸 그대로 쓴다 (예: 인재육성재단)
   var inst = (INSTITUTIONS || []).filter(function (i) { return i.key === nav.instKey; })[0];
   var fundRow = inst && inst.fundRows ? inst.fundRows.filter(function (f) { return f.fund_type === '위탁금'; })[0] : null;
@@ -804,6 +816,7 @@ var DONUT_COLOR_STOPS = {
   '인건비': ['#5B8DFF', '#8B5CF6'],
   '운영비': ['#C084FC', '#F472B6'],
   '자산취득비': ['#FDBA74', '#FB923C'],
+  '도서구입': ['#22D3EE', '#0891B2'],
   '출연금': ['#5B8DFF', '#8B5CF6'],
   '보조금': ['#FDBA74', '#FB923C'],
   '자체수익': ['#34D399', '#10B981']
