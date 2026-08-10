@@ -74,7 +74,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 /* 타이틀/제목 영역은 지마켓 산스, 나머지 본문/메뉴/숫자/테이블은 프리텐다드 */
-h1, h2, h3, .eyebrow, .sidebar .brand-title, .sidebar .brand-subtitle, .sidebar .cat-badge,
+h1, h2, h3, .eyebrow, .sidebar .brand-title, .sidebar .cat-badge,
 .team-block h3, .line-hdr h3, .card .name,
 .section-heading, .org-tab-name {
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
@@ -82,7 +82,7 @@ h1, h2, h3, .eyebrow, .sidebar .brand-title, .sidebar .brand-subtitle, .sidebar 
 h1 { font-size: 23px; font-weight: 700; margin: 0; letter-spacing: -0.01em; white-space: nowrap; }
 .eyebrow { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 4px; }
 
-.topbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.topbar { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
 .dept-tabs { display: flex; gap: 6px; }
 .dept-btn {
   border: none; border-radius: 999px; padding: 7px 16px; font-size: 15.5px; font-weight: 500; cursor: pointer;
@@ -108,8 +108,8 @@ table.summary th:first-child, table.summary td:first-child { text-align: left; c
 table.summary th { color: var(--navy); font-weight: 800; font-size: 13.5px; text-transform: uppercase; letter-spacing: .03em; background: var(--bg-hover); border-bottom: 1.5px solid var(--border-strong); text-align: center; }
 table.summary th:first-child { text-align: center; color: var(--navy); }
 table.summary tr.total td { font-weight: 700; border-bottom: 1.5px solid var(--border-strong); background: var(--bg-hover); }
-table.summary td.diff.up { color: var(--success); }
-table.summary td.diff.down { color: var(--danger); }
+table.summary td.diff.up { color: var(--danger); }
+table.summary td.diff.down { color: var(--accent); }
 table.summary td.diff { white-space: normal; word-break: keep-all; }
 .summary-unit-note { font-size: 12.5px; color: var(--text-soft); margin: 8px 0 0; text-align: right; }
 .summary-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 14px; }
@@ -123,10 +123,6 @@ table.summary td.diff { white-space: normal; word-break: keep-all; }
 .summary-grid .summary-box .table-scroll { width: 100%; overflow-x: auto; }
 @media (max-width: 980px) { .summary-grid { grid-template-columns: 1fr; } }
 .section-heading-lg { font-size: 22px; margin: 0; padding-left: 13px; border-left: 4px solid var(--accent); }
-#summary-title {
-  background: var(--navy); color: #fff; padding: 12px 18px;
-  border-radius: var(--r-lg); border-left: 4px solid var(--sidebar-accent);
-}
 .section-title-row { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; }
 .section-title-row .section-heading-lg { margin: 0; }
 .section-badge {
@@ -136,17 +132,20 @@ table.summary td.diff { white-space: normal; word-break: keep-all; }
 }
 .section-title-row .btn-sm { margin-left: auto; }
 table.fc-summary th { font-size: 13.5px; text-transform: none; letter-spacing: 0; }
-table.fc-summary td .dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+table.fc-summary td .dot {
+  display: inline-block; width: 10px; height: 10px; border-radius: 4px; margin-right: 6px;
+  box-shadow: 0 1px 3px rgba(16,20,35,.25), inset 0 1px 1px rgba(255,255,255,.4);
+}
 
 /* 도넛 차트 범례 */
 .donut-legend { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; width: 100%; }
 .donut-legend .item { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--text-muted); }
 .donut-legend .item .name { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-.donut-legend .item .chip { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.donut-legend .item .chip {
+  width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(16,20,35,.25), inset 0 1px 1px rgba(255,255,255,.4);
+}
 .donut-legend .item .pct { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
-.donut-legend .item:nth-child(1) .chip { background-color: #4C9AFF !important; }
-.donut-legend .item:nth-child(2) .chip { background-color: #9E75FF !important; }
-.donut-legend .item:nth-child(3) .chip { background-color: #FF7A85 !important; }
 
 .chip.personnel, .bg-personnel { background-color: #4C9AFF !important; }
 .chip.operating, .bg-operating { background-color: #9E75FF !important; }
@@ -171,7 +170,7 @@ table.fc-summary td .dot { display: inline-block; width: 8px; height: 8px; borde
 .tab-scroll-btn.right { right: 0; justify-content: flex-end; padding-right: 6px; border-radius: 0 var(--r-lg) 0 0; background: linear-gradient(to right, transparent, var(--bg-hover) 55%); }
 .tab-scroll-btn.left { left: 0; justify-content: flex-start; padding-left: 6px; border-radius: var(--r-lg) 0 0 0; background: linear-gradient(to left, transparent, var(--bg-hover) 55%); }
 .org-tab {
-  position: relative; border: none; border-radius: var(--r) var(--r) 0 0; padding: 10px 16px;
+  position: relative; border: none; border-radius: var(--r) var(--r) 0 0; padding: 9px 12px;
   background: rgba(16,23,42,.05); cursor: pointer; font-family: inherit; text-align: center;
   transition: all .15s; color: var(--text-muted); font-weight: 600;
   flex-shrink: 0; white-space: nowrap;
@@ -179,7 +178,7 @@ table.fc-summary td .dot { display: inline-block; width: 8px; height: 8px; borde
 .org-tab:hover { background: rgba(16,23,42,.1); color: var(--text); }
 .org-tab:active { transform: translateY(1px); }
 .org-tab.selected { background: var(--navy); color: #fff; }
-.org-tab .org-tab-name { font-size: 15px; font-weight: 700; color: inherit; white-space: nowrap; }
+.org-tab .org-tab-name { font-size: 14px; font-weight: 700; color: inherit; white-space: nowrap; }
 .org-tab.selected .org-tab-name { font-weight: 800; }
 
 /* 조직 상세 확장 영역 (정원현원 총괄 + 세부사업) */
@@ -251,31 +250,34 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 }
 .sidebar {
   width: 284px; flex-shrink: 0; background: var(--sidebar-bg);
-  padding: 20px 14px; overflow-y: auto;
+  padding: 18px 14px; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
   border-radius: var(--r-lg);
   box-shadow: 0 12px 32px rgba(4,7,16,.32), 0 2px 8px rgba(4,7,16,.22);
   position: sticky; top: var(--page-gap);
   max-height: calc(100vh - (var(--page-gap) * 2));
   z-index: 5;
 }
+.sidebar::-webkit-scrollbar { display: none; }
 .sidebar .brand { display: flex; flex-direction: column; gap: 2px; padding: 2px 4px 16px; border-bottom: 1px solid var(--sidebar-border); margin-bottom: 10px; }
 .sidebar .brand-title {
-  display: flex; align-items: flex-start; gap: 7px; font-size: 17px; font-weight: 800; letter-spacing: -0.01em;
+  display: flex; align-items: flex-start; gap: 7px; font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
   color: #FFFFFF; line-height: 1.32; white-space: normal;
 }
 .sidebar .brand-title .dot { margin-top: 7px; }
 .sidebar .brand-title-lines { display: flex; flex-direction: column; }
 .sidebar .brand-title-lines .l2 { color: #B7C7FF; }
 .sidebar .brand .dot { width: 8px; height: 8px; border-radius: 3px; background: var(--sidebar-accent); flex-shrink: 0; box-shadow: 0 0 10px rgba(91,132,255,.65); }
-.sidebar .brand-subtitle { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #FFFFFF; padding-left: 15px; white-space: nowrap; margin-top: 2px; }
+.sidebar .brand-subtitle {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-size: 10px; font-weight: 400; letter-spacing: .06em; text-transform: uppercase; color: #FFFFFF; padding-left: 15px; white-space: nowrap; margin-top: 2px;
+}
 
-/* 카테고리 배지 (대시보드 / 예산 / 결산) */
-.sidebar .group-label { padding: 12px 8px 6px; }
+/* 카테고리 라벨 (대시보드 / 예산 / 결산) */
+.sidebar .group-label { padding: 14px 10px 6px; }
 .sidebar .group-label:first-of-type { padding-top: 0; }
 .sidebar .cat-badge {
-  display: inline-flex; align-items: center; gap: 6px; padding: 4px 13px; border-radius: 999px;
-  background: rgba(91,132,255,.28); color: #B7C7FF; font-size: 13px; font-weight: 800;
-  letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px; color: var(--sidebar-text-muted); font-size: 15px; font-weight: 400;
+  flex-shrink: 0; white-space: nowrap;
 }
 
 .sidebar .side-icon { width: 15px; height: 15px; flex-shrink: 0; display: inline-flex; }
@@ -302,15 +304,11 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 
 /* 서브메뉴 접기/펼치기 */
 .sidebar .side-sub {
-  position: relative; padding-left: 18px; margin-left: 13px; border-left: 1px solid var(--sidebar-tree-line);
+  position: relative; padding-left: 10px; margin-left: 4px;
   max-height: 400px; overflow: hidden; opacity: 1; transition: max-height .22s ease, opacity .18s ease;
 }
-.sidebar .side-sub.collapsed { max-height: 0; opacity: 0; border-left-color: transparent; }
+.sidebar .side-sub.collapsed { max-height: 0; opacity: 0; }
 .sidebar .side-sub .side-item { position: relative; font-size: 14px; padding: 5px 10px; margin: 1px 0; }
-.sidebar .side-sub .side-item::before {
-  content: ''; position: absolute; top: 50%; left: -18px; width: 11px; height: 1px;
-  transform: translateY(-50%); background: var(--sidebar-tree-line);
-}
 .sidebar .caret { font-size: 11px; color: var(--sidebar-text-faint); transition: transform .15s ease; flex-shrink: 0; }
 .sidebar .caret.open { transform: rotate(180deg); }
 .main {
@@ -400,7 +398,7 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
     </div>
 
     <div class="side-item" id="nav-dashboard" onclick="showDashboard()">
-      <span class="side-item-label"><span class="side-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span><span class="cat-badge">대시보드</span></span>
+      <span class="side-item-label"><span class="side-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span><span>대시보드</span></span>
     </div>
 
     <div class="group-label"><span class="cat-badge">예산</span></div>
@@ -492,9 +490,12 @@ function updateTopbarLogo(instKey) {
   if (logo) {
     img.src = logo.src;
     img.alt = logo.alt;
+    // 도시공사/FC 로고는 원본 여백이 많아 같은 높이에서 더 커 보이므로 축소
+    img.style.height = (instKey === 'corp' || instKey === 'fc') ? '52px' : '72px';
   } else {
     img.src = DEFAULT_LOGO_SRC;
     img.alt = '화성시문화관광재단';
+    img.style.height = '72px';
   }
 }
 
@@ -652,7 +653,7 @@ function renderDeptTabs() {
   var amtEl = document.getElementById('dept-select-amt');
   if (amtEl) {
     var total = filteredBusinesses().reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
-    amtEl.textContent = total ? (fmtWon(total) + '천원') : '';
+    amtEl.textContent = total ? (fmtWon(Math.round(total / 1000)) + '백만원') : '';
   }
 
   var depts = (state.departments && state.departments.length) ? state.departments : DEPARTMENTS;
@@ -792,64 +793,88 @@ function renderWtgSummary() {
 
   el.innerHTML = '<div class="summary-box">'
     + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;"><h3 style="margin:0;">위탁금 총괄</h3><span style="font-size:12.5px;color:var(--text-soft);font-weight:500;">단위: 천원</span></div>'
-    + '<table class="summary"><thead><tr><th style="font-size:17px;">구&nbsp;&nbsp;&nbsp;&nbsp;분</th><th style="font-size:17px;">2026년</th><th style="font-size:17px;">2025년</th><th style="font-size:17px;">증&nbsp;&nbsp;&nbsp;&nbsp;감</th></tr></thead><tbody>'
+    + '<table class="summary"><thead><tr><th style="font-size:17px;">구&nbsp;&nbsp;분</th><th style="font-size:17px;">2026년</th><th style="font-size:17px;">2025년</th><th style="font-size:17px;">증&nbsp;&nbsp;감</th></tr></thead><tbody>'
     + totalHtml + rowsHtml + '</tbody></table>'
     + '<p class="summary-note">' + escapeHtml(state.dept || '') + ' 기준. 표시되지 않은 부서의 위탁사업은 데이터 확보 후 추가됩니다.</p>'
     + '</div>';
 }
 
-function buildDonutSvg(rows, total26, colors) {
-  var R = 62, CX = 90, CY = 90, STROKE = 46;
+// 요약 도넛차트·범례·표에서 공통으로 쓰는 그라데이션 컬러 팔레트
+var DONUT_COLOR_STOPS = {
+  '인건비': ['#5B8DFF', '#8B5CF6'],
+  '운영비': ['#C084FC', '#F472B6'],
+  '자산취득비': ['#FDBA74', '#FB923C'],
+  '출연금': ['#5B8DFF', '#8B5CF6'],
+  '보조금': ['#FDBA74', '#FB923C'],
+  '자체수익': ['#34D399', '#10B981']
+};
+function donutStops(label) { return DONUT_COLOR_STOPS[label] || ['#9AA3B4', '#64748B']; }
+function donutGradientCss(label) {
+  var s = donutStops(label);
+  return 'linear-gradient(135deg,' + s[0] + ',' + s[1] + ')';
+}
+
+function buildDonutSvg(rows, total26) {
+  var R = 64, CX = 100, CY = 100, STROKE = 42;
   var circumference = 2 * Math.PI * R;
   var offset = 0;
   var segsHtml = '';
   var labelsHtml = '';
-  rows.forEach(function (r) {
+  var defsHtml = '<filter id="donutGlow" x="-50%" y="-50%" width="200%" height="200%">'
+    + '<feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#10182E" flood-opacity="0.20"/>'
+    + '</filter>';
+  rows.forEach(function (r, i) {
     var pct = total26 ? (r.y26 / total26 * 100) : 0;
     var len = circumference * pct / 100;
-    var color = colors[r.label] || 'var(--text-soft)';
-    segsHtml += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '" fill="none" stroke="' + color + '" stroke-width="' + STROKE
-      + '" stroke-dasharray="' + len.toFixed(2) + ' ' + (circumference - len).toFixed(2)
-      + '" stroke-dashoffset="' + (-offset).toFixed(2) + '" transform="rotate(-90 ' + CX + ' ' + CY + ')"></circle>';
+    var stops = donutStops(r.label);
+    var gid = 'donutGrad' + i;
+    defsHtml += '<linearGradient id="' + gid + '" x1="0%" y1="0%" x2="100%" y2="100%">'
+      + '<stop offset="0%" stop-color="' + stops[0] + '"/>'
+      + '<stop offset="100%" stop-color="' + stops[1] + '"/>'
+      + '</linearGradient>';
+    var gap = (pct > 0 && pct < 100) ? 3 : 0;
+    segsHtml += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '" fill="none" stroke="url(#' + gid + ')" stroke-width="' + STROKE
+      + '" stroke-linecap="round"'
+      + ' stroke-dasharray="' + Math.max(len - gap, 0).toFixed(2) + ' ' + (circumference - len + gap).toFixed(2) + '"'
+      + ' stroke-dashoffset="' + (-offset).toFixed(2) + '" transform="rotate(-90 ' + CX + ' ' + CY + ')" filter="url(#donutGlow)"></circle>';
     var midAngle = (offset + len / 2) / circumference * 360 - 90;
     var rad = midAngle * Math.PI / 180;
-    var lx = CX + R * Math.cos(rad);
-    var ly = CY + R * Math.sin(rad);
-    if (pct > 4) {
-      labelsHtml += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="700" fill="#fff">' + pct.toFixed(1) + '%</text>';
+    if (pct > 0) {
+      var lx = CX + R * Math.cos(rad);
+      var ly = CY + R * Math.sin(rad);
+      labelsHtml += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="800" fill="#fff">' + pct.toFixed(1) + '%</text>';
     }
     offset += len;
   });
-  return '<svg width="180" height="180" viewBox="0 0 180 180">' + segsHtml + labelsHtml + '</svg>';
+  var glass = '<circle cx="' + CX + '" cy="' + CY + '" r="' + (R - STROKE / 2 - 6) + '" fill="rgba(255,255,255,.55)" stroke="rgba(255,255,255,.85)" stroke-width="1"></circle>';
+  return '<svg width="212" height="212" viewBox="0 0 200 200"><defs>' + defsHtml + '</defs>' + glass + segsHtml + labelsHtml + '</svg>';
 }
 
 // 도넛 차트 하단 범례 (항목명 + 색상 칩 + 비중)
-function buildDonutLegend(rows, total26, colors) {
+function buildDonutLegend(rows, total26) {
   var items = rows.map(function (r) {
     var pct = total26 ? (r.y26 / total26 * 100) : 0;
-    var color = (colors && colors[r.label]) || 'var(--text-soft)';
-    return '<div class="item"><span class="name"><span class="chip" style="background:' + color + '"></span>' + escapeHtml(r.label) + '</span><span class="pct">' + pct.toFixed(1) + '%</span></div>';
+    return '<div class="item"><span class="name"><span class="chip" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</span><span class="pct">' + pct.toFixed(1) + '%</span></div>';
   }).join('');
   return '<div class="donut-legend">' + items + '</div>';
 }
 
 function renderFcRevenueSummary(cardsByName) {
   var rows = [
-    { label: '출연금', y26: (cardsByName['출연금'] && cardsByName['출연금'].amt) || 0, y25: (cardsByName['출연금'] && cardsByName['출연금'].amt25) || 0, color: 'var(--accent)' },
-    { label: '보조금', y26: (cardsByName['보조금'] && cardsByName['보조금'].amt) || 0, y25: (cardsByName['보조금'] && cardsByName['보조금'].amt25) || 0, color: 'var(--dept-tour)' },
-    { label: '자체수익', y26: (cardsByName['자체수익'] && cardsByName['자체수익'].amt) || 0, y25: (cardsByName['자체수익'] && cardsByName['자체수익'].amt25) || 0, color: 'var(--success)' }
+    { label: '출연금', y26: (cardsByName['출연금'] && cardsByName['출연금'].amt) || 0, y25: (cardsByName['출연금'] && cardsByName['출연금'].amt25) || 0 },
+    { label: '보조금', y26: (cardsByName['보조금'] && cardsByName['보조금'].amt) || 0, y25: (cardsByName['보조금'] && cardsByName['보조금'].amt25) || 0 },
+    { label: '자체수익', y26: (cardsByName['자체수익'] && cardsByName['자체수익'].amt) || 0, y25: (cardsByName['자체수익'] && cardsByName['자체수익'].amt25) || 0 }
   ];
   var total26 = rows.reduce(function (a, r) { return a + r.y26; }, 0);
   var total25 = rows.reduce(function (a, r) { return a + r.y25; }, 0);
 
   var rowsHtml = rows.map(function (r) {
-    return '<tr><td><span class="dot" style="background:' + r.color + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var totalHtml = '<tr class="total"><td>합계</td><td>' + fmtWon(total26) + '</td><td>' + fmtWon(total25) + '</td>' + diffCellHtml(total25, total26) + '</tr>';
 
-  var FC_COLORS = { '출연금': 'var(--accent)', '보조금': 'var(--dept-tour)', '자체수익': 'var(--success)' };
-  var svgHtml = buildDonutSvg(rows, total26, FC_COLORS);
-  var legendHtml = buildDonutLegend(rows, total26, FC_COLORS);
+  var svgHtml = buildDonutSvg(rows, total26);
+  var legendHtml = buildDonutLegend(rows, total26);
 
   var el = document.getElementById('summary-slot');
   var titleEl = document.getElementById('summary-title');
@@ -858,7 +883,7 @@ function renderFcRevenueSummary(cardsByName) {
     + '<div class="summary-box">'
     + '<div class="summary-title-row"><h3>연도별 수입 현황</h3><p class="summary-unit-note">(단위: 천원)</p></div>'
     + '<div class="summary-box-body">'
-    + '<table class="summary"><thead><tr><th style="font-size:17px;">구&nbsp;&nbsp;&nbsp;&nbsp;분</th><th style="font-size:17px;">2026년</th><th style="font-size:17px;">2025년</th><th style="font-size:17px;">증&nbsp;&nbsp;&nbsp;&nbsp;감</th></tr></thead><tbody>'
+    + '<table class="summary fc-summary"><thead><tr><th style="font-size:17px;">구&nbsp;&nbsp;분</th><th style="font-size:17px;">2026년</th><th style="font-size:17px;">2025년</th><th style="font-size:17px;">증&nbsp;&nbsp;감</th></tr></thead><tbody>'
     + totalHtml + rowsHtml + '</tbody></table>'
     + '</div>'
     + '</div>'
@@ -888,15 +913,14 @@ function renderSummary() {
     return;
   }
   var s = state.fund === '위탁금' ? computeWtgFundSummary() : computeFundSummary();
-  var colors = { '인건비': '#4C9AFF', '운영비': '#9E75FF', '자산취득비': '#FF9F43' };
 
   var rowsHtml = s.rows.map(function (r) {
-    return '<tr><td><span class="dot" style="background:' + (colors[r.label] || 'var(--text-soft)') + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var totalHtml = '<tr class="total"><td>' + escapeHtml(s.total.label) + '</td><td>' + fmtWon(s.total.y26) + '</td><td>' + fmtWon(s.total.y25) + '</td>' + diffCellHtml(s.total.y25, s.total.y26) + '</tr>';
 
-  var svgHtml = buildDonutSvg(s.rows, s.total.y26, colors);
-  var legendHtml = buildDonutLegend(s.rows, s.total.y26, colors);
+  var svgHtml = buildDonutSvg(s.rows, s.total.y26);
+  var legendHtml = buildDonutLegend(s.rows, s.total.y26);
   var chartTitle = state.fund === '출연금' ? '2026년 비목별 세출 현황' : '2026년 비목별 세출 현황(위탁금)';
 
   var titleEl = document.getElementById('summary-title');
@@ -907,7 +931,7 @@ function renderSummary() {
     + '<div class="summary-box">'
     + '<div class="summary-title-row"><h3>' + escapeHtml(tableTitle) + '</h3><p class="summary-unit-note">(단위: 천원)</p></div>'
     + '<div class="summary-box-body">'
-    + '<table class="summary fc-summary"><thead><tr><th style="font-size:17px;">구&nbsp;&nbsp;&nbsp;&nbsp;분</th><th style="font-size:17px;">2026년</th><th style="font-size:17px;">2025년</th><th style="font-size:17px;">증&nbsp;&nbsp;&nbsp;&nbsp;감</th></tr></thead><tbody>'
+    + '<table class="summary fc-summary"><thead><tr><th style="font-size:17px;">구&nbsp;&nbsp;분</th><th style="font-size:17px;">2026년</th><th style="font-size:17px;">2025년</th><th style="font-size:17px;">증&nbsp;&nbsp;감</th></tr></thead><tbody>'
     + totalHtml + rowsHtml + '</tbody></table>'
     + '</div>'
     + '</div>'
@@ -1170,8 +1194,12 @@ function renderDetail() {
       totalCur += Number(t.current) || 0;
       return escapeHtml(t.name) + ' ' + t.capacity + '(' + t.current + ')';
     });
-    headcountLine = '<div class="detail-summary-line">정원 ' + totalCap + '명 · 현원 ' + totalCur + '명'
-      + (teamParts.length ? ' (' + teamParts.join(', ') + ')' : '') + '</div>';
+    if (b.teams.length === 1) {
+      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ') - ' + escapeHtml(b.teams[0].name) + '</div>';
+    } else {
+      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ')'
+        + (teamParts.length ? ' - ' + teamParts.join(', ') : '') + '</div>';
+    }
   }
 
   var teamTreesHtml = '';
@@ -1247,7 +1275,15 @@ function isInstExpanded(instKey) {
 }
 
 function toggleInst(instKey) {
-  nav.expandedInst[instKey] = !isInstExpanded(instKey);
+  var willExpand = !isInstExpanded(instKey);
+  nav.expandedInst[instKey] = willExpand;
+  if (willExpand) {
+    var inst = INSTITUTIONS.filter(function (i) { return i.key === instKey; })[0];
+    if (inst && inst.hasData && inst.funds && inst.funds.length) {
+      selectBudget(instKey, inst.funds[0]);
+      return;
+    }
+  }
   renderSidebarNav();
 }
 
