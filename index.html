@@ -140,6 +140,13 @@ table.fc-summary td .dot { display: inline-block; width: 8px; height: 8px; borde
 .donut-legend .item .name { display: flex; align-items: center; gap: 6px; }
 .donut-legend .item .chip { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 .donut-legend .item .pct { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.donut-legend .item:nth-child(1) .chip { background-color: #5B84FF !important; }
+.donut-legend .item:nth-child(2) .chip { background-color: #48BB78 !important; }
+.donut-legend .item:nth-child(3) .chip { background-color: #F6AD55 !important; }
+
+.chip.personnel, .bg-personnel { background-color: #5B84FF !important; }
+.chip.operating, .bg-operating { background-color: #48BB78 !important; }
+.chip.asset, .bg-asset { background-color: #F6AD55 !important; }
 
 /* 재단 재정 내 출연금 비중 미니 위젯 */
 .share-widget { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 18px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 14px; }
