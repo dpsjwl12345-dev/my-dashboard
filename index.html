@@ -96,7 +96,7 @@ h1 { font-size: 23px; font-weight: 700; margin: 0; letter-spacing: -0.01em; whit
 .fund-btn { border: none; padding: 7px 22px; font-size: 15.5px; font-weight: 600; cursor: pointer; background: transparent; color: var(--text-muted); border-radius: 999px; transition: all .15s; }
 .fund-btn.active { background: var(--navy); color: #fff; box-shadow: var(--shadow-sm); }
 
-.summary-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 18px; box-shadow: var(--shadow-sm); }
+.summary-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 20px; margin-bottom: 18px; box-shadow: var(--shadow-sm); }
 .summary-box h3 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 18px; font-weight: 800; margin: 0 0 14px; color: var(--text); }
 .section-heading {
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
@@ -115,12 +115,22 @@ table.summary td.diff { white-space: normal; word-break: keep-all; }
 .summary-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 14px; }
 .summary-title-row h3 { margin: 0; }
 .summary-title-row .summary-unit-note { margin: 0; flex-shrink: 0; }
-.summary-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 0.9fr); gap: 16px; align-items: stretch; margin-bottom: 18px; }
+.summary-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 0.9fr); gap: 16px; align-items: start; margin-bottom: 18px; }
 .summary-grid .summary-box { margin-bottom: 0; width: 100%; min-width: 0; max-width: none; overflow: hidden; display: flex; flex-direction: column; }
-.summary-box-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
+.summary-box-body { flex: 0 1 auto; display: flex; flex-direction: column; justify-content: flex-start; }
+.summary-box-body.donut-row { flex-direction: row; align-items: center; justify-content: center; gap: 22px; }
+.summary-box-body.donut-row .donut-legend { width: auto; flex: 1 1 auto; max-width: 200px; margin-top: 0; }
 .summary-grid .summary-box .table-scroll { width: 100%; overflow-x: auto; }
 @media (max-width: 980px) { .summary-grid { grid-template-columns: 1fr; } }
-.section-heading-lg { font-size: 22px; margin: 0 0 16px; }
+.section-heading-lg { font-size: 22px; margin: 0; padding-left: 13px; border-left: 4px solid var(--accent); }
+.section-title-row { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; }
+.section-title-row .section-heading-lg { margin: 0; }
+.section-badge {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-size: 12.5px; font-weight: 800; letter-spacing: .02em; color: var(--accent-dark);
+  background: var(--accent-soft); border-radius: 999px; padding: 4px 13px; flex-shrink: 0;
+}
+.section-title-row .btn-sm { margin-left: auto; }
 table.fc-summary th { font-size: 13.5px; text-transform: none; letter-spacing: 0; }
 table.fc-summary td .dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
 
@@ -141,25 +151,17 @@ table.fc-summary td .dot { display: inline-block; width: 8px; height: 8px; borde
 .share-bar-fill { height: 100%; border-radius: 999px; background: var(--accent); }
 
 /* 조직별 예산 가로 탭 */
-.org-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.org-tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin-bottom: 20px; background: var(--navy); padding: 7px; border-radius: var(--r-lg); box-shadow: var(--shadow-sm); scrollbar-width: thin; }
+.org-tab { flex-shrink: 0; }
 .org-tab {
-  position: relative; border: 1.5px solid var(--border-strong); border-radius: var(--r-lg); padding: 12px 34px 12px 18px;
-  background: var(--bg-card); cursor: pointer; font-family: inherit; text-align: left;
-  box-shadow: var(--shadow-sm); transition: all .15s; min-width: 176px;
+  position: relative; border: none; border-radius: var(--r); padding: 11px 22px;
+  background: transparent; cursor: pointer; font-family: inherit; text-align: center;
+  transition: all .15s; color: #B7C7FF; font-weight: 600;
 }
-.org-tab::after {
-  content: '›'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  font-size: 20px; font-weight: 700; color: var(--text-soft); opacity: .55; transition: all .15s;
-}
-.org-tab:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(52,87,213,.16), var(--shadow-md); }
-.org-tab:hover::after { color: var(--accent); opacity: 1; transform: translateY(-50%) translateX(3px); }
-.org-tab:active { transform: translateY(0); box-shadow: var(--shadow-sm); }
-.org-tab.selected { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-sm); }
-.org-tab.selected::after { color: var(--accent-dark); opacity: 1; }
-.org-tab .org-tab-name { font-size: 16px; font-weight: 700; color: var(--text); }
-.org-tab.selected .org-tab-name { color: var(--accent-dark); }
-.org-tab .org-tab-amt { font-size: 14.5px; color: var(--text-muted); margin-top: 5px; font-variant-numeric: tabular-nums; }
-.org-tab .org-tab-amt.empty { color: var(--text-soft); font-weight: 400; }
+.org-tab:hover { background: rgba(255,255,255,.09); color: #fff; }
+.org-tab:active { transform: translateY(1px); }
+.org-tab.selected { background: var(--sidebar-accent); color: #fff; box-shadow: 0 4px 12px rgba(91,132,255,.35); }
+.org-tab .org-tab-name { font-size: 15.5px; font-weight: 700; color: inherit; white-space: nowrap; }
 
 /* 조직 상세 확장 영역 (정원현원 총괄 + 세부사업) */
 .org-headcount { display: flex; flex-wrap: wrap; gap: 22px; align-items: baseline; margin: 4px 0 18px; padding: 14px 18px; background: var(--bg-hover); border-radius: var(--r); }
@@ -354,6 +356,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .empty-state { color: var(--text-soft); font-size: 16px; padding: 48px 0; text-align: center; }
 
 .detail { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+.detail-summary-line { font-size: 17px; font-weight: 700; color: var(--text); background: var(--bg-hover); border-radius: var(--r); padding: 12px 16px; margin-bottom: 16px; }
 .detail-hdr { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
 .detail-hdr h2 { font-size: 20.5px; font-weight: 700; margin: 0; white-space: pre-line; }
 .amt-edit { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
@@ -427,10 +430,14 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
         <div class="dept-tabs" id="dept-tabs" style="display:none;"></div>
       </div>
 
-      <h2 class="section-heading section-heading-lg" id="summary-title">출연금 총괄</h2>
+      <div class="section-title-row">
+        <h2 class="section-heading section-heading-lg" id="summary-title">출연금 총괄</h2>
+      </div>
       <div id="summary-slot"></div>
 
-      <h2 class="section-heading section-heading-lg">부서별 예산</h2>
+      <div class="section-title-row">
+        <h2 class="section-heading section-heading-lg" id="cards-title">부서별 예산</h2>
+      </div>
       <div class="card-grid" id="card-grid"></div>
 
       <div class="detail" id="detail"></div>
@@ -882,9 +889,9 @@ function renderFcRevenueSummary(cardsByName) {
     + totalHtml + rowsHtml + '</tbody></table>'
     + '</div>'
     + '</div>'
-    + '<div class="summary-box" style="align-items:center;">'
+    + '<div class="summary-box">'
     + '<h3 style="margin:0 0 10px;">2026년 재원 비중</h3>'
-    + '<div class="summary-box-body" style="align-items:center;">' + svgHtml + legendHtml + '</div>'
+    + '<div class="summary-box-body donut-row">' + svgHtml + legendHtml + '</div>'
     + '</div>'
     + shareHtml
     + '</div>';
@@ -933,19 +940,24 @@ function renderSummary() {
     + totalHtml + rowsHtml + '</tbody></table>'
     + '</div>'
     + '</div>'
-    + '<div class="summary-box" style="align-items:center;">'
+    + '<div class="summary-box">'
     + '<h3 style="margin:0 0 10px;">' + escapeHtml(chartTitle) + '</h3>'
-    + '<div class="summary-box-body" style="align-items:center;">' + svgHtml + legendHtml + '</div>'
+    + '<div class="summary-box-body donut-row">' + svgHtml + legendHtml + '</div>'
     + '</div>'
     + shareHtml
     + '</div>';
 }
 
-// 2단: 조직(사업 카드)별 예산 - 가로 탭 바 형태. 기본 상태는 [조직명 + 총예산액]만 노출한다.
+// 2단: 부서별/사업별 예산 - 가로 탭 바 형태. 금액 없이 [부서명] 또는 [사업명]만 단독 노출한다.
+function renderCardsTitle(count) {
+  var titleEl = document.getElementById('cards-title');
+  if (titleEl) titleEl.textContent = state.fund === '위탁금' ? '사업별 예산' : '부서별 예산';
+}
 function renderCards() {
   var el = document.getElementById('card-grid');
   el.className = 'org-tabs';
   var list = filteredBusinesses();
+  renderCardsTitle(list.length);
   if (!list.length) {
     el.className = '';
     el.innerHTML = '<div class="empty-state">' + escapeHtml(state.dept) + ' · ' + escapeHtml(state.fund) + ' 자료가 아직 없습니다.</div>';
@@ -953,12 +965,8 @@ function renderCards() {
   }
   el.innerHTML = list.map(function (b) {
     var sel = b.id === state.selectedId ? ' selected' : '';
-    var amtHtml = b.amt != null
-      ? '<div class="org-tab-amt">' + fmtWon(b.amt) + '천원</div>'
-      : '<div class="org-tab-amt empty">금액 미입력</div>';
     return '<button type="button" class="org-tab' + sel + '" onclick="selectCard(' + b.id + ')">'
-      + '<div class="org-tab-name">' + escapeHtml(b.name) + '</div>'
-      + amtHtml
+      + '<span class="org-tab-name">' + escapeHtml(b.name) + '</span>'
       + '</button>';
   }).join('');
 }
@@ -1187,6 +1195,19 @@ function renderDetail() {
     var trees = b.teams.filter(function (t) { return t.treeKey && TEAM_TREES[t.treeKey]; })
       .map(function (t) { return TEAM_TREES[t.treeKey]; });
     if (trees.length) teamTreesHtml = renderTeamTreesCombined(trees);
+  }
+
+  // 문화예술과 · 위탁금(사업별 예산) 탭은 예산액/정원·현원 등 복잡한 항목 대신 한 줄 요약만 노출한다.
+  var isCompactWtg = (state.dept === '문화예술과' && state.fund === '위탁금');
+  if (isCompactWtg) {
+    var totalCapC = 0, totalCurC = 0;
+    (b.teams || []).forEach(function (t) { totalCapC += Number(t.capacity) || 0; totalCurC += Number(t.current) || 0; });
+    var summaryParts = [escapeHtml(b.name)];
+    if (b.amt != null) summaryParts.push(fmtWon(b.amt) + '천원');
+    if (totalCapC || totalCurC) summaryParts.push('정원 ' + totalCapC + '명 · 현원 ' + totalCurC + '명');
+    el.innerHTML = '<div class="detail-summary-line">' + summaryParts.join(' · ') + '</div>' + teamTreesHtml;
+    if (teamTreesHtml) { applyTreeColWidths(); setupTreeColResize(); }
+    return;
   }
 
   var linesHtml = b.lines.length ? b.lines.map(function (l, i) {
