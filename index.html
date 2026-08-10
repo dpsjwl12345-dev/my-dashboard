@@ -924,7 +924,7 @@ function renderSummary() {
     return;
   }
   var s = state.fund === '위탁금' ? computeWtgFundSummary() : computeFundSummary();
-  var colors = { '인건비': '#4C9AFF', '운영비': '#9E75FF', '자산취득비': '#FF7A85' };
+  var colors = { '인건비': '#4C9AFF', '운영비': '#9E75FF', '자산취득비': '#FF9F43' };
 
   var rowsHtml = s.rows.map(function (r) {
     return '<tr><td><span class="dot" style="background:' + (colors[r.label] || 'var(--text-soft)') + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
