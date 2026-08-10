@@ -787,7 +787,7 @@ function renderWtgSummary() {
 
   el.innerHTML = '<div class="summary-box">'
     + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;"><h3 style="margin:0;">위탁금 총괄</h3><span style="font-size:12.5px;color:var(--text-soft);font-weight:500;">단위: 천원</span></div>'
-    + '<table class="summary"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>'
+    + '<table class="summary"><thead><tr><th style="font-size:18px;">구분</th><th style="font-size:18px;">2026년</th><th style="font-size:18px;">2025년</th><th style="font-size:18px;">증감</th></tr></thead><tbody>'
     + totalHtml + rowsHtml + '</tbody></table>'
     + '<p class="summary-note">' + escapeHtml(state.dept || '') + ' 기준. 표시되지 않은 부서의 위탁사업은 데이터 확보 후 추가됩니다.</p>'
     + '</div>';
@@ -893,7 +893,7 @@ function renderFcRevenueSummary(cardsByName) {
     + '<div class="summary-box">'
     + '<div class="summary-title-row"><h3>연도별 수입 현황</h3><p class="summary-unit-note">(단위: 천원)</p></div>'
     + '<div class="summary-box-body">'
-    + '<table class="summary fc-summary"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>'
+    + '<table class="summary fc-summary"><thead><tr><th style="font-size:18px;">구분</th><th style="font-size:18px;">2026년</th><th style="font-size:18px;">2025년</th><th style="font-size:18px;">증감</th></tr></thead><tbody>'
     + totalHtml + rowsHtml + '</tbody></table>'
     + '</div>'
     + '</div>'
@@ -944,7 +944,7 @@ function renderSummary() {
     + '<div class="summary-box">'
     + '<div class="summary-title-row"><h3>' + escapeHtml(tableTitle) + '</h3><p class="summary-unit-note">(단위: 천원)</p></div>'
     + '<div class="summary-box-body">'
-    + '<table class="summary fc-summary"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>'
+    + '<table class="summary fc-summary"><thead><tr><th style="font-size:18px;">구분</th><th style="font-size:18px;">2026년</th><th style="font-size:18px;">2025년</th><th style="font-size:18px;">증감</th></tr></thead><tbody>'
     + totalHtml + rowsHtml + '</tbody></table>'
     + '</div>'
     + '</div>'
