@@ -75,7 +75,7 @@ body {
 }
 /* 타이틀/제목 영역은 지마켓 산스, 나머지 본문/메뉴/숫자/테이블은 프리텐다드 */
 h1, h2, h3, .eyebrow, .sidebar .brand-title, .sidebar .brand-subtitle, .sidebar .cat-badge,
-.detail-hdr h2, .team-block h3, .line-hdr h3, .card .name,
+.team-block h3, .line-hdr h3, .card .name,
 .section-heading, .org-tab-name {
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
@@ -100,7 +100,7 @@ h1 { font-size: 23px; font-weight: 700; margin: 0; letter-spacing: -0.01em; whit
 .summary-box h3 { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 18px; font-weight: 800; margin: 0 0 14px; color: var(--text); }
 .section-heading {
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  font-size: 16px; font-weight: 800; color: var(--text); margin: 4px 0 14px;
+  font-size: 16px; font-weight: 700; color: var(--text); margin: 4px 0 14px;
 }
 table.summary { width: 100%; border-collapse: collapse; font-size: 15px; table-layout: auto; }
 table.summary th, table.summary td { padding: 7px 6px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; word-break: keep-all; }
@@ -115,7 +115,7 @@ table.summary td.diff { white-space: normal; word-break: keep-all; }
 .summary-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 14px; }
 .summary-title-row h3 { margin: 0; }
 .summary-title-row .summary-unit-note { margin: 0; flex-shrink: 0; }
-.summary-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 0.9fr); gap: 16px; align-items: start; margin-bottom: 18px; }
+.summary-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; align-items: stretch; margin-bottom: 18px; }
 .summary-grid .summary-box { margin-bottom: 0; width: 100%; min-width: 0; max-width: none; overflow: hidden; display: flex; flex-direction: column; }
 .summary-box-body { flex: 0 1 auto; display: flex; flex-direction: column; justify-content: flex-start; }
 .summary-box-body.donut-row { flex-direction: row; align-items: center; justify-content: center; gap: 22px; }
@@ -123,6 +123,10 @@ table.summary td.diff { white-space: normal; word-break: keep-all; }
 .summary-grid .summary-box .table-scroll { width: 100%; overflow-x: auto; }
 @media (max-width: 980px) { .summary-grid { grid-template-columns: 1fr; } }
 .section-heading-lg { font-size: 22px; margin: 0; padding-left: 13px; border-left: 4px solid var(--accent); }
+#summary-title {
+  background: var(--navy); color: #fff; padding: 12px 18px;
+  border-radius: var(--r-lg); border-left: 4px solid var(--sidebar-accent);
+}
 .section-title-row { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; }
 .section-title-row .section-heading-lg { margin: 0; }
 .section-badge {
@@ -136,8 +140,8 @@ table.fc-summary td .dot { display: inline-block; width: 8px; height: 8px; borde
 
 /* 도넛 차트 범례 */
 .donut-legend { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; width: 100%; }
-.donut-legend .item { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13.5px; color: var(--text-muted); }
-.donut-legend .item .name { display: flex; align-items: center; gap: 6px; }
+.donut-legend .item { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--text-muted); }
+.donut-legend .item .name { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 .donut-legend .item .chip { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 .donut-legend .item .pct { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 .donut-legend .item:nth-child(1) .chip { background-color: #4C9AFF !important; }
@@ -148,37 +152,38 @@ table.fc-summary td .dot { display: inline-block; width: 8px; height: 8px; borde
 .chip.operating, .bg-operating { background-color: #9E75FF !important; }
 .chip.asset, .bg-asset { background-color: #FF7A85 !important; }
 
-/* 재단 재정 내 출연금 비중 미니 위젯 */
-.share-widget { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px 18px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 14px; }
-.share-widget-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
-.share-widget h4 { margin: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); }
-.share-row .share-row-top { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--text-muted); margin-bottom: 6px; }
-.share-row .share-row-top .val { font-weight: 700; color: var(--accent-dark); font-variant-numeric: tabular-nums; }
-.share-bar-track { height: 9px; background: var(--bg-hover); border-radius: 999px; overflow: hidden; }
-.share-bar-fill { height: 100%; border-radius: 999px; background: var(--accent); }
-
 /* 조직별 예산 가로 탭 */
-.org-tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin-bottom: 20px; background: var(--navy); padding: 7px; border-radius: var(--r-lg); box-shadow: var(--shadow-sm); scrollbar-width: thin; }
-.org-tab { flex-shrink: 0; }
-.org-tab {
-  position: relative; border: none; border-radius: var(--r); padding: 11px 22px;
-  background: transparent; cursor: pointer; font-family: inherit; text-align: center;
-  transition: all .15s; color: #B7C7FF; font-weight: 600;
+.org-tabs {
+  position: relative;
+  display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 4px;
+  background: var(--bg-hover); padding: 10px 10px 0; margin-bottom: 0;
+  border-radius: var(--r-lg) var(--r-lg) 0 0; box-shadow: var(--shadow-sm);
+  scrollbar-width: none;
 }
-.org-tab:hover { background: rgba(255,255,255,.09); color: #fff; }
+.org-tabs::-webkit-scrollbar { display: none; }
+.tab-scroll-btn {
+  position: absolute; top: 0; bottom: 0; width: 30px; z-index: 2;
+  border: none; cursor: pointer;
+  display: flex; align-items: center;
+  font-size: 20px; font-weight: 800; color: var(--text-muted);
+}
+.tab-scroll-btn:hover { color: var(--text); }
+.tab-scroll-btn.right { right: 0; justify-content: flex-end; padding-right: 6px; border-radius: 0 var(--r-lg) 0 0; background: linear-gradient(to right, transparent, var(--bg-hover) 55%); }
+.tab-scroll-btn.left { left: 0; justify-content: flex-start; padding-left: 6px; border-radius: var(--r-lg) 0 0 0; background: linear-gradient(to left, transparent, var(--bg-hover) 55%); }
+.org-tab {
+  position: relative; border: none; border-radius: var(--r) var(--r) 0 0; padding: 9px 12px;
+  background: rgba(16,23,42,.05); cursor: pointer; font-family: inherit; text-align: center;
+  transition: all .15s; color: var(--text-muted); font-weight: 600;
+  flex-shrink: 0; white-space: nowrap;
+}
+.org-tab:hover { background: rgba(16,23,42,.1); color: var(--text); }
 .org-tab:active { transform: translateY(1px); }
-.org-tab.selected { background: var(--sidebar-accent); color: #fff; box-shadow: 0 4px 12px rgba(91,132,255,.35); }
-.org-tab .org-tab-name { font-size: 15.5px; font-weight: 700; color: inherit; white-space: nowrap; }
+.org-tab.selected { background: var(--navy); color: #fff; }
+.org-tab .org-tab-name { font-size: 14px; font-weight: 700; color: inherit; white-space: nowrap; }
+.org-tab.selected .org-tab-name { font-weight: 800; }
 
 /* 조직 상세 확장 영역 (정원현원 총괄 + 세부사업) */
-.org-headcount { display: flex; flex-wrap: wrap; gap: 22px; align-items: baseline; margin: 4px 0 18px; padding: 14px 18px; background: var(--bg-hover); border-radius: var(--r); }
-.org-headcount .hc-total { font-size: 22px; font-weight: 800; color: var(--navy); }
-.org-headcount .hc-total .label { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-right: 8px; }
-table.org-team-summary { width: 100%; border-collapse: collapse; font-size: 17px; margin-bottom: 18px; }
-table.org-team-summary th, table.org-team-summary td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
-table.org-team-summary th { color: var(--text-soft); font-weight: 700; font-size: 14px; text-transform: uppercase; background: var(--bg-hover); }
-table.org-team-summary td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
-table.org-team-summary tr.total td { font-weight: 800; background: var(--bg-hover); font-size: 18px; }
+
 
 .dept-select { position: relative; }
 .dept-select-btn {
@@ -362,13 +367,13 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .card .teams td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--text-soft); }
 .empty-state { color: var(--text-soft); font-size: 16px; padding: 48px 0; text-align: center; }
 
-.detail { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+.detail:empty { display: none; }
+.detail {
+  background: var(--navy); padding: 18px; border-radius: 0 0 var(--r-lg) var(--r-lg); margin-bottom: 24px;
+}
+.detail-inner { background: var(--bg-card); border-radius: var(--r); padding: 18px 20px; }
 .detail-summary-line { font-size: 17px; font-weight: 700; color: var(--text); background: var(--bg-hover); border-radius: var(--r); padding: 12px 16px; margin-bottom: 16px; }
-.detail-hdr { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
-.detail-hdr h2 { font-size: 20.5px; font-weight: 700; margin: 0; white-space: pre-line; }
-.amt-edit { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
-.amt-edit label { font-size: 15.5px; color: var(--text-muted); }
-.amt-edit input { font-size: 19.5px; font-weight: 600; border: 1px solid var(--border-strong); border-radius: var(--r); padding: 6px 10px; width: 160px; }
+
 
 table.team-summary, table.lines { width: 100%; border-collapse: collapse; font-size: 16px; margin-bottom: 16px; }
 table.team-summary th, table.team-summary td, table.lines th, table.lines td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -818,45 +823,6 @@ function buildDonutSvg(rows, total26, colors) {
   return '<svg width="180" height="180" viewBox="0 0 180 180">' + segsHtml + labelsHtml + '</svg>';
 }
 
-function sumTreeAmt(node) {
-  var total = node.level === '목' ? (node.amt26 || 0) : 0;
-  (node.children || []).forEach(function (c) { total += sumTreeAmt(c); });
-  return total;
-}
-function shareRow(label, pct) {
-  pct = Math.max(0, Math.min(100, pct || 0));
-  return '<div class="share-row"><div class="share-row-top"><span>' + escapeHtml(label) + '</span><span class="val">' + pct.toFixed(1) + '%</span></div>'
-    + '<div class="share-bar-track"><div class="share-bar-fill" style="width:' + pct.toFixed(1) + '%"></div></div></div>';
-}
-// 7번: 1단 우측 미니 위젯 - 재단 재정(기관 전체) 내 출연금 비중
-function buildFundShareWidget() {
-  var allBiz = state.businesses || [];
-  var incomeByFund = { '출연금': 0, '위탁금': 0 };
-  allBiz.forEach(function (b) { if (b.fundType === '출연금' || b.fundType === '위탁금') incomeByFund[b.fundType] += (b.amt || 0); });
-  var totalIncome = incomeByFund['출연금'] + incomeByFund['위탁금'];
-  if (!totalIncome) return '';
-  var incomePct = incomeByFund['출연금'] / totalIncome * 100;
-
-  var expByFund = { '출연금': 0, '위탁금': 0 };
-  ['출연금', '위탁금'].forEach(function (f) {
-    allBiz.filter(function (biz) { return biz.fundType === f; }).forEach(function (biz) {
-      (biz.teams || []).forEach(function (t) {
-        if (t.treeKey && TEAM_TREES[t.treeKey]) expByFund[f] += sumTreeAmt(TEAM_TREES[t.treeKey]);
-      });
-    });
-  });
-  var totalExpense = expByFund['출연금'] + expByFund['위탁금'];
-  var expensePct = totalExpense ? (expByFund['출연금'] / totalExpense * 100) : incomePct;
-
-  return '<div class="share-widget">'
-    + '<h4>재단 재정 내 출연금 비중</h4>'
-    + '<div class="share-widget-body">'
-    + shareRow('총 수입 대비 출연금 수입', incomePct)
-    + shareRow('총 지출 대비 출연금 지출', expensePct)
-    + '</div>'
-    + '</div>';
-}
-
 // 도넛 차트 하단 범례 (항목명 + 색상 칩 + 비중)
 function buildDonutLegend(rows, total26, colors) {
   var items = rows.map(function (r) {
@@ -884,7 +850,6 @@ function renderFcRevenueSummary(cardsByName) {
   var FC_COLORS = { '출연금': 'var(--accent)', '보조금': 'var(--dept-tour)', '자체수익': 'var(--success)' };
   var svgHtml = buildDonutSvg(rows, total26, FC_COLORS);
   var legendHtml = buildDonutLegend(rows, total26, FC_COLORS);
-  var shareHtml = buildFundShareWidget();
 
   var el = document.getElementById('summary-slot');
   var titleEl = document.getElementById('summary-title');
@@ -901,7 +866,6 @@ function renderFcRevenueSummary(cardsByName) {
     + '<h3 style="margin:0 0 10px;">2026년 재원 비중</h3>'
     + '<div class="summary-box-body donut-row">' + svgHtml + legendHtml + '</div>'
     + '</div>'
-    + shareHtml
     + '</div>';
 }
 
@@ -934,7 +898,6 @@ function renderSummary() {
   var svgHtml = buildDonutSvg(s.rows, s.total.y26, colors);
   var legendHtml = buildDonutLegend(s.rows, s.total.y26, colors);
   var chartTitle = state.fund === '출연금' ? '2026년 비목별 세출 현황' : '2026년 비목별 세출 현황(위탁금)';
-  var shareHtml = buildFundShareWidget();
 
   var titleEl = document.getElementById('summary-title');
   if (titleEl) titleEl.textContent = s.title;
@@ -952,7 +915,6 @@ function renderSummary() {
     + '<h3 style="margin:0 0 10px;">' + escapeHtml(chartTitle) + '</h3>'
     + '<div class="summary-box-body donut-row">' + svgHtml + legendHtml + '</div>'
     + '</div>'
-    + shareHtml
     + '</div>';
 }
 
@@ -976,7 +938,25 @@ function renderCards() {
     return '<button type="button" class="org-tab' + sel + '" onclick="selectCard(' + b.id + ')">'
       + '<span class="org-tab-name">' + escapeHtml(b.name) + '</span>'
       + '</button>';
-  }).join('');
+  }).join('')
+    + '<button type="button" id="tabScrollLeft" class="tab-scroll-btn left" onclick="scrollTabs(-1)" style="display:none;">\u2039</button>'
+    + '<button type="button" id="tabScrollRight" class="tab-scroll-btn right" onclick="scrollTabs(1)" style="display:none;">\u203A</button>';
+  el.onscroll = updateTabScrollButtons;
+  updateTabScrollButtons();
+  var selectedBtn = el.querySelector('.org-tab.selected');
+  if (selectedBtn) selectedBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+}
+function scrollTabs(dir) {
+  var el = document.getElementById('card-grid');
+  if (el) el.scrollBy({ left: dir * 240, behavior: 'smooth' });
+}
+function updateTabScrollButtons() {
+  var el = document.getElementById('card-grid');
+  var leftBtn = document.getElementById('tabScrollLeft');
+  var rightBtn = document.getElementById('tabScrollRight');
+  if (!el || !leftBtn || !rightBtn) return;
+  leftBtn.style.display = el.scrollLeft > 4 ? 'flex' : 'none';
+  rightBtn.style.display = (el.scrollWidth - el.clientWidth - el.scrollLeft > 4) ? 'flex' : 'none';
 }
 
 function editAmt() { /* 읽기 전용: 값 수정은 Supabase Table Editor에서 직접 진행하세요 */ }
@@ -1181,21 +1161,17 @@ function renderDetail() {
   var el = document.getElementById('detail');
   if (!b) { el.innerHTML = ''; return; }
 
-  // 9번: 소속 팀 및 정·현원 총괄표 (조직 전체 총원 명시, 폰트 확대)
-  var teamTable = '';
+  // 예산액은 표시하지 않고, 정원/현원 총합 + 소속 팀별 내역을 한 줄로 요약 (모든 카드 공통)
+  var headcountLine = '';
   if (b.teams && b.teams.length) {
     var totalCap = 0, totalCur = 0;
-    var teamRows = b.teams.map(function (t) {
+    var teamParts = b.teams.map(function (t) {
       totalCap += Number(t.capacity) || 0;
       totalCur += Number(t.current) || 0;
-      return '<tr><td>' + escapeHtml(t.name) + '</td><td class="num">' + t.capacity + '</td><td class="num">' + t.current + '</td></tr>';
-    }).join('');
-    var totalRow = '<tr class="total"><td>전체 합계</td><td class="num">' + totalCap + '</td><td class="num">' + totalCur + '</td></tr>';
-    teamTable = '<div class="org-headcount">'
-      + '<div class="hc-total"><span class="label">조직 전체 총원</span>정원 ' + totalCap + '명 · 현원 ' + totalCur + '명</div>'
-      + '</div>'
-      + '<table class="org-team-summary"><thead><tr><th>소속 팀</th><th style="text-align:right">정원</th><th style="text-align:right">현원</th></tr></thead>'
-      + '<tbody>' + teamRows + totalRow + '</tbody></table>';
+      return escapeHtml(t.name) + ' ' + t.capacity + '(' + t.current + ')';
+    });
+    headcountLine = '<div class="detail-summary-line">정원 ' + totalCap + '명 · 현원 ' + totalCur + '명'
+      + (teamParts.length ? ' (' + teamParts.join(', ') + ')' : '') + '</div>';
   }
 
   var teamTreesHtml = '';
@@ -1203,19 +1179,6 @@ function renderDetail() {
     var trees = b.teams.filter(function (t) { return t.treeKey && TEAM_TREES[t.treeKey]; })
       .map(function (t) { return TEAM_TREES[t.treeKey]; });
     if (trees.length) teamTreesHtml = renderTeamTreesCombined(trees);
-  }
-
-  // 문화예술과 · 위탁금(사업별 예산) 탭은 예산액/정원·현원 등 복잡한 항목 대신 한 줄 요약만 노출한다.
-  var isCompactWtg = (state.dept === '문화예술과' && state.fund === '위탁금');
-  if (isCompactWtg) {
-    var totalCapC = 0, totalCurC = 0;
-    (b.teams || []).forEach(function (t) { totalCapC += Number(t.capacity) || 0; totalCurC += Number(t.current) || 0; });
-    var summaryParts = [escapeHtml(b.name)];
-    if (b.amt != null) summaryParts.push(fmtWon(b.amt) + '천원');
-    if (totalCapC || totalCurC) summaryParts.push('정원 ' + totalCapC + '명 · 현원 ' + totalCurC + '명');
-    el.innerHTML = '<div class="detail-summary-line">' + summaryParts.join(' · ') + '</div>' + teamTreesHtml;
-    if (teamTreesHtml) { applyTreeColWidths(); setupTreeColResize(); }
-    return;
   }
 
   var linesHtml = b.lines.length ? b.lines.map(function (l, i) {
@@ -1233,11 +1196,11 @@ function renderDetail() {
       : '<p style="color:var(--text-soft); font-size:16.5px; padding:10px 0;">세부내역이 아직 입력되지 않았습니다. 엑셀 총액을 반영하려면 상단 총액을 직접 입력하거나, "+ 항목 추가"로 세부 항목을 넣으세요.</p>');
 
   el.innerHTML =
-    '<div class="detail-hdr"><h2>' + escapeHtml(b.name) + '</h2></div>'
-    + '<div class="amt-edit"><label>총액(천원)</label><span style="font-size:19.5px;font-weight:600;">' + (b.amt != null ? fmtWon(b.amt) : '-') + '</span></div>'
-    + teamTable
+    '<div class="detail-inner">'
+    + headcountLine
     + teamTreesHtml
-    + (teamTreesHtml ? '' : linesTable);
+    + (teamTreesHtml ? '' : linesTable)
+    + '</div>';
 
   if (teamTreesHtml) {
     applyTreeColWidths();
