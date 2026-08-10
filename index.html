@@ -802,7 +802,7 @@ function buildDonutSvg(rows, total26, colors) {
   rows.forEach(function (r) {
     var pct = total26 ? (r.y26 / total26 * 100) : 0;
     var len = circumference * pct / 100;
-    var color = (colors && colors[r.label]) || 'var(--text-soft)';
+    var color = colors[r.label] || 'var(--text-soft)';
     segsHtml += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '" fill="none" stroke="' + color + '" stroke-width="' + STROKE
       + '" stroke-dasharray="' + len.toFixed(2) + ' ' + (circumference - len).toFixed(2)
       + '" stroke-dashoffset="' + (-offset).toFixed(2) + '" transform="rotate(-90 ' + CX + ' ' + CY + ')"></circle>';
