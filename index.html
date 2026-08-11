@@ -596,7 +596,7 @@ async function fetchAllRows(table, institutionId) {
   var pageSize = 1000;
   var from = 0;
   while (true) {
-    var { data, error } = await db.from(table).select('*').eq('institution_id', institutionId).order('sort_order').range(from, from + pageSize - 1);
+    var { data, error } = await db.from(table).select('*').eq('institution_id', institutionId).order('sort_order').order('id').range(from, from + pageSize - 1);
     if (error) { showLoadError(table, error); break; }
     if (!data || !data.length) break;
     all = all.concat(data);
