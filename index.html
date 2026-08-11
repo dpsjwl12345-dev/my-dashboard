@@ -392,9 +392,10 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .sidebar .side-item.active .side-icon { color: var(--sidebar-accent); }
 .sidebar .side-item.inst-header { cursor: pointer; color: var(--sidebar-text); font-weight: 600; }
 .sidebar .side-item.inst-header:hover { background: var(--sidebar-hover-bg); }
+.settle-data-dots { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; flex-shrink: 0; }
 .settle-data-dot {
   display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--sidebar-accent); margin-left: 6px; flex-shrink: 0;
+  background: var(--sidebar-accent); flex-shrink: 0;
 }
 
 /* 서브메뉴 접기/펼치기 */
@@ -1951,10 +1952,15 @@ function renderSidebarNav() {
   var settleEl = document.getElementById('nav-settlement');
   settleEl.innerHTML = INSTITUTIONS.map(function (inst) {
     var isActive = nav.view === 'settlement' && nav.instKey === inst.key;
-    var hasSettleData = !!SETTLEMENT_DATA[inst.key];
-    var dotHtml = hasSettleData ? '<span class="settle-data-dot" title="결산 데이터 연동됨"></span>' : '';
+    var meta = SETTLEMENT_DATA[inst.key];
+    var yearCount = meta && meta.years ? Object.keys(meta.years).length : 0;
+    var dotsHtml = '';
+    for (var i = 0; i < yearCount; i++) {
+      dotsHtml += '<span class="settle-data-dot"></span>';
+    }
+    if (dotsHtml) dotsHtml = '<span class="settle-data-dots" title="결산 데이터 ' + yearCount + '개 연도 연동됨">' + dotsHtml + '</span>';
     return '<div class="side-item' + (isActive ? ' active' : '') + '" onclick="selectSettlement(\'' + inst.key + '\')">'
-      + '<span class="side-item-label"><span class="side-icon">' + SIDEBAR_ICON_SETTLEMENT + '</span><span>' + inst.name + '</span>' + dotHtml + '</span></div>';
+      + '<span class="side-item-label"><span class="side-icon">' + SIDEBAR_ICON_SETTLEMENT + '</span><span>' + inst.name + '</span>' + dotsHtml + '</span></div>';
   }).join('');
 
   document.getElementById('nav-dashboard').classList.toggle('active', nav.view === 'dashboard');
@@ -2134,6 +2140,28 @@ var SETTLEMENT_DATA = {
           totalRevenue: { curr: 23832291, prev: 22769908 },
           totalExpense: { curr: 23698151, prev: 22254838 },
           netIncome: { curr: 134139, prev: 515070 }
+        }
+      }
+    }
+  },
+  corp: {
+    defaultYear: 2025,
+    // 화성도시공사는 지방공기업(기업회계) 결산 형식이라 다른 기관의 세입세출 결산서와 표 구조가 다름.
+    // 손익계산서·재무상태표에서 확인 가능한 수치만 반영했고, 지출 성질별(인건비/물건비 등) 예산 대비
+    // 결산 총괄표는 원본 PDF에서 표가 깨져 확보하지 못해 byNature는 비워둠(추후 원본 대조 후 보완 필요).
+    years: {
+      2025: {
+        total: { budget: 112025455, settle: 114554129 }, // 사업수익(매출) 목표 대비 실적 - 손익계산서 매출액 기준
+        byFund: [ // 매출 구성 (수익현황)
+          { name: '시설관리대행사업', budget: 108486930, settle: 110300700 },
+          { name: '그린파킹파크 운영관리', budget: 2738525, settle: 2832413 },
+          { name: '위수탁사업 수수료수익', budget: 800000, settle: 1421015 }
+        ],
+        byNature: null, // 지출 성질별 예산 대비 결산 총괄표 미확보 (원본 PDF 표 구조 손상)
+        yoy: { // 전년(2024) 대비 증감 - 매출/매출원가+판관비/당기순이익 기준
+          totalRevenue: { curr: 114554129, prev: 100301648 },
+          totalExpense: { curr: 119122374, prev: 105628444 }, // 매출원가+판관비
+          netIncome: { curr: 379286, prev: 813894 }
         }
       }
     }
