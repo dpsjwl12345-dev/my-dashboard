@@ -1562,6 +1562,7 @@ function renderDetail() {
   var amtLine = '';
   if (b.teams && b.teams.length) {
     var totalCap = 0, totalCur = 0;
+    var anyCapacity = b.teams.some(function (t) { return t.capacity != null; });
     var namesOnly = [];
     var numbered = [];
     b.teams.forEach(function (t) {
@@ -1569,16 +1570,21 @@ function renderDetail() {
       totalCur += Number(t.current) || 0;
       if (!t.name) return; // 이름 없는 항목은 총원 집계에만 쓰고 목록엔 표시하지 않음
       namesOnly.push(escapeHtml(t.name));
-      var hasOwnNumbers = t.capacity != null || t.current != null;
-      numbered.push(hasOwnNumbers ? (escapeHtml(t.name) + ' ' + t.capacity + '(' + t.current + ')') : escapeHtml(t.name));
+      if (anyCapacity) {
+        var hasOwnNumbers = t.capacity != null || t.current != null;
+        numbered.push(hasOwnNumbers ? (escapeHtml(t.name) + ' ' + t.capacity + '(' + t.current + ')') : escapeHtml(t.name));
+      } else {
+        numbered.push(t.current != null ? (escapeHtml(t.name) + ' ' + t.current) : escapeHtml(t.name));
+      }
     });
     var branches = LIBRARY_BRANCHES[b.name];
     var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : (namesOnly[0] || '');
     amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
+    var totalLabel = anyCapacity ? ('정현원 ' + totalCap + '(' + totalCur + ')') : ('현원 ' + totalCur);
     if (namesOnly.length <= 1) {
-      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ')' + (suffixName ? ' - ' + suffixName : '') + '</div>';
+      headcountLine = '<div class="detail-summary-line">' + totalLabel + (suffixName ? ' - ' + suffixName : '') + '</div>';
     } else {
-      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ')'
+      headcountLine = '<div class="detail-summary-line">' + totalLabel
         + (numbered.length ? ' - ' + numbered.join(', ') : '') + '</div>';
     }
   }
