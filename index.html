@@ -652,7 +652,9 @@ function renderDeptTabs() {
 
   var amtEl = document.getElementById('dept-select-amt');
   if (amtEl) {
-    var total = filteredBusinesses().reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
+    var total = (nav.instKey === 'talent' && state.dept === '도서관정책과' && state.fund === '위탁금')
+      ? 18935831
+      : filteredBusinesses().reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
     amtEl.textContent = total ? (fmtWon(Math.round(total / 1000)) + '백만원') : '';
   }
 
