@@ -177,16 +177,18 @@ table.summary td.diff.down { color: var(--accent); }
 }
 .section-title-row .btn-sm { margin-left: auto; }
 .download-menu-wrap { margin-left: auto; position: relative; }
-.download-btn {
-  display: inline-flex; align-items: center; gap: 7px; border: none; cursor: pointer;
-  background: linear-gradient(135deg, #5B8DFF, #A855F7); color: #fff; border-radius: 999px; padding: 10px 20px;
+.button {
+  display: inline-flex; align-items: center; gap: 10px; cursor: pointer; border: none;
+  background: #e8e8e8; color: #7C3AED;
+  border-radius: 12px; padding: 8px 20px 8px 14px;
   font-size: 14px; font-weight: 700; font-family: inherit; letter-spacing: .01em;
-  box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 3px 0 rgba(88,53,150,.25), 0 6px 14px rgba(91,141,255,.28);
-  transition: all .12s;
+  transition: background .2s, color .2s;
 }
-.download-btn:hover { background: linear-gradient(135deg, #6C99FF, #B565F9); box-shadow: 0 1px 0 rgba(255,255,255,.22) inset, 0 4px 0 rgba(88,53,150,.25), 0 8px 18px rgba(91,141,255,.34); transform: translateY(-1px); }
-.download-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 1px 0 rgba(88,53,150,.25), 0 2px 6px rgba(91,141,255,.22); }
-.download-btn-icon { font-size: 13px; opacity: .85; }
+.button__icon { flex-shrink: 0; width: 20px; height: 20px; transition: transform .25s ease; }
+.button__text { position: relative; }
+.button:hover { background: linear-gradient(135deg, #5B8DFF, #A855F7); color: #fff; }
+.button:hover .button__icon { transform: translateY(3px); }
+.button:active .button__icon { transform: translateY(5px); }
 .download-menu {
   position: absolute; top: calc(100% + 8px); right: 0; z-index: 20; min-width: 168px;
   background: #fff; border-radius: 12px; box-shadow: 0 10px 28px rgba(16,23,42,.2), 0 1px 3px rgba(16,23,42,.08);
@@ -292,13 +294,14 @@ table.tree th { position: relative; padding: 10px 8px; text-align: center; font-
 table.tree td { padding: 7px 8px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: middle; word-break: break-word; }
 table.tree tr:last-child td { border-bottom: none; }
 table.tree td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.tree td.num:last-child { text-align: center; }
 table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; }
 table.tree td[contenteditable="true"]:hover { background: rgba(52,87,213,.06); box-shadow: inset 0 0 0 1px rgba(52,87,213,.2); }
 table.tree td[contenteditable="true"]:focus { background: #fff; outline: none; box-shadow: inset 0 0 0 1.5px var(--accent); }
 table.tree td.basis { color: var(--text-muted); font-size: 14.5px; }
 tr.lvl-팀 td { font-weight: 700; font-size: 16px; background: var(--navy); color: #fff; }
 tr.lvl-팀 td.basis, tr.lvl-팀 td.num { color: #DCE3F7; }
-tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: var(--accent); color: #fff; }
+tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: #33406B; color: #fff; }
 tr.lvl-합계 td.basis, tr.lvl-합계 td.num { color: #E9EEFF; }
 tr.lvl-정책 td { font-weight: 700; background: var(--accent-soft); }
 tr.lvl-단위 td { font-weight: 600; background: #FAFBFE; }
@@ -458,28 +461,42 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 
 .detail:empty { display: none; }
 .detail {
-  background: var(--navy); padding: 18px; border-radius: 0 0 var(--r-lg) var(--r-lg); margin-bottom: 24px;
+  margin-bottom: 24px;
 }
-.detail-inner { background: var(--bg-card); border-radius: var(--r); padding: 18px 20px; }
+.detail-inner {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 55%, var(--bg-hover) 100%);
+  border-radius: var(--r-lg); padding: 20px 22px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 -1px 0 rgba(16,23,42,.05) inset, 0 16px 36px rgba(16,23,42,.15), 0 4px 10px rgba(16,23,42,.09);
+}
+.detail-summary-row-wrap { position: relative; }
 .detail-total-amt {
   font-size: 32px; font-weight: 800; color: var(--accent); letter-spacing: -0.01em;
   margin: 2px 0 10px; font-variant-numeric: tabular-nums;
 }
 .detail-total-amt .unit { font-size: 17px; font-weight: 700; color: var(--text-muted); margin-left: 4px; }
-.detail-summary-line { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 0; }
+.detail-summary-line { font-size: 17px; font-weight: 700; color: var(--text-muted); margin-bottom: 0; }
 .detail-summary-row {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   background: var(--bg-hover); border-radius: var(--r); padding: 10px 16px; margin-bottom: 16px;
 }
 .detail-summary-row .detail-summary-line { flex: 1 1 auto; }
-.tree-search-box { position: relative; flex: 0 0 auto; margin-bottom: 0; }
+.tree-search-box { position: absolute; bottom: 100%; right: 0; margin-bottom: 8px; }
 .tree-search-box input {
-  width: 220px; padding: 9px 14px 9px 34px; border-radius: 999px; border: 1px solid var(--border);
-  font-size: 13.5px; font-family: inherit; background: #fff; color: var(--text);
+  width: 240px; padding: 9px 44px 9px 34px; border-radius: 10px; border: 1px solid var(--border);
+  font-size: 13.5px; font-family: inherit; background: #F9FAFB; color: var(--text);
 }
 .tree-search-box input::placeholder { color: var(--text-soft); }
-.tree-search-box input:focus { outline: none; border-color: var(--accent); }
+.tree-search-box input:focus { outline: none; border-color: var(--accent); background: #fff; }
 .tree-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-soft); pointer-events: none; }
+.tree-search-btn {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 7px; border: none; cursor: pointer;
+  background: var(--accent); color: #fff; transition: background .12s;
+}
+.tree-search-btn:hover { background: var(--accent-dark); }
+.tree-search-btn svg { width: 14px; height: 14px; }
 table.tree tr.search-match { background: #FFF6D6 !important; }
 table.tree tr.search-dim { opacity: .3; }
 table.tree tr.calc-mismatch td.basis { background: #FDE8E8; }
@@ -570,7 +587,15 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
       <div class="section-title-row">
         <h2 class="section-heading section-heading-lg" id="cards-title">부서별 예산</h2>
         <div class="download-menu-wrap">
-          <button type="button" class="download-btn" id="export-btn" onclick="toggleDownloadMenu(event)">Download</button>
+          <button type="button" class="button" id="export-btn" onclick="toggleDownloadMenu(event)">
+            <svg stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" height="40" width="40" class="button__icon" xmlns="http://www.w3.org/2000/svg">
+              <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+              <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+              <path d="M7 11l5 5l5 -5"></path>
+              <path d="M12 4l0 12"></path>
+            </svg>
+            <span class="button__text">Download</span>
+          </button>
           <div class="download-menu" id="download-menu" style="display:none">
             <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xls)</div>
             <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
@@ -1106,7 +1131,7 @@ function renderSummary() {
 
   var svgHtml = buildDonutSvg(s.rows, s.total.y26);
   var legendHtml = buildDonutLegend(s.rows, s.total.y26);
-  var chartTitle = state.fund === '출연금' ? '2026년 비목별 세출 현황' : '2026년 비목별 세출 현황(위탁금)';
+  var chartTitle = '2026년 비목별 세출 현황';
 
   var titleEl = document.getElementById('summary-title');
   if (titleEl) titleEl.textContent = s.title;
@@ -1449,6 +1474,12 @@ function exportCurrentTreePdf() {
   win.document.close();
 }
 
+// 검색 버튼 클릭 시 입력창의 현재 값으로 검색을 실행
+function submitTreeSearch() {
+  var input = document.getElementById('tree-search-input');
+  if (input) { filterTreeRows(input.value); input.focus(); }
+}
+
 function filterTreeRows(query) {
   var q = query.trim().toLowerCase();
   var rows = document.querySelectorAll('#detail table.tree tbody tr');
@@ -1526,7 +1557,7 @@ function renderTeamTreesCombined(trees) {
     var sumAmt26 = trees.reduce(function (s, t) { return s + (t.amt26 || 0); }, 0);
     var sumAmt25 = trees.reduce(function (s, t) { return s + (t.amt25 || 0); }, 0);
     totalRowHtml = '<tr class="lvl-합계">'
-      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> 합계 (' + trees.length + '개 팀)</td>'
+      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> 합계</td>'
       + '<td class="num basis"></td>'
       + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
@@ -1623,9 +1654,9 @@ function renderDetail() {
   var el = document.getElementById('detail');
   if (!b) { el.innerHTML = ''; return; }
 
-  // 예산액은 정현원과 분리된 큰 글씨 라인으로 표시
+  // 예산액은 정현원과 분리된 큰 글씨 라인으로 표시하며, teams(정원현원) 데이터 유무와 무관하게 독립적으로 노출한다.
+  var amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
   var headcountLine = '';
-  var amtLine = '';
   if (b.teams && b.teams.length) {
     var totalCap = 0, totalCur = 0;
     var anyCapacity = b.teams.some(function (t) { return t.capacity != null; });
@@ -1646,25 +1677,31 @@ function renderDetail() {
         numbered.push(escapeHtml(t.name));
       }
     });
-    var branches = LIBRARY_BRANCHES[b.name];
-    var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : (namesOnly[0] || '');
-    amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
-    var totalLabel = anyCapacity ? ('정현원 ' + totalCap + '(' + totalCur + ')') : (anyCurrent ? ('현원 ' + totalCur) : '');
-    if (namesOnly.length <= 1) {
-      headcountLine = '<div class="detail-summary-line">' + totalLabel + (totalLabel && suffixName ? ' - ' : '') + suffixName + '</div>';
-    } else {
-      headcountLine = '<div class="detail-summary-line">' + totalLabel
-        + (numbered.length ? ((totalLabel ? ' - ' : '') + numbered.join(', ')) : '') + '</div>';
+    // 자체수익/보조금처럼 정원·현원 데이터가 전혀 없는 카드는 인원 텍스트 줄 자체를 표시하지 않는다.
+    if (anyCapacity || anyCurrent) {
+      var branches = LIBRARY_BRANCHES[b.name];
+      var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : (namesOnly[0] || '');
+      var totalLabel = anyCapacity ? ('정현원 ' + totalCap + '(' + totalCur + ')') : ('현원 ' + totalCur);
+      if (namesOnly.length <= 1) {
+        headcountLine = '<div class="detail-summary-line">' + totalLabel + (totalLabel && suffixName ? ' - ' : '') + suffixName + '</div>';
+      } else {
+        headcountLine = '<div class="detail-summary-line">' + totalLabel
+          + (numbered.length ? ((totalLabel ? ' - ' : '') + numbered.join(', ')) : '') + '</div>';
+      }
     }
   }
 
-  var searchBox = (b.teams && b.teams.length)
-    ? '<div class="tree-search-box"><input type="text" id="tree-search-input" placeholder="예산서 검색 (항목명·산출기초)" oninput="filterTreeRows(this.value)"><svg class="tree-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>'
-      + '<div class="tree-filter-toggle"><input type="checkbox" id="mismatch-only-toggle" onchange="toggleMismatchOnly(this.checked)"><label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
+  var searchBoxHtml = (b.teams && b.teams.length)
+    ? '<div class="tree-search-box"><input type="text" id="tree-search-input" placeholder="예산서 검색 (항목명·산출기초)" oninput="filterTreeRows(this.value)"><svg class="tree-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><button type="button" class="tree-search-btn" onclick="submitTreeSearch()" aria-label="검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button></div>'
     : '';
-  headcountLine = headcountLine
-    ? amtLine + '<div class="detail-summary-row">' + headcountLine + searchBox + '</div>'
-    : headcountLine;
+  var filterToggleHtml = (b.teams && b.teams.length)
+    ? '<div class="tree-filter-toggle"><input type="checkbox" id="mismatch-only-toggle" onchange="toggleMismatchOnly(this.checked)"><label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
+    : '';
+  // 금액/인원줄/검색창 중 하나라도 있으면 요약 영역을 표시한다. 검색바는 가로 줄 안이 아니라
+  // 요약 영역 전체의 상단 우측에 떠 있는 형태로 배치한다.
+  headcountLine = (amtLine || headcountLine || searchBoxHtml)
+    ? amtLine + '<div class="detail-summary-row-wrap">' + searchBoxHtml + '<div class="detail-summary-row">' + headcountLine + filterToggleHtml + '</div></div>'
+    : '';
 
   var teamTreesHtml = '';
   if (b.teams && b.teams.length) {
