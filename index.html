@@ -838,23 +838,41 @@ function buildDonutSvg(rows, total26) {
   var defsHtml = '<filter id="donutGlow" x="-50%" y="-50%" width="200%" height="200%">'
     + '<feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#10182E" flood-opacity="0.20"/>'
     + '</filter>';
+
+  // 실제 비중이 너무 작은 조각(예: 1~2%)은 링에서 최소 폭을 보장해 숫자가 들어갈 공간을 확보한다.
+  // (실제 %는 라벨·범례에 정확한 값 그대로 표시하고, 링 폭 계산에만 보정값을 사용)
+  var MIN_PCT = 8;
+  var actualPcts = rows.map(function (r) { return total26 ? (r.y26 / total26 * 100) : 0; });
+  var visualPcts = actualPcts.map(function (p) { return p > 0 ? Math.max(p, MIN_PCT) : 0; });
+  var visualSum = visualPcts.reduce(function (a, b) { return a + b; }, 0);
+  if (visualSum > 100) {
+    var overBudget = visualSum - 100;
+    var flexIdx = [];
+    var flexSum = 0;
+    visualPcts.forEach(function (p, i) { if (p > MIN_PCT) { flexIdx.push(i); flexSum += p; } });
+    if (flexSum > 0) {
+      flexIdx.forEach(function (i) { visualPcts[i] -= overBudget * (visualPcts[i] / flexSum); });
+    }
+  }
+
   rows.forEach(function (r, i) {
-    var pct = total26 ? (r.y26 / total26 * 100) : 0;
-    var len = circumference * pct / 100;
+    var pct = actualPcts[i];
+    var vpct = visualPcts[i];
+    var len = circumference * vpct / 100;
     var stops = donutStops(r.label);
     var gid = 'donutGrad' + i;
     defsHtml += '<linearGradient id="' + gid + '" x1="0%" y1="0%" x2="100%" y2="100%">'
       + '<stop offset="0%" stop-color="' + stops[0] + '"/>'
       + '<stop offset="100%" stop-color="' + stops[1] + '"/>'
       + '</linearGradient>';
-    var gap = (pct > 0 && pct < 100) ? 3 : 0;
+    var gap = (vpct > 0 && vpct < 100) ? 3 : 0;
     segsHtml += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '" fill="none" stroke="url(#' + gid + ')" stroke-width="' + STROKE
       + '" stroke-linecap="round"'
       + ' stroke-dasharray="' + Math.max(len - gap, 0).toFixed(2) + ' ' + (circumference - len + gap).toFixed(2) + '"'
       + ' stroke-dashoffset="' + (-offset).toFixed(2) + '" transform="rotate(-90 ' + CX + ' ' + CY + ')" filter="url(#donutGlow)"></circle>';
     var midAngle = (offset + len / 2) / circumference * 360 - 90;
     var rad = midAngle * Math.PI / 180;
-    if (pct > 0) {
+    if (vpct > 0) {
       var lx = CX + R * Math.cos(rad);
       var ly = CY + R * Math.sin(rad);
       labelsHtml += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="800" fill="#fff">' + pct.toFixed(1) + '%</text>';
