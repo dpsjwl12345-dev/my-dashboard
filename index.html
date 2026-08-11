@@ -1213,6 +1213,18 @@ function applyMokFilter(instId) {
   });
 }
 
+// 도서관정책과 카드별 소관 도서관 목록 (2개 이상인 곳만 표시, 1개뿐인 곳은 생략)
+var LIBRARY_BRANCHES = {
+  '병점': ['병점도서관', '진안도서관'],
+  '봉담': ['봉담도서관', '비봉작은도서관', '샘내작은도서관'],
+  '삼괴': ['삼괴도서관', '둥지나래작은도서관', '기아행복마루작은도서관'],
+  '송산': ['송산도서관', '송린이음터도서관'],
+  '태안': ['태안도서관', '정남도서관', '노을빛도서관'],
+  '중앙이음터': ['중앙이음터도서관', '두빛나래어린이도서관'],
+  '왕배푸른숲': ['왕배푸른숲도서관', '달빛나래어린이도서관'],
+  '향남복합문화센터': ['향남복합문화센터도서관', '가족만세센터작은도서관']
+};
+
 function renderDetail() {
   var b = getBusiness(state.selectedId);
   var el = document.getElementById('detail');
@@ -1227,8 +1239,10 @@ function renderDetail() {
       totalCur += Number(t.current) || 0;
       return escapeHtml(t.name) + ' ' + t.capacity + '(' + t.current + ')';
     });
+    var branches = LIBRARY_BRANCHES[b.name];
+    var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : escapeHtml(b.teams[0].name);
     if (b.teams.length === 1) {
-      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ') - ' + escapeHtml(b.teams[0].name) + '</div>';
+      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ') - ' + suffixName + '</div>';
     } else {
       headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ')'
         + (teamParts.length ? ' - ' + teamParts.join(', ') : '') + '</div>';
