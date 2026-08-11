@@ -374,6 +374,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   border-radius: var(--r); box-shadow: var(--shadow-md); padding: 8px; margin-bottom: 8px; max-width: 320px;
 }
 .mok-filter-actions { display: flex; gap: 6px; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.mok-filter-actions .mok-filter-confirm { margin-left: auto; background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
 .mok-filter-actions button { border: 1px solid var(--border-strong); background: var(--bg-card); border-radius: var(--r); padding: 4px 10px; font-size: 15px; cursor: pointer; }
 .mok-filter-item { display: block; font-size: 16px; padding: 3px 2px; cursor: pointer; }
 .mok-filter-item input { margin-right: 6px; }
@@ -1489,7 +1490,7 @@ function renderTeamTreesCombined(trees) {
   }).join('');
 
   var popover = '<div id="mokpop-' + instId + '" class="mok-filter-popover" style="display:none">'
-    + '<div class="mok-filter-actions"><button onclick="setAllMokFilter(\'' + instId + '\', true)">전체선택</button><button onclick="setAllMokFilter(\'' + instId + '\', false)">전체해제</button></div>'
+    + '<div class="mok-filter-actions"><button onclick="setAllMokFilter(\'' + instId + '\', true)">전체선택</button><button onclick="setAllMokFilter(\'' + instId + '\', false)">전체해제</button><button class="mok-filter-confirm" onclick="closeMokFilter(\'' + instId + '\')">확인</button></div>'
     + groupsHtml + '</div>';
 
   return '<div class="team-block">' + popover
@@ -1507,6 +1508,11 @@ function toggleMokFilter(instId, e) {
   var pop = document.getElementById('mokpop-' + instId);
   if (!pop) return;
   pop.style.display = (pop.style.display === 'none') ? 'block' : 'none';
+}
+function closeMokFilter(instId) {
+  var pop = document.getElementById('mokpop-' + instId);
+  if (!pop) return;
+  pop.style.display = 'none';
 }
 document.addEventListener('click', function (e) {
   document.querySelectorAll('.mok-filter-popover').forEach(function (pop) {
