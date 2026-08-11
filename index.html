@@ -652,7 +652,7 @@ function renderDeptTabs() {
 
   var amtEl = document.getElementById('dept-select-amt');
   if (amtEl) {
-    var total = (nav.instKey === 'talent' && state.dept === '도서관정책과' && state.fund === '위탁금')
+    var total = (nav.instKey === 'hscf' && state.dept === '도서관정책과' && state.fund === '위탁금')
       ? 18935831
       : filteredBusinesses().reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
     amtEl.textContent = total ? (fmtWon(Math.round(total / 1000)) + '백만원') : '';
@@ -734,7 +734,7 @@ function computeFundSummary() {
 }
 function computeWtgFundSummary() {
   // 0) 도서관정책과 전용 4개 통계목(인건비/운영비/자산취득비/도서구입) 예외 처리
-  if (nav.instKey === 'talent' && state.dept === '도서관정책과') {
+  if (nav.instKey === 'hscf' && state.dept === '도서관정책과') {
     var rowsLib = [
       { label: '인건비', y26: 9820826, y25: 9544862 },
       { label: '운영비', y26: 7908245, y25: 8550000 },
