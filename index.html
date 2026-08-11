@@ -1562,19 +1562,24 @@ function renderDetail() {
   var amtLine = '';
   if (b.teams && b.teams.length) {
     var totalCap = 0, totalCur = 0;
-    var teamParts = b.teams.map(function (t) {
+    var namesOnly = [];
+    var numbered = [];
+    b.teams.forEach(function (t) {
       totalCap += Number(t.capacity) || 0;
       totalCur += Number(t.current) || 0;
-      return escapeHtml(t.name) + ' ' + t.capacity + '(' + t.current + ')';
+      if (!t.name) return; // 이름 없는 항목은 총원 집계에만 쓰고 목록엔 표시하지 않음
+      namesOnly.push(escapeHtml(t.name));
+      var hasOwnNumbers = t.capacity != null || t.current != null;
+      numbered.push(hasOwnNumbers ? (escapeHtml(t.name) + ' ' + t.capacity + '(' + t.current + ')') : escapeHtml(t.name));
     });
     var branches = LIBRARY_BRANCHES[b.name];
-    var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : escapeHtml(b.teams[0].name);
+    var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : (namesOnly[0] || '');
     amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
-    if (b.teams.length === 1) {
-      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ') - ' + suffixName + '</div>';
+    if (namesOnly.length <= 1) {
+      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ')' + (suffixName ? ' - ' + suffixName : '') + '</div>';
     } else {
       headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ')'
-        + (teamParts.length ? ' - ' + teamParts.join(', ') : '') + '</div>';
+        + (numbered.length ? ' - ' + numbered.join(', ') : '') + '</div>';
     }
   }
 
