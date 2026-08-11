@@ -1563,6 +1563,7 @@ function renderDetail() {
   if (b.teams && b.teams.length) {
     var totalCap = 0, totalCur = 0;
     var anyCapacity = b.teams.some(function (t) { return t.capacity != null; });
+    var anyCurrent = b.teams.some(function (t) { return t.current != null; });
     var namesOnly = [];
     var numbered = [];
     b.teams.forEach(function (t) {
@@ -1573,19 +1574,21 @@ function renderDetail() {
       if (anyCapacity) {
         var hasOwnNumbers = t.capacity != null || t.current != null;
         numbered.push(hasOwnNumbers ? (escapeHtml(t.name) + ' ' + t.capacity + '(' + t.current + ')') : escapeHtml(t.name));
-      } else {
+      } else if (anyCurrent) {
         numbered.push(t.current != null ? (escapeHtml(t.name) + ' ' + t.current) : escapeHtml(t.name));
+      } else {
+        numbered.push(escapeHtml(t.name));
       }
     });
     var branches = LIBRARY_BRANCHES[b.name];
     var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : (namesOnly[0] || '');
     amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
-    var totalLabel = anyCapacity ? ('정현원 ' + totalCap + '(' + totalCur + ')') : ('현원 ' + totalCur);
+    var totalLabel = anyCapacity ? ('정현원 ' + totalCap + '(' + totalCur + ')') : (anyCurrent ? ('현원 ' + totalCur) : '');
     if (namesOnly.length <= 1) {
-      headcountLine = '<div class="detail-summary-line">' + totalLabel + (suffixName ? ' - ' + suffixName : '') + '</div>';
+      headcountLine = '<div class="detail-summary-line">' + totalLabel + (totalLabel && suffixName ? ' - ' : '') + suffixName + '</div>';
     } else {
       headcountLine = '<div class="detail-summary-line">' + totalLabel
-        + (numbered.length ? ' - ' + numbered.join(', ') : '') + '</div>';
+        + (numbered.length ? ((totalLabel ? ' - ' : '') + numbered.join(', ')) : '') + '</div>';
     }
   }
 
