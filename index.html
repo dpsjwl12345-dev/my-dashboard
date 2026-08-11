@@ -114,13 +114,13 @@ h1 { font-size: 23px; font-weight: 700; margin: 0; letter-spacing: -0.01em; whit
 }
 table.summary { width: 100%; border-collapse: collapse; font-size: 15px; table-layout: auto; }
 table.summary th, table.summary td { padding: 7px 6px; border-bottom: 1px solid var(--border); text-align: right; font-variant-numeric: tabular-nums; word-break: keep-all; }
-table.summary th:first-child, table.summary td:first-child { text-align: left; color: var(--text-muted); font-variant-numeric: normal; white-space: normal; }
+table.summary th:first-child, table.summary td:first-child { text-align: center; color: var(--text-muted); font-variant-numeric: normal; white-space: normal; }
 table.summary th { color: var(--navy); font-weight: 800; font-size: 13.5px; text-transform: uppercase; letter-spacing: .03em; background: var(--bg-hover); border-bottom: 1.5px solid var(--border-strong); text-align: center; }
 table.summary th:first-child { text-align: center; color: var(--navy); }
 table.summary tr.total td { font-weight: 700; border-bottom: 1.5px solid var(--border-strong); background: var(--bg-hover); }
+table.summary td.diff { text-align: center; white-space: normal; word-break: keep-all; }
 table.summary td.diff.up { color: var(--danger); }
 table.summary td.diff.down { color: var(--accent); }
-table.summary td.diff { white-space: normal; word-break: keep-all; }
 .summary-unit-note { font-size: 12.5px; color: var(--text-soft); margin: 8px 0 0; text-align: right; }
 .summary-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 14px; }
 .summary-title-row h3 { margin: 0; }
@@ -144,13 +144,13 @@ table.summary td.diff { white-space: normal; word-break: keep-all; }
 .download-menu-wrap { margin-left: auto; position: relative; }
 .download-btn {
   display: inline-flex; align-items: center; gap: 7px; border: none; cursor: pointer;
-  background: linear-gradient(180deg, #232D52, var(--navy)); color: #fff; border-radius: 999px; padding: 10px 20px;
+  background: linear-gradient(135deg, #5B8DFF, #A855F7); color: #fff; border-radius: 999px; padding: 10px 20px;
   font-size: 14px; font-weight: 700; font-family: inherit; letter-spacing: .01em;
-  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 3px 0 rgba(6,9,20,.35), 0 6px 14px rgba(16,23,42,.28);
+  box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 3px 0 rgba(88,53,150,.25), 0 6px 14px rgba(91,141,255,.28);
   transition: all .12s;
 }
-.download-btn:hover { background: linear-gradient(180deg, #2B3660, #171E38); box-shadow: 0 1px 0 rgba(255,255,255,.1) inset, 0 4px 0 rgba(6,9,20,.35), 0 8px 18px rgba(16,23,42,.32); transform: translateY(-1px); }
-.download-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 1px 0 rgba(6,9,20,.35), 0 2px 6px rgba(16,23,42,.24); }
+.download-btn:hover { background: linear-gradient(135deg, #6C99FF, #B565F9); box-shadow: 0 1px 0 rgba(255,255,255,.22) inset, 0 4px 0 rgba(88,53,150,.25), 0 8px 18px rgba(91,141,255,.34); transform: translateY(-1px); }
+.download-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 1px 0 rgba(88,53,150,.25), 0 2px 6px rgba(91,141,255,.22); }
 .download-btn-icon { font-size: 13px; opacity: .85; }
 .download-menu {
   position: absolute; top: calc(100% + 8px); right: 0; z-index: 20; min-width: 168px;
@@ -263,6 +263,8 @@ table.tree td[contenteditable="true"]:focus { background: #fff; outline: none; b
 table.tree td.basis { color: var(--text-muted); font-size: 14.5px; }
 tr.lvl-팀 td { font-weight: 700; font-size: 16px; background: var(--navy); color: #fff; }
 tr.lvl-팀 td.basis, tr.lvl-팀 td.num { color: #DCE3F7; }
+tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: var(--accent); color: #fff; }
+tr.lvl-합계 td.basis, tr.lvl-합계 td.num { color: #E9EEFF; }
 tr.lvl-정책 td { font-weight: 700; background: var(--accent-soft); }
 tr.lvl-단위 td { font-weight: 600; background: #FAFBFE; }
 tr.lvl-세부 td { font-weight: 500; color: var(--text-muted); }
@@ -406,6 +408,11 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   background: var(--navy); padding: 18px; border-radius: 0 0 var(--r-lg) var(--r-lg); margin-bottom: 24px;
 }
 .detail-inner { background: var(--bg-card); border-radius: var(--r); padding: 18px 20px; }
+.detail-total-amt {
+  font-size: 32px; font-weight: 800; color: var(--accent); letter-spacing: -0.01em;
+  margin: 2px 0 10px; font-variant-numeric: tabular-nums;
+}
+.detail-total-amt .unit { font-size: 17px; font-weight: 700; color: var(--text-muted); margin-left: 4px; }
 .detail-summary-line { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 0; }
 .detail-summary-row {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
@@ -419,7 +426,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 }
 .tree-search-box input::placeholder { color: var(--text-soft); }
 .tree-search-box input:focus { outline: none; border-color: var(--accent); }
-.tree-search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 13px; opacity: .5; pointer-events: none; }
+.tree-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-soft); pointer-events: none; }
 table.tree tr.search-match { background: #FFF6D6 !important; }
 table.tree tr.search-dim { opacity: .3; }
 table.tree tr.calc-mismatch td.basis { background: #FDE8E8; }
@@ -921,7 +928,19 @@ function buildDonutSvg(rows, total26) {
     }
   }
 
-  rows.forEach(function (r, i) {
+  // 조각을 그리는 순서: 인건비(또는 출연금)를 항상 12시 방향 시작점으로 고정하고,
+  // 나머지는 큰 것-작은 것을 번갈아 배치해서 작은 조각끼리 라벨이 겹치지 않게 함
+  // (표/범례는 원래 순서 그대로 유지되며, 이건 시각적 배치 순서에만 영향)
+  var order = actualPcts.map(function (_, i) { return i; }).sort(function (a, b) { return actualPcts[b] - actualPcts[a]; });
+  var startIdx = rows.findIndex(function (r) { return r.label === '인건비' || r.label === '출연금'; });
+  if (startIdx === -1 || actualPcts[startIdx] <= 0) startIdx = order[0];
+  var remaining = order.filter(function (i) { return i !== startIdx; });
+  var zigzag = [startIdx];
+  var lo = 0, hi = remaining.length - 1;
+  while (lo <= hi) { zigzag.push(remaining[lo++]); if (lo <= hi) zigzag.push(remaining[hi--]); }
+
+  zigzag.forEach(function (i) {
+    var r = rows[i];
     var pct = actualPcts[i];
     var vpct = visualPcts[i];
     var len = circumference * vpct / 100;
@@ -1435,6 +1454,19 @@ var treeInstanceCounter = 0;
 function renderTeamTreesCombined(trees) {
   var instId = 'tt' + (treeInstanceCounter++);
   var rows = [];
+  var totalRowHtml = '';
+  if (trees.length > 1) {
+    var sumAmt26 = trees.reduce(function (s, t) { return s + (t.amt26 || 0); }, 0);
+    var sumAmt25 = trees.reduce(function (s, t) { return s + (t.amt25 || 0); }, 0);
+    totalRowHtml = '<tr class="lvl-합계">'
+      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> 합계 (' + trees.length + '개 팀)</td>'
+      + '<td class="num basis"></td>'
+      + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
+      + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
+      + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
+      + '<td class="num">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
+      + '</tr>';
+  }
   var groupsHtml = trees.map(function (tree) {
     var mokList = collectMokList(tree);
     mokList.forEach(function (m, i) { tagMok(m, instId + '_' + tree.name + '_m' + i); });
@@ -1464,7 +1496,7 @@ function renderTeamTreesCombined(trees) {
     + '<div class="tree-scroll"><div class="tree-container" id="treecontainer-' + instId + '">'
     + '<table class="tree">' + colgroup
     + '<thead><tr>' + headCells + '</tr></thead>'
-    + '<tbody>' + rows.join('') + '</tbody></table>'
+    + '<tbody>' + totalRowHtml + rows.join('') + '</tbody></table>'
     + '</div></div></div>';
 }
 function renderTeamTree(tree) {
@@ -1519,8 +1551,9 @@ function renderDetail() {
   var el = document.getElementById('detail');
   if (!b) { el.innerHTML = ''; return; }
 
-  // 예산액은 표시하지 않고, 정원/현원 총합 + 소속 팀별 내역을 한 줄로 요약 (모든 카드 공통)
+  // 예산액은 정현원과 분리된 큰 글씨 라인으로 표시
   var headcountLine = '';
+  var amtLine = '';
   if (b.teams && b.teams.length) {
     var totalCap = 0, totalCur = 0;
     var teamParts = b.teams.map(function (t) {
@@ -1530,21 +1563,21 @@ function renderDetail() {
     });
     var branches = LIBRARY_BRANCHES[b.name];
     var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : escapeHtml(b.teams[0].name);
-    var amtPrefix = (b.amt != null) ? '총예산액 ' + fmtWon(b.amt) + '천원 · ' : '';
+    amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
     if (b.teams.length === 1) {
-      headcountLine = '<div class="detail-summary-line">' + amtPrefix + '정현원 ' + totalCap + '(' + totalCur + ') - ' + suffixName + '</div>';
+      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ') - ' + suffixName + '</div>';
     } else {
-      headcountLine = '<div class="detail-summary-line">' + amtPrefix + '정현원 ' + totalCap + '(' + totalCur + ')'
+      headcountLine = '<div class="detail-summary-line">정현원 ' + totalCap + '(' + totalCur + ')'
         + (teamParts.length ? ' - ' + teamParts.join(', ') : '') + '</div>';
     }
   }
 
   var searchBox = (b.teams && b.teams.length)
-    ? '<div class="tree-search-box"><input type="text" id="tree-search-input" placeholder="예산서 검색 (항목명·산출기초)" oninput="filterTreeRows(this.value)"><span class="tree-search-icon">\uD83D\uDD0D</span></div>'
+    ? '<div class="tree-search-box"><input type="text" id="tree-search-input" placeholder="예산서 검색 (항목명·산출기초)" oninput="filterTreeRows(this.value)"><svg class="tree-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>'
       + '<div class="tree-filter-toggle"><input type="checkbox" id="mismatch-only-toggle" onchange="toggleMismatchOnly(this.checked)"><label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
     : '';
   headcountLine = headcountLine
-    ? '<div class="detail-summary-row">' + headcountLine + searchBox + '</div>'
+    ? amtLine + '<div class="detail-summary-row">' + headcountLine + searchBox + '</div>'
     : headcountLine;
 
   var teamTreesHtml = '';
