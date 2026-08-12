@@ -432,6 +432,7 @@ tr.lvl-팀 td { font-weight: 700; font-size: 16px; background: #EDE4FB; color: v
 tr.lvl-팀 td.basis, tr.lvl-팀 td.num { color: var(--navy); }
 tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: #D7DEF5; color: var(--navy); border-top: 1.5px solid #A9B7E0; }
 tr.lvl-합계 td.basis, tr.lvl-합계 td.num { color: var(--navy); }
+tr.lvl-합계 td:first-child { text-align: center; }
 tr.lvl-정책 td { font-weight: 700; background: var(--accent-soft); }
 tr.lvl-단위 td { font-weight: 600; background: #FAFBFE; }
 tr.lvl-세부 td { font-weight: 500; color: var(--text-muted); }
@@ -1107,13 +1108,13 @@ table.tree tr.increase-only-hide { display: none; }
 }
 .note-save {
   display: flex; align-items: center; gap: 6px; cursor: pointer;
-  fill: #fff; background: #FBBF24; border: 1px solid transparent; border-radius: 8px;
+  fill: #000; background: #FBBF24; border: 1px solid transparent; border-radius: 8px;
   padding: 8px 12px; transition: background .1s, border-color .1s;
 }
 .note-save:hover { background: #F0AD0E; }
 .note-save:active { border-color: #C88A00; }
 .note-save svg { flex-shrink: 0; }
-.note-save-label { font-size: 13.5px; font-weight: 700; color: #fff; }
+.note-save-label { font-size: 13.5px; font-weight: 700; color: #000; }
 .note-save:disabled { opacity: .6; cursor: default; }
 
 table.team-summary, table.lines { width: 100%; border-collapse: collapse; font-size: 16px; margin-bottom: 16px; }
@@ -2341,15 +2342,16 @@ async function saveCardNote(id) {
 
 
 var treeInstanceCounter = 0;
-function renderTeamTreesCombined(trees) {
+function renderTeamTreesCombined(trees, totalLabel) {
   var instId = 'tt' + (treeInstanceCounter++);
   var rows = [];
   var totalRowHtml = '';
+  var totalRowText = totalLabel ? (totalLabel + ' 합계') : '합계';
   if (trees.length > 1) {
     var sumAmt26 = trees.reduce(function (s, t) { return s + (t.amt26 || 0); }, 0);
     var sumAmt25 = trees.reduce(function (s, t) { return s + (t.amt25 || 0); }, 0);
     totalRowHtml = '<tr class="lvl-합계">'
-      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> 합계</td>'
+      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> ' + escapeHtml(totalRowText) + '</td>'
       + '<td class="num basis"></td>'
       + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
@@ -2529,7 +2531,10 @@ function renderDetail() {
   if (b.teams && b.teams.length) {
     var trees = b.teams.filter(function (t) { return t.treeKey && TEAM_TREES[t.treeKey]; })
       .map(function (t) { return TEAM_TREES[t.treeKey]; });
-    if (trees.length) teamTreesHtml = renderTeamTreesCombined(trees);
+    if (trees.length) {
+      var totalLabelForCard = (nav.instKey === 'hscf' && state.fund === '출연금') ? b.name : null;
+      teamTreesHtml = renderTeamTreesCombined(trees, totalLabelForCard);
+    }
   }
 
   var linesHtml = b.lines.length ? b.lines.map(function (l, i) {
