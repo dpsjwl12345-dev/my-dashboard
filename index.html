@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>화성시 공기관 예산통합 대시보드</title>
+<title>화성시문화관광재단 출연금·위탁금 관리</title>
 <link rel="stylesheet" as="style" crossorigin
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
 <style>
@@ -320,14 +320,21 @@ table.fc-summary td .dot {
   border-radius: 16px;
   display: flex; flex-direction: column; gap: 0;
 }
-/* 카드 배경의 흐릿한 블롭 (정적) */
+/* 카드 배경에서 떠다니는 블롭 애니메이션 (Uiverse 참고 코드 반영) */
 .dept-stat-blob {
   position: absolute; z-index: 1; top: 50%; left: 50%;
   width: 7rem; height: 7rem; border-radius: 50%;
   background-color: #7C5CD6;
   opacity: .6;
   filter: blur(18px);
-  transform: translate(-100%, -100%);
+  animation: dept-blob-bounce 5s infinite ease;
+}
+@keyframes dept-blob-bounce {
+  0%   { transform: translate(-100%, -100%) translate3d(0, 0, 0); }
+  25%  { transform: translate(-100%, -100%) translate3d(100%, 0, 0); }
+  50%  { transform: translate(-100%, -100%) translate3d(100%, 100%, 0); }
+  75%  { transform: translate(-100%, -100%) translate3d(0, 100%, 0); }
+  100% { transform: translate(-100%, -100%) translate3d(0, 0, 0); }
 }
 .dept-stat-content {
   position: relative; z-index: 2;
@@ -354,9 +361,9 @@ table.fc-summary td .dot {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
-.dept-stat-percent { margin: 0 0 0 0.3rem; color: var(--danger); font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 2px; white-space: nowrap; flex-shrink: 0; line-height: 1; }
+.dept-stat-percent { margin: 0 0 0 0.3rem; color: var(--accent); font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 2px; white-space: nowrap; flex-shrink: 0; line-height: 1; }
 .dept-stat-percent svg { width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
-.dept-stat-percent.down { color: var(--accent); }
+.dept-stat-percent.down { color: var(--danger); }
 .dept-stat-percent.down svg { transform: rotate(180deg); }
 .dept-stat-data { display: flex; flex-direction: column; justify-content: flex-start; margin-top: 0.45rem; margin-left: 2.4rem; }
 .dept-stat-value {
@@ -420,12 +427,11 @@ table.tree td.num:last-child { text-align: center; }
 table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; }
 table.tree td[contenteditable="true"]:hover { background: rgba(52,87,213,.06); box-shadow: inset 0 0 0 1px rgba(52,87,213,.2); }
 table.tree td[contenteditable="true"]:focus { background: #fff; outline: none; box-shadow: inset 0 0 0 1.5px var(--accent); }
-table.tree td.basis { color: var(--text-muted); font-size: 14.5px; text-align: left; white-space: pre-line; }
+table.tree td.basis { color: var(--text-muted); font-size: 14.5px; }
 tr.lvl-팀 td { font-weight: 700; font-size: 16px; background: #EDE4FB; color: var(--navy); }
 tr.lvl-팀 td.basis, tr.lvl-팀 td.num { color: var(--navy); }
 tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: #D7DEF5; color: var(--navy); border-top: 1.5px solid #A9B7E0; }
 tr.lvl-합계 td.basis, tr.lvl-합계 td.num { color: var(--navy); }
-tr.lvl-합계 td:first-child { text-align: center; }
 tr.lvl-정책 td { font-weight: 700; background: var(--accent-soft); }
 tr.lvl-단위 td { font-weight: 600; background: #FAFBFE; }
 tr.lvl-세부 td { font-weight: 500; color: var(--text-muted); }
@@ -680,7 +686,6 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   font-family: 'GmarketSans', 'Pretendard', sans-serif;
   font-size: 48px; font-weight: 700; letter-spacing: -0.01em; color: var(--navy);
   margin: 0 0 10px; line-height: 1.3; white-space: nowrap;
-  position: relative; top: 28px;
 }
 .landing-title .l1 { display: inline; }
 .landing-title .l1::after { content: " "; }
@@ -699,7 +704,6 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   font-family: 'GmarketSans', 'Pretendard', sans-serif;
   font-size: 16px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
   color: var(--text-soft); margin: 0 0 48px;
-  position: relative; top: 28px;
 }
 .landing-grid { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 28px; max-width: 100%; margin: 20px auto 0; background: transparent; padding: 10px 16px; }
 .landing-btn-row { display: flex; justify-content: center; gap: 32px; margin-top: 72px; }
@@ -944,10 +948,8 @@ table.tree tr.calc-mismatch td.basis { background: #FDE8E8; }
 .mismatch-flag { color: #D14343; margin-left: 5px; font-size: 13px; cursor: help; }
 table.tree tr.mismatch-only-hide { display: none; }
 table.tree tr.increase-only-hide { display: none; }
-table.tree tr.new-only-hide { display: none; }
 .tree-filter-toggle { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: #D14343; flex: 0 0 auto; white-space: nowrap; }
 .tree-filter-toggle.increase { color: #2E7D32; }
-.tree-filter-toggle.new { color: #3457D5; }
 .tree-filter-toggle input { accent-color: var(--accent); cursor: pointer; }
 .tree-filter-toggle label { cursor: pointer; }
 
@@ -1105,13 +1107,13 @@ table.tree tr.new-only-hide { display: none; }
 }
 .note-save {
   display: flex; align-items: center; gap: 6px; cursor: pointer;
-  fill: #000; background: #FBBF24; border: 1px solid transparent; border-radius: 8px;
+  fill: #1A1A1A; background: #FBBF24; border: 1px solid transparent; border-radius: 8px;
   padding: 8px 12px; transition: background .1s, border-color .1s;
 }
 .note-save:hover { background: #F0AD0E; }
 .note-save:active { border-color: #C88A00; }
 .note-save svg { flex-shrink: 0; }
-.note-save-label { font-size: 13.5px; font-weight: 700; color: #000; }
+.note-save-label { font-size: 13.5px; font-weight: 700; color: #1A1A1A; }
 .note-save:disabled { opacity: .6; cursor: default; }
 
 table.team-summary, table.lines { width: 100%; border-collapse: collapse; font-size: 16px; margin-bottom: 16px; }
@@ -1210,24 +1212,6 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
         <h1 class="landing-title"><span class="l1">화성시 공공기관</span><span class="l2">예산통합 대시보드</span></h1>
         <p class="landing-subtitle-en">Integrated Budget Dashboard</p>
         <div class="landing-grid" id="landing-grid"></div>
-        <div class="landing-btn-row">
-          <button type="button" class="landing-settle-btn" id="landing-budget-btn" onclick="goToBudget()">예산보기
-            <div class="icon-btn">
-              <svg height="20" width="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
-              </svg>
-            </div>
-          </button>
-          <button type="button" class="landing-settle-btn" id="landing-settle-btn" onclick="goToSettlement()">결산보기
-            <div class="icon-btn">
-              <svg height="20" width="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
-              </svg>
-            </div>
-          </button>
-        </div>
       </div>
     </section>
 
@@ -2057,9 +2041,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible) {
     ? '<span class="mismatch-flag" title="산출기초 계산값 ' + fmtWon(mismatchAmt) + '천원 ≠ 입력 금액 ' + fmtWon(node.amt26) + '천원">\u26A0</span>'
     : '';
   var increasedAttr = (Number(node.amt26) || 0) > (Number(node.amt25) || 0) ? ' data-increased="1"' : '';
-  var isNew = (!node.amt25 || Number(node.amt25) === 0) && (Number(node.amt26) || 0) > 0;
-  var newAttr = isNew ? ' data-new="1"' : '';
-  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + '"' + mokAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
+  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + '"' + mokAttr + mismatchAttr + increasedAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
     + '<td style="padding-left:' + (8 + depth * 14) + 'px">' + arrowHtml + ' ' + escapeHtml(label) + mismatchIcon + '</td>'
     + '<td class="num basis" contenteditable="true" spellcheck="false" onblur="saveBudgetItemCell(' + node.id + ',\'calc\',this)">' + escapeHtml(node.calc || '') + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" onblur="saveBudgetItemCell(' + node.id + ',\'amt26\',this)">' + fmtWon(node.amt26) + '</td>'
@@ -2100,23 +2082,6 @@ function toggleIncreaseOnly(checked) {
       tr.classList.remove('row-hidden-collapse');
     } else {
       tr.classList.add('increase-only-hide');
-    }
-  });
-}
-
-// 신규사업만 보기 토글 (전년도 금액 없음/0, 올해 금액 0 초과)
-function toggleNewOnly(checked) {
-  var rows = document.querySelectorAll('#detail table.tree tbody tr');
-  rows.forEach(function (tr) {
-    if (!checked) {
-      tr.classList.remove('new-only-hide');
-      return;
-    }
-    if (tr.getAttribute('data-new') === '1') {
-      tr.classList.remove('new-only-hide');
-      tr.classList.remove('row-hidden-collapse');
-    } else {
-      tr.classList.add('new-only-hide');
     }
   });
 }
@@ -2358,16 +2323,15 @@ async function saveCardNote(id) {
 
 
 var treeInstanceCounter = 0;
-function renderTeamTreesCombined(trees, totalLabel) {
+function renderTeamTreesCombined(trees) {
   var instId = 'tt' + (treeInstanceCounter++);
   var rows = [];
   var totalRowHtml = '';
-  var totalRowText = totalLabel ? (totalLabel + ' 합계') : '합계';
-  if (trees.length > 1 || (trees.length === 1 && totalLabel)) {
+  if (trees.length > 1) {
     var sumAmt26 = trees.reduce(function (s, t) { return s + (t.amt26 || 0); }, 0);
     var sumAmt25 = trees.reduce(function (s, t) { return s + (t.amt25 || 0); }, 0);
     totalRowHtml = '<tr class="lvl-합계">'
-      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> ' + escapeHtml(totalRowText) + '</td>'
+      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> 합계</td>'
       + '<td class="num basis"></td>'
       + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
@@ -2456,8 +2420,7 @@ var LIBRARY_BRANCHES = {
   '태안': ['태안도서관', '정남도서관', '노을빛도서관'],
   '중앙이음터': ['중앙이음터도서관', '두빛나래어린이도서관'],
   '왕배푸른숲': ['왕배푸른숲도서관', '달빛나래어린이도서관'],
-  '향남복합문화센터': ['향남복합문화센터도서관', '가족만세센터작은도서관'],
-  '화성예술의전당': ['공연기획팀', '무대기술팀', '운영지원팀']
+  '향남복합문화센터': ['향남복합문화센터도서관', '가족만세센터작은도서관']
 };
 
 function renderDetail() {
@@ -2508,7 +2471,6 @@ function renderDetail() {
   var filterToggleHtml = (b.teams && b.teams.length)
     ? '<div class="tree-filter-toggle"><input type="checkbox" id="mismatch-only-toggle" onchange="toggleMismatchOnly(this.checked)"><label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
       + '<div class="tree-filter-toggle increase"><input type="checkbox" id="increase-only-toggle" onchange="toggleIncreaseOnly(this.checked)"><label for="increase-only-toggle">\u25B2 전년대비 증액만</label></div>'
-      + '<div class="tree-filter-toggle new"><input type="checkbox" id="new-only-toggle" onchange="toggleNewOnly(this.checked)"><label for="new-only-toggle">\uD83C\uDD95 신규사업만</label></div>'
     : '';
   var hasNoteClass = b.note ? ' has-note' : '';
   var shapeSvg = ['a','b','c','a','b','c','a','b','c'].map(function (cls) {
@@ -2549,11 +2511,7 @@ function renderDetail() {
   if (b.teams && b.teams.length) {
     var trees = b.teams.filter(function (t) { return t.treeKey && TEAM_TREES[t.treeKey]; })
       .map(function (t) { return TEAM_TREES[t.treeKey]; });
-    if (trees.length) {
-      var totalLabelForCard = (nav.instKey === 'hscf' && state.fund === '출연금') ? b.name
-        : (nav.instKey === 'hscf' && b.name === '화성예술의전당') ? '예술의전당본부' : null;
-      teamTreesHtml = renderTeamTreesCombined(trees, totalLabelForCard);
-    }
+    if (trees.length) teamTreesHtml = renderTeamTreesCombined(trees);
   }
 
   var linesHtml = b.lines.length ? b.lines.map(function (l, i) {
