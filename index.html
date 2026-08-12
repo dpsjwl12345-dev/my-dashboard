@@ -539,6 +539,111 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .dash-list .row .name { font-weight: 600; }
 .dash-list .row .status { color: var(--text-soft); font-size: 14.5px; font-weight: 500; padding: 3px 10px; background: var(--bg-hover); border-radius: 999px; }
 
+/* ---- 랜딩(시작) 화면 ---- */
+.landing-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 40px 32px;
+  margin: -28px -32px -48px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.landing-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(100deg, #ffffff 0%, #ffffff 7%, transparent 10%, transparent 12%, #ffffff 16%),
+    repeating-linear-gradient(100deg, #3457D5 10%, #8B7FD1 15%, #5B84FF 20%, #48BB78 25%, #3457D5 30%);
+  background-size: 300% 200%, 200% 100%;
+  background-position: 50% 50%, 50% 50%;
+  filter: blur(10px) invert(0);
+  opacity: .35;
+  animation: hscf-aurora 60s linear infinite;
+}
+.landing-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, transparent 0%, #fdfdfe 70%);
+}
+@keyframes hscf-aurora {
+  from { background-position: 50% 50%, 50% 50%; }
+  to   { background-position: 350% 50%, 350% 50%; }
+}
+.landing-hero > * { position: relative; z-index: 1; }
+.landing-eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.landing-title {
+  font-family: 'GmarketSans', 'Pretendard', sans-serif;
+  font-size: 48px; font-weight: 700; letter-spacing: -0.01em; color: var(--navy);
+  margin: 0 0 10px; line-height: 1.3; white-space: nowrap;
+}
+.landing-title .l1 { display: inline; }
+.landing-title .l1::after { content: " "; }
+.landing-title .l2 {
+  display: inline;
+  background-image: linear-gradient(90deg, #3457D5, #8B7FD1, #5B84FF, #48BB78, #3457D5);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: hscf-colourful 6s linear infinite;
+}
+@keyframes hscf-colourful {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+.landing-subtitle-en {
+  font-family: 'GmarketSans', 'Pretendard', sans-serif;
+  font-size: 16px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-soft); margin: 0 0 48px;
+}
+.landing-grid { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; gap: 14px; max-width: 100%; margin: 0 auto; }
+.landing-btn-row { display: flex; justify-content: center; gap: 32px; margin-top: 72px; }
+.landing-settle-btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px; border-radius: 999px; cursor: pointer; border: none;
+  background: linear-gradient(90deg, #FF6496, #6496FF, #FFC864, #FF6496);
+  background-size: 300% 100%;
+  animation: hscf-colourful 5s linear infinite;
+}
+.landing-settle-btn span {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #ffffff; color: var(--navy);
+  font-size: 15.5px; font-weight: 700;
+  padding: 12px 28px; border-radius: 999px;
+  box-shadow: 0 2px 0 0 rgba(16,20,35,.04) inset, 0 0.5px 1px 0 rgba(16,20,35,.15);
+  transition: transform .12s ease;
+}
+.landing-settle-btn:hover span { transform: scale(0.98); }
+.landing-settle-btn:active span { transform: scale(0.96); }
+.landing-card {
+  width: 100%; max-width: 320px; height: 48px;
+  background: #353535; border-radius: 16px;
+  display: flex; align-items: center; justify-content: flex-start;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: 0.5s ease-in-out; cursor: pointer; border: none;
+}
+.landing-card:hover { transform: scale(1.05); }
+.landing-card-icon {
+  width: 30px; height: 30px; margin-left: 9px; flex-shrink: 0; border-radius: 8px;
+  background: linear-gradient(#d7cfcf, #9198e5);
+  transition: 0.5s ease-in-out;
+}
+.landing-card:hover .landing-card-icon { background: linear-gradient(#9198e5, #712020); }
+.landing-card-name {
+  font-family: 'GmarketSans', 'Pretendard', sans-serif;
+  font-size: 14px; font-weight: 500; color: #ffffff;
+  padding: 0 12px; line-height: 1.3; white-space: nowrap;
+}
+
 .col-resize-handle { position: absolute; right: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 2; }
 .col-resize-handle:hover, .col-resize-handle.resizing { background: var(--accent); opacity: 0.4; }
 .th-filter-label { cursor: pointer; user-select: none; }
@@ -725,10 +830,6 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
       <div class="brand-subtitle">Integrated Budget Dashboard</div>
     </div>
 
-    <div class="side-item" id="nav-dashboard" onclick="showDashboard()">
-      <span class="side-item-label"><span class="side-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span><span>대시보드</span></span>
-    </div>
-
     <div class="group-label"><span class="cat-badge">예산</span></div>
     <div id="nav-budget"></div>
 
@@ -739,9 +840,15 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   <main class="main">
 
     <section class="panel" id="panel-dashboard">
-      <h1 style="font-size:22px;margin:0 0 16px;">전체 현황</h1>
-      <div class="dash-grid" id="dash-kpis"></div>
-      <div class="dash-list" id="dash-list"></div>
+      <div class="landing-hero">
+        <h1 class="landing-title"><span class="l1">화성시 공공기관</span><span class="l2">예산통합 대시보드</span></h1>
+        <p class="landing-subtitle-en">Integrated Budget Dashboard</p>
+        <div class="landing-grid" id="landing-grid"></div>
+        <div class="landing-btn-row">
+          <button type="button" class="landing-settle-btn" id="landing-budget-btn" onclick="goToBudget()"><span>예산</span></button>
+          <button type="button" class="landing-settle-btn" id="landing-settle-btn" onclick="goToSettlement()"><span>결산</span></button>
+        </div>
+      </div>
     </section>
 
     <section class="panel" id="panel-budget-placeholder">
@@ -2113,13 +2220,22 @@ function renderSidebarNav() {
     return '<div class="side-item' + (isActive ? ' active' : '') + '" onclick="selectSettlement(\'' + inst.key + '\')">'
       + '<span class="side-item-label"><span class="side-icon">' + SIDEBAR_ICON_SETTLEMENT + '</span><span>' + inst.name + '</span>' + dotsHtml + '</span></div>';
   }).join('');
-
-  document.getElementById('nav-dashboard').classList.toggle('active', nav.view === 'dashboard');
 }
 
 function switchPanel(panelId) {
   document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
   document.getElementById(panelId).classList.add('active');
+  if (panelId !== 'panel-dashboard') {
+    var main = document.querySelector('.main');
+    var hero = document.querySelector('.landing-hero');
+    if (main) main.style.height = '';
+    if (hero) hero.style.height = '';
+  }
+}
+
+function goToSettlement() {
+  var target = INSTITUTIONS.filter(function (i) { return SETTLEMENT_DATA[i.key]; })[0] || INSTITUTIONS[0];
+  if (target) selectSettlement(target.key);
 }
 
 function showDashboard() {
@@ -2127,7 +2243,24 @@ function showDashboard() {
   switchPanel('panel-dashboard');
   renderDashboard();
   renderSidebarNav();
+  syncLandingHeroHeight();
 }
+
+function syncLandingHeroHeight() {
+  var sb = document.querySelector('.sidebar');
+  var main = document.querySelector('.main');
+  var hero = document.querySelector('.landing-hero');
+  if (!sb || !main) return;
+  requestAnimationFrame(function () {
+    var h = sb.offsetHeight;
+    main.style.height = h + 'px';
+    if (hero) hero.style.height = h + 'px';
+  });
+}
+window.addEventListener('resize', function () {
+  if (nav.view === 'dashboard') syncLandingHeroHeight();
+});
+
 
 async function selectBudget(instKey, fund) {
   var inst = INSTITUTIONS.filter(function (i) { return i.key === instKey; })[0];
@@ -2488,32 +2621,22 @@ function selectSettlement(instKey) {
 }
 
 async function renderDashboard() {
-  var kpiEl = document.getElementById('dash-kpis');
-  var listEl = document.getElementById('dash-list');
-  if (!INSTITUTIONS.length) { kpiEl.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="loader"><span class="loader-text">loading</span><span class="load"></span></div></div>'; return; }
+  var gridEl = document.getElementById('landing-grid');
+  if (!INSTITUTIONS.length) { gridEl.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="loader"><span class="loader-text">loading</span><span class="load"></span></div></div>'; return; }
 
-  kpiEl.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="loader"><span class="loader-text">loading</span><span class="load"></span></div></div>';
-
-  var hscfCount = INSTITUTIONS.filter(function (i) { return i.hasData; }).length;
-
-  var totalY26 = 0, totalY25 = 0;
-  if (HSCF_INST_ID) {
-    var { data: roots } = await db.from('budget_items')
-      .select('amt26, amt25')
-      .eq('institution_id', HSCF_INST_ID).eq('fund_type', '출연금').eq('level', '팀');
-    (roots || []).forEach(function (r) { totalY26 += r.amt26 || 0; totalY25 += r.amt25 || 0; });
-  }
-
-  kpiEl.innerHTML =
-    '<div class="dash-card"><div class="label">연동된 기관 수</div><div class="value">' + hscfCount + ' / ' + INSTITUTIONS.length + '</div></div>'
-    + '<div class="dash-card"><div class="label">화성시문화관광재단 출연금 총액</div><div class="value">' + fmtWon(totalY26) + '천원</div></div>'
-    + '<div class="dash-card"><div class="label">전년 대비</div><div class="value">' + (totalY26 - totalY25 >= 0 ? '+' : '') + fmtWon(totalY26 - totalY25) + '천원</div></div>'
-    + '<div class="dash-card"><div class="label">데이터 준비 중</div><div class="value">' + (INSTITUTIONS.length - hscfCount) + '개 기관</div></div>';
-
-  listEl.innerHTML = INSTITUTIONS.map(function (inst) {
-    return '<div class="row"><span class="name">' + inst.icon + ' ' + inst.name + '</span>'
-      + '<span class="status">' + (inst.hasData ? '연동 완료' : '데이터 준비 중') + '</span></div>';
+  gridEl.innerHTML = INSTITUTIONS.map(function (inst) {
+    var firstFund = inst.funds && inst.funds[0];
+    var onclick = firstFund ? "selectBudget('" + inst.key + "','" + firstFund + "')" : '';
+    return '<div class="landing-card" onclick="' + onclick + '">'
+      + '<div class="landing-card-icon"></div>'
+      + '<div class="landing-card-name">' + inst.name + '</div>'
+      + '</div>';
   }).join('');
+}
+
+function goToBudget() {
+  var target = INSTITUTIONS.filter(function (i) { return i.funds && i.funds[0]; })[0];
+  if (target) selectBudget(target.key, target.funds[0]);
 }
 
 loadInstitutions().then(function () { showDashboard(); });
