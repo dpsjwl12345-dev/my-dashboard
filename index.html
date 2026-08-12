@@ -926,7 +926,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 }
 .detail-summary-row .detail-summary-line { flex: 1 1 auto; }
 .detail-filters { display: flex; align-items: center; gap: 14px; margin-left: 44px; flex-wrap: wrap; }
-.tree-search-box { position: relative; margin-left: auto; flex-shrink: 0; }
+.tree-search-box { position: relative; flex-shrink: 0; }
 .tree-search-box input {
   width: 240px; padding: 9px 44px 9px 34px; border-radius: 10px; border: 1px solid var(--border);
   font-size: 13.5px; font-family: inherit; background: #F9FAFB; color: var(--text);
@@ -953,6 +953,168 @@ table.tree tr.increase-only-hide { display: none; }
 .tree-filter-toggle input { accent-color: var(--accent); cursor: pointer; }
 .tree-filter-toggle label { cursor: pointer; }
 
+
+.note-popover-wrap { position: relative; flex-shrink: 0; margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+.note-count-badge {
+  display: inline-flex; align-items: center; flex-shrink: 0; cursor: pointer;
+  background: #FFFCEB; border: 1px solid #E4B93A; color: #8A6D1F;
+  border-radius: 999px; padding: 5px 12px; font-size: 12.5px; font-weight: 700;
+  transition: background .12s;
+}
+.note-count-badge:hover { background: #FDF0C0; }
+
+/* 중요사항(메모) 토글 버튼 — Uiverse 스타일 플러스→X 모핑 + 컨페티 버스트 */
+.note-toggle-wrapper {
+  --background: var(--accent);
+  --icon-color: #414856;
+  --shape-color-01: var(--accent-soft);
+  --shape-color-02: var(--accent);
+  --shape-color-03: #E4B93A;
+  --width: 42px;
+  --height: 42px;
+  --border-radius: var(--height);
+  width: var(--width);
+  height: var(--height);
+  position: relative;
+  border-radius: var(--border-radius);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+.note-toggle-wrapper.has-note .note-toggle-btn { box-shadow: 0 0 0 2px #E4B93A; }
+.note-toggle-wrapper .note-toggle-btn {
+  background: var(--background);
+  width: var(--width);
+  height: var(--height);
+  position: relative;
+  z-index: 3;
+  border-radius: var(--border-radius);
+  box-shadow: 0 6px 16px rgba(52,87,213,.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: note-plus-anim-reverse 0.5s ease-out forwards;
+}
+.note-toggle-wrapper .note-toggle-btn::before,
+.note-toggle-wrapper .note-toggle-btn::after {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 2px;
+  background: #fff;
+}
+.note-toggle-wrapper .note-toggle-btn::before { width: 2.5px; height: 15px; }
+.note-toggle-wrapper .note-toggle-btn::after { width: 15px; height: 2.5px; }
+.note-toggle-tooltip {
+  width: fit-content; height: 34px; border-radius: 34px; position: absolute;
+  background: #fff; z-index: 2; padding: 9px 16px;
+  box-shadow: var(--shadow-md); opacity: 0; top: 0;
+  display: flex; justify-content: space-around; align-items: center; gap: 6px;
+  transition: opacity .15s ease-in, top .15s ease-in, width .15s ease-in;
+  pointer-events: none;
+}
+.note-toggle-tooltip > span { position: relative; width: 100%; white-space: nowrap; opacity: 0; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+.note-toggle-tooltip > svg { width: 15px; height: 15px; flex-shrink: 0; }
+.note-toggle-tooltip > svg .icon { fill: none; stroke: var(--icon-color); stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
+.note-toggle-tooltip::after {
+  content: ""; width: 10px; height: 10px; background: #fff; border-radius: 2px;
+  position: absolute; left: 50%; margin-left: -5px; bottom: -4px; transform: rotate(45deg); z-index: 0;
+}
+.note-toggle-confetti { width: 150px; height: 150px; position: absolute; z-index: 1; transform: scale(0); pointer-events: none; }
+.note-toggle-confetti .shape { stroke: none; transform-origin: 50% 20%; }
+.note-toggle-confetti .shape-a { fill: var(--shape-color-01); }
+.note-toggle-confetti .shape-b { fill: var(--shape-color-02); }
+.note-toggle-confetti .shape-c { fill: var(--shape-color-03); }
+.note-toggle-checkbox {
+  height: 100%; width: 100%; border-radius: var(--border-radius); cursor: pointer;
+  position: absolute; z-index: 5; opacity: 0; margin: 0;
+}
+.note-toggle-checkbox:checked ~ .note-toggle-confetti { animation: note-pang-anim 1.2s ease-out forwards; }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(1) { transform: translate(13px, 30%) rotate(40deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(2) { transform: translate(-2px, 30%) rotate(80deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(3) { transform: translate(6px, 30%) rotate(120deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(4) { transform: translate(4px, 30%) rotate(160deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(5) { transform: translate(11px, 30%) rotate(200deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(6) { transform: translate(0px, 30%) rotate(240deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(7) { transform: translate(9px, 30%) rotate(280deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(8) { transform: translate(-2px, 30%) rotate(320deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(9) { transform: translate(13px, 30%) rotate(360deg); }
+.note-toggle-checkbox:checked ~ .note-toggle-btn { animation: note-plus-anim 0.5s ease-out forwards; }
+.note-toggle-checkbox:checked ~ .note-toggle-tooltip {
+  width: fit-content; padding: 9px 16px;
+  animation: note-stretch-anim 1s ease-out forwards .15s;
+  top: -46px; opacity: 1;
+}
+.note-toggle-checkbox:checked ~ .note-toggle-tooltip > span { opacity: 1; }
+
+@keyframes note-pang-anim {
+  0% { transform: scale(0); opacity: 0; }
+  40% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.1); opacity: 0; }
+}
+@keyframes note-plus-anim {
+  0% { transform: rotate(0) scale(1); }
+  20% { transform: rotate(60deg) scale(0.93); }
+  55% { transform: rotate(35deg) scale(0.97); }
+  80% { transform: rotate(48deg) scale(0.94); }
+  100% { transform: rotate(45deg) scale(0.95); }
+}
+@keyframes note-plus-anim-reverse {
+  0% { transform: rotate(45deg) scale(0.95); }
+  20% { transform: rotate(-15deg); }
+  55% { transform: rotate(10deg); }
+  80% { transform: rotate(-3deg); }
+  100% { transform: rotate(0) scale(1); }
+}
+@keyframes note-stretch-anim {
+  0% { transform: scale(1, 1); }
+  10% { transform: scale(1.1, 0.9); }
+  30% { transform: scale(0.9, 1.1); }
+  50% { transform: scale(1.05, 0.95); }
+  100% { transform: scale(1, 1); }
+}
+
+.note-popover {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 30; width: 448px; max-width: 90vw;
+  background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow-md), 0 8px 24px rgba(16,20,35,.10);
+  overflow: hidden;
+}
+.note-popover-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; }
+.note-popover-header-left { display: flex; gap: 16px; align-items: center; }
+.note-popover-avatar { width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; background: #FBBF24; }
+.note-popover-title { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.note-popover-close {
+  border: none; background: transparent; color: var(--text-soft); cursor: pointer;
+  padding: 4px; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: background .12s;
+}
+.note-popover-close:hover { background: var(--bg-hover); color: var(--text-muted); }
+.note-popover-body { padding: 0 24px 16px; }
+.note-textarea {
+  width: 100%; box-sizing: border-box; min-height: 110px; resize: vertical;
+  border: 1px solid var(--border); border-radius: 8px; background: #F9FAFB;
+  font-family: inherit; font-size: 14.5px; line-height: 1.5; color: var(--text); padding: 8px 10px;
+}
+.note-textarea::placeholder { color: var(--text-soft); }
+.note-textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+.note-popover-footer {
+  display: flex; justify-content: flex-end;
+  padding: 16px 24px; border-top: 1px solid var(--border);
+}
+.note-popover-footer button {
+  border-radius: var(--r); padding: 6px 14px; font-size: 13.5px; font-family: inherit; cursor: pointer;
+}
+.note-save {
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  fill: #fff; background: #FBBF24; border: 1px solid transparent; border-radius: 8px;
+  padding: 8px 12px; transition: background .1s, border-color .1s;
+}
+.note-save:hover { background: #F0AD0E; }
+.note-save:active { border-color: #C88A00; }
+.note-save svg { flex-shrink: 0; }
+.note-save-label { font-size: 13.5px; font-weight: 700; color: #fff; }
+.note-save:disabled { opacity: .6; cursor: default; }
 
 table.team-summary, table.lines { width: 100%; border-collapse: collapse; font-size: 16px; margin-bottom: 16px; }
 table.team-summary th, table.team-summary td, table.lines th, table.lines td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -1274,7 +1436,7 @@ async function loadInstBudgetData(inst) {
     var myTeams = teams.filter(function (t) { return t.card_id === c.id; }).map(function (t) {
       return { name: t.team_name, capacity: t.capacity, current: t.current, treeKey: t.team_root_budget_item_id };
     });
-    return { id: c.id, dept: c.dept, fundType: c.fund_type, name: c.name, amt: c.amt, amt25: c.amt25,
+    return { id: c.id, dept: c.dept, fundType: c.fund_type, name: c.name, amt: c.amt, amt25: c.amt25, note: c.note,
       laborCost: c.labor_cost, laborCost25: c.labor_cost25,
       adminCost: c.admin_cost, adminCost25: c.admin_cost25,
       programCost: c.program_cost, programCost25: c.program_cost25,
@@ -2119,6 +2281,64 @@ async function saveBudgetItemCell(id, field, el) {
   renderSummary();
 }
 
+// 부서/사업 카드별 "MEMO" 토글 버튼(체크박스) 상태에 맞춰 팝업 열기/닫기.
+// forceOpen=true면(예: "메모 N" 배지 클릭) 체크박스 상태와 무관하게 무조건 연다.
+function toggleNotePopover(id, forceOpen) {
+  var pop = document.getElementById('notepop-' + id);
+  var chk = document.getElementById('notechk-' + id);
+  if (!pop || !chk) return;
+  if (forceOpen) chk.checked = true;
+  // 다른 카드의 토글/팝업이 열려 있으면 먼저 닫는다.
+  document.querySelectorAll('.note-toggle-checkbox').forEach(function (c) { if (c !== chk) c.checked = false; });
+  document.querySelectorAll('.note-popover').forEach(function (p) { if (p !== pop) p.style.display = 'none'; });
+  pop.style.display = chk.checked ? 'block' : 'none';
+  if (chk.checked) {
+    var ta = document.getElementById('note-textarea-' + id);
+    if (ta) ta.focus();
+  }
+}
+function closeNotePopover(id) {
+  var pop = document.getElementById('notepop-' + id);
+  var chk = document.getElementById('notechk-' + id);
+  if (pop) pop.style.display = 'none';
+  if (chk) chk.checked = false;
+}
+document.addEventListener('click', function (e) {
+  document.querySelectorAll('.note-popover').forEach(function (pop) {
+    if (pop.style.display === 'none') return;
+    if (!pop.contains(e.target) && !e.target.closest('.note-popover-wrap')) {
+      closeNotePopover(pop.id.replace('notepop-', ''));
+    }
+  });
+});
+
+// 부서/사업 카드별 "중요사항" 메모 저장 (business_cards.note)
+async function saveCardNote(id) {
+  var b = getBusiness(id);
+  var ta = document.getElementById('note-textarea-' + id);
+  if (!b || !ta) return;
+  var newVal = ta.value.trim();
+  if ((b.note || '') === newVal) { closeNotePopover(id); return; } // 변경 없으면 저장 생략하고 닫기
+
+  var saveBtn = document.querySelector('#notepop-' + id + ' .note-save');
+  var saveLabel = document.querySelector('#notepop-' + id + ' .note-save-label');
+  if (saveBtn) saveBtn.disabled = true;
+  if (saveLabel) saveLabel.textContent = '저장 중...';
+
+  var { error } = await db.from('business_cards').update({ note: newVal || null }).eq('id', id);
+
+  if (saveBtn) saveBtn.disabled = false;
+  if (saveLabel) saveLabel.textContent = '저장';
+
+  if (error) {
+    alert('중요사항 저장 실패: ' + error.message);
+    return;
+  }
+  b.note = newVal;
+  closeNotePopover(id);
+  renderDetail(); // 버튼에 "메모 있음" 표시(점) 즉시 반영
+}
+
 
 var treeInstanceCounter = 0;
 function renderTeamTreesCombined(trees) {
@@ -2270,12 +2490,40 @@ function renderDetail() {
     ? '<div class="tree-filter-toggle"><input type="checkbox" id="mismatch-only-toggle" onchange="toggleMismatchOnly(this.checked)"><label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
       + '<div class="tree-filter-toggle increase"><input type="checkbox" id="increase-only-toggle" onchange="toggleIncreaseOnly(this.checked)"><label for="increase-only-toggle">\u25B2 전년대비 증액만</label></div>'
     : '';
-  // 정현원/소속팀 줄만 탭 바로 아래(금액 위)로 분리해서 배치한다. 금액·불일치필터·검색창은 한 가로바에
-  // 모아서, 금액과 필터 사이에 간격을 두어 이후 필터가 추가될 여지를 남긴다.
+  var hasNoteClass = b.note ? ' has-note' : '';
+  var shapeSvg = ['a','b','c','a','b','c','a','b','c'].map(function (cls) {
+    return '<circle class="shape shape-' + cls + '" cx="150" cy="150" r="6"></circle>';
+  }).join('');
+  var noteCountBadgeHtml = b.note ? '<div class="note-count-badge" onclick="toggleNotePopover(' + b.id + ', true)">메모 1</div>' : '';
+  var noteToggleHtml = '<div class="note-toggle-wrapper' + hasNoteClass + '">'
+    + '<input type="checkbox" class="note-toggle-checkbox" id="notechk-' + b.id + '" onchange="toggleNotePopover(' + b.id + ')">'
+    + '<div class="note-toggle-btn"></div>'
+    + '<div class="note-toggle-tooltip"><svg viewBox="0 0 24 24"><path class="icon" d="M9 2h6l5 5v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><path class="icon" d="M9 9h6M9 13h6M9 17h3"></path></svg><span>메모</span></div>'
+    + '<svg class="note-toggle-confetti" viewBox="0 0 300 300">' + shapeSvg + '</svg>'
+    + '</div>';
+  var notePopoverHtml = '<div class="note-popover" id="notepop-' + b.id + '" style="display:none" onclick="event.stopPropagation()">'
+    + '<div class="note-popover-header">'
+    + '<div class="note-popover-header-left">'
+    + '<div class="note-popover-avatar"></div>'
+    + '<div class="note-popover-title">MEMO</div>'
+    + '</div>'
+    + '<button type="button" class="note-popover-close" onclick="closeNotePopover(' + b.id + ')" aria-label="닫기">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+    + '</button>'
+    + '</div>'
+    + '<div class="note-popover-body">'
+    + '<textarea class="note-textarea" id="note-textarea-' + b.id + '" placeholder="이 부서·사업과 관련된 중요사항을 입력하세요 (예: 예산 변경 사유, 협의 필요 사항 등)">' + escapeHtml(b.note || '') + '</textarea>'
+    + '</div>'
+    + '<div class="note-popover-footer">'
+    + '<button type="button" class="note-save" onclick="saveCardNote(' + b.id + ')" title="저장"><svg viewBox="0 -0.5 25 25" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" d="M18.507 19.853V6.034C18.5116 5.49905 18.3034 4.98422 17.9283 4.60277C17.5532 4.22131 17.042 4.00449 16.507 4H8.50705C7.9721 4.00449 7.46085 4.22131 7.08577 4.60277C6.7107 4.98422 6.50252 5.49905 6.50705 6.034V19.853C6.45951 20.252 6.65541 20.6407 7.00441 20.8399C7.35342 21.039 7.78773 21.0099 8.10705 20.766L11.907 17.485C12.2496 17.1758 12.7705 17.1758 13.113 17.485L16.9071 20.767C17.2265 21.0111 17.6611 21.0402 18.0102 20.8407C18.3593 20.6413 18.5551 20.2522 18.507 19.853Z" clip-rule="evenodd" fill-rule="evenodd"></path></svg><span class="note-save-label">저장</span></button>'
+    + '</div>'
+    + '</div>';
+  var noteBtnHtml = '<div class="note-popover-wrap">' + noteToggleHtml + noteCountBadgeHtml + searchBoxHtml + notePopoverHtml + '</div>';
+
+  // 정현원/소속팀 줄만 탭 바로 아래(금액 위)로 분리해서 배치한다. 금액·불일치필터·(중요사항 버튼+검색창)은
+  // 한 가로바에 모아서, 금액과 필터 사이에 간격을 두어 이후 필터가 추가될 여지를 남긴다.
   var topRowHtml = headcountLine ? '<div class="detail-top-row">' + headcountLine + '</div>' : '';
-  var bottomRowHtml = (amtLine || searchBoxHtml || filterToggleHtml)
-    ? '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters">' + filterToggleHtml + '</div>' + searchBoxHtml + '</div>'
-    : '';
+  var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters">' + filterToggleHtml + '</div>' + noteBtnHtml + '</div>';
 
   var teamTreesHtml = '';
   if (b.teams && b.teams.length) {
