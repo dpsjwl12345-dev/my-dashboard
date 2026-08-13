@@ -310,12 +310,12 @@ table.summary.ov2-income-table td { font-size: 17px; }
 .ov2-subtable-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin: 18px 2px 8px; }
 
 .ov2-dept-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
-.ov2-dept-card { position: relative; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; box-shadow: 0 2px 8px rgba(16,23,42,.06); cursor: pointer; overflow: hidden; transition: transform .25s, box-shadow .25s; }
-.ov2-dept-card:hover { transform: translateY(3px); box-shadow: 0 -8px 0 0 #3457D5; }
-.ov2-dept-card .dept-name { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-weight: 700; font-size: 17px; line-height: 1.3; color: var(--text); margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov2-dept-card { position: relative; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px 20px; box-shadow: 0 -8px 0 0 #3457D5, 0 2px 8px rgba(16,23,42,.06); cursor: pointer; overflow: hidden; transition: transform .25s, box-shadow .25s; }
+.ov2-dept-card:hover { transform: translateY(3px); }
+.ov2-dept-card .dept-name { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-weight: 700; font-size: 19px; line-height: 1.3; color: var(--text); margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ov2-dept-card .dept-row { display: flex; align-items: baseline; gap: 8px; margin-top: 0; line-height: 1.3; }
-.ov2-dept-card .dept-val { font-size: 17px; color: var(--text-soft); font-weight: 800; margin: 0; font-variant-numeric: tabular-nums; }
-.ov2-dept-card .dept-diff { font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ov2-dept-card .dept-val { font-size: 19px; color: var(--text-soft); font-weight: 800; margin: 0; font-variant-numeric: tabular-nums; }
+.ov2-dept-card .dept-diff { font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .ov2-dept-card .dept-diff.up { color: var(--danger); }
 .ov2-dept-card .dept-diff.down { color: var(--accent); }
 .ov2-dept-card .dept-diff.zero { color: var(--text-soft); }
@@ -2254,11 +2254,14 @@ function ov2DiffCls(d) { return d > 0 ? 'up' : d < 0 ? 'down' : 'zero'; }
 function ov2PersonnelVBarList(rows) {
   var cards = rows.map(function (r) {
     var valTxt = (r.capacity != null) ? (r.capacity + '(' + r.current + ')') : (r.current + '명');
-    var diffTxt = r.diff == null ? '-' : (r.diff > 0 ? '+' + r.diff : String(r.diff));
-    var diffCls = r.diff == null ? 'na' : ov2DiffCls(r.diff);
+    var diffHtml = '';
+    if (r.diff != null) {
+      var diffTxt = r.diff > 0 ? '+' + r.diff : String(r.diff);
+      diffHtml = '<span class="dept-diff ' + ov2DiffCls(r.diff) + '">' + diffTxt + '</span>';
+    }
     return '<div class="ov2-dept-card">'
       + '<p class="dept-name">' + escapeHtml(r.label) + '</p>'
-      + '<p class="dept-row"><span class="dept-val">' + valTxt + '</span><span class="dept-diff ' + diffCls + '">' + diffTxt + '</span></p>'
+      + '<p class="dept-row"><span class="dept-val">' + valTxt + '</span>' + diffHtml + '</p>'
       + '</div>';
   }).join('');
   return '<div class="ov2-dept-card-grid">' + cards + '</div>';
@@ -2353,11 +2356,7 @@ function renderOv2Overview(instKey) {
     return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null);
   }).join('');
   var orgHtml = '<div class="section-title-row"><h2 class="section-heading section-heading-lg">정현원 총괄</h2></div>'
-    + '<div class="settle-kpi-grid">' + cardsHtml + '</div>'
-    + (d.org.note ? '<p class="ov2-org-shortage">' + (function (note) {
-        var m = /^(\S+)\s(.*)$/.exec(note);
-        return m ? '<span class="ico">' + m[1] + '</span><span>' + m[2] + '</span>' : note;
-      })(d.org.note) + '</p>' : '');
+    + '<div class="settle-kpi-grid">' + cardsHtml + '</div>';
 
   // 2) 직급별 정현원
   var groupsHtml = d.personnelGroups.map(function (g) {
@@ -2383,7 +2382,7 @@ function renderOv2Overview(instKey) {
     var revDetailRows = d.revenueDetail.map(function (r) {
       return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
     }).join('');
-    revDetailHtml = '<div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>수입 항목</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + revDetailRows + '</tbody></table></div>';
+    revDetailHtml = '<div class="table-scroll"><table class="summary fc-summary ov2-income-table"><thead><tr><th>수입 항목</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + revDetailRows + '</tbody></table></div>';
   }
 
   var expTotal26 = d.budgetCompare.reduce(function (a, r) { return a + r.y26; }, 0);
@@ -2411,7 +2410,7 @@ function renderOv2Overview(instKey) {
     return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var budgetCompareHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">예산편성현황</h2></div>'
-    + '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-budget-fmt"><thead><tr>'
+    + '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-budget-fmt"><thead><tr>'
     + '<th>구분</th><th>2026년도 예산</th><th>2025년도 최종예산</th><th>전년대비 증감</th>'
     + '</tr></thead><tbody>' + bcTotalHtml + bcRowsHtml + '</tbody></table></div></div>';
 
