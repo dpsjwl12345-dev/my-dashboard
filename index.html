@@ -1126,18 +1126,9 @@ table.tree tr.new-only-hide { display: none; }
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: note-plus-anim-reverse 0.5s ease-out forwards;
 }
-.note-toggle-wrapper .note-toggle-btn::before,
-.note-toggle-wrapper .note-toggle-btn::after {
-  content: "";
-  display: block;
-  position: absolute;
-  border-radius: 2px;
-  background: #fff;
-}
-.note-toggle-wrapper .note-toggle-btn::before { width: 2.5px; height: 15px; }
-.note-toggle-wrapper .note-toggle-btn::after { width: 15px; height: 2.5px; }
+.note-toggle-wrapper .note-toggle-btn .note-toggle-icon { width: 21px; height: 21px; color: #fff; display: block; }
+.note-toggle-wrapper .note-toggle-btn .note-toggle-icon svg { width: 100%; height: 100%; display: block; }
 .note-toggle-tooltip {
   width: fit-content; height: 34px; border-radius: 34px; position: absolute;
   background: #fff; z-index: 2; padding: 9px 16px;
@@ -1172,7 +1163,8 @@ table.tree tr.new-only-hide { display: none; }
 .note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(7) { transform: translate(9px, 30%) rotate(280deg); }
 .note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(8) { transform: translate(-2px, 30%) rotate(320deg); }
 .note-toggle-checkbox:checked ~ .note-toggle-confetti .shape:nth-of-type(9) { transform: translate(13px, 30%) rotate(360deg); }
-.note-toggle-checkbox:checked ~ .note-toggle-btn { animation: note-plus-anim 0.5s ease-out forwards; }
+.note-toggle-wrapper .note-toggle-btn { transition: transform .2s ease; }
+.note-toggle-checkbox:checked ~ .note-toggle-btn { transform: scale(0.9); }
 .note-toggle-checkbox:checked ~ .note-toggle-tooltip {
   width: fit-content; padding: 9px 16px;
   animation: note-stretch-anim 1s ease-out forwards .15s;
@@ -3284,7 +3276,7 @@ function renderDetail() {
   var noteCountBadgeHtml = b.note ? '<div class="note-count-badge" onclick="toggleNotePopover(' + b.id + ', true)">메모 1</div>' : '';
   var noteToggleHtml = '<div class="note-toggle-wrapper' + hasNoteClass + '">'
     + '<input type="checkbox" class="note-toggle-checkbox" id="notechk-' + b.id + '" onchange="toggleNotePopover(' + b.id + ')">'
-    + '<div class="note-toggle-btn"></div>'
+    + '<div class="note-toggle-btn"><span class="note-toggle-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M12.433 1.25H6.567c-.952 0-1.713 0-2.327.05c-.63.052-1.172.16-1.67.413A4.25 4.25 0 0 0 .714 3.571C.46 4.068.352 4.61.3 5.24C.25 5.853.25 6.614.25 7.566v8.866c0 .952 0 1.713.05 2.327c.052.63.16 1.172.413 1.67a4.25 4.25 0 0 0 1.858 1.857c.497.253 1.04.361 1.67.413c.613.05 1.374.05 2.326.05h5.188a.75.75 0 0 0 .585-1.22A7.25 7.25 0 0 1 18 9.75a.75.75 0 0 0 .75-.75V7.567c0-.952 0-1.713-.05-2.327c-.052-.63-.16-1.172-.413-1.67a4.25 4.25 0 0 0-1.857-1.857c-.498-.253-1.04-.361-1.67-.413c-.614-.05-1.375-.05-2.327-.05M4.75 8a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4A.75.75 0 0 1 4.75 8m.75 3.25a.75.75 0 0 0 0 1.5h5.721a8 8 0 0 1 1.217-1.5zm4.504 5.5q.025-.772.188-1.5H5.5a.75.75 0 0 0 0 1.5z"/><path d="M12.25 17a5.75 5.75 0 1 1 11.5 0a5.75 5.75 0 0 1-11.5 0m8.192-.808a.625.625 0 1 0-.884-.884l-2.056 2.056l-1.058-1.067a.625.625 0 1 0-.888.88l1.5 1.513a.625.625 0 0 0 .886.002z"/></g></svg></span></div>'
     + '<div class="note-toggle-tooltip"><svg viewBox="0 0 24 24"><path class="icon" d="M9 2h6l5 5v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"></path><path class="icon" d="M9 9h6M9 13h6M9 17h3"></path></svg><span>메모</span></div>'
     + '<svg class="note-toggle-confetti" viewBox="0 0 300 300">' + shapeSvg + '</svg>'
     + '</div>';
