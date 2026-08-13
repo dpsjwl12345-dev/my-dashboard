@@ -258,7 +258,7 @@ table.fc-summary td .dot {
 .ov2-org-shortage .ico { flex: none; line-height: 1; }
 .ov2-section-sub { font-size: 18px; color: var(--text-muted); font-weight: 700; margin-left: 4px; }
 .ov2-outside-detail { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-weight: 300; }
-.ov2-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 18px; align-items: stretch; }
+.ov2-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 18px; align-items: start; }
 .ov2-two-col .summary-box { margin-bottom: 0; }
 @media (max-width: 980px) { .ov2-two-col { grid-template-columns: 1fr; } }
 
@@ -279,6 +279,7 @@ table.fc-summary td .dot {
 .ov2-pbar-diff.down { color: var(--accent); }
 .ov2-pbar-diff.zero { color: var(--text-soft); }
 .ov2-pbar-diff.na { color: var(--text-soft); }
+.ov2-pbar-divider { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); margin: 0 0 4px; padding-top: 0; border-top: none; }
 .ov2-pbar-note { font-size: 12.5px; color: var(--text-soft); margin: 12px 2px 0; }
 
 .ov2-exec-wrap { display: flex; gap: 22px; align-items: flex-end; }
@@ -304,6 +305,10 @@ table.fc-summary td .dot {
 .ov2-kpi-title-amt .diff.up { color: var(--danger); }
 .ov2-kpi-title-amt .diff.down { color: var(--accent); }
 table.summary.ov2-budget-fmt tr.total td { font-weight: 800; }
+table.summary tr.ov2-eb-section td { font-weight: 800; background: var(--bg-hover); }
+table.summary tr.ov2-eb-row td:first-child { padding-left: 22px; color: var(--text-muted); font-weight: 400; }
+.ov2-eb-note { color: var(--danger); font-weight: 800; margin-left: 2px; }
+.ov2-eb-footnote { font-size: 12.5px; color: var(--text-soft); margin: 8px 0 0; }
 table.summary.ov2-income-table th { font-size: 15.5px; }
 table.summary.ov2-income-table td { font-size: 17px; }
 .ov2-unit-note { font-size: 11px; font-weight: 300; color: var(--text-soft); text-align: right; margin: 0 2px 4px; }
@@ -320,6 +325,7 @@ table.summary.ov2-income-table td { font-size: 17px; }
 .ov2-dept-card .dept-diff.down { color: var(--accent); }
 .ov2-dept-card .dept-diff.zero { color: var(--text-soft); }
 .ov2-dept-card .dept-diff.na { color: var(--text-soft); }
+.ov2-dept-card .dept-badge { position: absolute; top: 10px; right: 12px; font-size: 13px; font-weight: 800; color: #5B6472; background: var(--bg-hover); padding: 4px 10px; border-radius: 20px; line-height: 1.2; white-space: nowrap; }
 
 /* 조직별 예산 가로 탭 - Uiverse(Spacious74) radio-inputs 폴더탭 구조를 그대로 이식 */
 .org-tabs {
@@ -1310,6 +1316,72 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   90% { width: 80%; transform: translateX(15px); }
   100% { transform: translateX(0px); width: 16px; }
 }
+.witak-dropdown {
+  position: absolute;
+  top: 22px;
+  right: 26px;
+  width: 340px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background-color: var(--bg-card);
+  box-shadow: 0 8px 24px rgba(16,23,42,.12);
+  z-index: 50;
+}
+.witak-dropdown input:not(:checked) + .witak-trigger {
+  background: linear-gradient(180deg, #ffffff, #f3f5fb);
+  box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 4px 10px rgba(16,23,42,.10), 0 1px 2px rgba(16,23,42,.06);
+}
+.witak-dropdown input:where(:checked) ~ .witak-list {
+  opacity: 1;
+  max-height: 26rem;
+  padding: 4px 22px 18px;
+  transition: max-height 280ms ease, opacity 200ms ease;
+}
+.witak-dropdown input:where(:not(:checked)) ~ .witak-list {
+  opacity: 0;
+  max-height: 0;
+  padding: 0 22px;
+  overflow: hidden;
+  transition: max-height 220ms ease-in, opacity 150ms ease;
+}
+.witak-trigger {
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  font-family: 'GmarketSans', 'Pretendard', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--text);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: inherit;
+  background-color: var(--bg-card);
+  box-sizing: border-box;
+}
+.witak-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+.witak-dropdown input:where(:checked) + .witak-trigger:before { rotate: 0deg; }
+.witak-trigger:before { content: '\2304'; rotate: -90deg; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; color: var(--text); transition: all 300ms ease; }
+.witak-list {
+  width: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-auto-flow: row;
+  overflow-y: auto;
+  gap: 0;
+  margin: 0;
+  list-style: none;
+  --witak-w-scrollbar: 8px;
+}
+.witak-listitem { list-style: none; }
+.witak-dept-heading { font-size: 16px; font-weight: 800; color: var(--text); padding: 14px 2px 10px; }
+.witak-project { font-size: 16px; font-weight: 500; color: var(--text); padding: 13px 2px; border-top: 1px solid var(--border); }
+.witak-webkit-scrollbar::-webkit-scrollbar { width: var(--witak-w-scrollbar); height: var(--witak-w-scrollbar); border-radius: 9999px; }
+.witak-webkit-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.witak-webkit-scrollbar::-webkit-scrollbar-thumb { background: transparent; border-radius: 9999px; }
+.witak-webkit-scrollbar:hover::-webkit-scrollbar-thumb { background: var(--border-strong); }
 </style>
 </head>
 <body>
@@ -1352,9 +1424,16 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
     </section>
 
     <section class="panel" id="panel-inst-overview">
-      <div class="topbar" style="justify-content:space-between;gap:16px;">
-        <img id="overview-topbar-logo" style="height:72px;width:auto;display:none;">
-        <span id="overview-topbar-logo-text" style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-0.01em;"></span>
+      <div class="witak-topbar-wrap" style="position:relative;">
+        <div class="topbar" style="justify-content:space-between;gap:16px;">
+          <img id="overview-topbar-logo" style="height:72px;width:auto;display:none;">
+          <span id="overview-topbar-logo-text" style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-0.01em;"></span>
+        </div>
+        <div class="witak-dropdown" id="witak-dropdown-wrap" style="display:none;">
+          <input hidden="" class="witak-sr-only" name="witak-dropdown" id="witak-dropdown" type="checkbox" />
+          <label aria-label="위탁사업 리스트" for="witak-dropdown" class="witak-trigger" id="witak-trigger-label">위탁사업 리스트 보기</label>
+          <ul class="witak-list witak-webkit-scrollbar" id="witak-list" role="list" dir="auto"></ul>
+        </div>
       </div>
 
       <div id="overview-legacy-blocks">
@@ -2019,6 +2098,78 @@ function computeInstDeptBreakdown() {
 // ============================================
 // 화성시문화관광재단 "기관 현황" 화면 v2 데이터 (수기 입력, 2026년 기준)
 // ============================================
+var WITAK_DATA = {
+  hscf: [
+    { name: '동탄복합문화센터 운영', dept: '문화예술과' },
+    { name: '문화관광재단 공연장 운영', dept: '문화예술과' },
+    { name: '미디어센터 운영', dept: '문화예술과' },
+    { name: '생활문화센터 운영', dept: '문화예술과' },
+    { name: '화성예술의전당', dept: '문화예술과' },
+    { name: '정조효 및 능행차운영', dept: '문화예술과' },
+    { name: '홍사용 문화거리 운영', dept: '문화예술과' },
+    { name: '서영기 달항아리 전시관', dept: '문화예술과' },
+    { name: '화성열린문화예술공간(라크몽)', dept: '문화예술과' },
+    { name: '뱃놀이 축제 운영', dept: '관광진흥과' },
+    { name: '화성 관광 진흥', dept: '관광진흥과' },
+    { name: '화성시시립도서관 운영', dept: '도서관정책과' }
+  ],
+  corp: [
+    { name: '화성 종합경기타운 관리', dept: '체육진흥과' },
+    { name: '체육시설 관리', dept: '체육진흥과' },
+    { name: '동탄2 실내 배드민턴장', dept: '체육진흥과' },
+    { name: '드림 파크 운영', dept: '체육진흥과' },
+    { name: '화성국민체육센터 운영(거점포함)', dept: '체육진흥과' },
+    { name: '거점 체력 센터(국비)', dept: '체육진흥과' },
+    { name: '화성남부국민체육센터 운영', dept: '체육진흥과' },
+    { name: '동탄중앙어울체육센터 운영', dept: '체육진흥과' },
+    { name: '반월 체육 센터 운영', dept: '체육진흥과' },
+    { name: '향남복합문화센터 운영관리', dept: '체육진흥과' },
+    { name: '제부도 관광편의시설 관리', dept: '관광진흥과' },
+    { name: '전곡항 마리나 관리', dept: '관광진흥과' },
+    { name: '향남·궁평 캠핑장 운영', dept: '관광진흥과' }
+  ],
+  talent: [
+    { name: '화성시장학관', dept: '교육지원과' },
+    { name: '다원이음터', dept: '교육지원과' },
+    { name: '동탄목동이음터', dept: '교육지원과' },
+    { name: '늘봄이음터', dept: '교육지원과' },
+    { name: '서연이음터', dept: '교육지원과' },
+    { name: '동탄중앙이음터', dept: '교육지원과' },
+    { name: '송린이음터', dept: '교육지원과' },
+    { name: '호연이음터', dept: '교육지원과' },
+    { name: '화성형 영재교육', dept: '교육지원과' },
+    { name: '다올이음터', dept: '교육지원과' },
+    { name: '화성시립 다원이음터도서관', dept: '도서관정책과' },
+    { name: '화성시립 동탄목동이음터도서관', dept: '도서관정책과' },
+    { name: '화성시립 늘봄이음터작은도서관', dept: '도서관정책과' },
+    { name: '화성시립 서연이음터도서관', dept: '도서관정책과' },
+    { name: '화성시립 호연이음터작은도서관', dept: '도서관정책과' }
+  ]
+};
+
+function renderWitakDropdown(instKey) {
+  var wrap = document.getElementById('witak-dropdown-wrap');
+  var list = document.getElementById('witak-list');
+  var checkbox = document.getElementById('witak-dropdown');
+  var data = WITAK_DATA[instKey];
+  if (!data) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  checkbox.checked = false;
+  var groups = {};
+  var order = [];
+  data.forEach(function (item) {
+    if (!groups[item.dept]) { groups[item.dept] = []; order.push(item.dept); }
+    groups[item.dept].push(item.name);
+  });
+  var html = order.map(function (dept) {
+    var itemsHtml = groups[dept].map(function (name) {
+      return '<li class="witak-listitem witak-project" role="listitem">' + escapeHtml(name) + '</li>';
+    }).join('');
+    return '<li class="witak-listitem witak-dept-heading" role="listitem">' + escapeHtml(dept) + '</li>' + itemsHtml;
+  }).join('');
+  list.innerHTML = html;
+}
+
 var OV2_DATA = {
 hscf: {
   name: '화성시문화관광재단',
@@ -2033,11 +2184,12 @@ hscf: {
     note: '⚠️ 정원 내 부족 인원: 22명 · 현원(총계) 402명'
   },
   personnelGroups: [
-    { title: '직종별 현황', rows: [
-      { label: '임원\n(대표이사)', current: 1, capacity: 1, diff: 0 },
-      { label: '일반직\n(전문계약직 포함)', current: 259, capacity: 273, diff: -14 },
+    { title: '정원 내 인력', rows: [
+      { label: '임원', current: 1, capacity: 1, diff: 0 },
+      { label: '일반직', current: 259, capacity: 273, diff: -14 },
       { label: '무기계약직', current: 13, capacity: 14, diff: -1 },
-      { label: '공무직', current: 113, capacity: 120, diff: -7 }
+      { label: '공무직', current: 113, capacity: 120, diff: -7 },
+      { label: '기간제근로자', current: 16, capacity: null, diff: null, pctOverride: 45, sectionLabel: '정원외 인력' }
     ] },
     { title: '일반직 직급별 현황', rows: [
       { label: '2급', current: 0, capacity: 6, diff: -6 },
@@ -2050,13 +2202,13 @@ hscf: {
     ], note: '전문계약직·체육직은 별도 정원 없이 현원만 운영' }
   ],
   byDept: [
-    { label: '직속', current: 11, capacity: 11, diff: 0 },
-    { label: '경영기획본부', current: 77, capacity: 73, diff: 4 },
-    { label: '예술의전당본부', current: 24, capacity: 33, diff: -9 },
-    { label: '예술진흥본부', current: 38, capacity: 47, diff: -9 },
-    { label: '문화진흥본부', current: 30, capacity: 32, diff: -2 },
-    { label: '관광진흥본부', current: 13, capacity: 17, diff: -4 },
-    { label: '도서관본부', current: 190, capacity: 195, diff: -5 }
+    { label: '대표이사 직속', current: 11, capacity: 11, diff: 0, teams: 3 },
+    { label: '경영기획본부', current: 77, capacity: 73, diff: 4, teams: 4 },
+    { label: '예술의전당본부', current: 24, capacity: 33, diff: -9, teams: 4 },
+    { label: '예술진흥본부', current: 38, capacity: 47, diff: -9, teams: 3 },
+    { label: '문화진흥본부', current: 30, capacity: 32, diff: -2, teams: 5 },
+    { label: '관광진흥본부', current: 13, capacity: 17, diff: -4, teams: 5 },
+    { label: '도서관본부', current: 190, capacity: 195, diff: -5, teams: 3, gwan: 9 }
   ],
   revenueItems: [
     { label: '대행사업수익', y26: 48069238, y25: 44574745 },
@@ -2070,6 +2222,29 @@ hscf: {
     { label: '운영경비', y26: 7034082, y25: 5633501 },
     { label: '사업비', y26: 36029432, y25: 33390911 }
   ],
+  expenseBreakdown: {
+    columns: ['출연금·전출금', '위탁사업비'],
+    sections: [
+      { label: '인건비', total: 22785497, values: [6498563, 16286934, 0], rows: [
+        { label: '일반직 보수', total: 15708341, values: [5193713, 10514628, 0] },
+        { label: '기타직 보수', total: 495107, values: [331671, 163436, 0] },
+        { label: '무기계약직근로자보수', total: 4111789, values: [553957, 3557832, 0] },
+        { label: '기간제근로자보수', total: 1300065, values: [335393, 964672, 0] },
+        { label: '퇴직급여', total: 1170195, values: [83829, 1086366, 0] }
+      ] },
+      { label: '운영경비', total: 7034082, values: [4570753, 2463329, 0], rows: [
+        { label: '사무관리비', total: 603582, values: [283860, 319722, 0] },
+        { label: '공공운영비', total: 49009, values: [13260, 35749, 0] },
+        { label: '업무추진비', total: 174675, values: [96615, 78060, 0] },
+        { label: '복리후생비', total: 917826, values: [832808, 85018, 0] },
+        { label: '자산취득비', total: 4339, values: [4339, 0, 0] },
+        { label: '예비비', total: 690541, values: [690541, 0, 0] },
+        { label: '기타운영경비', total: 4594110, values: [2649330, 1944780, 0] }
+      ] },
+      { label: '사업비', total: 36029432, values: [6126678, 29318975, 583779], rows: [] }
+    ],
+    grandTotal: { total: 65849011, values: [17195994, 48069238, 583779] }
+  },
 },
 corp: {
   name: '화성시도시공사',
@@ -2084,6 +2259,17 @@ corp: {
     note: null
   },
   personnelGroups: [
+    { title: '정원 내 인력', rows: [
+      { label: '기관장', current: 1, capacity: 1, diff: 0 },
+      { label: '상임이사', current: 1, capacity: 2, diff: -1 },
+      { label: '일반직', current: 290, capacity: 311, diff: -21 },
+      { label: '청원경찰', current: 4, capacity: 4, diff: 0 },
+      { label: '전문계약직', current: 1, capacity: 0, diff: 1 },
+      { label: '일반계약직', current: 3, capacity: 0, diff: 3 },
+      { label: '무기계약직', current: 479, capacity: 579, diff: -100 },
+      { label: '전문특수직', current: 8, capacity: 10, diff: -2 },
+      { label: '기간제', current: 3, capacity: null, diff: null, pctOverride: 45, sectionLabel: '정원외 인력' }
+    ] },
     { title: '일반직 직급별 현황', rows: [
       { label: '1급(특급)', current: 5, capacity: 4, diff: 1 },
       { label: '2급(가급)', current: 11, capacity: 11, diff: 0 },
@@ -2094,12 +2280,12 @@ corp: {
     ] }
   ],
   byDept: [
-    { label: '안전감사실', current: 11, capacity: 14, diff: -3 },
-    { label: '경영전략본부', current: 72, capacity: 70, diff: 2 },
-    { label: '도시건설본부', current: 41, capacity: 49, diff: -8 },
-    { label: '시설관리본부', current: 195, capacity: 222, diff: -27 },
-    { label: '추모주차운영본부', current: 191, capacity: 233, diff: -42 },
-    { label: '교통사업본부', current: 259, capacity: 313, diff: -54 }
+    { label: '안전감사실', current: 11, capacity: 14, diff: -3, teams: 2, teamsUnit: '부' },
+    { label: '경영전략본부', current: 72, capacity: 70, diff: 2, teams: 10, teamsUnit: '부' },
+    { label: '도시건설본부', current: 41, capacity: 49, diff: -8, teams: 8, teamsUnit: '부' },
+    { label: '시설관리본부', current: 195, capacity: 222, diff: -27, teams: 14, teamsUnit: '부' },
+    { label: '추모주차운영본부', current: 191, capacity: 233, diff: -42, teams: 6, teamsUnit: '부' },
+    { label: '교통사업본부', current: 259, capacity: 313, diff: -54, teams: 5, teamsUnit: '부' }
   ],
   revenueItems: [
     { label: '사업수익', y26: 127973248, y25: 182070127 },
@@ -2142,7 +2328,8 @@ talent: {
     { title: '정원 내 인력', rows: [
       { label: '기관장', current: 1, capacity: 1, diff: 0 },
       { label: '일반직', current: 133, capacity: 139, diff: -6 },
-      { label: '공무직', current: 30, capacity: 30, diff: 0 }
+      { label: '공무직', current: 30, capacity: 30, diff: 0 },
+      { label: '기간제근로자', current: 32, capacity: null, diff: null, pctOverride: 45, sectionLabel: '정원외 인력' }
     ] },
     { title: '직급별 현황', rows: [
       { label: '2급', current: 5, capacity: 6, diff: -1 },
@@ -2157,14 +2344,13 @@ talent: {
     ], note: '2~6급은 일반직, 나~마급은 계약직 직급 구분' }
   ],
   byDept: [
-    { label: '감사팀', current: 3, capacity: 3, diff: 0 },
-    { label: '전문위원', current: 1, capacity: 1, diff: 0 },
-    { label: '경영기획본부', current: 21, capacity: 21, diff: 0 },
-    { label: '장학본부', current: 29, capacity: 29, diff: 0 },
-    { label: '교육협력지원본부', current: 18, capacity: 19, diff: -1 },
-    { label: '다원이음터본부', current: 45, capacity: 48, diff: -3 },
-    { label: '서연송린이음터본부', current: 42, capacity: 43, diff: -1 },
-    { label: '영재교육원', current: 5, capacity: 6, diff: -1 }
+    { label: '대표이사 직속', current: 4, capacity: 4, diff: 0, teams: 1, committee: 1 },
+    { label: '경영기획본부', current: 21, capacity: 21, diff: 0, teams: 3 },
+    { label: '장학본부', current: 29, capacity: 29, diff: 0, teams: 3 },
+    { label: '교육협력지원본부', current: 18, capacity: 19, diff: -1, teams: 3 },
+    { label: '다원이음터본부', current: 45, capacity: 48, diff: -3, teams: 5 },
+    { label: '서연송린이음터본부', current: 42, capacity: 43, diff: -1, teams: 5 },
+    { label: '영재교육원', current: 5, capacity: 6, diff: -1, teams: 2 }
   ],
   revenueItems: [
     { label: '사업수익', y26: 26958404, y25: 26005105 },
@@ -2203,7 +2389,10 @@ fc: {
       { label: '일반직', current: 13, capacity: 19, diff: -6 },
       { label: '전문계약직', current: 0, capacity: 0, diff: 0 },
       { label: '일반계약직', current: 3, capacity: 0, diff: 3 },
-      { label: '무기계약직', current: 0, capacity: 0, diff: 0 }
+      { label: '무기계약직', current: 0, capacity: 0, diff: 0 },
+      { label: '기관장', current: 1, capacity: null, diff: null, pctOverride: 45, sectionLabel: '정원외 인력' },
+      { label: '파견공무원', current: 1, capacity: null, diff: null, pctOverride: 45 },
+      { label: '기간제', current: 2, capacity: null, diff: null, pctOverride: 45 }
     ] },
     { title: '직급별 현황', rows: [
       { label: '1급', current: 0, capacity: 1, diff: -1 },
@@ -2259,7 +2448,16 @@ function ov2PersonnelVBarList(rows) {
       var diffTxt = r.diff > 0 ? '+' + r.diff : String(r.diff);
       diffHtml = '<span class="dept-diff ' + ov2DiffCls(r.diff) + '">' + diffTxt + '</span>';
     }
+    var badgeHtml = '';
+    var badgeParts = [];
+    if (r.teams != null) badgeParts.push(r.teams + (r.teamsUnit || '팀'));
+    if (r.gwan != null) badgeParts.push(r.gwan + '관');
+    if (r.committee != null) badgeParts.push(r.committee + '위원');
+    if (badgeParts.length) {
+      badgeHtml = '<span class="dept-badge">' + badgeParts.join('·') + '</span>';
+    }
     return '<div class="ov2-dept-card">'
+      + badgeHtml
       + '<p class="dept-name">' + escapeHtml(r.label) + '</p>'
       + '<p class="dept-row"><span class="dept-val">' + valTxt + '</span>' + diffHtml + '</p>'
       + '</div>';
@@ -2270,7 +2468,7 @@ function ov2PersonnelVBarList(rows) {
 function ov2PersonnelBarList(rows) {
   return '<div class="ov2-pbar-list">' + rows.map(function (r) {
     var hasCap = r.capacity != null && r.capacity > 0;
-    var pct = hasCap ? Math.min(100, Math.round((r.current / r.capacity) * 100)) : (r.current > 0 ? 100 : 0);
+    var pct = r.pctOverride != null ? r.pctOverride : (hasCap ? Math.min(100, Math.round((r.current / r.capacity) * 100)) : (r.current > 0 ? 100 : 0));
     var fillCls = hasCap ? '' : ' na';
     var valTxt = (r.capacity != null) ? (r.current + ' / ' + r.capacity) : (r.current + ' / -');
     var diffTxt = r.diff == null ? '-' : (r.diff > 0 ? '+' + r.diff : String(r.diff));
@@ -2278,7 +2476,8 @@ function ov2PersonnelBarList(rows) {
     var labelParts = String(r.label).split('\n');
     var mainLabel = labelParts[0];
     var subLabel = labelParts[1] || null;
-    return '<div class="ov2-pbar-row">'
+    var dividerHtml = r.sectionLabel ? '<div class="ov2-pbar-divider">' + escapeHtml(r.sectionLabel) + '</div>' : '';
+    return dividerHtml + '<div class="ov2-pbar-row">'
       + '<div class="ov2-pbar-label">'
         + '<div class="ov2-pbar-label-line"><span class="ov2-pbar-label-main">' + escapeHtml(mainLabel) + '</span><span class="ov2-pbar-val">' + valTxt + '</span></div>'
         + (subLabel ? '<div class="ov2-pbar-label-sub">' + escapeHtml(subLabel) + '</div>' : '')
@@ -2394,15 +2593,58 @@ function renderOv2Overview(instKey) {
 
   var revPct = revTotal25 ? (((revTotal26 - revTotal25) / revTotal25) * 100).toFixed(1) : '0.0';
   var expPct = expTotal25 ? (((expTotal26 - expTotal25) / expTotal25) * 100).toFixed(1) : '0.0';
-  var incomeExpenseHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">2026년 수입총괄</h2></div>'
-    + '<div class="' + (revDetailHtml ? 'ov2-two-col' : '') + '">'
-      + '<div class="summary-box"><h3>총수입' + ov2KpiTitleAmt(revTotal26, revTotal25) + '</h3>'
+
+  // 지출총괄표 (재원별) - 수입총괄 옆 칸에 배치
+  var expenseBreakdownHtml = '';
+  if (d.expenseBreakdown) {
+    var eb = d.expenseBreakdown;
+    var ebCols = eb.columns;
+    var ebHeadHtml = '<th>구분</th><th>계</th>' + ebCols.map(function (c) { return '<th>' + escapeHtml(c) + '</th>'; }).join('');
+    var ebFootnotes = [];
+    var ebMarkIfOther = function (label, values) {
+      if (values[2]) { ebFootnotes.push(escapeHtml(label) + ' ' + fmtWon(values[2]) + '천원'); return '<span class="ov2-eb-note">*</span>'; }
+      return '';
+    };
+    var ebGrandRow = '<tr class="total"><td>총 계' + ebMarkIfOther('총 계 중 기타재원', eb.grandTotal.values) + '</td><td>' + fmtWon(eb.grandTotal.total) + '</td>' + eb.grandTotal.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
+    var ebSectionsHtml = eb.sections.map(function (sec) {
+      var secMark = ebMarkIfOther(sec.label, sec.values);
+      var secRow = '<tr class="ov2-eb-section"><td>' + escapeHtml(sec.label) + secMark + '</td><td>' + fmtWon(sec.total) + '</td>' + sec.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
+      var subRows = sec.rows.map(function (r) {
+        var rMark = ebMarkIfOther(r.label, r.values);
+        return '<tr class="ov2-eb-row"><td>' + escapeHtml(r.label) + rMark + '</td><td>' + fmtWon(r.total) + '</td>' + r.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
+      }).join('');
+      return secRow + subRows;
+    }).join('');
+    var ebFootnoteHtml = ebFootnotes.length ? '<p class="ov2-eb-footnote">* 기타재원 포함: ' + ebFootnotes.join(', ') + '</p>' : '';
+    expenseBreakdownHtml = '<div class="summary-box" style="padding-top:8px;"><h3 style="margin-bottom:2px;">2026년 총지출</h3><p class="ov2-unit-note" style="margin:0 2px 2px;">단위: 천원</p><div class="table-scroll"><table class="summary fc-summary ov2-income-table"><thead><tr>' + ebHeadHtml + '</tr></thead><tbody>' + ebGrandRow + ebSectionsHtml + '</tbody></table></div>' + ebFootnoteHtml + '</div>';
+  }
+
+  var incomeBoxHtml = '<div class="summary-box"><h3>총수입</h3>'
         + '<div class="summary-box-body donut-row">' + buildDonutSvg(d.revenueItems, revTotal26) + buildDonutLegend(d.revenueItems, revTotal26) + '</div>'
         + '<p class="ov2-unit-note">단위: 천원</p>'
         + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>'
+      + '</div>';
+
+  var incomeExpenseHtml;
+  if (expenseBreakdownHtml) {
+    expenseBreakdownHtml = expenseBreakdownHtml.replace('<h3>2026년 총지출</h3>', '<h3>총지출</h3>');
+    incomeExpenseHtml = '<div class="ov2-two-col">'
+      + '<div>'
+        + '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">2026년 수입총괄</h2></div>'
+        + incomeBoxHtml
       + '</div>'
-      + (revDetailHtml ? '<div class="summary-box"><h3>주요 수입 항목</h3>' + revDetailHtml + '</div>' : '')
+      + '<div>'
+        + '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">2026년 지출총괄</h2></div>'
+        + expenseBreakdownHtml
+      + '</div>'
     + '</div>';
+  } else {
+    incomeExpenseHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">2026년 수입총괄</h2></div>'
+      + '<div class="' + (revDetailHtml ? 'ov2-two-col' : '') + '">'
+        + incomeBoxHtml
+        + (revDetailHtml ? '<div class="summary-box"><h3>주요 수입 항목</h3>' + revDetailHtml + '</div>' : '')
+      + '</div>';
+  }
 
   // 6) 예산편성현황
   var bcTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(expTotal26) + '</td><td>' + fmtWon(expTotal25) + '</td>' + diffCellHtml(expTotal25, expTotal26) + '</tr>';
@@ -2413,6 +2655,8 @@ function renderOv2Overview(instKey) {
     + '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-budget-fmt"><thead><tr>'
     + '<th>구분</th><th>2026년도 예산</th><th>2025년도 최종예산</th><th>전년대비 증감</th>'
     + '</tr></thead><tbody>' + bcTotalHtml + bcRowsHtml + '</tbody></table></div></div>';
+
+  // 7) 지출총괄표는 위 incomeExpenseHtml 안에 이미 포함됨
 
   document.getElementById('overview-v2-slot').innerHTML = orgHtml + gradeHtml + deptPersonHtml + incomeExpenseHtml + budgetCompareHtml;
 }
@@ -2471,6 +2715,7 @@ async function selectInstOverview(instKey) {
   switchPanel('panel-inst-overview');
   document.getElementById('overview-topbar-logo-text').textContent = inst.name;
   document.getElementById('overview-v2-slot').innerHTML = '';
+  renderWitakDropdown(instKey);
 
   if (OV2_DATA[instKey]) {
     document.getElementById('overview-summary-slot').innerHTML = '';
