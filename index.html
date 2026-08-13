@@ -141,26 +141,20 @@ table.summary td.diff.down { color: var(--accent); }
 .settle-year-tab.selected { background: var(--navy); color: #fff; border-color: var(--navy); }
 .settle-year-tab.disabled { cursor: not-allowed; opacity: .45; }
 .settle-subheading { font-size: 15px; font-weight: 700; color: var(--navy); margin: 0 0 12px; }
-.settle-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--page-gap); margin-bottom: 22px; }
-.settle-kpi-card { border-radius: 16px; padding: 18px 20px; position: relative; overflow: hidden; border: 1px solid rgba(16,23,42,.05); box-shadow: 0 4px 14px rgba(16,23,42,.05); transition: transform .15s, box-shadow .15s; }
-.settle-kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(16,23,42,.09); }
-.settle-kpi-card .kpi-top-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.settle-kpi-card .icon-badge { flex: none; width: 36px; height: 36px; border-radius: 11px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); }
-.settle-kpi-card .icon-badge svg { width: 18px; height: 18px; }
-.settle-kpi-card .label { font-size: 19px; font-weight: 800; color: var(--navy); }
-.settle-kpi-card .value { font-size: 26px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.15; }
-.settle-kpi-card .sub { font-size: 12.5px; color: var(--text-soft); margin-top: 8px; }
-.settle-kpi-card.tone-blue { background: linear-gradient(155deg, #EEF3FF, #E4ECFF); } .settle-kpi-card.tone-blue .icon-badge { background: #DCE6FF; color: #3457D5; }
-.settle-kpi-card.tone-purple { background: linear-gradient(155deg, #F3EEFF, #ECE3FF); } .settle-kpi-card.tone-purple .icon-badge { background: #E4D9FF; color: #7C5CD6; }
-.settle-kpi-card.tone-mint { background: linear-gradient(155deg, #E9FBF3, #DFF7EA); } .settle-kpi-card.tone-mint .icon-badge { background: #D3F5E5; color: #16924F; }
-.settle-kpi-card.tone-orange { background: linear-gradient(155deg, #FFF3E6, #FFEBD6); } .settle-kpi-card.tone-orange .icon-badge { background: #FFE3C2; color: #C97A1F; }
-.settle-rate-bar { width: 100%; height: 14px; border-radius: 7px; background: rgba(16,23,42,.10); overflow: hidden; margin-top: 12px; }
-.settle-rate-bar .fill { height: 100%; border-radius: 7px; background: #16924F; }
-.settle-kpi-card.tone-blue .settle-rate-bar .fill { background: #3457D5; }
-.settle-kpi-card.tone-purple .settle-rate-bar .fill { background: #7C5CD6; }
-.settle-kpi-card.tone-mint .settle-rate-bar .fill { background: #0F7A3E; }
-.settle-kpi-card.tone-orange .settle-rate-bar .fill { background: #C97A1F; }
+.settle-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; margin-bottom: 22px; }
+.settle-kpi-card { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-radius: 22px; padding: 16px 20px; position: relative; overflow: hidden; background: #eef0f3; box-shadow: 9px 9px 18px rgba(163,172,196,.38), -9px -9px 18px #ffffff; transition: transform .15s, box-shadow .15s; }
+.settle-kpi-card:hover { transform: translateY(-2px); box-shadow: 11px 11px 20px rgba(163,172,196,.42), -11px -11px 20px #ffffff; }
+.settle-kpi-card .kpi-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.settle-kpi-card .label { font-size: 18px; font-weight: 700; color: var(--text-muted); white-space: nowrap; line-height: 1.3; }
+.settle-kpi-card .value { font-size: 26px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; line-height: 1.3; }
+.settle-kpi-card .sub { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+.settle-kpi-card .icon-badge { flex: none; width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; }
+.settle-kpi-card .icon-badge svg { width: 54px; height: 54px; }
+.settle-kpi-card .icon-badge.icon-shortage svg { color: #7C5CD6; }
+.settle-rate-bar { width: 100%; height: 8px; border-radius: 5px; background: rgba(16,23,42,.10); overflow: hidden; margin-top: 4px; }
+.settle-rate-bar .fill { height: 100%; border-radius: 5px; background: #7C5CD6; }
 .settle-section-gap { margin-top: 64px; }
+.settle-section-gap-lg { margin-top: 96px; }
 .settle-yoy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--page-gap); margin-bottom: 32px; }
 /* From Uiverse.io by uiverse-astronaut (폰트: 상단 결산총괄 KPI 박스와 동일한 Pretendard로 통일 / 카드별 고유 색상(--halo-accent) 적용) */
 .halo-stat {
@@ -260,21 +254,27 @@ table.fc-summary td .dot {
 
 /* ===== 기관 현황 화면 v2 (직급별/부서별 정현원, 수입지출총괄, 집행실적, 예산편성현황) ===== */
 .ov2-org-sub { font-size: 15px; color: var(--text-muted); font-weight: 600; margin: 0 0 14px; }
-.ov2-org-shortage { font-size: 14px; color: var(--danger); font-weight: 700; margin: 12px 2px 0; }
+.ov2-org-shortage { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--danger); font-weight: 700; margin: 6px 2px 0; }
+.ov2-org-shortage .ico { flex: none; line-height: 1; }
 .ov2-section-sub { font-size: 18px; color: var(--text-muted); font-weight: 700; margin-left: 4px; }
 .ov2-outside-detail { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-weight: 300; }
-.ov2-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; align-items: stretch; }
+.ov2-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 18px; align-items: stretch; }
 .ov2-two-col .summary-box { margin-bottom: 0; }
 @media (max-width: 980px) { .ov2-two-col { grid-template-columns: 1fr; } }
 
-.ov2-pbar-list { display: flex; flex-direction: column; gap: 10px; }
-.ov2-pbar-row { display: grid; grid-template-columns: 92px 1fr 78px 54px; align-items: center; gap: 10px; }
-.ov2-pbar-label { font-size: 14px; color: var(--text-muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ov2-pbar-track { position: relative; height: 14px; background: var(--bg-hover); border-radius: 999px; overflow: hidden; }
-.ov2-pbar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#5B8DFF,#8B5CF6); }
+.summary-box h3:has(+ .ov2-pbar-list) { margin-bottom: 4px; }
+.ov2-pbar-list { display: flex; flex-direction: column; gap: 4px; }
+.ov2-pbar-row { display: grid; grid-template-columns: 176px 1fr 54px; align-items: start; gap: 14px; height: 46px; }
+.ov2-pbar-label { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ov2-pbar-label-line { display: inline-flex; align-items: stretch; height: 30px; border-radius: 6px; overflow: hidden; box-shadow: 3px 3px 8px rgba(16,23,42,.08); width: fit-content; }
+.ov2-pbar-label-main { display: flex; align-items: center; padding: 0 12px; background: var(--navy); color: #fff; font-size: 13.5px; font-weight: 700; white-space: nowrap; }
+.ov2-pbar-val { display: flex; align-items: center; padding: 0 12px; background: #fff; color: var(--text); font-size: 13.5px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; position: relative; }
+.ov2-pbar-val::before { content: ''; position: absolute; left: -4px; top: 50%; width: 8px; height: 8px; background: #fff; transform: translateY(-50%) rotate(45deg); }
+.ov2-pbar-label-sub { font-size: 11px; color: var(--text-soft); font-weight: 500; white-space: nowrap; padding-left: 2px; height: 14px; line-height: 14px; }
+.ov2-pbar-track { position: relative; height: 22px; margin-top: 4px; background: var(--bg-hover); border-radius: 999px; overflow: hidden; }
+.ov2-pbar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#C7CEE3,#7C88AC); }
 .ov2-pbar-fill.na { background: repeating-linear-gradient(135deg, var(--border-strong), var(--border-strong) 4px, transparent 4px, transparent 8px); }
-.ov2-pbar-val { font-size: 16px; color: var(--text); font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.ov2-pbar-diff { font-size: 15px; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ov2-pbar-diff { font-size: 19px; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; margin-top: 3px; line-height: 22px; }
 .ov2-pbar-diff.up { color: var(--danger); }
 .ov2-pbar-diff.down { color: var(--accent); }
 .ov2-pbar-diff.zero { color: var(--text-soft); }
@@ -299,27 +299,31 @@ table.fc-summary td .dot {
 .ov2-exec-legend .chip.prev { background: #C9CEDA; }
 .ov2-exec-legend .chip.curr { background: linear-gradient(135deg,#5B8DFF,#3457D5); }
 
-.ov2-kpi-note { font-size: 13px; color: var(--text-soft); margin: 6px 2px 0; }
+.ov2-kpi-title-amt { font-size: 16px; font-weight: 700; color: var(--text-muted); margin-left: 8px; }
+.ov2-kpi-title-amt .diff { font-weight: 800; }
+.ov2-kpi-title-amt .diff.up { color: var(--danger); }
+.ov2-kpi-title-amt .diff.down { color: var(--accent); }
 table.summary.ov2-budget-fmt tr.total td { font-weight: 800; }
+table.summary.ov2-income-table th { font-size: 15.5px; }
+table.summary.ov2-income-table td { font-size: 17px; }
 .ov2-unit-note { font-size: 11px; font-weight: 300; color: var(--text-soft); text-align: right; margin: 0 2px 4px; }
 .ov2-subtable-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin: 18px 2px 8px; }
 
-.ov2-vbar-list { display: flex; gap: 14px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; }
-.ov2-vbar-col { display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 78px; }
-.ov2-vbar-head { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-bottom: 8px; text-align: center; }
-.ov2-vbar-label { font-size: 13px; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
-.ov2-vbar-val { font-size: 15.5px; color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.ov2-vbar-diff { font-size: 13.5px; font-weight: 800; font-variant-numeric: tabular-nums; }
-.ov2-vbar-diff.up { color: var(--danger); }
-.ov2-vbar-diff.down { color: var(--accent); }
-.ov2-vbar-diff.zero { color: var(--text-soft); }
-.ov2-vbar-diff.na { color: var(--text-soft); }
-.ov2-vbar-stack { display: flex; flex-direction: column; align-items: stretch; width: 40px; }
-.ov2-vbar-track { position: relative; width: 40px; background: var(--bg-hover); border-radius: 10px; overflow: hidden; display: flex; align-items: flex-end; }
-.ov2-vbar-track.has-over { border-radius: 0 0 10px 10px; }
-.ov2-vbar-fill { width: 100%; border-radius: 10px 10px 0 0; background: linear-gradient(180deg, rgba(34,211,238,.55), rgba(91,141,255,.55)); border: 1px solid rgba(91,141,255,.35); border-bottom: none; box-sizing: border-box; position: relative; z-index: 1; }
-.ov2-vbar-track.has-over .ov2-vbar-fill { border-radius: 0; border-top: none; }
-.ov2-vbar-over { width: 100%; border-radius: 10px 10px 0 0; background: linear-gradient(180deg, rgba(246,173,85,.85), rgba(214,69,90,.85)); border: 1px solid rgba(214,69,90,.5); border-bottom: none; box-sizing: border-box; }
+.ov2-vbar-scroll { overflow-x: auto; padding-bottom: 4px; }
+.ov2-vbar-list { display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(88px, 1fr); grid-template-rows: auto auto 140px; column-gap: 20px; align-items: end; min-width: 100%; }
+.ov2-vbar-label { display: flex; align-items: flex-end; justify-content: center; height: 42px; font-size: 16.5px; color: var(--text-muted); font-weight: 700; white-space: normal; line-height: 1.25; text-align: center; margin-bottom: 4px; }
+.ov2-vbar-val { font-size: 18px; color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; margin-bottom: 10px; }
+.ov2-vbar-stack { display: flex; flex-direction: column; align-items: stretch; width: 48px; justify-self: center; }
+.ov2-vbar-track { position: relative; width: 48px; background: linear-gradient(180deg, #EEF1F6, #E4E8F0); border-radius: 12px; overflow: visible; display: flex; align-items: flex-end; box-shadow: inset 0 2px 5px rgba(16,23,42,.10); }
+.ov2-vbar-track.has-over { border-radius: 0 0 12px 12px; }
+.ov2-vbar-fill { width: 100%; border-radius: 12px 12px 0 0; background: linear-gradient(180deg, #C7CEE3, #7C88AC 65%, #5C6684); box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 6px rgba(16,23,42,.20); box-sizing: border-box; position: relative; z-index: 1; overflow: hidden; display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; }
+.ov2-vbar-track.has-over .ov2-vbar-fill { border-radius: 0; }
+.ov2-vbar-over { width: 100%; border-radius: 12px 12px 0 0; background: linear-gradient(180deg, #FFE3C2, #FDBA74 55%, #FB923C); box-shadow: inset 0 2px 3px rgba(255,255,255,.7), inset 0 -4px 6px rgba(180,90,20,.25); box-sizing: border-box; position: relative; z-index: 1; }
+.ov2-vbar-diff { font-size: 12.5px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; color: #fff; }
+.ov2-vbar-diff.up { color: #fff; }
+.ov2-vbar-diff.down { color: #fff; }
+.ov2-vbar-diff.zero { color: rgba(255,255,255,.85); }
+.ov2-vbar-diff.na { color: rgba(255,255,255,.85); }
 
 /* 조직별 예산 가로 탭 - Uiverse(Spacious74) radio-inputs 폴더탭 구조를 그대로 이식 */
 .org-tabs {
@@ -1604,6 +1608,18 @@ function fmtMillion(nThousand) {
   var m = Math.round((nThousand / 1000) * 10) / 10;
   return m.toLocaleString('ko-KR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
+function fmtMillionInt(nThousand) {
+  if (nThousand == null || nThousand === '') return '';
+  var m = Math.round(nThousand / 1000);
+  return m.toLocaleString('ko-KR');
+}
+function ov2KpiTitleAmt(total26, total25) {
+  var d = total26 - total25;
+  var cls = d >= 0 ? 'up' : 'down';
+  var sign = d >= 0 ? '+' : '';
+  return '<span class="ov2-kpi-title-amt">' + fmtMillionInt(total26) + '백만원'
+    + '(<span class="diff ' + cls + '">' + sign + fmtMillionInt(d) + '백만원</span>)</span>';
+}
 function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -1823,26 +1839,26 @@ function renderWtgSummary() {
 
 // 요약 도넛차트·범례·표에서 공통으로 쓰는 그라데이션 컬러 팔레트
 var DONUT_COLOR_STOPS = {
-  '인건비': ['#5B8DFF', '#8B5CF6'],
-  '운영비': ['#C084FC', '#F472B6'],
-  '자산취득비': ['#FDBA74', '#FB923C'],
-  '도서구입': ['#22D3EE', '#0891B2'],
-  '출연금': ['#5B8DFF', '#8B5CF6'],
-  '보조금': ['#FDBA74', '#FB923C'],
-  '자체수익': ['#34D399', '#10B981'],
-  '운영경비': ['#C084FC', '#F472B6'],
-  '사업비': ['#FDBA74', '#FB923C'],
-  '대행사업수익': ['#5B8DFF', '#8B5CF6'],
-  '자치단체출연금수익': ['#34D399', '#10B981'],
-  '국비·자치단체보조금수익': ['#FDBA74', '#FB923C'],
-  '순세계잉여금': ['#22D3EE', '#0891B2'],
-  '기부금수익': ['#F472B6', '#EC4899'],
-  '사업수익': ['#5B8DFF', '#8B5CF6'],
-  '자본적수입': ['#34D399', '#10B981'],
-  '자체수입금': ['#22D3EE', '#0891B2'],
-  '도시보조금': ['#FDBA74', '#FB923C']
+  '인건비': ['#AEC5F7', '#B9A8EC'],
+  '운영비': ['#D6B7EF', '#F0AECD'],
+  '자산취득비': ['#F8CFA0', '#EFAE7C'],
+  '도서구입': ['#A9DDEA', '#7FB9C9'],
+  '출연금': ['#AEC5F7', '#B9A8EC'],
+  '보조금': ['#F8CFA0', '#EFAE7C'],
+  '자체수익': ['#AEE3CB', '#84C7A8'],
+  '운영경비': ['#D6B7EF', '#F0AECD'],
+  '사업비': ['#F8CFA0', '#EFAE7C'],
+  '대행사업수익': ['#AEC5F7', '#B9A8EC'],
+  '자치단체출연금수익': ['#AEE3CB', '#84C7A8'],
+  '국비·자치단체보조금수익': ['#F8CFA0', '#EFAE7C'],
+  '순세계잉여금': ['#A9DDEA', '#7FB9C9'],
+  '기부금수익': ['#F0AECD', '#E58FB0'],
+  '사업수익': ['#AEC5F7', '#B9A8EC'],
+  '자본적수입': ['#AEE3CB', '#84C7A8'],
+  '자체수입금': ['#A9DDEA', '#7FB9C9'],
+  '도시보조금': ['#F8CFA0', '#EFAE7C']
 };
-function donutStops(label) { return DONUT_COLOR_STOPS[label] || ['#9AA3B4', '#64748B']; }
+function donutStops(label) { return DONUT_COLOR_STOPS[label] || ['#C4CAD6', '#9AA3B4']; }
 function donutGradientCss(label) {
   var s = donutStops(label);
   return 'linear-gradient(135deg,' + s[0] + ',' + s[1] + ')';
@@ -2014,16 +2030,16 @@ hscf: {
     subtitle: '6본부 · 24팀 · 9관',
     cards: [
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '408명' },
-      { tone: 'purple', iconKey: 'settle', label: '현원(정원 내)', value: '386명' },
-      { tone: 'mint', iconKey: 'rate', label: '정원 내 충원율', value: '94.6%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:94.6%;"></div></div>' },
-      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '16명', extra: '<span class="ov2-outside-detail">기간제근로자(휴직대체)</span>' }
+      { tone: 'purple', iconKey: 'settle', label: '현원', value: '386명' },
+      { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '94.6%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:94.6%;"></div></div>' },
+      { tone: 'orange', iconKey: 'unused', label: '정원외 인력', value: '16명', extra: '<span class="ov2-outside-detail">기간제근로자(휴직대체)</span>' }
     ],
     note: '⚠️ 정원 내 부족 인원: 22명 · 현원(총계) 402명'
   },
   personnelGroups: [
-    { title: '직종별 정·현원', rows: [
-      { label: '임원(대표이사)', current: 1, capacity: 1, diff: 0 },
-      { label: '일반직(전문계약직 포함)', current: 259, capacity: 273, diff: -14 },
+    { title: '직종별 현황', rows: [
+      { label: '임원\n(대표이사)', current: 1, capacity: 1, diff: 0 },
+      { label: '일반직\n(전문계약직 포함)', current: 259, capacity: 273, diff: -14 },
       { label: '무기계약직', current: 13, capacity: 14, diff: -1 },
       { label: '공무직', current: 113, capacity: 120, diff: -7 }
     ] },
@@ -2059,14 +2075,19 @@ hscf: {
     { label: '사업비', y26: 36029432, y25: 33390911 }
   ],
   execution: {
-    hasCompare: true,
+    hasCompare: false,
     rows: [
-      { label: '총계', b25: 61239855, e25: 53926930, r25: 88.1, b26: 65849011, e26: 19744074, r26: 30.0 },
-      { label: '인건비', b25: 22215443, e25: 19251363, r25: 86.7, b26: 22785497, e26: 6955581, r26: 30.5 },
-      { label: '운영경비', b25: 5633501, e25: 4137059, r25: 73.4, b26: 7034082, e26: 1314837, r26: 18.7 },
-      { label: '사업비', b25: 33390911, e25: 30538508, r25: 91.5, b26: 36029432, e26: 11473656, r26: 31.8 }
+      { label: '총계', b25: 61239855, e25: 53926930, r25: 88.1 },
+      { label: '인건비', b25: 22215443, e25: 19251363, r25: 86.7 },
+      { label: '운영경비', b25: 5633501, e25: 4137059, r25: 73.4 },
+      { label: '사업비', b25: 33390911, e25: 30538508, r25: 91.5 }
     ]
-  }
+  },
+  executionByFund: [
+    { label: '출연금/전출금', budget: 15885210, exec: 13156300, rate: 82.8 },
+    { label: '위탁사업비', budget: 44574745, exec: 40013640, rate: 89.8 },
+    { label: '기타재원', budget: 779900, exec: 756990, rate: 97.1 }
+  ]
 },
 corp: {
   name: '화성시도시공사',
@@ -2075,8 +2096,8 @@ corp: {
     cards: [
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '907명' },
       { tone: 'purple', iconKey: 'settle', label: '현원', value: '787명' },
-      { tone: 'mint', iconKey: 'rate', label: '충원율', value: '86.8%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:86.8%;"></div></div>' },
-      { tone: 'orange', iconKey: 'unused', label: '부족 인원', value: '120명' }
+      { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '86.8%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:86.8%;"></div></div>' },
+      { tone: 'orange', iconKey: 'shortage', label: '부족 인원', value: '120명' }
     ],
     note: null
   },
@@ -2132,9 +2153,9 @@ corp: {
     ]
   },
   executionByFund: [
-    { label: 'A. 전출금', budget: 15212553, exec: 14235047, rate: 94 },
-    { label: 'B. 위탁사업비', budget: 162908465, exec: 134302928, rate: 82 },
-    { label: 'C. 기타재원', budget: 10760558, exec: 7932605, rate: 74 }
+    { label: '전출금', budget: 15212553, exec: 14235047, rate: 94 },
+    { label: '위탁사업비', budget: 162908465, exec: 134302928, rate: 82 },
+    { label: '기타재원', budget: 10760558, exec: 7932605, rate: 74 }
   ]
 },
 talent: {
@@ -2144,8 +2165,8 @@ talent: {
     cards: [
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '170명' },
       { tone: 'purple', iconKey: 'settle', label: '현원', value: '164명' },
-      { tone: 'mint', iconKey: 'rate', label: '충원율', value: '96.5%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:96.5%;"></div></div>' },
-      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '32명', extra: '<span class="ov2-outside-detail">기간제근로자</span>' }
+      { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '96.5%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:96.5%;"></div></div>' },
+      { tone: 'orange', iconKey: 'unused', label: '정원외 인력', value: '32명', extra: '<span class="ov2-outside-detail">기간제근로자</span>' }
     ],
     note: '⚠️ 정원 내 부족 인원: 6명'
   },
@@ -2206,9 +2227,9 @@ talent: {
     ]
   },
   executionByFund: [
-    { label: 'A. 출연금', budget: 9480958, exec: 8905201, rate: 93.9 },
-    { label: 'B. 위탁사업비', budget: 16883659, exec: 16452050, rate: 97.4 },
-    { label: 'C. 기타재원', budget: 2777379, exec: 2128169, rate: 76.6 }
+    { label: '출연금', budget: 9480958, exec: 8905201, rate: 93.9 },
+    { label: '위탁사업비', budget: 16883659, exec: 16452050, rate: 97.4 },
+    { label: '기타재원', budget: 2777379, exec: 2128169, rate: 76.6 }
   ]
 },
 fc: {
@@ -2218,8 +2239,8 @@ fc: {
     cards: [
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '19명' },
       { tone: 'purple', iconKey: 'settle', label: '현원', value: '16명' },
-      { tone: 'mint', iconKey: 'rate', label: '충원율', value: '84.2%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:84.2%;"></div></div>' },
-      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '4명', extra: '<span class="ov2-outside-detail">기관장·파견공무원·기간제</span>' }
+      { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '84.2%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:84.2%;"></div></div>' },
+      { tone: 'orange', iconKey: 'unused', label: '정원외 인력', value: '4명', extra: '<span class="ov2-outside-detail">기관장·파견공무원·기간제</span>' }
     ],
     note: '⚠️ 정원 내 부족 인원: 3명'
   },
@@ -2281,9 +2302,9 @@ fc: {
     ]
   },
   executionByFund: [
-    { label: 'A. 출연금', budget: 6095000, exec: 5894000, rate: 96.7 },
-    { label: 'B. 위탁사업비', budget: 0, exec: null, rate: null },
-    { label: 'C. 기타재원', budget: 2566000, exec: 2133000, rate: 83.1 }
+    { label: '출연금', budget: 6095000, exec: 5894000, rate: 96.7 },
+    { label: '위탁사업비', budget: 0, exec: null, rate: null },
+    { label: '기타재원', budget: 2566000, exec: 2133000, rate: 83.1 }
   ]
 }
 };
@@ -2294,7 +2315,7 @@ function ov2PersonnelVBarList(rows) {
   var TRACK_PX = 140;
   var hasAnyCap = rows.some(function (r) { return r.capacity != null && r.capacity > 0; });
   var maxCurrent = rows.reduce(function (m, r) { return Math.max(m, r.current || 0); }, 1);
-  return '<div class="ov2-vbar-list">' + rows.map(function (r) {
+  var colsHtml = rows.map(function (r) {
     var hasCap = r.capacity != null && r.capacity > 0;
     var pct, basePct, overPct, valTxt, diffTxt, diffCls;
     if (hasCap) {
@@ -2321,14 +2342,15 @@ function ov2PersonnelVBarList(rows) {
     }
     var overPx = Math.round((overPct / 100) * TRACK_PX);
     var overHtml = overPx > 0 ? '<div class="ov2-vbar-over" style="height:' + overPx + 'px;"></div>' : '';
-    return '<div class="ov2-vbar-col">'
-      + '<div class="ov2-vbar-head"><span class="ov2-vbar-label">' + escapeHtml(r.label) + '</span><span class="ov2-vbar-val">' + valTxt + '</span>' + (diffTxt ? '<span class="ov2-vbar-diff ' + diffCls + '">' + diffTxt + '</span>' : '') + '</div>'
+    var diffHtml = diffTxt ? '<span class="ov2-vbar-diff ' + diffCls + '">' + diffTxt + '</span>' : '';
+    return '<div class="ov2-vbar-label">' + escapeHtml(r.label) + '</div>'
+      + '<div class="ov2-vbar-val">' + valTxt + '</div>'
       + '<div class="ov2-vbar-stack">'
         + overHtml
-        + '<div class="ov2-vbar-track' + (overPx > 0 ? ' has-over' : '') + '" style="height:' + TRACK_PX + 'px;"><div class="ov2-vbar-fill" style="height:' + basePct + '%;"></div></div>'
-      + '</div>'
-    + '</div>';
-  }).join('') + '</div>';
+        + '<div class="ov2-vbar-track' + (overPx > 0 ? ' has-over' : '') + '" style="height:' + TRACK_PX + 'px;"><div class="ov2-vbar-fill" style="height:' + basePct + '%;">' + diffHtml + '</div></div>'
+      + '</div>';
+  }).join('');
+  return '<div class="ov2-vbar-scroll"><div class="ov2-vbar-list">' + colsHtml + '</div></div>';
 }
 
 function ov2PersonnelBarList(rows) {
@@ -2339,17 +2361,22 @@ function ov2PersonnelBarList(rows) {
     var valTxt = (r.capacity != null) ? (r.current + ' / ' + r.capacity) : (r.current + ' / -');
     var diffTxt = r.diff == null ? '-' : (r.diff > 0 ? '+' + r.diff : String(r.diff));
     var diffCls = r.diff == null ? 'na' : ov2DiffCls(r.diff);
+    var labelParts = String(r.label).split('\n');
+    var mainLabel = labelParts[0];
+    var subLabel = labelParts[1] || null;
     return '<div class="ov2-pbar-row">'
-      + '<div class="ov2-pbar-label">' + escapeHtml(r.label) + '</div>'
+      + '<div class="ov2-pbar-label">'
+        + '<div class="ov2-pbar-label-line"><span class="ov2-pbar-label-main">' + escapeHtml(mainLabel) + '</span><span class="ov2-pbar-val">' + valTxt + '</span></div>'
+        + (subLabel ? '<div class="ov2-pbar-label-sub">' + escapeHtml(subLabel) + '</div>' : '')
+      + '</div>'
       + '<div class="ov2-pbar-track"><div class="ov2-pbar-fill' + fillCls + '" style="width:' + pct + '%;"></div></div>'
-      + '<div class="ov2-pbar-val">' + valTxt + '</div>'
       + '<div class="ov2-pbar-diff ' + diffCls + '">' + diffTxt + '</div>'
       + '</div>';
   }).join('') + '</div>';
 }
 
 function ov2ExecutionChart(rows, hasCompare) {
-  var bars = rows.map(function (r) {
+  var bars = rows.filter(function (r) { return r.label !== '총계'; }).map(function (r) {
     var currBar = hasCompare
       ? '<div class="ov2-exec-bar curr" style="height:' + Math.max(r.r26, 2) + '%;"><span class="ov2-exec-bar-val">' + r.r26.toFixed(1) + '%</span></div>'
       : '';
@@ -2361,10 +2388,7 @@ function ov2ExecutionChart(rows, hasCompare) {
       + '<div class="ov2-exec-label">' + escapeHtml(r.label) + '</div>'
     + '</div>';
   }).join('');
-  var legend = hasCompare
-    ? '<div class="ov2-exec-legend"><span class="item"><span class="chip prev"></span>2025년 집행률</span><span class="item"><span class="chip curr"></span>2026년 집행률</span></div>'
-    : '<div class="ov2-exec-legend"><span class="item"><span class="chip prev"></span>2025년 집행률</span></div>';
-  return '<div class="ov2-exec-wrap"><div class="ov2-exec-chart">' + bars + '</div></div>' + legend;
+  return '<div class="ov2-exec-wrap"><div class="ov2-exec-chart">' + bars + '</div></div>';
 }
 
 function ov2ExecutionTable(rows, hasCompare) {
@@ -2389,17 +2413,22 @@ function ov2ExecutionByFundChart(rows) {
       + '<div class="ov2-exec-label">' + escapeHtml(r.label) + '</div>'
     + '</div>';
   }).join('');
-  return '<div class="ov2-exec-wrap"><div class="ov2-exec-chart">' + bars + '</div></div>'
-    + '<div class="ov2-exec-legend"><span class="item"><span class="chip curr"></span>집행률</span></div>';
+  return '<div class="ov2-exec-wrap"><div class="ov2-exec-chart">' + bars + '</div></div>';
 }
 
 function ov2ExecutionByFundTable(rows) {
   var body = rows.map(function (r) {
     var execTxt = r.exec == null ? '-' : fmtWon(r.exec);
-    var rateTxt = r.rate == null ? '-' : r.rate.toFixed(0) + '%';
-    return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.budget) + '</td><td>' + execTxt + '</td><td>' + rateTxt + '</td></tr>';
+    var remainTxt = (r.exec == null) ? '-' : fmtWon(r.budget - r.exec);
+    var rateTxt = r.rate == null ? '-' : r.rate.toFixed(1) + '%';
+    return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.budget) + '</td><td>' + execTxt + '</td><td>' + remainTxt + '</td><td>' + rateTxt + '</td></tr>';
   }).join('');
-  return '<div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>재원</th><th>최종예산</th><th>집행액</th><th>집행률</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+  var totalBudget = rows.reduce(function (a, r) { return a + (r.budget || 0); }, 0);
+  var totalExec = rows.reduce(function (a, r) { return a + (r.exec || 0); }, 0);
+  var totalRemain = totalBudget - totalExec;
+  var totalRate = totalBudget ? (totalExec / totalBudget * 100) : 0;
+  var totalRow = '<tr class="total"><td>합계</td><td>' + fmtWon(totalBudget) + '</td><td>' + fmtWon(totalExec) + '</td><td>' + fmtWon(totalRemain) + '</td><td>' + totalRate.toFixed(1) + '%</td></tr>';
+  return '<div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>재원구분</th><th>예산액</th><th>집행액</th><th>집행잔액</th><th>집행률</th></tr></thead><tbody>' + totalRow + body + '</tbody></table></div>';
 }
 
 function renderOv2Overview(instKey) {
@@ -2412,16 +2441,19 @@ function renderOv2Overview(instKey) {
   var cardsHtml = d.org.cards.map(function (c) {
     return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null);
   }).join('');
-  var orgHtml = '<div class="section-title-row"><h2 class="section-heading section-heading-lg">정현원 현황</h2></div>'
+  var orgHtml = '<div class="section-title-row"><h2 class="section-heading section-heading-lg">정현원 총괄</h2></div>'
     + '<div class="settle-kpi-grid">' + cardsHtml + '</div>'
-    + (d.org.note ? '<p class="ov2-org-shortage">' + d.org.note + '</p>' : '');
+    + (d.org.note ? '<p class="ov2-org-shortage">' + (function (note) {
+        var m = /^(\S+)\s(.*)$/.exec(note);
+        return m ? '<span class="ico">' + m[1] + '</span><span>' + m[2] + '</span>' : note;
+      })(d.org.note) + '</p>' : '');
 
   // 2) 직급별 정현원
   var groupsHtml = d.personnelGroups.map(function (g) {
     return '<div class="summary-box"><h3>' + escapeHtml(g.title) + '</h3>' + ov2PersonnelBarList(g.rows)
       + (g.note ? '<p class="ov2-pbar-note">' + escapeHtml(g.note) + '</p>' : '') + '</div>';
   }).join('');
-  var gradeHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">직급별 정현원</h2></div>'
+  var gradeHtml = '<div class="section-title-row settle-section-gap-lg"><h2 class="section-heading section-heading-lg">정현원 현황</h2></div>'
     + '<div class="' + (d.personnelGroups.length > 1 ? 'ov2-two-col' : '') + '">' + groupsHtml + '</div>';
 
   // 3) 소관별 정현원
@@ -2454,23 +2486,21 @@ function renderOv2Overview(instKey) {
   var expPct = expTotal25 ? (((expTotal26 - expTotal25) / expTotal25) * 100).toFixed(1) : '0.0';
   var incomeExpenseHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">2026년 예산 총괄</h2></div>'
     + '<div class="ov2-two-col">'
-      + '<div class="summary-box"><h3>총수입 총괄</h3>'
-        + '<p class="ov2-kpi-note">2026년 ' + fmtWon(revTotal26) + '천원 · 2025년 대비 ' + (revTotal26 - revTotal25 >= 0 ? '+' : '') + fmtWon(revTotal26 - revTotal25) + '천원(' + (revPct >= 0 ? '+' : '') + revPct + '%)</p>'
+      + '<div class="summary-box"><h3>총수입' + ov2KpiTitleAmt(revTotal26, revTotal25) + '</h3>'
         + '<div class="summary-box-body donut-row">' + buildDonutSvg(d.revenueItems, revTotal26) + buildDonutLegend(d.revenueItems, revTotal26) + '</div>'
         + '<p class="ov2-unit-note">단위: 천원</p>'
-        + '<div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>'
+        + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>'
         + revDetailHtml
       + '</div>'
-      + '<div class="summary-box"><h3>총지출 총괄</h3>'
-        + '<p class="ov2-kpi-note">2026년 ' + fmtWon(expTotal26) + '천원 · 2025년 대비 ' + (expTotal26 - expTotal25 >= 0 ? '+' : '') + fmtWon(expTotal26 - expTotal25) + '천원(' + (expPct >= 0 ? '+' : '') + expPct + '%)</p>'
+      + '<div class="summary-box"><h3>총지출' + ov2KpiTitleAmt(expTotal26, expTotal25) + '</h3>'
         + '<div class="summary-box-body donut-row">' + buildDonutSvg(d.budgetCompare, expTotal26) + buildDonutLegend(d.budgetCompare, expTotal26) + '</div>'
         + '<p class="ov2-unit-note">단위: 천원</p>'
-        + '<div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + expTotalHtml + expRowsHtml + '</tbody></table></div>'
+        + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + expTotalHtml + expRowsHtml + '</tbody></table></div>'
       + '</div>'
     + '</div>';
 
   // 5) 전년대비 집행실적
-  var execTitle = d.execution.hasCompare ? '전년대비 집행실적' : '집행실적 현황 (2025년 기준)';
+  var execTitle = d.execution.hasCompare ? '전년대비 집행실적' : '2025년도 집행실적 현황';
   var execHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">' + execTitle + '</h2></div>';
   if (d.executionByFund) {
     execHtml += '<div class="ov2-two-col">'
@@ -2488,7 +2518,7 @@ function renderOv2Overview(instKey) {
   }).join('');
   var budgetCompareHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">예산편성현황</h2></div>'
     + '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-budget-fmt"><thead><tr>'
-    + '<th>구분</th><th>2026년 예산(A)</th><th>2025년 최종예산(B)</th><th>전년대비 증감(A-B)</th>'
+    + '<th>구분</th><th>2026년도 예산</th><th>2025년도 최종예산</th><th>전년대비 증감</th>'
     + '</tr></thead><tbody>' + bcTotalHtml + bcRowsHtml + '</tbody></table></div></div>';
 
   document.getElementById('overview-v2-slot').innerHTML = orgHtml + gradeHtml + deptPersonHtml + incomeExpenseHtml + execHtml + budgetCompareHtml;
@@ -3715,10 +3745,11 @@ var SETTLEMENT_DATA = {
 };
 
 var SETTLE_KPI_ICONS = {
-  budget: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"></path><path d="M8 9h8M8 13h8M8 17h5"></path></svg>',
-  settle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>',
-  rate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="3"></circle><circle cx="17" cy="17" r="3"></circle><path d="M18 6L6 18"></path></svg>',
-  unused: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.9L2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>'
+  budget: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><g fill="none"><path fill="url(#kpiIcoB1)" d="M37.222 39.997a7 7 0 0 0 3.07-.818A7 7 0 0 0 44 33v-9.75a4.25 4.25 0 0 0-3.409-4.167A4.3 4.3 0 0 0 39.75 19h-5.5q-.433.001-.842.083A4.25 4.25 0 0 0 30 23.25V33c0 2.675 1.501 5 3.707 6.179a6.96 6.96 0 0 0 3.27.821H37q.111 0 .222-.004" /><path fill="url(#kpiIcoB2)" fill-opacity=".5" d="M37.222 39.997a7 7 0 0 0 3.07-.818A7 7 0 0 0 44 33v-9.75a4.25 4.25 0 0 0-3.409-4.167A4.3 4.3 0 0 0 39.75 19h-5.5q-.433.001-.842.083A4.25 4.25 0 0 0 30 23.25V33c0 2.675 1.501 5 3.707 6.179a6.96 6.96 0 0 0 3.27.821H37q.111 0 .222-.004" /><path fill="url(#kpiIcoB3)" d="M11.222 39.997a7 7 0 0 0 3.07-.818A7 7 0 0 0 18 33v-9.75a4.25 4.25 0 0 0-3.409-4.167A4.3 4.3 0 0 0 13.75 19h-5.5q-.433.001-.842.083A4.25 4.25 0 0 0 4 23.25V33c0 2.675 1.501 5 3.707 6.179a6.96 6.96 0 0 0 3.27.821H11q.112 0 .222-.004" /><path fill="url(#kpiIcoB4)" fill-opacity=".5" d="M11.222 39.997a7 7 0 0 0 3.07-.818A7 7 0 0 0 18 33v-9.75a4.25 4.25 0 0 0-3.409-4.167A4.3 4.3 0 0 0 13.75 19h-5.5q-.433.001-.842.083A4.25 4.25 0 0 0 4 23.25V33c0 2.675 1.501 5 3.707 6.179a6.96 6.96 0 0 0 3.27.821H11q.112 0 .222-.004" /><path fill="url(#kpiIcoB5)" d="M19.25 19A4.25 4.25 0 0 0 15 23.25V34a9 9 0 1 0 18 0V23.25A4.25 4.25 0 0 0 28.75 19z" /><path fill="url(#kpiIcoB6)" d="M19.25 19A4.25 4.25 0 0 0 15 23.25V34a9 9 0 1 0 18 0V23.25A4.25 4.25 0 0 0 28.75 19z" /><path fill="url(#kpiIcoB7)" d="M37 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10" /><path fill="url(#kpiIcoB8)" d="M11 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10" /><path fill="url(#kpiIcoB9)" d="M18 11a6 6 0 1 1 12 0a6 6 0 0 1-12 0" /><defs><linearGradient id="kpiIcoB1" x1="33.329" x2="45.202" y1="21.792" y2="34.43" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#7a41dc" /><stop offset="1" stop-color="#5b2ab5" /></linearGradient><linearGradient id="kpiIcoB3" x1="7.329" x2="19.202" y1="21.792" y2="34.43" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#9c6cfe" /><stop offset="1" stop-color="#7a41dc" /></linearGradient><linearGradient id="kpiIcoB5" x1="19.28" x2="32.658" y1="22.191" y2="38.211" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#bd96ff" /><stop offset="1" stop-color="#9c6cfe" /></linearGradient><linearGradient id="kpiIcoB6" x1="24" x2="44.557" y1="16.143" y2="44.95" gradientUnits="userSpaceOnUse"><stop stop-color="#885edb" stop-opacity="0" /><stop offset="1" stop-color="#e362f8" /></linearGradient><linearGradient id="kpiIcoB7" x1="34.378" x2="39.474" y1="8.329" y2="16.467" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#7a41dc" /><stop offset="1" stop-color="#5b2ab5" /></linearGradient><linearGradient id="kpiIcoB8" x1="8.378" x2="13.474" y1="8.329" y2="16.467" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#9c6cfe" /><stop offset="1" stop-color="#7a41dc" /></linearGradient><linearGradient id="kpiIcoB9" x1="20.854" x2="26.969" y1="6.595" y2="16.36" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#bd96ff" /><stop offset="1" stop-color="#9c6cfe" /></linearGradient><radialGradient id="kpiIcoB2" cx="0" cy="0" r="1" gradientTransform="matrix(8.7001 -.00781 .01988 22.1392 27.8 29.008)" gradientUnits="userSpaceOnUse"><stop offset=".433" stop-color="#3b148a" /><stop offset="1" stop-color="#3b148a" stop-opacity="0" /></radialGradient><radialGradient id="kpiIcoB4" cx="0" cy="0" r="1" gradientTransform="rotate(180.041 11.273 14.5)scale(11.0348 28.0801)" gradientUnits="userSpaceOnUse"><stop offset=".433" stop-color="#3b148a" /><stop offset="1" stop-color="#3b148a" stop-opacity="0" /></radialGradient></defs></g></svg>',
+  settle: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><g fill="none"><path fill="url(#kpiIcoA1)" d="M27.225 27a3.75 3.75 0 0 0-3.75 3.75V31s0 8 10.5 8h.024c10.5 0 10.5-8 10.5-8v-.25A3.75 3.75 0 0 0 40.75 27z" /><path fill="url(#kpiIcoA2)" fill-opacity=".5" d="M27.225 27a3.75 3.75 0 0 0-3.75 3.75V31s0 8 10.5 8h.024c10.5 0 10.5-8 10.5-8v-.25A3.75 3.75 0 0 0 40.75 27z" /><path fill="url(#kpiIcoA3)" d="M6.75 27A3.75 3.75 0 0 0 3 30.75V32s0 9 13 9s13-9 13-9v-1.25A3.75 3.75 0 0 0 25.25 27z" /><path fill="url(#kpiIcoA4)" d="M6.75 27A3.75 3.75 0 0 0 3 30.75V32s0 9 13 9s13-9 13-9v-1.25A3.75 3.75 0 0 0 25.25 27z" /><path fill="url(#kpiIcoA5)" d="M34 24a6 6 0 1 0 0-12a6 6 0 0 0 0 12" /><path fill="url(#kpiIcoA6)" d="M16 24a8 8 0 1 0 0-16a8 8 0 0 0 0 16" /><defs><linearGradient id="kpiIcoA1" x1="28.474" x2="32.783" y1="28.595" y2="40.65" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#9c6cfe" /><stop offset="1" stop-color="#7a41dc" /></linearGradient><linearGradient id="kpiIcoA3" x1="9.183" x2="13.986" y1="28.861" y2="43.103" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#bd96ff" /><stop offset="1" stop-color="#9c6cfe" /></linearGradient><linearGradient id="kpiIcoA4" x1="16" x2="22.748" y1="25.333" y2="48.75" gradientUnits="userSpaceOnUse"><stop stop-color="#885edb" stop-opacity="0" /><stop offset="1" stop-color="#e362f8" /></linearGradient><linearGradient id="kpiIcoA5" x1="30.854" x2="36.969" y1="13.595" y2="23.36" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#9c6cfe" /><stop offset="1" stop-color="#7a41dc" /></linearGradient><linearGradient id="kpiIcoA6" x1="11.805" x2="19.959" y1="10.127" y2="23.147" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#bd96ff" /><stop offset="1" stop-color="#9c6cfe" /></linearGradient><radialGradient id="kpiIcoA2" cx="0" cy="0" r="1" gradientTransform="matrix(13.83637 -1.75 1.7749 14.0332 20.808 33)" gradientUnits="userSpaceOnUse"><stop offset=".392" stop-color="#3b148a" /><stop offset="1" stop-color="#3b148a" stop-opacity="0" /></radialGradient></defs></g></svg>',
+  rate: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><g fill="none"><path fill="url(#kpiIcoC1)" d="M5 17a3 3 0 0 0-3 3v.15S2 26 10.5 26s8.5-5.85 8.5-5.85V20a3 3 0 0 0-3-3z" /><path fill="url(#kpiIcoC2)" d="M5 17a3 3 0 0 0-3 3v.15S2 26 10.5 26s8.5-5.85 8.5-5.85V20a3 3 0 0 0-3-3z" /><path fill="url(#kpiIcoC3)" fill-opacity=".5" d="M5 17a3 3 0 0 0-3 3v.15S2 26 10.5 26s8.5-5.85 8.5-5.85V20a3 3 0 0 0-3-3z" /><path fill="url(#kpiIcoC4)" d="M23 15a4 4 0 1 0 0-8a4 4 0 0 0 0 8" /><path fill="url(#kpiIcoC5)" d="M10.5 15a5.5 5.5 0 1 0 0-11a5.5 5.5 0 0 0 0 11" /><path fill="#212121" fill-rule="evenodd" d="M23 31.5a7.5 7.5 0 1 0 0-15a7.5 7.5 0 0 0 0 15" clip-rule="evenodd" /><path fill="url(#kpiIcoC6)" fill-rule="evenodd" d="M23 31.5a7.5 7.5 0 1 0 0-15a7.5 7.5 0 0 0 0 15" clip-rule="evenodd" /><path fill="#242424" fill-rule="evenodd" d="M24.75 24h3a.75.75 0 0 0 .75-.75v-2.5a.75.75 0 0 0-1.5 0v1.186a4.5 4.5 0 0 0-6.795-1.463c-.431.342-.289.985.204 1.232c.256.127.56.068.79-.104a3 3 0 0 1 4.4.899h-.849a.75.75 0 0 0 0 1.5m.772 3.727c.392-.265.389-.816.054-1.151c-.251-.251-.656-.244-.954-.052a3 3 0 0 1-4.22-1.024h.848a.75.75 0 0 0 0-1.5h-3a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 0 1.5 0v-1.186a4.5 4.5 0 0 0 6.522 1.663" clip-rule="evenodd" /><path fill="url(#kpiIcoC7)" fill-rule="evenodd" d="M24.75 24h3a.75.75 0 0 0 .75-.75v-2.5a.75.75 0 0 0-1.5 0v1.186a4.5 4.5 0 0 0-6.795-1.463c-.431.342-.289.985.204 1.232c.256.127.56.068.79-.104a3 3 0 0 1 4.4.899h-.849a.75.75 0 0 0 0 1.5m.772 3.727c.392-.265.389-.816.054-1.151c-.251-.251-.656-.244-.954-.052a3 3 0 0 1-4.22-1.024h.848a.75.75 0 0 0 0-1.5h-3a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 0 1.5 0v-1.186a4.5 4.5 0 0 0 6.522 1.663" clip-rule="evenodd" /><defs><linearGradient id="kpiIcoC1" x1="6.043" x2="9.088" y1="18.196" y2="27.383" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#bd96ff" /><stop offset="1" stop-color="#9c6cfe" /></linearGradient><linearGradient id="kpiIcoC2" x1="10.5" x2="14.776" y1="15.929" y2="31.021" gradientUnits="userSpaceOnUse"><stop stop-color="#885edb" stop-opacity="0" /><stop offset="1" stop-color="#e362f8" /></linearGradient><linearGradient id="kpiIcoC4" x1="20.902" x2="24.98" y1="8.063" y2="14.574" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#9c6cfe" /><stop offset="1" stop-color="#7a41dc" /></linearGradient><linearGradient id="kpiIcoC5" x1="7.616" x2="13.222" y1="5.462" y2="14.414" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#bd96ff" /><stop offset="1" stop-color="#9c6cfe" /></linearGradient><linearGradient id="kpiIcoC6" x1="16.036" x2="26.387" y1="19.313" y2="30.068" gradientUnits="userSpaceOnUse"><stop stop-color="#52d17c" /><stop offset="1" stop-color="#22918b" /></linearGradient><linearGradient id="kpiIcoC7" x1="17.5" x2="22.566" y1="18.75" y2="29.939" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" /><stop offset="1" stop-color="#e3ffd9" /></linearGradient><radialGradient id="kpiIcoC3" cx="0" cy="0" r="1" gradientTransform="rotate(66.949 -6.513 27.13)scale(7.2969 7.6767)" gradientUnits="userSpaceOnUse"><stop stop-color="#30116e" /><stop offset=".268" stop-color="#30116e" stop-opacity=".812" /><stop offset="1" stop-color="#30116e" stop-opacity="0" /></radialGradient></defs></g></svg>',
+  unused: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28"><g fill="none"><path fill="url(#kpiIcoD1)" d="M2 17.25A2.25 2.25 0 0 1 4.25 15h10.5A2.25 2.25 0 0 1 17 17.25v.5S17 23 9.5 23S2 17.75 2 17.75z" /><path fill="url(#kpiIcoD2)" d="M2 17.25A2.25 2.25 0 0 1 4.25 15h10.5A2.25 2.25 0 0 1 17 17.25v.5S17 23 9.5 23S2 17.75 2 17.75z" /><path fill="url(#kpiIcoD3)" fill-opacity=".5" d="M2 17.25A2.25 2.25 0 0 1 4.25 15h10.5A2.25 2.25 0 0 1 17 17.25v.5S17 23 9.5 23S2 17.75 2 17.75z" /><path fill="url(#kpiIcoD4)" d="M23.5 9.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0" /><path fill="url(#kpiIcoD5)" d="M9.5 13a4.5 4.5 0 1 0 0-9a4.5 4.5 0 0 0 0 9" /><path fill="url(#kpiIcoD6)" d="M27 20.5a6.5 6.5 0 1 1-13 0a6.5 6.5 0 0 1 13 0" /><path fill="#fff" fill-rule="evenodd" d="M20.5 16a.5.5 0 0 1 .5.5V20h3.5a.5.5 0 0 1 0 1H21v3.5a.5.5 0 0 1-1 0V21h-3.5a.5.5 0 0 1 0-1H20v-3.5a.5.5 0 0 1 .5-.5" clip-rule="evenodd" /><defs><linearGradient id="kpiIcoD1" x1="5.567" x2="8.291" y1="16.064" y2="24.217" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#bd96ff" /><stop offset="1" stop-color="#9c6cfe" /></linearGradient><linearGradient id="kpiIcoD2" x1="9.5" x2="13.325" y1="14.048" y2="27.448" gradientUnits="userSpaceOnUse"><stop stop-color="#885edb" stop-opacity="0" /><stop offset="1" stop-color="#e362f8" /></linearGradient><linearGradient id="kpiIcoD4" x1="18.165" x2="21.732" y1="6.931" y2="12.627" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#9c6cfe" /><stop offset="1" stop-color="#7a41dc" /></linearGradient><linearGradient id="kpiIcoD5" x1="7.14" x2="11.727" y1="5.196" y2="12.52" gradientUnits="userSpaceOnUse"><stop offset=".125" stop-color="#bd96ff" /><stop offset="1" stop-color="#9c6cfe" /></linearGradient><linearGradient id="kpiIcoD6" x1="14.464" x2="23.436" y1="16.438" y2="25.759" gradientUnits="userSpaceOnUse"><stop stop-color="#52d17c" /><stop offset="1" stop-color="#22918b" /></linearGradient><radialGradient id="kpiIcoD3" cx="0" cy="0" r="1" gradientTransform="matrix(3 6 -6.28306 3.14154 18 20.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#30116e" /><stop offset=".268" stop-color="#30116e" stop-opacity=".812" /><stop offset="1" stop-color="#30116e" stop-opacity="0" /></radialGradient></defs></g></svg>',
+  shortage: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><g fill="none"><path fill="currentColor" stroke="currentColor" stroke-linejoin="round" stroke-width="4" d="M19 20a7 7 0 1 0 0-14a7 7 0 0 0 0 14Z" /><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M30 35h12m-15-7h-8.2c-4.48 0-6.72 0-8.432.872a8 8 0 0 0-3.496 3.496C6 34.08 6 36.32 6 40.8V42h21" /></g></svg>'
 };
 
 function fmtSettleDiff(budget, settle) {
@@ -3751,10 +3782,13 @@ function renderSettlementTotalRow(rows) {
 }
 
 function settleKpiCard(tone, iconKey, label, valueHtml, subHtml) {
-  return '<div class="settle-kpi-card tone-' + tone + '">'
-    + '<div class="kpi-top-row"><div class="icon-badge">' + SETTLE_KPI_ICONS[iconKey] + '</div><div class="label">' + label + '</div></div>'
+  var iconCls = iconKey === 'shortage' ? ' icon-shortage' : '';
+  return '<div class="settle-kpi-card">'
+    + '<div class="kpi-body"><div class="label">' + label + '</div>'
     + '<div class="value">' + valueHtml + '</div>'
     + (subHtml ? '<div class="sub">' + subHtml + '</div>' : '')
+    + '</div>'
+    + '<div class="icon-badge' + iconCls + '">' + SETTLE_KPI_ICONS[iconKey] + '</div>'
     + '</div>';
 }
 
