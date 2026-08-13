@@ -315,17 +315,19 @@ table.fc-summary td .dot {
   background-color: #ffffff;
   box-shadow:
     -3px -3px 8px rgba(255,255,255,.7),
-    5px 5px 12px rgba(163,177,198,.35);
+    5px 5px 12px rgba(163,177,198,.35),
+    inset -3px -3px 8px rgba(255,255,255,.7),
+    inset 5px 5px 12px rgba(163,177,198,.25);
   min-width: 280px;
   border-radius: 16px;
   display: flex; flex-direction: column; gap: 0;
 }
-/* 카드 배경의 흐릿한 블롭 (정적) */
+/* 카드 배경의 블롭: 색상 제거 */
 .dept-stat-blob {
   position: absolute; z-index: 1; top: 50%; left: 50%;
   width: 7rem; height: 7rem; border-radius: 50%;
-  background-color: #7C5CD6;
-  opacity: .6;
+  background-color: transparent;
+  opacity: 0;
   filter: blur(18px);
   transform: translate(-100%, -100%);
 }
@@ -349,8 +351,60 @@ table.fc-summary td .dot {
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   color: #fff; font-size: 15px; font-weight: 800; line-height: 1; text-align: center;
 }
+/* 부서명 앞 체크박스 토글 아이콘 */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+.container input {
+  position: relative;
+  top: -2px;
+  opacity: 1;
+  -webkit-appearance: none;
+  cursor: pointer;
+  height: 44px;
+  width: 44px;
+  box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+  10px 10px 15px rgba(0,0,70,0.12);
+  border-radius: 50%;
+  border: 7px solid #ececec;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: .5s;
+}
+.container input::after {
+  transition: .5s;
+  font-family: monospace;
+  content: '';
+  color: #7a7a7a;
+  font-size: 25px;
+  left: 0.45em;
+  top: 0.25em;
+  width: 0.25em;
+  height: 0.5em;
+  border: solid #7a7a7a;
+  border-width: 0 0.15em 0.15em 0;
+  transform: rotate(45deg);
+}
+.container input:checked {
+  box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
+  10px 10px 15px rgba(70,70,70,0.12),
+  inset -10px -10px 15px rgba(255,255,255,0.5),
+  inset 10px 10px 15px rgba(70,70,70,0.12);
+  transition: .5s;
+}
+.container input:checked::after {
+  transition: .5s;
+  border: solid var(--accent);
+  border-width: 0 0.15em 0.15em 0;
+  transform: rotate(45deg);
+}
 .dept-stat-title-text {
-  margin: 0 0 0 0.4rem; color: var(--navy); font-size: 23px; font-weight: 800; flex: 1; min-width: 0;
+  margin: 0 0 0 0.4rem; color: var(--navy); font-size: 23px; font-weight: 500; flex: 1; min-width: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
@@ -358,18 +412,17 @@ table.fc-summary td .dot {
 .dept-stat-percent svg { width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
 .dept-stat-percent.down { color: var(--accent); }
 .dept-stat-percent.down svg { transform: rotate(180deg); }
-.dept-stat-data { display: flex; flex-direction: column; justify-content: flex-start; margin-top: 0.45rem; margin-left: 2.4rem; }
+.dept-stat-data { display: flex; flex-direction: column; justify-content: flex-start; margin-top: 0.05rem; margin-left: 4.05rem; }
 .dept-stat-value {
-  margin-top: 0; margin-bottom: 0.2rem; color: var(--text); font-size: 1.35rem; line-height: 1.1; font-weight: 800; text-align: left;
+  margin-top: 0; margin-bottom: 0.2rem; color: var(--text); font-size: 1.35rem; line-height: 1.1; font-weight: 700; text-align: right;
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 .dept-stat-range {
-  position: relative; background-color: #eef1f6;
-  box-shadow: -2px -2px 4px rgba(255,255,255,1), 2px 2px 4px rgba(163,177,198,.4);
-  width: 100%; height: 0.4rem; border-radius: 0.2rem;
-  margin-left: -1.2rem; width: calc(100% + 1.2rem);
+  position: relative; background-color: transparent;
+  box-shadow: none;
+  width: 100%; height: 4px; border-radius: 2px;
 }
-.dept-stat-fill { position: absolute; top: 0; left: 0; background-color: var(--accent); width: 0%; height: 100%; border-radius: 0.2rem; }
+.dept-stat-fill { position: absolute; top: 0; left: 0; background-color: var(--accent); width: 0%; height: 100%; border-radius: 2px; }
 
 .dept-select { position: relative; }
 
@@ -1268,7 +1321,10 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
           <div class="dept-stat-blob"></div>
           <div class="dept-stat-content">
             <div class="dept-stat-title">
-              <span class="dept-stat-icon" id="dept-select-icon">문</span>
+              <label class="container" id="dept-select-icon">
+                <input checked="checked" type="checkbox">
+                <div class="checkmark"></div>
+              </label>
               <p class="dept-stat-title-text" id="dept-select-label">문화예술과</p>
               <p class="dept-stat-percent" id="dept-select-pct">
                 <svg viewBox="0 0 1792 1792" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path></svg>
@@ -1516,7 +1572,6 @@ function renderDeptTabs() {
   if (!labelEl || !menuEl) return;
 
   labelEl.textContent = state.dept;
-  iconEl.textContent = state.dept.charAt(0);
 
   var amtEl = document.getElementById('dept-select-amt');
   var pctWrapEl = document.getElementById('dept-select-pct');
@@ -1546,12 +1601,9 @@ function renderDeptTabs() {
       }
     }
 
-    // 같은 재원 유형 전체(모든 부서) 대비 이 부서의 비중
+    // 하단 라인은 데이터 연동 없는 디자인 요소로 고정
     if (fillEl) {
-      var instTotal = state.businesses.filter(function (b) { return b.fundType === state.fund; })
-        .reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
-      var fillPct = instTotal ? Math.min(100, Math.round((total / instTotal) * 1000) / 10) : 0;
-      fillEl.style.width = fillPct + '%';
+      fillEl.style.width = '100%';
     }
   }
 
@@ -2064,7 +2116,7 @@ function fmtPct(amt26, amt25) {
   return Math.round(d / amt25 * 100) + '%';
 }
 
-var TREE_COL_LABELS = ['부서·정책·단위·세부사업·편성목·통계목·부기명', '산출기초', '2026년도', '2025년도', '비교증감', '증감률'];
+var TREE_COL_LABELS = ['부서·정책·단위·세부사업·편성목·통계목·부기명', '산출기초', '2026년도 예산액', '2025년도 예산액', '비교증감', '증감률'];
 var DEFAULT_TREE_COL_WIDTHS = [34, 18, 13, 13, 12, 10];
 function loadTreeColWidths() {
   try {
