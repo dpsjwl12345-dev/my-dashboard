@@ -258,6 +258,69 @@ table.fc-summary td .dot {
 .chip.operating, .bg-operating { background-color: #9E75FF !important; }
 .chip.asset, .bg-asset { background-color: #FF7A85 !important; }
 
+/* ===== 기관 현황 화면 v2 (직급별/부서별 정현원, 수입지출총괄, 집행실적, 예산편성현황) ===== */
+.ov2-org-sub { font-size: 15px; color: var(--text-muted); font-weight: 600; margin: 0 0 14px; }
+.ov2-org-shortage { font-size: 14px; color: var(--danger); font-weight: 700; margin: 12px 2px 0; }
+.ov2-section-sub { font-size: 18px; color: var(--text-muted); font-weight: 700; margin-left: 4px; }
+.ov2-outside-detail { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-weight: 300; }
+.ov2-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; align-items: stretch; }
+.ov2-two-col .summary-box { margin-bottom: 0; }
+@media (max-width: 980px) { .ov2-two-col { grid-template-columns: 1fr; } }
+
+.ov2-pbar-list { display: flex; flex-direction: column; gap: 10px; }
+.ov2-pbar-row { display: grid; grid-template-columns: 92px 1fr 78px 54px; align-items: center; gap: 10px; }
+.ov2-pbar-label { font-size: 14px; color: var(--text-muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov2-pbar-track { position: relative; height: 14px; background: var(--bg-hover); border-radius: 999px; overflow: hidden; }
+.ov2-pbar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#5B8DFF,#8B5CF6); }
+.ov2-pbar-fill.na { background: repeating-linear-gradient(135deg, var(--border-strong), var(--border-strong) 4px, transparent 4px, transparent 8px); }
+.ov2-pbar-val { font-size: 16px; color: var(--text); font-weight: 800; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ov2-pbar-diff { font-size: 15px; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ov2-pbar-diff.up { color: var(--danger); }
+.ov2-pbar-diff.down { color: var(--accent); }
+.ov2-pbar-diff.zero { color: var(--text-soft); }
+.ov2-pbar-diff.na { color: var(--text-soft); }
+.ov2-pbar-note { font-size: 12.5px; color: var(--text-soft); margin: 12px 2px 0; }
+
+.ov2-exec-wrap { display: flex; gap: 22px; align-items: flex-end; }
+.ov2-exec-chart { flex: 1 1 auto; display: flex; justify-content: space-around; align-items: flex-end; height: 190px; padding-top: 22px; border-bottom: 1px solid var(--border); }
+.ov2-exec-group { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+.ov2-exec-bars { display: flex; align-items: flex-end; gap: 6px; height: 160px; }
+.ov2-exec-bar { width: 26px; border-radius: 6px 6px 0 0; position: relative; display: flex; justify-content: center; }
+.ov2-exec-bar.prev { background: #C9CEDA; }
+.ov2-exec-bar.curr { background: linear-gradient(180deg,#5B8DFF,#3457D5); }
+.ov2-exec-bar.curr.na { background: var(--bg-hover); }
+.ov2-exec-bar.curr.na .ov2-exec-bar-val { color: var(--text-soft); }
+.ov2-exec-bar-val { position: absolute; top: -20px; font-size: 12px; font-weight: 800; color: var(--text-muted); white-space: nowrap; }
+.ov2-exec-bar.curr .ov2-exec-bar-val { color: var(--accent-dark); }
+.ov2-exec-label { font-size: 13.5px; font-weight: 700; color: var(--text); }
+.ov2-exec-legend { display: flex; gap: 16px; justify-content: center; margin: 14px 0 0; font-size: 12.5px; color: var(--text-muted); }
+.ov2-exec-legend .item { display: flex; align-items: center; gap: 5px; }
+.ov2-exec-legend .chip { width: 10px; height: 10px; border-radius: 3px; }
+.ov2-exec-legend .chip.prev { background: #C9CEDA; }
+.ov2-exec-legend .chip.curr { background: linear-gradient(135deg,#5B8DFF,#3457D5); }
+
+.ov2-kpi-note { font-size: 13px; color: var(--text-soft); margin: 6px 2px 0; }
+table.summary.ov2-budget-fmt tr.total td { font-weight: 800; }
+.ov2-unit-note { font-size: 11px; font-weight: 300; color: var(--text-soft); text-align: right; margin: 0 2px 4px; }
+.ov2-subtable-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin: 18px 2px 8px; }
+
+.ov2-vbar-list { display: flex; gap: 14px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; }
+.ov2-vbar-col { display: flex; flex-direction: column; align-items: center; flex: 1 1 0; min-width: 78px; }
+.ov2-vbar-head { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-bottom: 8px; text-align: center; }
+.ov2-vbar-label { font-size: 13px; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+.ov2-vbar-val { font-size: 15.5px; color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ov2-vbar-diff { font-size: 13.5px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ov2-vbar-diff.up { color: var(--danger); }
+.ov2-vbar-diff.down { color: var(--accent); }
+.ov2-vbar-diff.zero { color: var(--text-soft); }
+.ov2-vbar-diff.na { color: var(--text-soft); }
+.ov2-vbar-stack { display: flex; flex-direction: column; align-items: stretch; width: 40px; }
+.ov2-vbar-track { position: relative; width: 40px; background: var(--bg-hover); border-radius: 10px; overflow: hidden; display: flex; align-items: flex-end; }
+.ov2-vbar-track.has-over { border-radius: 0 0 10px 10px; }
+.ov2-vbar-fill { width: 100%; border-radius: 10px 10px 0 0; background: linear-gradient(180deg, rgba(34,211,238,.55), rgba(91,141,255,.55)); border: 1px solid rgba(91,141,255,.35); border-bottom: none; box-sizing: border-box; position: relative; z-index: 1; }
+.ov2-vbar-track.has-over .ov2-vbar-fill { border-radius: 0; border-top: none; }
+.ov2-vbar-over { width: 100%; border-radius: 10px 10px 0 0; background: linear-gradient(180deg, rgba(246,173,85,.85), rgba(214,69,90,.85)); border: 1px solid rgba(214,69,90,.5); border-bottom: none; box-sizing: border-box; }
+
 /* 조직별 예산 가로 탭 - Uiverse(Spacious74) radio-inputs 폴더탭 구조를 그대로 이식 */
 .org-tabs {
   position: relative;
@@ -1302,15 +1365,19 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
         <span id="overview-topbar-logo-text" style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-0.01em;"></span>
       </div>
 
-      <div class="section-title-row">
-        <h2 class="section-heading section-heading-lg" id="overview-summary-title">총괄</h2>
-      </div>
-      <div id="overview-summary-slot"></div>
+      <div id="overview-legacy-blocks">
+        <div class="section-title-row">
+          <h2 class="section-heading section-heading-lg" id="overview-summary-title">총괄</h2>
+        </div>
+        <div id="overview-summary-slot"></div>
 
-      <div class="section-title-row">
-        <h2 class="section-heading section-heading-lg">부서별 현황</h2>
+        <div class="section-title-row">
+          <h2 class="section-heading section-heading-lg">부서별 현황</h2>
+        </div>
+        <div id="overview-dept-slot"></div>
       </div>
-      <div id="overview-dept-slot"></div>
+
+      <div id="overview-v2-slot"></div>
     </section>
 
     <section class="panel" id="panel-hscf">
@@ -1770,7 +1837,18 @@ var DONUT_COLOR_STOPS = {
   '도서구입': ['#22D3EE', '#0891B2'],
   '출연금': ['#5B8DFF', '#8B5CF6'],
   '보조금': ['#FDBA74', '#FB923C'],
-  '자체수익': ['#34D399', '#10B981']
+  '자체수익': ['#34D399', '#10B981'],
+  '운영경비': ['#C084FC', '#F472B6'],
+  '사업비': ['#FDBA74', '#FB923C'],
+  '대행사업수익': ['#5B8DFF', '#8B5CF6'],
+  '자치단체출연금수익': ['#34D399', '#10B981'],
+  '국비·자치단체보조금수익': ['#FDBA74', '#FB923C'],
+  '순세계잉여금': ['#22D3EE', '#0891B2'],
+  '기부금수익': ['#F472B6', '#EC4899'],
+  '사업수익': ['#5B8DFF', '#8B5CF6'],
+  '자본적수입': ['#34D399', '#10B981'],
+  '자체수입금': ['#22D3EE', '#0891B2'],
+  '도시보조금': ['#FDBA74', '#FB923C']
 };
 function donutStops(label) { return DONUT_COLOR_STOPS[label] || ['#9AA3B4', '#64748B']; }
 function donutGradientCss(label) {
@@ -1778,13 +1856,15 @@ function donutGradientCss(label) {
   return 'linear-gradient(135deg,' + s[0] + ',' + s[1] + ')';
 }
 
+var _donutSvgSeq = 0;
 function buildDonutSvg(rows, total26) {
   var R = 64, CX = 100, CY = 100, STROKE = 42;
+  var uid = 'd' + (_donutSvgSeq++) + '_';
   var circumference = 2 * Math.PI * R;
   var offset = 0;
   var segsHtml = '';
   var labelsHtml = '';
-  var defsHtml = '<filter id="donutGlow" x="-50%" y="-50%" width="200%" height="200%">'
+  var defsHtml = '<filter id="' + uid + 'donutGlow" x="-50%" y="-50%" width="200%" height="200%">'
     + '<feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#10182E" flood-opacity="0.20"/>'
     + '</filter>';
 
@@ -1821,7 +1901,7 @@ function buildDonutSvg(rows, total26) {
     var vpct = visualPcts[i];
     var len = circumference * vpct / 100;
     var stops = donutStops(r.label);
-    var gid = 'donutGrad' + i;
+    var gid = uid + 'donutGrad' + i;
     defsHtml += '<linearGradient id="' + gid + '" x1="0%" y1="0%" x2="100%" y2="100%">'
       + '<stop offset="0%" stop-color="' + stops[0] + '"/>'
       + '<stop offset="100%" stop-color="' + stops[1] + '"/>'
@@ -1830,7 +1910,7 @@ function buildDonutSvg(rows, total26) {
     segsHtml += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '" fill="none" stroke="url(#' + gid + ')" stroke-width="' + STROKE
       + '" stroke-linecap="round"'
       + ' stroke-dasharray="' + Math.max(len - gap, 0).toFixed(2) + ' ' + (circumference - len + gap).toFixed(2) + '"'
-      + ' stroke-dashoffset="' + (-offset).toFixed(2) + '" transform="rotate(-90 ' + CX + ' ' + CY + ')" filter="url(#donutGlow)"></circle>';
+      + ' stroke-dashoffset="' + (-offset).toFixed(2) + '" transform="rotate(-90 ' + CX + ' ' + CY + ')" filter="url(#' + uid + 'donutGlow)"></circle>';
     var midAngle = (offset + len / 2) / circumference * 360 - 90;
     var rad = midAngle * Math.PI / 180;
     if (vpct > 0) {
@@ -1932,6 +2012,496 @@ function computeInstDeptBreakdown() {
   return order.map(function (d) { return { dept: d, y26: byDept[d].y26, y25: byDept[d].y25 }; });
 }
 
+// ============================================
+// 화성시문화관광재단 "기관 현황" 화면 v2 데이터 (수기 입력, 2026년 기준)
+// ============================================
+var OV2_DATA = {
+hscf: {
+  name: '화성시문화관광재단',
+  org: {
+    subtitle: '6본부 · 24팀 · 9관',
+    cards: [
+      { tone: 'blue', iconKey: 'budget', label: '정원', value: '408명' },
+      { tone: 'purple', iconKey: 'settle', label: '현원(정원 내)', value: '386명' },
+      { tone: 'mint', iconKey: 'rate', label: '정원 내 충원율', value: '94.6%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:94.6%;"></div></div>' },
+      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '16명', extra: '<span class="ov2-outside-detail">기간제근로자(휴직대체)</span>' }
+    ],
+    note: '⚠️ 정원 내 부족 인원: 22명 · 현원(총계) 402명'
+  },
+  personnelGroups: [
+    { title: '직종별 정·현원', rows: [
+      { label: '임원(대표이사)', current: 1, capacity: 1, diff: 0 },
+      { label: '일반직(전문계약직 포함)', current: 259, capacity: 273, diff: -14 },
+      { label: '무기계약직', current: 13, capacity: 14, diff: -1 },
+      { label: '공무직', current: 113, capacity: 120, diff: -7 }
+    ] },
+    { title: '일반직 직급별 현황', rows: [
+      { label: '2급', current: 0, capacity: 6, diff: -6 },
+      { label: '3급', current: 32, capacity: 34, diff: -2 },
+      { label: '4급', current: 41, capacity: 46, diff: -5 },
+      { label: '5급', current: 74, capacity: 79, diff: -5 },
+      { label: '6급', current: 104, capacity: 108, diff: -4 },
+      { label: '전문계약직', current: 6, capacity: null, diff: null },
+      { label: '체육직', current: 2, capacity: null, diff: null }
+    ], note: '전문계약직·체육직은 별도 정원 없이 현원만 운영' }
+  ],
+  byDept: [
+    { label: '직속', current: 11, capacity: 11, diff: 0 },
+    { label: '경영기획본부', current: 77, capacity: 73, diff: 4 },
+    { label: '예술의전당본부', current: 24, capacity: 33, diff: -9 },
+    { label: '예술진흥본부', current: 38, capacity: 47, diff: -9 },
+    { label: '문화진흥본부', current: 30, capacity: 32, diff: -2 },
+    { label: '관광진흥본부', current: 13, capacity: 17, diff: -4 },
+    { label: '도서관본부', current: 190, capacity: 195, diff: -5 }
+  ],
+  revenueItems: [
+    { label: '대행사업수익', y26: 48069238, y25: 44574745 },
+    { label: '자치단체출연금수익', y26: 14382623, y25: 12849409 },
+    { label: '순세계잉여금', y26: 2813371, y25: 3035801 },
+    { label: '국비·자치단체보조금수익', y26: 483779, y25: 665900 },
+    { label: '기부금수익', y26: 100000, y25: 114000 }
+  ],
+  budgetCompare: [
+    { label: '인건비', y26: 22785497, y25: 22215443 },
+    { label: '운영경비', y26: 7034082, y25: 5633501 },
+    { label: '사업비', y26: 36029432, y25: 33390911 }
+  ],
+  execution: {
+    hasCompare: true,
+    rows: [
+      { label: '총계', b25: 61239855, e25: 53926930, r25: 88.1, b26: 65849011, e26: 19744074, r26: 30.0 },
+      { label: '인건비', b25: 22215443, e25: 19251363, r25: 86.7, b26: 22785497, e26: 6955581, r26: 30.5 },
+      { label: '운영경비', b25: 5633501, e25: 4137059, r25: 73.4, b26: 7034082, e26: 1314837, r26: 18.7 },
+      { label: '사업비', b25: 33390911, e25: 30538508, r25: 91.5, b26: 36029432, e26: 11473656, r26: 31.8 }
+    ]
+  }
+},
+corp: {
+  name: '화성시도시공사',
+  org: {
+    subtitle: '2 부사장 · 5본부 · 3실 · 9처 · 1단 · 47부',
+    cards: [
+      { tone: 'blue', iconKey: 'budget', label: '정원', value: '907명' },
+      { tone: 'purple', iconKey: 'settle', label: '현원', value: '787명' },
+      { tone: 'mint', iconKey: 'rate', label: '충원율', value: '86.8%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:86.8%;"></div></div>' },
+      { tone: 'orange', iconKey: 'unused', label: '부족 인원', value: '120명' }
+    ],
+    note: null
+  },
+  personnelGroups: [
+    { title: '일반직 직급별 현황', rows: [
+      { label: '1급(특급)', current: 5, capacity: 4, diff: 1 },
+      { label: '2급(가급)', current: 11, capacity: 11, diff: 0 },
+      { label: '3급(나급)', current: 49, capacity: 56, diff: -7 },
+      { label: '4급(다급)', current: 113, capacity: 118, diff: -5 },
+      { label: '5급(라급)', current: 61, capacity: 96, diff: -35 },
+      { label: '6급(마급)', current: 55, capacity: 26, diff: 29 }
+    ] }
+  ],
+  byDept: [
+    { label: '안전감사실', current: 11, capacity: 14, diff: -3 },
+    { label: '경영전략본부', current: 72, capacity: 70, diff: 2 },
+    { label: '도시건설본부', current: 41, capacity: 49, diff: -8 },
+    { label: '시설관리본부', current: 195, capacity: 222, diff: -27 },
+    { label: '추모주차운영본부', current: 191, capacity: 233, diff: -42 },
+    { label: '교통사업본부', current: 259, capacity: 313, diff: -54 }
+  ],
+  revenueItems: [
+    { label: '사업수익', y26: 127973248, y25: 182070127 },
+    { label: '자본적수입', y26: 63095014, y25: 6811449 }
+  ],
+  revenueDetail: [
+    { label: '대행사업수익', y26: 116463923, y25: 173084807 },
+    { label: '직접관리비수익', y26: 109548402, y25: 114660823 },
+    { label: '대행사업전입금', y26: 5057321, y25: 57579984 },
+    { label: '대행사업수수료', y26: 1858200, y25: 844000 },
+    { label: '용지 및 주택판매수익', y26: 1041670, y25: 900000 },
+    { label: '임대사업수익', y26: 1968000, y25: 2317320 },
+    { label: '기타영업수익', y26: 944400, y25: 800000 },
+    { label: '이자수익', y26: 3000000, y25: 900000 },
+    { label: '기타영업외수익', y26: 4555255, y25: 4068000 },
+    { label: '보증금회수입', y26: 552504, y25: 1300000 },
+    { label: '자본금수익', y26: 40000000, y25: 0 },
+    { label: '자치단체보조금수입', y26: 6280226, y25: 2780211 },
+    { label: '기타자본적수입', y26: 16262284, y25: 2531238 }
+  ],
+  budgetCompare: [
+    { label: '인건비', y26: 47007945, y25: 45928227 },
+    { label: '운영경비', y26: 99002996, y25: 85373365 },
+    { label: '사업비', y26: 5057321, y25: 57579984 }
+  ],
+  execution: {
+    hasCompare: false,
+    rows: [
+      { label: '총계', b25: 188881576, e25: 156470580, r25: 83 },
+      { label: '인건비', b25: 45928226, e25: 43157255, r25: 94 },
+      { label: '운영경비', b25: 85373366, e25: 77640365, r25: 91 },
+      { label: '사업비', b25: 57579984, e25: 35672960, r25: 62 }
+    ]
+  },
+  executionByFund: [
+    { label: 'A. 전출금', budget: 15212553, exec: 14235047, rate: 94 },
+    { label: 'B. 위탁사업비', budget: 162908465, exec: 134302928, rate: 82 },
+    { label: 'C. 기타재원', budget: 10760558, exec: 7932605, rate: 74 }
+  ]
+},
+talent: {
+  name: '화성시인재육성재단',
+  org: {
+    subtitle: '5본부 · 1원 · 1전문위원 · 22팀',
+    cards: [
+      { tone: 'blue', iconKey: 'budget', label: '정원', value: '170명' },
+      { tone: 'purple', iconKey: 'settle', label: '현원', value: '164명' },
+      { tone: 'mint', iconKey: 'rate', label: '충원율', value: '96.5%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:96.5%;"></div></div>' },
+      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '32명', extra: '<span class="ov2-outside-detail">기간제근로자</span>' }
+    ],
+    note: '⚠️ 정원 내 부족 인원: 6명'
+  },
+  personnelGroups: [
+    { title: '정원 내 인력', rows: [
+      { label: '기관장', current: 1, capacity: 1, diff: 0 },
+      { label: '일반직', current: 133, capacity: 139, diff: -6 },
+      { label: '공무직', current: 30, capacity: 30, diff: 0 }
+    ] },
+    { title: '직급별 현황', rows: [
+      { label: '2급', current: 5, capacity: 6, diff: -1 },
+      { label: '3급', current: 16, capacity: 22, diff: -6 },
+      { label: '4급', current: 25, capacity: 33, diff: -8 },
+      { label: '5급', current: 44, capacity: 35, diff: 9 },
+      { label: '6급', current: 43, capacity: 43, diff: 0 },
+      { label: '나급', current: 1, capacity: 1, diff: 0 },
+      { label: '다급', current: 0, capacity: 0, diff: 0 },
+      { label: '라급', current: 1, capacity: 1, diff: 0 },
+      { label: '마급', current: 28, capacity: 28, diff: 0 }
+    ], note: '2~6급은 일반직, 나~마급은 계약직 직급 구분' }
+  ],
+  byDept: [
+    { label: '감사팀', current: 3, capacity: 3, diff: 0 },
+    { label: '전문위원', current: 1, capacity: 1, diff: 0 },
+    { label: '경영기획본부', current: 21, capacity: 21, diff: 0 },
+    { label: '장학본부', current: 29, capacity: 29, diff: 0 },
+    { label: '교육협력지원본부', current: 18, capacity: 19, diff: -1 },
+    { label: '다원이음터본부', current: 45, capacity: 48, diff: -3 },
+    { label: '서연송린이음터본부', current: 42, capacity: 43, diff: -1 },
+    { label: '영재교육원', current: 5, capacity: 6, diff: -1 }
+  ],
+  revenueItems: [
+    { label: '사업수익', y26: 26958404, y25: 26005105 },
+    { label: '자본적수입', y26: 3023524, y25: 3136892 }
+  ],
+  revenueDetail: [
+    { label: '대행사업수익', y26: 16346536, y25: 15249150 },
+    { label: '보조금수익', y26: 320860, y25: 718722 },
+    { label: '기부금수익', y26: 132308, y25: 211064 },
+    { label: '자치단체출연금수익', y26: 9871907, y25: 9512650 },
+    { label: '출연금이자수익', y26: 269812, y25: 269186 },
+    { label: '기타영업외수익', y26: 16981, y25: 44333 },
+    { label: '순세계잉여금', y26: 2014249, y25: 2095027 },
+    { label: '기타자본적수입', y26: 1009275, y25: 1041865 }
+  ],
+  budgetCompare: [
+    { label: '인건비', y26: 10396295, y25: 8830152 },
+    { label: '운영경비', y26: 13516210, y25: 10614537 },
+    { label: '사업비', y26: 6069423, y25: 9697307 }
+  ],
+  execution: {
+    hasCompare: false,
+    rows: [
+      { label: '총계', b25: 29141996, e25: 27485421, r25: 94.3 },
+      { label: '인건비', b25: 8830152, e25: 8510236, r25: 96.4 },
+      { label: '운영경비', b25: 10614537, e25: 10254524, r25: 96.6 },
+      { label: '사업비', b25: 9697307, e25: 8720661, r25: 89.9 }
+    ]
+  },
+  executionByFund: [
+    { label: 'A. 출연금', budget: 9480958, exec: 8905201, rate: 93.9 },
+    { label: 'B. 위탁사업비', budget: 16883659, exec: 16452050, rate: 97.4 },
+    { label: 'C. 기타재원', budget: 2777379, exec: 2128169, rate: 76.6 }
+  ]
+},
+fc: {
+  name: '화성FC',
+  org: {
+    subtitle: '1국 · 1단 · 4팀',
+    cards: [
+      { tone: 'blue', iconKey: 'budget', label: '정원', value: '19명' },
+      { tone: 'purple', iconKey: 'settle', label: '현원', value: '16명' },
+      { tone: 'mint', iconKey: 'rate', label: '충원율', value: '84.2%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:84.2%;"></div></div>' },
+      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '4명', extra: '<span class="ov2-outside-detail">기관장·파견공무원·기간제</span>' }
+    ],
+    note: '⚠️ 정원 내 부족 인원: 3명'
+  },
+  personnelGroups: [
+    { title: '정원 내 인력', rows: [
+      { label: '일반직', current: 13, capacity: 19, diff: -6 },
+      { label: '전문계약직', current: 0, capacity: 0, diff: 0 },
+      { label: '일반계약직', current: 3, capacity: 0, diff: 3 },
+      { label: '무기계약직', current: 0, capacity: 0, diff: 0 }
+    ] },
+    { title: '직급별 현황', rows: [
+      { label: '1급', current: 0, capacity: 1, diff: -1 },
+      { label: '2급', current: 0, capacity: 1, diff: -1 },
+      { label: '3급', current: 1, capacity: 4, diff: -3 },
+      { label: '4급', current: 2, capacity: 4, diff: -2 },
+      { label: '5급', current: 4, capacity: 4, diff: 0 },
+      { label: '6급', current: 6, capacity: 5, diff: 1 },
+      { label: '가급', current: 1, capacity: 0, diff: 1 },
+      { label: '나급', current: 2, capacity: 0, diff: 2 },
+      { label: '다급', current: 0, capacity: 0, diff: 0 },
+      { label: '라급', current: 0, capacity: 0, diff: 0 },
+      { label: '마급', current: 0, capacity: 0, diff: 0 }
+    ], note: '1~6급은 일반직, 가~마급은 일반계약직 직급 구분' }
+  ],
+  byDept: [
+    { label: '(재)화성FC', current: 1 },
+    { label: '경영지원팀', current: 4 },
+    { label: '홍보마케팅팀', current: 4 },
+    { label: '선수운영팀', current: 4 },
+    { label: '사회공헌팀', current: 3 }
+  ],
+  revenueItems: [
+    { label: '출연금', y26: 10050353, y25: 6095154 },
+    { label: '자체수입금', y26: 1661037, y25: 1566289 },
+    { label: '도시보조금', y26: 1122000, y25: 1000000 }
+  ],
+  revenueDetail: [
+    { label: '상품 등 판매수익', y26: 160000, y25: 0 },
+    { label: '입장료수익', y26: 300000, y25: 300000 },
+    { label: '기부금수익', y26: 130000, y25: 0 },
+    { label: '광고료수익', y26: 290000, y25: 420000 },
+    { label: '기타영업수익', y26: 20000, y25: 30000 },
+    { label: '예금이자수익', y26: 60000, y25: 40000 },
+    { label: '기타영업외수익', y26: 0, y25: 30000 },
+    { label: '순세계잉여금', y26: 701037, y25: 0 }
+  ],
+  budgetCompare: [
+    { label: '인건비', y26: 1144280, y25: 862000 },
+    { label: '운영경비', y26: 739410, y25: 389000 },
+    { label: '사업비', y26: 10949700, y25: 7410000 }
+  ],
+  execution: {
+    hasCompare: false,
+    rows: [
+      { label: '총계', b25: 8661000, e25: 8027000, r25: 92.7 },
+      { label: '인건비', b25: 862000, e25: 687000, r25: 79.7 },
+      { label: '운영경비', b25: 389000, e25: 303000, r25: 77.9 },
+      { label: '사업비', b25: 7410000, e25: 7037000, r25: 95.0 }
+    ]
+  },
+  executionByFund: [
+    { label: 'A. 출연금', budget: 6095000, exec: 5894000, rate: 96.7 },
+    { label: 'B. 위탁사업비', budget: 0, exec: null, rate: null },
+    { label: 'C. 기타재원', budget: 2566000, exec: 2133000, rate: 83.1 }
+  ]
+}
+};
+
+function ov2DiffCls(d) { return d > 0 ? 'up' : d < 0 ? 'down' : 'zero'; }
+
+function ov2PersonnelVBarList(rows) {
+  var TRACK_PX = 140;
+  var hasAnyCap = rows.some(function (r) { return r.capacity != null && r.capacity > 0; });
+  var maxCurrent = rows.reduce(function (m, r) { return Math.max(m, r.current || 0); }, 1);
+  return '<div class="ov2-vbar-list">' + rows.map(function (r) {
+    var hasCap = r.capacity != null && r.capacity > 0;
+    var pct, basePct, overPct, valTxt, diffTxt, diffCls;
+    if (hasCap) {
+      pct = (r.current / r.capacity) * 100;
+      basePct = Math.min(pct, 100);
+      overPct = Math.max(0, pct - 100);
+      valTxt = r.current + ' / ' + r.capacity;
+      diffTxt = r.diff == null ? '-' : (r.diff > 0 ? '+' + r.diff : String(r.diff));
+      diffCls = r.diff == null ? 'na' : ov2DiffCls(r.diff);
+    } else if (hasAnyCap) {
+      // 이 목록 안에 정원 데이터가 있는 항목이 섞여 있으면, 정원 없는 항목은 대시 표시
+      basePct = 0;
+      overPct = 0;
+      valTxt = r.current + ' / -';
+      diffTxt = r.diff == null ? '-' : (r.diff > 0 ? '+' + r.diff : String(r.diff));
+      diffCls = 'na';
+    } else {
+      // 정원 데이터가 아예 없는 목록(예: 팀별 현원만 있는 경우) → 최댓값 대비 상대 크기로 표시
+      basePct = Math.min((r.current / maxCurrent) * 100, 100);
+      overPct = 0;
+      valTxt = r.current + '명';
+      diffTxt = r.diff == null ? '' : (r.diff > 0 ? '+' + r.diff : String(r.diff));
+      diffCls = r.diff == null ? 'na' : ov2DiffCls(r.diff);
+    }
+    var overPx = Math.round((overPct / 100) * TRACK_PX);
+    var overHtml = overPx > 0 ? '<div class="ov2-vbar-over" style="height:' + overPx + 'px;"></div>' : '';
+    return '<div class="ov2-vbar-col">'
+      + '<div class="ov2-vbar-head"><span class="ov2-vbar-label">' + escapeHtml(r.label) + '</span><span class="ov2-vbar-val">' + valTxt + '</span>' + (diffTxt ? '<span class="ov2-vbar-diff ' + diffCls + '">' + diffTxt + '</span>' : '') + '</div>'
+      + '<div class="ov2-vbar-stack">'
+        + overHtml
+        + '<div class="ov2-vbar-track' + (overPx > 0 ? ' has-over' : '') + '" style="height:' + TRACK_PX + 'px;"><div class="ov2-vbar-fill" style="height:' + basePct + '%;"></div></div>'
+      + '</div>'
+    + '</div>';
+  }).join('') + '</div>';
+}
+
+function ov2PersonnelBarList(rows) {
+  return '<div class="ov2-pbar-list">' + rows.map(function (r) {
+    var hasCap = r.capacity != null && r.capacity > 0;
+    var pct = hasCap ? Math.min(100, Math.round((r.current / r.capacity) * 100)) : (r.current > 0 ? 100 : 0);
+    var fillCls = hasCap ? '' : ' na';
+    var valTxt = (r.capacity != null) ? (r.current + ' / ' + r.capacity) : (r.current + ' / -');
+    var diffTxt = r.diff == null ? '-' : (r.diff > 0 ? '+' + r.diff : String(r.diff));
+    var diffCls = r.diff == null ? 'na' : ov2DiffCls(r.diff);
+    return '<div class="ov2-pbar-row">'
+      + '<div class="ov2-pbar-label">' + escapeHtml(r.label) + '</div>'
+      + '<div class="ov2-pbar-track"><div class="ov2-pbar-fill' + fillCls + '" style="width:' + pct + '%;"></div></div>'
+      + '<div class="ov2-pbar-val">' + valTxt + '</div>'
+      + '<div class="ov2-pbar-diff ' + diffCls + '">' + diffTxt + '</div>'
+      + '</div>';
+  }).join('') + '</div>';
+}
+
+function ov2ExecutionChart(rows, hasCompare) {
+  var bars = rows.map(function (r) {
+    var currBar = hasCompare
+      ? '<div class="ov2-exec-bar curr" style="height:' + Math.max(r.r26, 2) + '%;"><span class="ov2-exec-bar-val">' + r.r26.toFixed(1) + '%</span></div>'
+      : '';
+    return '<div class="ov2-exec-group">'
+      + '<div class="ov2-exec-bars">'
+        + '<div class="ov2-exec-bar prev" style="height:' + Math.max(r.r25, 2) + '%;"><span class="ov2-exec-bar-val">' + r.r25.toFixed(1) + '%</span></div>'
+        + currBar
+      + '</div>'
+      + '<div class="ov2-exec-label">' + escapeHtml(r.label) + '</div>'
+    + '</div>';
+  }).join('');
+  var legend = hasCompare
+    ? '<div class="ov2-exec-legend"><span class="item"><span class="chip prev"></span>2025년 집행률</span><span class="item"><span class="chip curr"></span>2026년 집행률</span></div>'
+    : '<div class="ov2-exec-legend"><span class="item"><span class="chip prev"></span>2025년 집행률</span></div>';
+  return '<div class="ov2-exec-wrap"><div class="ov2-exec-chart">' + bars + '</div></div>' + legend;
+}
+
+function ov2ExecutionTable(rows, hasCompare) {
+  var head = hasCompare
+    ? '<tr><th>구분</th><th>2025 예산액</th><th>2025 집행액</th><th>2025 집행률</th><th>2026 예산액</th><th>2026 집행액</th><th>2026 집행률</th></tr>'
+    : '<tr><th>구분</th><th>2025 최종예산</th><th>2025 집행액</th><th>2025 집행률</th></tr>';
+  var body = rows.map(function (r) {
+    var cells = '<td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.b25) + '</td><td>' + fmtWon(r.e25) + '</td><td>' + r.r25.toFixed(1) + '%</td>';
+    if (hasCompare) cells += '<td>' + fmtWon(r.b26) + '</td><td>' + fmtWon(r.e26) + '</td><td>' + r.r26.toFixed(1) + '%</td>';
+    return '<tr' + (r.label === '총계' ? ' class="total"' : '') + '>' + cells + '</tr>';
+  }).join('');
+  return '<div class="table-scroll"><table class="summary fc-summary"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>';
+}
+
+function ov2ExecutionByFundChart(rows) {
+  var bars = rows.map(function (r) {
+    var barHtml = r.rate == null
+      ? '<div class="ov2-exec-bar curr na" style="height:2%;"><span class="ov2-exec-bar-val">-</span></div>'
+      : '<div class="ov2-exec-bar curr" style="height:' + Math.max(r.rate, 2) + '%;"><span class="ov2-exec-bar-val">' + r.rate.toFixed(0) + '%</span></div>';
+    return '<div class="ov2-exec-group">'
+      + '<div class="ov2-exec-bars">' + barHtml + '</div>'
+      + '<div class="ov2-exec-label">' + escapeHtml(r.label) + '</div>'
+    + '</div>';
+  }).join('');
+  return '<div class="ov2-exec-wrap"><div class="ov2-exec-chart">' + bars + '</div></div>'
+    + '<div class="ov2-exec-legend"><span class="item"><span class="chip curr"></span>집행률</span></div>';
+}
+
+function ov2ExecutionByFundTable(rows) {
+  var body = rows.map(function (r) {
+    var execTxt = r.exec == null ? '-' : fmtWon(r.exec);
+    var rateTxt = r.rate == null ? '-' : r.rate.toFixed(0) + '%';
+    return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.budget) + '</td><td>' + execTxt + '</td><td>' + rateTxt + '</td></tr>';
+  }).join('');
+  return '<div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>재원</th><th>최종예산</th><th>집행액</th><th>집행률</th></tr></thead><tbody>' + body + '</tbody></table></div>';
+}
+
+function renderOv2Overview(instKey) {
+  var d = OV2_DATA[instKey];
+  var legacy = document.getElementById('overview-legacy-blocks');
+  if (legacy) legacy.style.display = 'none';
+  document.getElementById('overview-summary-title').textContent = d.name + ' 총괄';
+
+  // 1) 정현원 현황
+  var cardsHtml = d.org.cards.map(function (c) {
+    return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null);
+  }).join('');
+  var orgHtml = '<div class="section-title-row"><h2 class="section-heading section-heading-lg">정현원 현황</h2></div>'
+    + '<div class="settle-kpi-grid">' + cardsHtml + '</div>'
+    + (d.org.note ? '<p class="ov2-org-shortage">' + d.org.note + '</p>' : '');
+
+  // 2) 직급별 정현원
+  var groupsHtml = d.personnelGroups.map(function (g) {
+    return '<div class="summary-box"><h3>' + escapeHtml(g.title) + '</h3>' + ov2PersonnelBarList(g.rows)
+      + (g.note ? '<p class="ov2-pbar-note">' + escapeHtml(g.note) + '</p>' : '') + '</div>';
+  }).join('');
+  var gradeHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">직급별 정현원</h2></div>'
+    + '<div class="' + (d.personnelGroups.length > 1 ? 'ov2-two-col' : '') + '">' + groupsHtml + '</div>';
+
+  // 3) 소관별 정현원
+  var deptPersonHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">소관별 정현원</h2><span class="ov2-section-sub">' + escapeHtml(d.org.subtitle) + '</span></div>'
+    + '<div class="summary-box">' + ov2PersonnelVBarList(d.byDept) + '</div>';
+
+  // 4) 총수입 총괄 / 총지출 총괄
+  var revTotal26 = d.revenueItems.reduce(function (a, r) { return a + r.y26; }, 0);
+  var revTotal25 = d.revenueItems.reduce(function (a, r) { return a + r.y25; }, 0);
+  var revRowsHtml = d.revenueItems.map(function (r) {
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+  }).join('');
+  var revTotalHtml = '<tr class="total"><td>합계</td><td>' + fmtWon(revTotal26) + '</td><td>' + fmtWon(revTotal25) + '</td>' + diffCellHtml(revTotal25, revTotal26) + '</tr>';
+  var revDetailHtml = '';
+  if (d.revenueDetail) {
+    var revDetailRows = d.revenueDetail.map(function (r) {
+      return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+    }).join('');
+    revDetailHtml = '<p class="ov2-subtable-title">주요 수입 항목</p><div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>수입 항목</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + revDetailRows + '</tbody></table></div>';
+  }
+
+  var expTotal26 = d.budgetCompare.reduce(function (a, r) { return a + r.y26; }, 0);
+  var expTotal25 = d.budgetCompare.reduce(function (a, r) { return a + r.y25; }, 0);
+  var expRowsHtml = d.budgetCompare.map(function (r) {
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+  }).join('');
+  var expTotalHtml = '<tr class="total"><td>합계</td><td>' + fmtWon(expTotal26) + '</td><td>' + fmtWon(expTotal25) + '</td>' + diffCellHtml(expTotal25, expTotal26) + '</tr>';
+
+  var revPct = revTotal25 ? (((revTotal26 - revTotal25) / revTotal25) * 100).toFixed(1) : '0.0';
+  var expPct = expTotal25 ? (((expTotal26 - expTotal25) / expTotal25) * 100).toFixed(1) : '0.0';
+  var incomeExpenseHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">2026년 예산 총괄</h2></div>'
+    + '<div class="ov2-two-col">'
+      + '<div class="summary-box"><h3>총수입 총괄</h3>'
+        + '<p class="ov2-kpi-note">2026년 ' + fmtWon(revTotal26) + '천원 · 2025년 대비 ' + (revTotal26 - revTotal25 >= 0 ? '+' : '') + fmtWon(revTotal26 - revTotal25) + '천원(' + (revPct >= 0 ? '+' : '') + revPct + '%)</p>'
+        + '<div class="summary-box-body donut-row">' + buildDonutSvg(d.revenueItems, revTotal26) + buildDonutLegend(d.revenueItems, revTotal26) + '</div>'
+        + '<p class="ov2-unit-note">단위: 천원</p>'
+        + '<div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>'
+        + revDetailHtml
+      + '</div>'
+      + '<div class="summary-box"><h3>총지출 총괄</h3>'
+        + '<p class="ov2-kpi-note">2026년 ' + fmtWon(expTotal26) + '천원 · 2025년 대비 ' + (expTotal26 - expTotal25 >= 0 ? '+' : '') + fmtWon(expTotal26 - expTotal25) + '천원(' + (expPct >= 0 ? '+' : '') + expPct + '%)</p>'
+        + '<div class="summary-box-body donut-row">' + buildDonutSvg(d.budgetCompare, expTotal26) + buildDonutLegend(d.budgetCompare, expTotal26) + '</div>'
+        + '<p class="ov2-unit-note">단위: 천원</p>'
+        + '<div class="table-scroll"><table class="summary fc-summary"><thead><tr><th>구분</th><th>2026년</th><th>2025년</th><th>증감</th></tr></thead><tbody>' + expTotalHtml + expRowsHtml + '</tbody></table></div>'
+      + '</div>'
+    + '</div>';
+
+  // 5) 전년대비 집행실적
+  var execTitle = d.execution.hasCompare ? '전년대비 집행실적' : '집행실적 현황 (2025년 기준)';
+  var execHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">' + execTitle + '</h2></div>';
+  if (d.executionByFund) {
+    execHtml += '<div class="ov2-two-col">'
+      + '<div class="summary-box"><h3>비목별 집행현황</h3>' + ov2ExecutionChart(d.execution.rows, d.execution.hasCompare) + ov2ExecutionTable(d.execution.rows, d.execution.hasCompare) + '</div>'
+      + '<div class="summary-box"><h3>재원별 집행현황</h3>' + ov2ExecutionByFundChart(d.executionByFund) + ov2ExecutionByFundTable(d.executionByFund) + '</div>'
+    + '</div>';
+  } else {
+    execHtml += '<div class="summary-box">' + ov2ExecutionChart(d.execution.rows, d.execution.hasCompare) + ov2ExecutionTable(d.execution.rows, d.execution.hasCompare) + '</div>';
+  }
+
+  // 6) 예산편성현황
+  var bcTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(expTotal26) + '</td><td>' + fmtWon(expTotal25) + '</td>' + diffCellHtml(expTotal25, expTotal26) + '</tr>';
+  var bcRowsHtml = d.budgetCompare.map(function (r) {
+    return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+  }).join('');
+  var budgetCompareHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">예산편성현황</h2></div>'
+    + '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-budget-fmt"><thead><tr>'
+    + '<th>구분</th><th>2026년 예산(A)</th><th>2025년 최종예산(B)</th><th>전년대비 증감(A-B)</th>'
+    + '</tr></thead><tbody>' + bcTotalHtml + bcRowsHtml + '</tbody></table></div></div>';
+
+  document.getElementById('overview-v2-slot').innerHTML = orgHtml + gradeHtml + deptPersonHtml + incomeExpenseHtml + execHtml + budgetCompareHtml;
+}
+
 function renderInstOverview(inst) {
   var logoImg = document.getElementById('overview-topbar-logo');
   var logoText = document.getElementById('overview-topbar-logo-text');
@@ -1977,7 +2547,7 @@ async function selectInstOverview(instKey) {
   nav.expandedInst[instKey] = true;
   renderSidebarNav();
 
-  if (!inst.hasData) {
+  if (!inst.hasData && !OV2_DATA[instKey]) {
     switchPanel('panel-budget-placeholder');
     document.getElementById('ph-title').textContent = inst.name;
     document.getElementById('ph-body').textContent = inst.name + '의 데이터는 아직 연동되지 않았습니다.';
@@ -1985,6 +2555,17 @@ async function selectInstOverview(instKey) {
   }
   switchPanel('panel-inst-overview');
   document.getElementById('overview-topbar-logo-text').textContent = inst.name;
+  document.getElementById('overview-v2-slot').innerHTML = '';
+
+  if (OV2_DATA[instKey]) {
+    document.getElementById('overview-summary-slot').innerHTML = '';
+    document.getElementById('overview-dept-slot').innerHTML = '';
+    renderOv2Overview(instKey);
+    return;
+  }
+
+  var legacy = document.getElementById('overview-legacy-blocks');
+  if (legacy) legacy.style.display = '';
   document.getElementById('overview-summary-title').textContent = inst.name + ' 총괄';
   document.getElementById('overview-summary-slot').innerHTML = '<div class="empty-state"><div class="loader"><span class="loader-text">loading</span><span class="load"></span></div></div>';
   document.getElementById('overview-dept-slot').innerHTML = '';
@@ -3326,7 +3907,7 @@ async function renderDashboard() {
   if (!INSTITUTIONS.length) { gridEl.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="loader"><span class="loader-text">loading</span><span class="load"></span></div></div>'; return; }
 
   gridEl.innerHTML = INSTITUTIONS.map(function (inst) {
-    var onclick = inst.hasData ? "selectInstOverview('" + inst.key + "')" : '';
+    var onclick = (inst.hasData || OV2_DATA[inst.key]) ? "selectInstOverview('" + inst.key + "')" : '';
     var logoSrc = getInstLogoSrc(inst.key);
     var iconInner = logoSrc
       ? '<img src="' + logoSrc + '" alt="' + inst.name + '" class="' + (inst.key === 'hscf' ? 'landing-logo-lg' : '') + '" />'
