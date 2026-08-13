@@ -3274,8 +3274,7 @@ async function renderDashboard() {
   if (!INSTITUTIONS.length) { gridEl.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="loader"><span class="loader-text">loading</span><span class="load"></span></div></div>'; return; }
 
   gridEl.innerHTML = INSTITUTIONS.map(function (inst) {
-    var firstFund = inst.funds && inst.funds[0];
-    var onclick = firstFund ? "selectBudget('" + inst.key + "','" + firstFund + "')" : '';
+    var onclick = inst.hasData ? "selectInstOverview('" + inst.key + "')" : '';
     var logoSrc = getInstLogoSrc(inst.key);
     var iconInner = logoSrc
       ? '<img src="' + logoSrc + '" alt="' + inst.name + '" class="' + (inst.key === 'hscf' ? 'landing-logo-lg' : '') + '" />'
