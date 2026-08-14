@@ -421,11 +421,59 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .org-tab .org-tab-name { font-size: 15px; font-weight: 600; letter-spacing: .01em; color: inherit; white-space: nowrap; }
 .org-tab.selected .org-tab-name { font-weight: 700; }
 
-/* 선택된 탭 하단이 그대로 본문(detail) 패널과 이어지도록 사이 여백/모서리 제거 */
-#card-grid.org-tabs + #detail .detail-inner {
+/* 회차 탭 바로 아래 본문(detail) 패널이 이어지도록 사이 모서리 제거 */
+.round-tabs-row + #detail .detail-inner {
   border-top-left-radius: 0; border-top-right-radius: 0; border-top: none;
   box-shadow: 0 -1px 0 rgba(16,23,42,.05) inset, 0 16px 36px rgba(16,23,42,.15), 0 4px 10px rgba(16,23,42,.09);
 }
+
+/* 정현원 뱃지 - 선택된 부서/사업 탭 바로 위, 그 탭 위치를 따라 좌우로 이동. 선택 전에는 숨김 */
+.tab-headcount-badge-row { display: none; justify-content: flex-start; margin-bottom: 6px; transition: margin-left .15s ease; }
+.tab-headcount-badge { flex-shrink: 0; }
+.tab-headcount-badge .detail-summary-line {
+  display: inline-block; font-size: 14px; font-weight: 600; color: var(--text-muted);
+  background: var(--bg-hover); border-radius: var(--r);
+  border-left: 3px solid var(--accent-soft);
+  padding: 6px 12px; margin: 0; white-space: nowrap;
+}
+
+/* 회차 탭 줄 - 선택된 부서/사업 탭 바로 아래로 좌우 위치가 따라 움직인다 (JS: alignRoundTabsRow) */
+.round-tabs-row { display: none; margin: 10px 0 16px 14px; transition: margin-left .15s ease; }
+
+/* 회차 탭 (본예산/추경) - 뼈대만, 스크롤 없이 한 줄 고정 */
+/* 회차 탭 (본예산/추경) - Uiverse 글라이더(glider) radio-input 스타일, 4개 옵션 기준 */
+#round-tabs.radio-input {
+  --container_width: 260px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 9px;
+  background-color: #fff;
+  color: #000;
+  width: var(--container_width);
+  overflow: hidden;
+  border: 1px solid rgba(53, 52, 52, .226);
+}
+#round-tabs.radio-input input { display: none; }
+#round-tabs.radio-input label {
+  width: 100%; padding: 6px 2px; cursor: pointer;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1; font-weight: 600; letter-spacing: -.6px; font-size: 12px;
+  white-space: nowrap; color: var(--text-muted);
+}
+#round-tabs .selection {
+  display: none; position: absolute; height: 100%;
+  width: calc(var(--container_width) / 4);
+  z-index: 0; left: 0; top: 0; transition: .15s ease;
+}
+#round-tabs.radio-input label:has(input:checked) { color: #fff; }
+#round-tabs.radio-input label:has(input:checked) ~ .selection {
+  background-color: var(--navy); display: inline-block;
+}
+#round-tabs.radio-input label:nth-child(1):has(input:checked) ~ .selection { transform: translateX(calc(var(--container_width) * 0/4)); }
+#round-tabs.radio-input label:nth-child(2):has(input:checked) ~ .selection { transform: translateX(calc(var(--container_width) * 1/4)); }
+#round-tabs.radio-input label:nth-child(3):has(input:checked) ~ .selection { transform: translateX(calc(var(--container_width) * 2/4)); }
+#round-tabs.radio-input label:nth-child(4):has(input:checked) ~ .selection { transform: translateX(calc(var(--container_width) * 3/4)); }
 
 /* 조직 상세 확장 영역 (정원현원 총괄 + 세부사업) */
 
@@ -1091,13 +1139,6 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   border: 1px solid var(--border);
   box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 -1px 0 rgba(16,23,42,.05) inset, 0 16px 36px rgba(16,23,42,.15), 0 4px 10px rgba(16,23,42,.09);
 }
-.detail-top-row { margin: -12px 0 6px 0; transition: margin-left .15s ease; }
-.detail-top-row .detail-summary-line {
-  display: inline-block; font-size: 14.5px; font-weight: 600; color: var(--text-muted);
-  background: var(--bg-hover); border-radius: 0 var(--r) var(--r) var(--r);
-  border-left: 3px solid var(--accent-soft);
-  padding: 5px 12px; margin: 0;
-}
 .detail-summary-row-wrap { position: relative; }
 .detail-total-amt {
   font-size: 26px; font-weight: 800; color: var(--accent); letter-spacing: -0.01em;
@@ -1557,7 +1598,31 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
         </div>
       </div>
       <div class="business-section">
+        <div class="tab-headcount-badge-row" id="tab-headcount-badge-row">
+          <div class="tab-headcount-badge" id="tab-headcount-badge"></div>
+        </div>
         <div class="card-grid" id="card-grid"></div>
+        <div class="round-tabs-row" id="round-tabs-row">
+          <div class="radio-input" id="round-tabs">
+            <label>
+              <input type="radio" id="round-base" name="round-radio" value="base" onchange="onRoundChange(this)">
+              <span>본예산</span>
+            </label>
+            <label>
+              <input type="radio" id="round-supp1" name="round-radio" value="supp1" onchange="onRoundChange(this)">
+              <span>1회 추경</span>
+            </label>
+            <label>
+              <input type="radio" id="round-supp2" name="round-radio" value="supp2" onchange="onRoundChange(this)">
+              <span>2회 추경</span>
+            </label>
+            <label>
+              <input type="radio" id="round-supp3" name="round-radio" value="supp3" onchange="onRoundChange(this)">
+              <span>3회 추경</span>
+            </label>
+            <span class="selection"></span>
+          </div>
+        </div>
 
         <div class="detail" id="detail"></div>
       </div>
@@ -1621,19 +1686,26 @@ var state = {
   businesses: [],
   dept: '문화예술과',
   fund: '출연금',
-  selectedId: null
+  selectedId: null,
+  selectedRound: null, // 정현원까지만 노출된 상태에서, 회차 탭(본예산/1~3회 추경)을 골라야 아래 예산서가 나옴
+  roundData: null // 본예산이 아닌 회차를 선택했을 때 Supabase에서 불러온 { trees, teams } - fetchRoundData 참고
 };
+
+// 회차 탭 값 -> 화면 표시용 라벨 (자료 없음 안내 메시지 등에 사용)
+var ROUND_LABELS = { base: '본예산', supp1: '1회 추경', supp2: '2회 추경', supp3: '3회 추경' };
 
 var HSCF_INST_ID = null; // 대시보드 KPI 계산용으로만 사용
 var instDataCache = {}; // instKey -> { teamTrees, businesses, departments }
 
 // budget_items 원본 행(flat) -> TEAM_TREES 형태(중첩 트리)로 조립
-async function fetchAllRows(table, institutionId) {
+async function fetchAllRows(table, institutionId, round) {
   var all = [];
   var pageSize = 1000;
   var from = 0;
   while (true) {
-    var { data, error } = await db.from(table).select('*').eq('institution_id', institutionId).order('sort_order').order('id').range(from, from + pageSize - 1);
+    var q = db.from(table).select('*').eq('institution_id', institutionId);
+    if (round) q = q.eq('round', round);
+    var { data, error } = await q.order('sort_order').order('id').range(from, from + pageSize - 1);
     if (error) { showLoadError(table, error); break; }
     if (!data || !data.length) break;
     all = all.concat(data);
@@ -1641,6 +1713,27 @@ async function fetchAllRows(table, institutionId) {
     from += pageSize;
   }
   return all;
+}
+
+// 회차(본예산 외 1~3회 추경) 트리 캐시: 'instId|businessId|round' -> { trees, teams }
+var roundDataCache = {};
+async function fetchRoundData(instId, business, round) {
+  var cacheKey = instId + '|' + business.id + '|' + round;
+  if (roundDataCache[cacheKey]) return roundDataCache[cacheKey];
+  var { data: items, error: e1 } = await db.from('budget_items').select('*')
+    .eq('institution_id', instId).eq('business_card', business.name).eq('round', round)
+    .order('sort_order').order('id');
+  if (e1) { showLoadError('회차별 예산 트리', e1); return { trees: {}, teams: [] }; }
+  var trees = buildTeamTrees(items || []);
+  var { data: teamRows, error: e2 } = await db.from('card_teams').select('*')
+    .eq('card_id', business.id).eq('round', round).order('sort_order');
+  if (e2) { showLoadError('회차별 정현원', e2); }
+  var teams = (teamRows || []).map(function (t) {
+    return { name: t.team_name, capacity: t.capacity, current: t.current, treeKey: t.team_root_budget_item_id };
+  });
+  var result = { trees: trees, teams: teams };
+  roundDataCache[cacheKey] = result;
+  return result;
 }
 
 function buildTeamTrees(rows) {
@@ -1688,12 +1781,12 @@ async function loadInstitutions() {
 async function loadInstBudgetData(inst) {
   if (instDataCache[inst.key]) return instDataCache[inst.key];
 
-  var items = await fetchAllRows('budget_items', inst.id);
+  var items = await fetchAllRows('budget_items', inst.id, 'base');
   var teamTrees = buildTeamTrees(items);
 
   var { data: cards, error: e2 } = await db.from('business_cards').select('*').eq('institution_id', inst.id).order('sort_order');
   if (e2) { showLoadError('본부/사업 카드', e2); return null; }
-  var { data: teams, error: e3 } = await db.from('card_teams').select('*').order('sort_order');
+  var { data: teams, error: e3 } = await db.from('card_teams').select('*').eq('round', 'base').order('sort_order');
   if (e3) { showLoadError('팀 정원현원', e3); return null; }
 
   var businesses = cards.map(function (c) {
@@ -1848,8 +1941,19 @@ function selectFund(f) {
 
 function selectCard(id) {
   state.selectedId = id;
+  state.selectedRound = null; // 부서/사업을 새로 고르면 회차 선택은 초기화 - 예산서는 회차를 골라야 나옴
+  state.roundData = null; // 이전에 불러온 추경 회차 데이터도 같이 비운다
+  resetRoundTabsUI(); // 화면상 라디오 체크 표시도 실제 상태(선택 안 됨)와 맞춰서 같이 초기화
   renderCards();
   renderDetail();
+}
+
+// 회차 탭(본예산~3회추경) 라디오 버튼의 체크 표시를 전부 해제한다.
+// (부서/사업 탭을 새로 고를 때 state.selectedRound=null과 화면 표시를 맞추기 위함)
+function resetRoundTabsUI() {
+  var wrap = document.getElementById('round-tabs');
+  if (!wrap) return;
+  wrap.querySelectorAll('input[name="round-radio"]').forEach(function (r) { r.checked = false; });
 }
 
 function classifyMokCode(code) {
@@ -2889,7 +2993,7 @@ function renderCards() {
   }).join('')
     + '<button type="button" id="tabScrollLeft" class="tab-scroll-btn left" onclick="scrollTabs(-1)" style="display:none;">\u2039</button>'
     + '<button type="button" id="tabScrollRight" class="tab-scroll-btn right" onclick="scrollTabs(1)" style="display:none;">\u203A</button>';
-  el.onscroll = function () { updateTabScrollButtons(); alignDetailTopRow(); };
+  el.onscroll = function () { updateTabScrollButtons(); alignRoundTabsRow(); alignHeadcountBadgeRow(); };
   updateTabScrollButtons();
   var selectedBtn = el.querySelector('.org-tab.selected');
   if (selectedBtn) selectedBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -3463,8 +3567,18 @@ var LIBRARY_BRANCHES = {
 function renderDetail() {
   var b = getBusiness(state.selectedId);
   var el = document.getElementById('detail');
-  if (!b) { el.innerHTML = ''; return; }
-
+  var roundRow = document.getElementById('round-tabs-row');
+  var badgeRow = document.getElementById('tab-headcount-badge-row');
+  if (!b) {
+    el.innerHTML = '';
+    if (roundRow) roundRow.style.display = 'none';
+    if (badgeRow) badgeRow.style.display = 'none';
+    var emptyBadge = document.getElementById('tab-headcount-badge');
+    if (emptyBadge) emptyBadge.innerHTML = '';
+    return;
+  }
+  if (roundRow) roundRow.style.display = 'block';
+  if (badgeRow) badgeRow.style.display = 'flex';
   // 예산액은 정현원과 분리된 큰 글씨 라인으로 표시하며, teams(정원현원) 데이터 유무와 무관하게 독립적으로 노출한다.
   var amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
   var headcountLine = '';
@@ -3502,10 +3616,45 @@ function renderDetail() {
     }
   }
 
-  var searchBoxHtml = (b.teams && b.teams.length)
+  // 정현원 줄은 #detail이 아니라 부서/사업명 탭(card-grid) 위쪽 뱃지 자리에 렌더링한다.
+  var badgeEl = document.getElementById('tab-headcount-badge');
+  if (badgeEl) badgeEl.innerHTML = headcountLine;
+
+  // 정현원 뱃지 줄과 회차 탭(본예산~3회추경)을 지금 선택된 부서/사업 탭 위/아래에 각각 맞춘다.
+  alignHeadcountBadgeRow();
+  alignRoundTabsRow();
+
+  // 부서/사업 탭만 고른 상태에서는 정현원 + 회차 탭(본예산~3회추경)까지만 보여주고,
+  // 그 아래 예산서(금액·트리)는 회차 탭을 하나 골라야 나오게 한다.
+  if (!state.selectedRound) {
+    el.innerHTML = '';
+    return;
+  }
+
+  // 본예산이면 이미 불러와 둔 b.teams/TEAM_TREES를 쓰고, 추경 회차면 fetchRoundData로 받아둔 roundData를 쓴다.
+  var activeTeams = b.teams;
+  var activeTrees = TEAM_TREES;
+  if (state.selectedRound !== 'base') {
+    if (!state.roundData) {
+      el.innerHTML = '<div class="empty-state">불러오는 중...</div>';
+      return;
+    }
+    activeTeams = state.roundData.teams;
+    activeTrees = state.roundData.trees;
+    if (!activeTeams || !activeTeams.length) {
+      el.innerHTML = '<div class="empty-state">' + escapeHtml(ROUND_LABELS[state.selectedRound] || '') + ' 자료가 아직 없습니다.</div>';
+      return;
+    }
+    // 추경 회차의 예산액은 본예산 카드 금액이 아니라, 그 회차 트리의 합계로 다시 계산한다.
+    var roundTotal = 0;
+    activeTeams.forEach(function (t) { var node = activeTrees[t.treeKey]; if (node) roundTotal += Number(node.amt26) || 0; });
+    amtLine = '<div class="detail-total-amt">' + fmtWon(roundTotal) + '<span class="unit">천원</span></div>';
+  }
+
+  var searchBoxHtml = (activeTeams && activeTeams.length)
     ? '<div class="tree-search-box"><input type="text" id="tree-search-input" placeholder="예산서 검색 (항목명·산출기초)" oninput="filterTreeRows(this.value)"><svg class="tree-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><button type="button" class="tree-search-btn" onclick="submitTreeSearch()" aria-label="검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button></div>'
     : '';
-  var filterToggleHtml = (b.teams && b.teams.length)
+  var filterToggleHtml = (activeTeams && activeTeams.length)
     ? '<div class="tree-filter-toggle"><input type="checkbox" id="mismatch-only-toggle" onchange="toggleMismatchOnly(this.checked)"><label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
       + '<div class="tree-filter-toggle increase"><input type="checkbox" id="increase-only-toggle" onchange="toggleIncreaseOnly(this.checked)"><label for="increase-only-toggle">\u25B2 전년대비 증액만</label></div>'
       + '<div class="tree-filter-toggle new"><input type="checkbox" id="new-only-toggle" onchange="toggleNewOnly(this.checked)"><label for="new-only-toggle">\uD83C\uDD95 신규사업만</label></div>'
@@ -3540,15 +3689,12 @@ function renderDetail() {
     + '</div>';
   var noteBtnHtml = '<div class="note-popover-wrap">' + noteToggleHtml + noteCountBadgeHtml + searchBoxHtml + notePopoverHtml + '</div>';
 
-  // 정현원/소속팀 줄만 탭 바로 아래(금액 위)로 분리해서 배치한다. 금액·불일치필터·(중요사항 버튼+검색창)은
-  // 한 가로바에 모아서, 금액과 필터 사이에 간격을 두어 이후 필터가 추가될 여지를 남긴다.
-  var topRowHtml = headcountLine ? '<div class="detail-top-row">' + headcountLine + '</div>' : '';
   var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters">' + filterToggleHtml + '</div>' + noteBtnHtml + '</div>';
 
   var teamTreesHtml = '';
-  if (b.teams && b.teams.length) {
-    var trees = b.teams.filter(function (t) { return t.treeKey && TEAM_TREES[t.treeKey]; })
-      .map(function (t) { return TEAM_TREES[t.treeKey]; });
+  if (activeTeams && activeTeams.length) {
+    var trees = activeTeams.filter(function (t) { return t.treeKey && activeTrees[t.treeKey]; })
+      .map(function (t) { return activeTrees[t.treeKey]; });
     if (trees.length) {
       var totalLabelForCard = (nav.instKey === 'hscf' && state.fund === '출연금') ? b.name
         : (nav.instKey === 'hscf' && b.name === '화성예술의전당') ? '예술의전당본부' : null;
@@ -3572,7 +3718,6 @@ function renderDetail() {
 
   el.innerHTML =
     '<div class="detail-inner">'
-    + topRowHtml
     + bottomRowHtml
     + teamTreesHtml
     + (teamTreesHtml ? '' : linesTable)
@@ -3582,24 +3727,66 @@ function renderDetail() {
     applyTreeColWidths();
     setupTreeColResize();
   }
-  alignDetailTopRow();
 }
 
-// 정현원/소속팀 요약 박스를 현재 선택된 사업 탭 바로 아래 위치로 정렬한다.
-// detail-inner(패딩 22px)와 org-tabs(패딩 10px)의 좌측 여백 차이(12px)만큼 보정한다.
-function alignDetailTopRow() {
-  var rowEl = document.querySelector('.detail-top-row');
+// 회차 탭(본예산/1회추경/2회추경/3회추경) 변경 - 본예산이 아니면 Supabase에서 그 회차의 트리를 새로 불러와 교체 렌더링한다.
+async function onRoundChange(input) {
+  var round = input.value;
+  state.selectedRound = round;
+  var b = getBusiness(state.selectedId);
+  if (!b) { renderDetail(); return; }
+
+  if (round === 'base') {
+    state.roundData = null;
+    renderDetail();
+    return;
+  }
+
+  state.roundData = null;
+  var el = document.getElementById('detail');
+  if (el) el.innerHTML = '<div class="empty-state">불러오는 중...</div>';
+
+  var inst = INSTITUTIONS.filter(function (i) { return i.key === nav.instKey; })[0];
+  if (!inst) { state.roundData = { trees: {}, teams: [] }; renderDetail(); return; }
+
+  var data = await fetchRoundData(inst.id, b, round);
+  // 불러오는 동안 다른 탭/회차를 눌렀으면 그 결과는 버린다.
+  if (state.selectedId !== b.id || state.selectedRound !== round) return;
+  state.roundData = data;
+  renderDetail();
+}
+
+// 정현원 뱃지 줄을 현재 선택된 부서/사업 탭 바로 위 위치로 정렬한다. (회차 탭과 동일한 방식, 위/아래만 다름)
+function alignHeadcountBadgeRow() {
+  var rowEl = document.getElementById('tab-headcount-badge-row');
   var tabsEl = document.getElementById('card-grid');
   if (!rowEl || !tabsEl) return;
+  if (getComputedStyle(rowEl).display === 'none') return;
   var selTab = tabsEl.querySelector('.org-tab.selected');
   var PAD_DIFF = 12;
   if (!selTab) { rowEl.style.marginLeft = (-PAD_DIFF) + 'px'; return; }
   var left = selTab.offsetLeft - tabsEl.scrollLeft - PAD_DIFF;
-  var maxLeft = Math.max(-PAD_DIFF, tabsEl.clientWidth - selTab.offsetWidth - PAD_DIFF);
+  var maxLeft = Math.max(-PAD_DIFF, tabsEl.clientWidth - 260 - PAD_DIFF);
   left = Math.max(-PAD_DIFF, Math.min(left, maxLeft));
   rowEl.style.marginLeft = left + 'px';
 }
-window.addEventListener('resize', function () { alignDetailTopRow(); });
+
+// 회차 탭(본예산~3회추경) 줄을 현재 선택된 부서/사업 탭 바로 아래 위치로 정렬한다.
+// detail-inner(패딩 22px)와 org-tabs(패딩 10px)의 좌측 여백 차이(12px)만큼 보정한다.
+function alignRoundTabsRow() {
+  var rowEl = document.getElementById('round-tabs-row');
+  var tabsEl = document.getElementById('card-grid');
+  if (!rowEl || !tabsEl) return;
+  if (getComputedStyle(rowEl).display === 'none') return;
+  var selTab = tabsEl.querySelector('.org-tab.selected');
+  var PAD_DIFF = 12;
+  if (!selTab) { rowEl.style.marginLeft = (-PAD_DIFF) + 'px'; return; }
+  var left = selTab.offsetLeft - tabsEl.scrollLeft - PAD_DIFF;
+  var maxLeft = Math.max(-PAD_DIFF, tabsEl.clientWidth - 260 - PAD_DIFF);
+  left = Math.max(-PAD_DIFF, Math.min(left, maxLeft));
+  rowEl.style.marginLeft = left + 'px';
+}
+window.addEventListener('resize', function () { alignRoundTabsRow(); alignHeadcountBadgeRow(); });
 
 function renderAll() {
   renderDeptTabs();
