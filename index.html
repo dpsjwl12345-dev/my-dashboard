@@ -645,6 +645,11 @@ table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; }
 table.tree td[contenteditable="true"]:hover { background: rgba(52,87,213,.06); box-shadow: inset 0 0 0 1px rgba(52,87,213,.2); }
 table.tree td[contenteditable="true"]:focus { background: #fff; outline: none; box-shadow: inset 0 0 0 1.5px var(--accent); }
 table.tree td.basis { color: var(--text-muted); font-size: 14.5px; text-align: left; white-space: pre-line; }
+table.tree td.edit-check { text-align: center; }
+table.tree td.edit-check input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--success); }
+table.tree tr.row-edited td { background: var(--success-soft); }
+table.tree tr.row-edited td[contenteditable="true"]:hover { background: rgba(22,146,79,.12); box-shadow: inset 0 0 0 1px rgba(22,146,79,.3); }
+table.tree tr.row-edited td:first-child::after { content: '\C218\C815\B428'; margin-left: 6px; font-size: 11px; font-weight: 700; color: var(--success); background: #fff; border: 1px solid var(--success); border-radius: 20px; padding: 1px 7px; vertical-align: middle; }
 table.tree td.num.basis { text-align: left !important; white-space: pre-line !important; overflow-wrap: break-word; word-break: break-word; }
 tr.lvl-팀 td { font-weight: 700; font-size: 16px; background: #EDE4FB; color: var(--navy); }
 tr.lvl-팀 td.basis, tr.lvl-팀 td.num { color: var(--navy); }
@@ -1738,7 +1743,7 @@ async function fetchRoundData(instId, business, round) {
 
 function buildTeamTrees(rows) {
   var byId = {};
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r.amt26, amt25: r.amt25, calc: r.calc, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r.amt26, amt25: r.amt25, calc: r.calc, edited: !!r.edited, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -3034,7 +3039,7 @@ function fmtPct(amt26, amt25) {
   return Math.round(d / amt25 * 100) + '%';
 }
 
-var TREE_COL_LABELS = ['부서·정책·단위·세부사업·편성목·통계목·부기명', '산출기초', '2026년도 예산액', '2025년도 예산액', '비교증감', '증감률'];
+var TREE_COL_LABELS = ['부서·정책·단위·세부사업·편성목·통계목·부기명', '산출기초', '2026년도 예산액', '2025년도 예산액', '비교증감', '증감률', '확인'];
 var DEFAULT_TREE_COL_WIDTHS = [34, 18, 13, 13, 12, 10];
 function loadTreeColWidths() {
   try {
@@ -3163,13 +3168,15 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible) {
   var increasedAttr = (Number(node.amt26) || 0) > (Number(node.amt25) || 0) ? ' data-increased="1"' : '';
   var isNew = (!node.amt25 || Number(node.amt25) === 0) && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
-  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + '"' + mokAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
+  var editedCls = node.edited ? ' row-edited' : '';
+  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + '"' + mokAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
     + '<td style="padding-left:' + (8 + depth * 14) + 'px">' + arrowHtml + ' ' + escapeHtml(label) + mismatchIcon + '</td>'
-    + '<td class="num basis" contenteditable="true" spellcheck="false" onblur="saveBudgetItemCell(' + node.id + ',\'calc\',this)">' + escapeHtml(node.calc || '') + '</td>'
-    + '<td class="num" contenteditable="true" spellcheck="false" onblur="saveBudgetItemCell(' + node.id + ',\'amt26\',this)">' + fmtWon(node.amt26) + '</td>'
-    + '<td class="num" contenteditable="true" spellcheck="false" onblur="saveBudgetItemCell(' + node.id + ',\'amt25\',this)">' + amt25Cell + '</td>'
+    + '<td class="num basis" contenteditable="true" spellcheck="false" data-field="calc">' + escapeHtml(node.calc || '') + '</td>'
+    + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + '</td>'
+    + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + '</td>'
     + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
     + '<td class="num">' + fmtPct(node.amt26, node.amt25) + '</td>'
+    + '<td class="num edit-check"><input type="checkbox" class="row-edit-checkbox" title="체크하면 위 내용이 저장되고 수정됨으로 표시됩니다"' + (node.edited ? ' checked' : '') + ' onchange="saveBudgetRowEdit(' + node.id + ', this)"></td>'
     + '</tr>');
   if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded); });
 }
@@ -3361,42 +3368,56 @@ function filterTreeRows(query) {
 }
 
 
-async function saveBudgetItemCell(id, field, el) {
+// 산출기초/2026예산액/2025예산액 셀은 더 이상 blur만으로 자동 저장되지 않는다.
+// 행 끝의 "확인" 체크박스를 눌러야 그 시점의 셀 값이 한번에 저장되고, 그 행이 "수정됨"으로 영구 표시된다.
+// 체크 해제는 데이터를 되돌리지 않고 "수정됨" 표시만 지운다(이미 저장된 값은 그대로 유지).
+async function saveBudgetRowEdit(id, checkboxEl) {
   var node = budgetItemIndex[id];
   if (!node) return;
-  var raw = el.textContent.trim();
-  var payload = {};
-  var newVal;
+  var tr = checkboxEl.closest('tr');
+  var checked = checkboxEl.checked;
+  var payload = { edited: checked };
+  var newVals = null;
 
-  if (field === 'calc') {
-    newVal = raw;
-    payload.calc = newVal || null;
-  } else {
-    // "1,234" 같은 표시 형식에서 숫자만 추출
-    var num = Number(raw.replace(/[^0-9.-]/g, ''));
-    if (raw === '' || raw === '-') num = 0;
-    if (isNaN(num)) { alert('숫자만 입력해주세요.'); el.textContent = field === 'amt26' ? fmtWon(node.amt26) : (node.amt25 != null && node.amt25 !== 0 ? fmtWon(node.amt25) : (node.amt25 === 0 ? '-' : '')); return; }
-    newVal = num;
-    payload[field] = newVal;
+  if (checked) {
+    var calcEl = tr.querySelector('[data-field="calc"]');
+    var amt26El = tr.querySelector('[data-field="amt26"]');
+    var amt25El = tr.querySelector('[data-field="amt25"]');
+
+    var rawCalc = calcEl ? calcEl.textContent.trim() : (node.calc || '');
+    var rawAmt26 = amt26El ? amt26El.textContent.trim() : '';
+    var rawAmt25 = amt25El ? amt25El.textContent.trim() : '';
+
+    var numAmt26 = Number(rawAmt26.replace(/[^0-9.-]/g, ''));
+    if (rawAmt26 === '' || rawAmt26 === '-') numAmt26 = 0;
+    if (isNaN(numAmt26)) { alert('2026년도 예산액은 숫자만 입력해주세요.'); checkboxEl.checked = false; return; }
+
+    var numAmt25 = Number(rawAmt25.replace(/[^0-9.-]/g, ''));
+    if (rawAmt25 === '' || rawAmt25 === '-') numAmt25 = 0;
+    if (isNaN(numAmt25)) { alert('2025년도 예산액은 숫자만 입력해주세요.'); checkboxEl.checked = false; return; }
+
+    newVals = { calc: rawCalc || null, amt26: numAmt26, amt25: numAmt25 };
+    payload.calc = newVals.calc;
+    payload.amt26 = newVals.amt26;
+    payload.amt25 = newVals.amt25;
   }
 
-  // 값이 실제로 안 바뀌었으면 저장 생략
-  if (node[field] === newVal || (field !== 'calc' && (node[field] || 0) === newVal)) {
-    el.textContent = field === 'calc' ? (newVal || '') : fmtWon(newVal);
-    return;
-  }
-
-  el.style.opacity = '0.5';
+  checkboxEl.disabled = true;
   var { error } = await db.from('budget_items').update(payload).eq('id', id);
-  el.style.opacity = '1';
+  checkboxEl.disabled = false;
 
   if (error) {
     alert('저장 실패: ' + error.message);
-    el.textContent = field === 'calc' ? (node.calc || '') : (field === 'amt26' ? fmtWon(node.amt26) : (node.amt25 != null && node.amt25 !== 0 ? fmtWon(node.amt25) : (node.amt25 === 0 ? '-' : '')));
+    checkboxEl.checked = !checked;
     return;
   }
 
-  node[field] = newVal;
+  node.edited = checked;
+  if (newVals) {
+    node.calc = newVals.calc;
+    node.amt26 = newVals.amt26;
+    node.amt25 = newVals.amt25;
+  }
   // 트리/요약/카드 화면 전체 재계산 (증감·비율·도넛차트 등에 즉시 반영)
   renderDetail();
   renderSummary();
@@ -3477,6 +3498,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
       + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
       + '<td class="num">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
+      + '<td class="num edit-check"></td>'
       + '</tr>';
   }
   var groupsHtml = trees.map(function (tree) {
