@@ -2651,7 +2651,7 @@ function ov2PersonnelBarList(rows, hoverMap) {
         + '<div class="ov2-pbar-label-line"><span class="ov2-pbar-label-main">' + escapeHtml(mainLabel) + '</span><span class="ov2-pbar-val">' + valTxt + '</span></div>'
         + (subLabel ? '<div class="ov2-pbar-label-sub">' + escapeHtml(subLabel) + '</div>' : '')
       + '</div>'
-      + '<div class="ov2-pbar-track"><div class="ov2-pbar-fill' + fillCls + '" style="width:' + pct + '%;"></div>' + (hoverHtml ? '<button type="button" class="grade-btn"><svg xmlns="http://www.w3.org/2000/svg" width="11" viewBox="0 0 20 20" height="11" fill="none" class="grade-btn-icon"><g stroke-width="1.5" stroke-linecap="round" stroke="#22348E"><circle r="7.5" cy="10" cx="10"></circle><path d="m9.99998 7.5v5"></path><path d="m7.5 9.99998h5"></path></g></svg><span class="grade-btn-label">직급별 보기</span><div class="ov2-pbar-tooltip' + hoverDirCls + '">' + hoverHtml + '</div></button>' : '') + '</div>'
+      + '<div class="ov2-pbar-track"><div class="ov2-pbar-fill' + fillCls + '" style="width:' + pct + '%;"></div>' + (hoverHtml ? '<button type="button" class="grade-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" viewBox="0 0 20 20" height="16" fill="none" class="grade-btn-icon"><g stroke-width="2" stroke-linecap="round" stroke="#22348E"><circle r="7.5" cy="10" cx="10"></circle><path d="m9.99998 6.5v7"></path><path d="m6.5 9.99998h7"></path></g></svg><span class="grade-btn-label">직급별 보기</span><div class="ov2-pbar-tooltip' + hoverDirCls + '">' + hoverHtml + '</div></button>' : '') + '</div>'
       + '<div class="ov2-pbar-diff ' + diffCls + '">' + diffTxt + '</div>'
       + '</div>';
   }).join('') + '</div>';
@@ -2824,7 +2824,7 @@ function renderOv2Overview(instKey) {
     incomeExpenseHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">2026년 수입총괄</h2></div>'
       + '<div class="' + (revDetailHtml ? 'ov2-two-col' : '') + '">'
         + incomeBoxHtml
-        + (revDetailHtml ? '<div class="summary-box"><h3>' + escapeHtml(d.revenueDetailTitle || '세부 내역') + '</h3>' + revDetailHtml + '</div>' : '')
+        + (revDetailHtml ? '<div class="summary-box"><div class="summary-title-row"><h3>' + escapeHtml(d.revenueDetailTitle || '세부 내역') + '</h3><p class="summary-unit-note">(단위: 천원)</p></div>' + revDetailHtml + '</div>' : '')
       + '</div>';
   }
 
@@ -2834,7 +2834,7 @@ function renderOv2Overview(instKey) {
     return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var budgetCompareHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">예산편성현황</h2></div>'
-    + '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-budget-fmt ov2-rev-total-table"><thead><tr>'
+    + '<div class="summary-box"><p class="ov2-unit-note" style="margin:0 2px 8px;">단위: 천원</p><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-budget-fmt ov2-rev-total-table"><thead><tr>'
     + '<th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th>'
     + '</tr></thead><tbody>' + bcTotalHtml + bcRowsHtml + '</tbody></table></div></div>';
 
@@ -3039,7 +3039,16 @@ function fmtPct(amt26, amt25) {
   return Math.round(d / amt25 * 100) + '%';
 }
 
-var TREE_COL_LABELS = ['부서·정책·단위·세부사업·편성목·통계목·부기명', '산출기초', '2026년도 예산액', '2025년도 예산액', '비교증감', '증감률', '확인'];
+function getTreeColLabels() {
+  var round = state.selectedRound;
+  var amtLabel = '2026년도 예산액';
+  var baseLabel = '2025년도 예산액';
+  if (round && round !== 'base') {
+    amtLabel = (ROUND_LABELS[round] || '') + '요구액';
+    baseLabel = '기정액';
+  }
+  return ['부서·정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '비교증감', '증감률', '확인'];
+}
 var DEFAULT_TREE_COL_WIDTHS = [34, 18, 13, 13, 12, 10];
 function loadTreeColWidths() {
   try {
@@ -3513,9 +3522,10 @@ function renderTeamTreesCombined(trees, totalLabel) {
     return '<div style="font-weight:600; font-size:15px; padding:4px 2px;">' + escapeHtml(tree.name) + '</div>' + mokItemsHtml;
   }).join('');
 
-  var colgroup = '<colgroup>' + TREE_COL_LABELS.map(function (_, i) { return '<col class="tcol-' + i + '">'; }).join('') + '</colgroup>';
-  var headCells = TREE_COL_LABELS.map(function (label, i) {
-    var handle = i < TREE_COL_LABELS.length - 1 ? '<span class="col-resize-handle" data-resize="' + i + '"></span>' : '';
+  var treeColLabels = getTreeColLabels();
+  var colgroup = '<colgroup>' + treeColLabels.map(function (_, i) { return '<col class="tcol-' + i + '">'; }).join('') + '</colgroup>';
+  var headCells = treeColLabels.map(function (label, i) {
+    var handle = i < treeColLabels.length - 1 ? '<span class="col-resize-handle" data-resize="' + i + '"></span>' : '';
     if (i === 0) {
       return '<th><span class="th-filter-label" onclick="toggleMokFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret">▾</i></span>' + handle + '</th>';
     }
