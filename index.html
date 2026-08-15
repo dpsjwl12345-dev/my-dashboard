@@ -61,7 +61,7 @@
   --sidebar-hover-bg: rgba(16,23,42,.06);
   --sidebar-border: rgba(16,23,42,.09);
   --sidebar-tree-line: rgba(16,23,42,.14);
-  --sidebar-accent: #8B7FD1;
+  --sidebar-accent: #3457D5;
   --page-gap: 16px;
 }
 * { box-sizing: border-box; }
@@ -76,7 +76,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 /* 타이틀/제목 영역은 지마켓 산스, 나머지 본문/메뉴/숫자/테이블은 프리텐다드 */
-h1, h2, h3, .eyebrow, .sidebar .brand-title, .sidebar .cat-badge,
+h1, h2, h3, .eyebrow, .sidebar .brand-logotype, .sidebar .cat-badge,
 .team-block h3, .line-hdr h3, .card .name,
 .section-heading, .org-tab-name {
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
@@ -88,7 +88,7 @@ h1 { font-size: 23px; font-weight: 700; margin: 0; letter-spacing: -0.01em; whit
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
   background:
     radial-gradient(circle at 10% 20%, rgba(91,141,255,.32), transparent 48%),
-    radial-gradient(circle at 90% 90%, rgba(168,85,247,.28), transparent 55%),
+    radial-gradient(circle at 90% 90%, rgba(125,166,255,.28), transparent 55%),
     radial-gradient(circle at 55% -20%, rgba(52,211,153,.22), transparent 45%),
     linear-gradient(135deg, #EEF2FC, #FFFFFF);
   border-radius: var(--r-lg); padding: 22px 26px;
@@ -164,9 +164,9 @@ table.summary td.diff.down { color: var(--accent); }
 .settle-kpi-card .icon-badge { flex: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
 .settle-kpi-card .icon-badge svg { width: 36px; height: 36px; }
 .settle-kpi-card .icon-badge img { width: 36px; height: 36px; }
-.settle-kpi-card .icon-badge.icon-shortage svg { color: #7C5CD6; }
+.settle-kpi-card .icon-badge.icon-shortage svg { color: var(--accent-dark); }
 .settle-rate-bar { width: 100%; height: 6px; border-radius: 4px; background: rgba(16,23,42,.10); overflow: hidden; margin-top: 3px; }
-.settle-rate-bar .fill { height: 100%; border-radius: 5px; background: #7C5CD6; }
+.settle-rate-bar .fill { height: 100%; border-radius: 5px; background: var(--accent-dark); }
 .section-title-row.settle-section-gap { margin-top: 40px; }
 .section-title-row.settle-section-gap-lg { margin-top: 96px; }
 .settle-yoy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--page-gap); margin-bottom: 32px; }
@@ -228,14 +228,14 @@ table.summary td.diff.down { color: var(--accent); }
 .download-menu-wrap { margin-left: auto; margin-right: 24px; position: relative; }
 .button {
   display: inline-flex; align-items: center; gap: 10px; cursor: pointer; border: none;
-  background: #e8e8e8; color: #7C3AED;
+  background: #e8e8e8; color: var(--accent-dark);
   border-radius: 12px; padding: 8px 20px 8px 14px;
   font-size: 14px; font-weight: 700; font-family: inherit; letter-spacing: .01em;
   transition: background .2s, color .2s;
 }
 .button__icon { flex-shrink: 0; width: 20px; height: 20px; transition: transform .25s ease; }
 .button__text { position: relative; }
-.button:hover { background: linear-gradient(135deg, #5B8DFF, #A855F7); color: #fff; }
+.button:hover { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; }
 .button:hover .button__icon { transform: translateY(3px); }
 .button:active .button__icon { transform: translateY(5px); }
 .download-menu {
@@ -313,16 +313,15 @@ table.fc-summary td .dot {
   75% { transform: rotate(-10deg); }
   100% { transform: rotate(0deg); }
 }
-.ov2-pbar-tooltip { display: none; position: absolute; left: 100%; bottom: 100%; margin-bottom: 8px; margin-left: -8px; z-index: 40; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 24px rgba(16,23,42,.16); padding: 10px 14px; width: max-content; max-width: min(90vw, 900px); }
-.ov2-pbar-tooltip.ov2-tt-down { bottom: auto; top: 100%; margin-bottom: 0; margin-top: 8px; }
-.grade-btn:hover .ov2-pbar-tooltip { display: block; }
-.ov2-tt-title { font-size: 12.5px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.ov2-box-tooltip { display: none; position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: 6px; z-index: 40; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 24px rgba(16,23,42,.16); padding: 8px 10px; box-sizing: border-box; overflow: hidden; }
+.ov2-pbar-row:has(.grade-btn:hover) .ov2-box-tooltip { display: block; }
+.ov2-tt-title { font-size: 11.5px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
 .ov2-tt-row { display: flex; justify-content: space-between; gap: 16px; font-size: 12.5px; color: var(--text-muted); padding: 3px 0; }
 .ov2-tt-note { font-size: 11px; color: var(--text-soft); margin-top: 6px; }
-.ov2-tt-chips { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; }
-.ov2-tt-chip { display: flex; flex-direction: column; align-items: center; gap: 2px; background: var(--bg-hover); border-radius: 8px; padding: 6px 10px; min-width: 52px; flex-shrink: 0; }
-.ov2-tt-chip-label { font-size: 11px; font-weight: 700; color: var(--text-muted); }
-.ov2-tt-chip-val { font-size: 13px; font-weight: 800; color: var(--text); }
+.ov2-tt-chips { display: flex; flex-wrap: nowrap; gap: 3px; overflow: hidden; }
+.ov2-tt-chip { display: flex; flex-direction: column; align-items: center; gap: 1px; background: var(--bg-hover); border-radius: 6px; padding: 3px 2px; flex: 1 1 0; min-width: 0; }
+.ov2-tt-chip-label { font-size: 9.5px; font-weight: 700; color: var(--text-muted); white-space: nowrap; }
+.ov2-tt-chip-val { font-size: 11px; font-weight: 800; color: var(--text); white-space: nowrap; }
 .ov2-pbar-label { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .ov2-pbar-label-line { display: inline-flex; align-items: stretch; height: 24px; border-radius: 6px; overflow: hidden; box-shadow: 3px 3px 8px rgba(16,23,42,.08); width: fit-content; }
 .ov2-pbar-label-main { display: flex; align-items: center; padding: 0 10px; background: var(--navy); color: #fff; font-size: 12px; font-weight: 700; white-space: nowrap; }
@@ -330,7 +329,7 @@ table.fc-summary td .dot {
 .ov2-pbar-val::before { content: ''; position: absolute; left: -4px; top: 50%; width: 8px; height: 8px; background: #fff; transform: translateY(-50%) rotate(45deg); }
 .ov2-pbar-label-sub { font-size: 10px; color: var(--text-soft); font-weight: 500; white-space: nowrap; padding-left: 2px; height: 12px; line-height: 12px; }
 .ov2-pbar-track-wrap { position: relative; }
-.ov2-pbar-track { position: relative; height: 13px; margin-top: 3px; background: var(--bg-hover); border-radius: 999px; overflow: visible; }
+.ov2-pbar-track { position: relative; height: 18px; margin-top: 3px; background: var(--bg-hover); border-radius: 999px; overflow: visible; }
 .ov2-pbar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#C7CEE3,#7C88AC); }
 .ov2-pbar-fill.na { background: repeating-linear-gradient(135deg, var(--border-strong), var(--border-strong) 4px, transparent 4px, transparent 8px); }
 .ov2-pbar-diff { font-size: 15px; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; margin-top: 2px; line-height: 16px; }
@@ -401,7 +400,7 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .org-tabs {
   position: relative;
   display: flex; flex-wrap: nowrap; overflow-x: auto; overflow-y: visible;
-  background-color: rgba(230,214,252,0.55); box-sizing: border-box;
+  background-color: rgba(214,226,252,0.6); box-sizing: border-box;
   padding: 10px 10px 0 10px; margin-bottom: 0;
   border-radius: 8px 8px 0 0;
   scrollbar-width: none;
@@ -414,8 +413,8 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
   font-size: 20px; font-weight: 800; color: rgba(16,23,42,.55);
 }
 .tab-scroll-btn:hover { color: var(--text); }
-.tab-scroll-btn.right { right: 0; justify-content: flex-end; padding-right: 10px; background: linear-gradient(to right, transparent, rgba(230,214,252,0.55) 55%); }
-.tab-scroll-btn.left { left: 0; justify-content: flex-start; padding-left: 10px; background: linear-gradient(to left, transparent, rgba(230,214,252,0.55) 55%); }
+.tab-scroll-btn.right { right: 0; justify-content: flex-end; padding-right: 10px; background: linear-gradient(to right, transparent, rgba(214,226,252,0.6) 55%); }
+.tab-scroll-btn.left { left: 0; justify-content: flex-start; padding-left: 10px; background: linear-gradient(to left, transparent, rgba(214,226,252,0.6) 55%); }
 .org-tab {
   position: relative; border: none;
   border-top-left-radius: 8px; border-top-right-radius: 8px;
@@ -430,66 +429,88 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .org-tab.selected:hover { color: #1d1d29; }
 .org-tab.selected::after, .org-tab.selected::before {
   content: ""; position: absolute; width: 10px; height: 10px;
-  background-color: rgba(230,214,252,0.55); bottom: 0;
+  background-color: rgba(214,226,252,0.6); bottom: 0;
 }
 .org-tab.selected::after { right: -10px; border-bottom-left-radius: 300px; box-shadow: -3px 3px 0 3px #fff; }
 .org-tab.selected::before { left: -10px; border-bottom-right-radius: 300px; box-shadow: 3px 3px 0 3px #fff; }
 .org-tab .org-tab-name { font-size: 15px; font-weight: 600; letter-spacing: .01em; color: inherit; white-space: nowrap; }
 .org-tab.selected .org-tab-name { font-weight: 700; }
 
-/* 회차 탭 바로 아래 본문(detail) 패널이 이어지도록 사이 모서리 제거 */
-.round-tabs-row + #detail .detail-inner {
-  border-top-left-radius: 0; border-top-right-radius: 0; border-top: none;
-  box-shadow: 0 -1px 0 rgba(16,23,42,.05) inset, 0 16px 36px rgba(16,23,42,.15), 0 4px 10px rgba(16,23,42,.09);
-}
-
-/* 정현원 뱃지 - 선택된 부서/사업 탭 바로 위, 그 탭 위치를 따라 좌우로 이동. 선택 전에는 숨김 */
-.tab-headcount-badge-row { display: none; justify-content: flex-start; margin-bottom: 6px; transition: margin-left .15s ease; }
-.tab-headcount-badge { flex-shrink: 0; }
-.tab-headcount-badge .detail-summary-line {
-  display: inline-block; font-size: 14px; font-weight: 600; color: var(--text-muted);
+/* 정현원 뱃지 - 부서/사업 탭 바로 아래(간격 좁게), 선택된 탭 위치를 따라 좌우로 이동 (JS: alignHeadcountBadge). 선택 전에는 숨김 */
+.tab-headcount-badge-row { display: none; justify-content: flex-start; margin: 4px 0 8px; }
+.tab-headcount-badge { flex-shrink: 0; position: relative; transition: margin-left .15s ease; }
+.headcount-summary {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700; color: var(--text-muted);
   background: var(--bg-hover); border-radius: var(--r);
   border-left: 3px solid var(--accent-soft);
-  padding: 6px 12px; margin: 0; white-space: nowrap;
+  padding: 6px 12px; margin: 0; white-space: nowrap; cursor: default;
+}
+.headcount-info-icon {
+  display: inline-flex; color: var(--accent); flex-shrink: 0; cursor: pointer;
+  transition: transform .5s ease-in-out;
+}
+.headcount-info-icon svg { width: 14px; height: 14px; }
+.tab-headcount-badge:has(.headcount-summary:hover) .headcount-info-icon { transform: rotate(360deg) scale(1.2); }
+.headcount-detail-pop {
+  visibility: hidden; opacity: 0; position: absolute; left: 100%; top: 50%;
+  transform: translateY(-50%) translateX(-10px); margin-left: 8px; z-index: 5;
+  background: var(--accent-soft); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 14px; font-size: 13.5px; font-weight: 500; color: var(--text-muted);
+  white-space: nowrap; transition: opacity .5s, transform .5s;
+}
+.headcount-detail-pop::after {
+  content: ""; position: absolute; right: 100%; top: 50%; margin-top: -5px;
+  border-width: 5px; border-style: solid; border-color: transparent var(--accent-soft) transparent transparent;
+}
+@keyframes headcount-pop-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(-50%) translateX(0); }
+  40% { transform: translateY(-50%) translateX(10px); }
+  60% { transform: translateY(-50%) translateX(5px); }
+}
+.tab-headcount-badge:has(.headcount-summary:hover) .headcount-detail-pop {
+  visibility: visible; opacity: 1; transform: translateY(-50%) translateX(0);
+  animation: headcount-pop-bounce .6s ease;
 }
 
-/* 회차 탭 줄 - 선택된 부서/사업 탭 바로 아래로 좌우 위치가 따라 움직인다 (JS: alignRoundTabsRow) */
-.round-tabs-row { display: none; margin: 10px 0 16px 14px; transition: margin-left .15s ease; }
+/* 회차 탭(본예산~3회추경) - 부서/사업 탭 줄 바로 위, 첫 번째 탭 자리에 고정. Download는 같은 줄 오른쪽 끝 */
+.round-tabs-row { display: none; align-items: center; margin: 0 0 10px; }
 
 /* 회차 탭 (본예산/추경) - 뼈대만, 스크롤 없이 한 줄 고정 */
 /* 회차 탭 (본예산/추경) - Uiverse 글라이더(glider) radio-input 스타일, 4개 옵션 기준 */
 #round-tabs.radio-input {
   --container_width: 260px;
   position: relative;
+  top: -2px;
   display: flex;
   align-items: center;
   border-radius: 9px;
-  background-color: #fff;
-  color: #000;
+  background-color: var(--navy);
+  color: #fff;
   width: var(--container_width);
   overflow: hidden;
-  border: 1px solid rgba(53, 52, 52, .226);
+  border: none;
+  padding: 4px;
+  gap: 2px;
 }
 #round-tabs.radio-input input { display: none; }
 #round-tabs.radio-input label {
-  width: 100%; padding: 6px 2px; cursor: pointer;
+  width: 100%; padding: 7px 2px; cursor: pointer;
+  position: relative;
   display: flex; justify-content: center; align-items: center;
-  z-index: 1; font-weight: 600; letter-spacing: -.6px; font-size: 12px;
-  white-space: nowrap; color: var(--text-muted);
+  z-index: 1; font-weight: 700; letter-spacing: -.4px; font-size: 14px;
+  white-space: nowrap; color: #C7D8FF;
+  border-radius: 6px;
+  transition: color .15s ease, background-color .15s ease;
 }
-#round-tabs .selection {
-  display: none; position: absolute; height: 100%;
-  width: calc(var(--container_width) / 4);
-  z-index: 0; left: 0; top: 0; transition: .15s ease;
+#round-tabs.radio-input label::before {
+  content: ""; position: absolute; top: 15%; left: 0; width: 3px; height: 70%;
+  background-color: var(--accent); border-radius: 3px; opacity: 0;
+  transition: opacity .15s ease;
 }
-#round-tabs.radio-input label:has(input:checked) { color: #fff; }
-#round-tabs.radio-input label:has(input:checked) ~ .selection {
-  background-color: var(--navy); display: inline-block;
+#round-tabs.radio-input label:has(input:checked) {
+  color: #fff; background-color: rgba(255,255,255,.16);
 }
-#round-tabs.radio-input label:nth-child(1):has(input:checked) ~ .selection { transform: translateX(calc(var(--container_width) * 0/4)); }
-#round-tabs.radio-input label:nth-child(2):has(input:checked) ~ .selection { transform: translateX(calc(var(--container_width) * 1/4)); }
-#round-tabs.radio-input label:nth-child(3):has(input:checked) ~ .selection { transform: translateX(calc(var(--container_width) * 2/4)); }
-#round-tabs.radio-input label:nth-child(4):has(input:checked) ~ .selection { transform: translateX(calc(var(--container_width) * 3/4)); }
+#round-tabs.radio-input label:has(input:checked)::before { opacity: 1; }
 
 /* 조직 상세 확장 영역 (정원현원 총괄 + 세부사업) */
 
@@ -499,6 +520,7 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
   position: relative;
   overflow: hidden;
   padding: 0;
+  zoom: 0.66;
   background-color: #ffffff;
   box-shadow:
     -3px -3px 8px rgba(255,255,255,.7),
@@ -657,6 +679,7 @@ table.tree td { padding: 7px 8px; border-bottom: 1px solid var(--border); border
 table.tree tr:last-child td { border-bottom: none; }
 table.tree td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.tree td.num:last-child { text-align: center; }
+table.tree td.num.pct { text-align: center; }
 table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; }
 table.tree td[contenteditable="true"]:hover { background: rgba(52,87,213,.06); box-shadow: inset 0 0 0 1px rgba(52,87,213,.2); }
 table.tree td[contenteditable="true"]:focus { background: #fff; outline: none; box-shadow: inset 0 0 0 1.5px var(--accent); }
@@ -667,13 +690,13 @@ table.tree tr.row-edited td { background: var(--success-soft); }
 table.tree tr.row-edited td[contenteditable="true"]:hover { background: rgba(22,146,79,.12); box-shadow: inset 0 0 0 1px rgba(22,146,79,.3); }
 table.tree tr.row-edited td:first-child::after { content: '\C218\C815\B428'; margin-left: 6px; font-size: 11px; font-weight: 700; color: var(--success); background: #fff; border: 1px solid var(--success); border-radius: 20px; padding: 1px 7px; vertical-align: middle; }
 table.tree td.num.basis { text-align: left !important; white-space: pre-line !important; overflow-wrap: break-word; word-break: break-word; }
-tr.lvl-팀 td { font-weight: 700; font-size: 16px; background: #EDE4FB; color: var(--navy); }
+tr.lvl-팀 td { font-weight: 700; font-size: 16px; border-top: 1px solid var(--border); color: var(--navy); }
 tr.lvl-팀 td.basis, tr.lvl-팀 td.num { color: var(--navy); }
 tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: #D7DEF5; color: var(--navy); border-top: 1.5px solid #A9B7E0; }
 tr.lvl-합계 td.basis, tr.lvl-합계 td.num { color: var(--navy); }
 tr.lvl-합계 td:first-child { text-align: center; }
-tr.lvl-정책 td { font-weight: 700; background: var(--accent-soft); }
-tr.lvl-단위 td { font-weight: 600; background: #FAFBFE; }
+tr.lvl-정책 td { font-weight: 700; }
+tr.lvl-단위 td { font-weight: 600; }
 tr.lvl-세부 td { font-weight: 500; color: var(--text-muted); }
 tr.lvl-목 td { font-weight: 700; }
 tr.lvl-세목 td { font-weight: 500; }
@@ -708,19 +731,46 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   margin: -20px -14px 14px; padding: 18px 16px 14px;
   border-radius: 14px 14px 0 0;
   background:
-    radial-gradient(120% 140% at 12% 0%, rgba(139,127,209,.20), rgba(139,127,209,0) 60%),
+    radial-gradient(120% 140% at 12% 0%, rgba(52,87,213,.20), rgba(52,87,213,0) 60%),
     linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0));
   border-bottom: 1px solid var(--sidebar-border);
   cursor: pointer;
 }
 .sidebar .brand-row { display: flex; align-items: center; gap: 11px; }
 .sidebar .brand-mark {
-  width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px;
+  width: 42px; height: 42px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(155deg, #6C5FC7 0%, #3D3487 65%, #23205E 100%);
-  box-shadow: 0 4px 14px rgba(58,47,135,.42), inset 0 1px 1px rgba(255,255,255,.4);
+  overflow: visible;
 }
-.sidebar .brand-mark svg { width: 24px; height: 24px; display: block; }
+.sidebar .brand-mark svg { width: 42px; height: 42px; display: block; position: relative; filter: drop-shadow(0 2px 3px rgba(15,11,40,.28)); }
+.sidebar .brand-mark .brand-mark-triangle { animation: brand-triangle-bob 4s ease infinite both; }
+@keyframes brand-triangle-bob {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+  100% { transform: translateY(0); }
+}
+.sidebar .brand-mark .cls-1, .sidebar .brand-mark .cls-2, .sidebar .brand-mark .cls-3 { stroke-width: 0; }
+.sidebar .brand-mark .cls-1 { fill: #3457D5; animation: brand-cls1 4s ease infinite both; }
+.sidebar .brand-mark .cls-2 { fill: #5B84FF; animation: brand-cls2 4s ease infinite both; }
+.sidebar .brand-mark .cls-3 { fill: #22348E; animation: brand-cls3 4s ease infinite both; }
+@keyframes brand-cls1 {
+  0% { fill: #3457D5; }
+  34% { fill: #22348E; }
+  66% { fill: #5B84FF; }
+  100% { fill: #3457D5; }
+}
+@keyframes brand-cls2 {
+  0% { fill: #5B84FF; }
+  34% { fill: #3457D5; }
+  66% { fill: #22348E; }
+  100% { fill: #5B84FF; }
+}
+@keyframes brand-cls3 {
+  0% { fill: #22348E; }
+  34% { fill: #5B84FF; }
+  66% { fill: #3457D5; }
+  100% { fill: #22348E; }
+}
 .sidebar .brand-word { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .sidebar .brand-eyebrow {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
@@ -733,7 +783,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 }
 .sidebar .brand-logotype em {
   font-style: normal;
-  background: linear-gradient(100deg, #6C5FC7, #A6154A 130%);
+  background: linear-gradient(100deg, #3457D5, #22348E 130%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .sidebar .brand-subtitle {
@@ -793,11 +843,11 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .sidebar .side-item:hover { background: var(--sidebar-hover-bg); color: var(--sidebar-text); }
 /* 선택 상태: 좌측 포인트 인디케이터 + 배경 톤 + 은은한 링으로 강조 */
 .sidebar .side-item.active {
-  background: rgba(139,127,209,.16); color: var(--sidebar-text); font-weight: 700;
-  box-shadow: inset 0 0 0 1px rgba(139,127,209,.28);
+  background: rgba(52,87,213,.14); color: var(--sidebar-text); font-weight: 700;
+  box-shadow: inset 0 0 0 1px rgba(52,87,213,.26);
 }
 .sidebar .side-item.active::before { opacity: 1; transform: scaleY(1); }
-.sidebar .side-item.active .side-icon { color: #fff; background: var(--sidebar-accent); box-shadow: 0 2px 8px rgba(139,127,209,.5); }
+.sidebar .side-item.active .side-icon { color: #fff; background: var(--sidebar-accent); box-shadow: 0 2px 8px rgba(52,87,213,.5); }
 .sidebar .side-item.inst-header { cursor: pointer; color: var(--sidebar-text); font-weight: 600; }
 .sidebar .side-item.inst-header:hover { background: var(--sidebar-hover-bg); }
 .sidebar .side-item.inst-header:hover .side-icon { background: #E7E7E7; color: var(--sidebar-text); }
@@ -829,7 +879,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 }
 .sidebar .side-sub .side-item.fund-item.active,
 .sidebar .side-sub .side-item.dept-item.active {
-  background: rgba(139,127,209,.14); box-shadow: none;
+  background: rgba(52,87,213,.13); box-shadow: none;
   color: var(--sidebar-accent); font-weight: 700;
 }
 .sidebar .caret { display: inline-flex; color: var(--sidebar-text-faint); transition: transform .18s ease, color .15s ease; flex-shrink: 0; }
@@ -840,7 +890,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 /* ---- fund radio glider (출연금/위탁금 선택 토글) ---- */
 .sidebar .fund-radio {
   --main-color: var(--sidebar-accent);
-  --main-color-opacity: rgba(139,127,209,.14);
+  --main-color-opacity: rgba(52,87,213,.13);
   display: flex; flex-direction: column; position: relative; padding-left: 14px;
 }
 .sidebar .fund-radio input {
@@ -911,7 +961,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   text-align: center;
 }
 .landing-hero {
-  background: oklch(0.97 0.008 260);
+  background: oklch(0.98 0.01 255);
 }
 .landing-hero > * { position: relative; z-index: 1; }
 .landing-hero-wash {
@@ -919,15 +969,15 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(120% 100% at 50% 0%, oklch(0.99 0.01 285), oklch(0.93 0.02 280) 80%);
+  background: radial-gradient(120% 100% at 30% 10%, oklch(0.99 0.006 255), oklch(0.93 0.025 250) 80%);
 }
 .landing-hero-blobs {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  filter: blur(30px) saturate(1.1);
-  opacity: .62;
+  filter: blur(34px) saturate(1.15);
+  opacity: .9;
 }
 .landing-hero-blob {
   position: absolute;
@@ -936,29 +986,18 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   width: var(--lh-s);
   aspect-ratio: 1;
   translate: -50% -50%;
-  background: conic-gradient(from 140deg, oklch(0.8 0.11 var(--lh-h)), oklch(0.86 0.08 calc(var(--lh-h) + 25)), oklch(0.74 0.12 calc(var(--lh-h) - 20)), oklch(0.8 0.11 var(--lh-h)));
-  mix-blend-mode: multiply;
+  background: conic-gradient(from 140deg, oklch(0.78 0.14 var(--lh-h)), oklch(0.83 0.11 calc(var(--lh-h) + 25)), oklch(0.72 0.15 calc(var(--lh-h) - 20)), oklch(0.78 0.14 var(--lh-h)));
+  mix-blend-mode: normal;
+  opacity: .55;
   animation: landing-blob-morph var(--lh-t) ease-in-out infinite, landing-blob-turn calc(var(--lh-t) * 2.3) linear infinite;
 }
 @keyframes landing-blob-morph {
-  0% { border-radius: 62% 38% 46% 54% / 58% 42% 58% 42%; }
-  34% { border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%; }
-  67% { border-radius: 45% 55% 37% 63% / 63% 57% 43% 37%; }
-  100% { border-radius: 62% 38% 46% 54% / 58% 42% 58% 42%; }
+  0% { border-radius: 62% 38% 46% 54% / 58% 42% 58% 42%; scale: 1; }
+  34% { border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%; scale: 1.18; }
+  67% { border-radius: 45% 55% 37% 63% / 63% 57% 43% 37%; scale: 0.86; }
+  100% { border-radius: 62% 38% 46% 54% / 58% 42% 58% 42%; scale: 1; }
 }
 @keyframes landing-blob-turn { to { rotate: 360deg; } }
-.landing-hero-blob-svg {
-  position: absolute;
-  left: 84%;
-  top: 92%;
-  translate: -50% -50%;
-  z-index: 0;
-  pointer-events: none;
-  width: min(74vmin,660px);
-  height: min(74vmin,660px);
-  opacity: .2;
-  filter: blur(.4px);
-}
 @media (prefers-reduced-motion: reduce) {
   .landing-hero-blob { animation: none; }
 }
@@ -973,7 +1012,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .landing-title .l1::after { content: " "; }
 .landing-title .l2 {
   display: inline;
-  background-image: linear-gradient(90deg, #3457D5, #8B7FD1, #C4436F, #8B7FD1, #3457D5);
+  background-image: linear-gradient(90deg, #3457D5, #5B84FF, #22348E, #5B84FF, #3457D5);
   background-size: 300% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
   animation: hscf-colourful 6s linear infinite;
@@ -1089,7 +1128,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 }
 .landing-card-icon:not(:has(img)) {
   border-radius: 50%;
-  background: linear-gradient(155deg, #A99CEB, #6C5FC7);
+  background: linear-gradient(155deg, #7B9EFF, #3457D5);
   transition: 0.5s ease-in-out;
 }
 .landing-card-icon img {
@@ -1102,7 +1141,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   font-family: 'GmarketSans', 'Pretendard', sans-serif;
   font-size: 15px; font-weight: 700; color: #fff;
 }
-.landing-card:hover .landing-card-icon:not(:has(img)) { background: linear-gradient(155deg, #6C5FC7, #3D3487); }
+.landing-card:hover .landing-card-icon:not(:has(img)) { background: linear-gradient(155deg, #3457D5, #22348E); }
 .landing-card-tooltip {
   position: absolute;
   bottom: calc(100% + 12px);
@@ -1219,7 +1258,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .tree-search-btn:hover { background: var(--accent-dark); }
 .tree-search-btn svg { width: 14px; height: 14px; }
 table.tree tr.search-match { background: #FFF6D6 !important; }
-table.tree tr.search-dim { opacity: .3; }
+table.tree tr.search-dim { display: none; }
 table.tree tr.calc-mismatch td.basis { background: #FDE8E8; }
 .mismatch-flag { color: #D14343; margin-left: 5px; font-size: 13px; cursor: help; }
 table.tree tr.mismatch-only-hide { display: none; }
@@ -1411,13 +1450,13 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   top: 0;
   padding: 0;
   margin: 0;
-  color: #C8B6FF;
+  color: #B6CCFF;
   animation: text_713 3.5s ease both infinite;
   font-size: .8rem;
   letter-spacing: 1px;
 }
 .load {
-  background-color: #9A79FF;
+  background-color: #5B84FF;
   border-radius: 50px;
   display: block;
   height: 16px;
@@ -1432,7 +1471,7 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   content: "";
   width: 100%;
   height: 100%;
-  background-color: #D1C2FF;
+  background-color: #C7D8FF;
   border-radius: inherit;
   animation: loading2_713 3.5s ease both infinite;
 }
@@ -1457,11 +1496,16 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   90% { width: 80%; transform: translateX(15px); }
   100% { transform: translateX(0px); width: 16px; }
 }
+.witak-topbar-wrap { position: relative; }
+.witak-topbar-wrap .topbar-logo-slot { max-width: calc(100% - 372px); overflow: hidden; min-height: 72px; }
+.witak-topbar-wrap .topbar-logo-slot #overview-topbar-logo-text { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .witak-dropdown {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  right: 26px;
+  transform: translateY(-50%);
   width: 340px;
-  max-width: 100%;
-  flex-shrink: 0;
+  max-width: calc(100% - 52px);
   border: 1px solid var(--border);
   border-radius: 16px;
   background-color: var(--bg-card);
@@ -1508,14 +1552,22 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .witak-caret svg { width: 15px; height: 15px; display: block; transition: transform 300ms ease; }
 .witak-dropdown input:where(:checked) + .witak-trigger .witak-caret svg { transform: rotate(90deg); }
 .witak-list {
-  width: 100%;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 6px;
+  width: auto;
   box-sizing: border-box;
   display: grid;
   grid-auto-flow: row;
   overflow-y: auto;
   gap: 0;
-  margin: 0;
   list-style: none;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(16,23,42,.12);
   --witak-w-scrollbar: 8px;
 }
 .witak-listitem { list-style: none; }
@@ -1534,9 +1586,10 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
     <div class="brand" onclick="showDashboard()">
       <div class="brand-row">
         <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 40 40" fill="none">
-            <circle cx="20" cy="20" r="15" stroke="rgba(255,255,255,.28)" stroke-width="6"></circle>
-            <circle cx="20" cy="20" r="15" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-dasharray="42 100" transform="rotate(-90 20 20)"></circle>
+          <svg class="brand-mark-triangle" viewBox="368 406 1300 1188">
+            <polygon class="cls-1" points="928 781 1021 951 784.5 1371.97 1618 1371.97 1530.32 1544 509 1539 928 781"></polygon>
+            <polygon class="cls-3" points="1618 1371.97 784.5 1371.97 874.93 1211 1346 1211 923.1 456 1110.06 456 1618 1371.97"></polygon>
+            <polygon class="cls-2" points="418 1372.74 509 1539 928 781 1162.32 1211 1346 1211 923.1 456 418 1372.74"></polygon>
           </svg>
         </span>
         <span class="brand-word">
@@ -1574,26 +1627,10 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
       <div class="landing-hero">
         <div class="landing-hero-wash" aria-hidden="true"></div>
         <div class="landing-hero-blobs" aria-hidden="true">
-          <span class="landing-hero-blob" style="--lh-t:12s;--lh-x:12%;--lh-y:16%;--lh-s:44vmin;--lh-h:280"></span>
-          <span class="landing-hero-blob" style="--lh-t:16s;--lh-x:70%;--lh-y:24%;--lh-s:36vmin;--lh-h:255"></span>
-          <span class="landing-hero-blob" style="--lh-t:14s;--lh-x:56%;--lh-y:74%;--lh-s:50vmin;--lh-h:300"></span>
+          <span class="landing-hero-blob" style="--lh-t:7s;--lh-x:14%;--lh-y:18%;--lh-s:46vmin;--lh-h:262"></span>
+          <span class="landing-hero-blob" style="--lh-t:9s;--lh-x:68%;--lh-y:20%;--lh-s:38vmin;--lh-h:220"></span>
+          <span class="landing-hero-blob" style="--lh-t:8s;--lh-x:88%;--lh-y:85%;--lh-s:44vmin;--lh-h:264;background:conic-gradient(from 140deg, oklch(0.38 0.13 264), oklch(0.44 0.11 284), oklch(0.32 0.14 244), oklch(0.38 0.13 264));opacity:.5"></span>
         </div>
-        <svg class="landing-hero-blob-svg" viewBox="0 0 200 200" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <linearGradient id="landing-blob-g" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="oklch(0.82 0.07 285)"/>
-              <stop offset="1" stop-color="oklch(0.76 0.07 275)"/>
-            </linearGradient>
-          </defs>
-          <path fill="url(#landing-blob-g)" d="M45,-58C58,-47,68,-33,71,-17C74,-1,70,17,60,32C50,47,34,59,15,66C-4,73,-25,75,-42,66C-59,57,-72,37,-75,16C-78,-5,-71,-27,-58,-42C-45,-57,-26,-65,-7,-63C12,-61,32,-69,45,-58Z" transform="translate(100 100)">
-            <animate attributeName="d" dur="18s" repeatCount="indefinite" calcMode="spline"
-              keyTimes="0;0.33;0.66;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1;0.45 0 0.55 1"
-              values="M45,-58C58,-47,68,-33,71,-17C74,-1,70,17,60,32C50,47,34,59,15,66C-4,73,-25,75,-42,66C-59,57,-72,37,-75,16C-78,-5,-71,-27,-58,-42C-45,-57,-26,-65,-7,-63C12,-61,32,-69,45,-58Z;
-                      M53,-64C67,-52,73,-31,74,-11C75,9,71,29,59,44C47,59,27,69,5,71C-17,73,-41,67,-57,53C-73,39,-81,17,-78,-4C-75,-25,-61,-45,-45,-57C-29,-69,-11,-73,7,-74C25,-75,39,-76,53,-64Z;
-                      M39,-51C52,-40,64,-29,70,-14C76,1,76,19,68,33C60,47,44,57,26,64C8,71,-12,75,-31,69C-50,63,-68,47,-74,28C-80,9,-74,-13,-63,-30C-52,-47,-36,-59,-19,-64C-2,-69,17,-62,39,-51Z;
-                      M45,-58C58,-47,68,-33,71,-17C74,-1,70,17,60,32C50,47,34,59,15,66C-4,73,-25,75,-42,66C-59,57,-72,37,-75,16C-78,-5,-71,-27,-58,-42C-45,-57,-26,-65,-7,-63C12,-61,32,-69,45,-58Z"/>
-          </path>
-        </svg>
         <h1 class="landing-title"><span class="l1">화성시 공공기관</span><span class="l2">예산통합 대시보드</span></h1>
         <p class="landing-subtitle-en">Integrated Budget Dashboard</p>
         <div class="landing-grid" id="landing-grid"></div>
@@ -1614,17 +1651,17 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
     </section>
 
     <section class="panel" id="panel-inst-overview">
-      <div class="witak-topbar-wrap" style="position:relative;">
-        <div class="topbar" style="justify-content:space-between;gap:16px;">
-          <div style="display:flex;align-items:center;gap:16px;min-width:0;flex:1 1 auto;">
-            <img id="overview-topbar-logo" style="height:72px;width:auto;display:none;">
+      <div class="witak-topbar-wrap">
+        <div class="topbar" style="gap:16px;">
+          <div class="topbar-logo-slot" style="display:flex;align-items:center;gap:16px;min-width:0;">
+            <img id="overview-topbar-logo" style="height:72px;width:auto;display:none;flex-shrink:0;">
             <span id="overview-topbar-logo-text" style="font-family:'GmarketSans','Pretendard',sans-serif;font-size:25px;font-weight:800;color:var(--navy);letter-spacing:-0.01em;"></span>
           </div>
-          <div class="witak-dropdown" id="witak-dropdown-wrap" style="display:none;">
-            <input hidden="" class="witak-sr-only" name="witak-dropdown" id="witak-dropdown" type="checkbox" />
-            <label aria-label="위탁사업 리스트" for="witak-dropdown" class="witak-trigger" id="witak-trigger-label"><span class="witak-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></span>위탁사업 리스트 보기</label>
-            <ul class="witak-list witak-webkit-scrollbar" id="witak-list" role="list" dir="auto"></ul>
-          </div>
+        </div>
+        <div class="witak-dropdown" id="witak-dropdown-wrap" style="display:none;">
+          <input hidden="" class="witak-sr-only" name="witak-dropdown" id="witak-dropdown" type="checkbox" />
+          <label aria-label="위탁사업 리스트" for="witak-dropdown" class="witak-trigger" id="witak-trigger-label"><span class="witak-caret"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></span>위탁사업 리스트 보기</label>
+          <ul class="witak-list witak-webkit-scrollbar" id="witak-list" role="list" dir="auto"></ul>
         </div>
       </div>
 
@@ -1678,27 +1715,8 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 
       <div class="section-title-row">
         <h2 class="section-heading section-heading-lg" id="cards-title">부서별 예산</h2>
-        <div class="download-menu-wrap">
-          <button type="button" class="button" id="export-btn" onclick="toggleDownloadMenu(event)">
-            <svg stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" height="40" width="40" class="button__icon" xmlns="http://www.w3.org/2000/svg">
-              <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
-              <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-              <path d="M7 11l5 5l5 -5"></path>
-              <path d="M12 4l0 12"></path>
-            </svg>
-            <span class="button__text">Download</span>
-          </button>
-          <div class="download-menu" id="download-menu" style="display:none">
-            <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xls)</div>
-            <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
-          </div>
-        </div>
       </div>
       <div class="business-section">
-        <div class="tab-headcount-badge-row" id="tab-headcount-badge-row">
-          <div class="tab-headcount-badge" id="tab-headcount-badge"></div>
-        </div>
-        <div class="card-grid" id="card-grid"></div>
         <div class="round-tabs-row" id="round-tabs-row">
           <div class="radio-input" id="round-tabs">
             <label>
@@ -1717,8 +1735,26 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
               <input type="radio" id="round-supp3" name="round-radio" value="supp3" onchange="onRoundChange(this)">
               <span>3회 추경</span>
             </label>
-            <span class="selection"></span>
           </div>
+          <div class="download-menu-wrap">
+            <button type="button" class="button" id="export-btn" onclick="toggleDownloadMenu(event)">
+              <svg stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" height="40" width="40" class="button__icon" xmlns="http://www.w3.org/2000/svg">
+                <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                <path d="M7 11l5 5l5 -5"></path>
+                <path d="M12 4l0 12"></path>
+              </svg>
+              <span class="button__text">Download</span>
+            </button>
+            <div class="download-menu" id="download-menu" style="display:none">
+              <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xls)</div>
+              <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-grid" id="card-grid"></div>
+        <div class="tab-headcount-badge-row" id="tab-headcount-badge-row">
+          <div class="tab-headcount-badge" id="tab-headcount-badge"></div>
         </div>
 
         <div class="detail" id="detail"></div>
@@ -1767,12 +1803,19 @@ function updateTopbarLogo(instKey, imgId, textId) {
   if (logo) {
     img.src = logo.src;
     img.alt = logo.alt;
-    // 도시공사/FC/인재육성재단 로고는 원본 여백이 많아 같은 높이에서 더 커 보이므로 축소
-    img.style.height = (instKey === 'corp' || instKey === 'fc' || instKey === 'talent') ? '52px' : '72px';
   } else {
     img.src = DEFAULT_LOGO_SRC;
     img.alt = '화성시문화관광재단';
-    img.style.height = '72px';
+  }
+  img.style.height = '72px';
+  // 실제 이미지마다 여백/구도가 달라 같은 72px 박스 안에서도 체감 크기가 달라 보정
+  // (박스 높이는 그대로 72px로 고정해 배너 전체 높이는 안 흔들리게 함)
+  if (instKey === 'hscf') {
+    img.style.transform = 'translateY(-4px) scale(1.12)';
+  } else if (instKey === 'fc' || instKey === 'corp') {
+    img.style.transform = 'scale(0.85)';
+  } else {
+    img.style.transform = '';
   }
 }
 
@@ -2042,19 +2085,22 @@ function selectFund(f) {
 
 function selectCard(id) {
   state.selectedId = id;
-  state.selectedRound = null; // 부서/사업을 새로 고르면 회차 선택은 초기화 - 예산서는 회차를 골라야 나옴
-  state.roundData = null; // 이전에 불러온 추경 회차 데이터도 같이 비운다
-  resetRoundTabsUI(); // 화면상 라디오 체크 표시도 실제 상태(선택 안 됨)와 맞춰서 같이 초기화
+  // 회차 선택은 부서/사업 탭을 바꿔도 유지한다 - 매번 본예산을 다시 눌러야 하는 게 번거롭다는 피드백 반영.
+  syncRoundTabsUI();
   renderCards();
-  renderDetail();
+  if (state.selectedRound) {
+    applyRound(state.selectedRound); // 새로 고른 사업 기준으로 그 회차 데이터를 다시 불러온다
+  } else {
+    state.roundData = null;
+    renderDetail();
+  }
 }
 
-// 회차 탭(본예산~3회추경) 라디오 버튼의 체크 표시를 전부 해제한다.
-// (부서/사업 탭을 새로 고를 때 state.selectedRound=null과 화면 표시를 맞추기 위함)
-function resetRoundTabsUI() {
+// 회차 탭(본예산~3회추경) 라디오 버튼의 체크 표시를 현재 state.selectedRound와 맞춘다.
+function syncRoundTabsUI() {
   var wrap = document.getElementById('round-tabs');
   if (!wrap) return;
-  wrap.querySelectorAll('input[name="round-radio"]').forEach(function (r) { r.checked = false; });
+  wrap.querySelectorAll('input[name="round-radio"]').forEach(function (r) { r.checked = (r.value === state.selectedRound); });
 }
 
 function classifyMokCode(code) {
@@ -2172,29 +2218,23 @@ function renderWtgSummary() {
 }
 
 // 요약 도넛차트·범례·표에서 공통으로 쓰는 그라데이션 컬러 팔레트
-var DONUT_COLOR_STOPS = {
-  '인건비': ['#AEC5F7', '#B9A8EC'],
-  '운영비': ['#D6B7EF', '#F0AECD'],
-  '자산취득비': ['#F8CFA0', '#EFAE7C'],
-  '도서구입': ['#A9DDEA', '#7FB9C9'],
-  '출연금': ['#AEC5F7', '#B9A8EC'],
-  '보조금': ['#F8CFA0', '#EFAE7C'],
-  '자체수익': ['#AEE3CB', '#84C7A8'],
-  '운영경비': ['#D6B7EF', '#F0AECD'],
-  '사업비': ['#F8CFA0', '#EFAE7C'],
-  '대행사업수익': ['#AEC5F7', '#B9A8EC'],
-  '자치단체출연금수익': ['#AEE3CB', '#84C7A8'],
-  '국비·자치단체보조금수익': ['#F8CFA0', '#EFAE7C'],
-  '순세계잉여금': ['#A9DDEA', '#7FB9C9'],
-  '기부금수익': ['#F0AECD', '#E58FB0'],
-  '사업수익': ['#AEC5F7', '#B9A8EC'],
-  '자본적수입': ['#AEE3CB', '#84C7A8'],
-  '자체수입금': ['#A9DDEA', '#7FB9C9'],
-  '도시보조금': ['#F8CFA0', '#EFAE7C']
-};
-function donutStops(label) { return DONUT_COLOR_STOPS[label] || ['#C4CAD6', '#9AA3B4']; }
-function donutGradientCss(label) {
-  var s = donutStops(label);
+// 항목명이 아니라 순서(인덱스)로 색을 배정 — 항목이 많은(문화관광재단 세부내역 등) 차트에서도
+// 매핑되지 않은 항목이 전부 같은 회색으로 뭉개지지 않고 항상 서로 다른 색이 나오도록 함
+var DONUT_PALETTE = [
+  ['#AEC5F7', '#7FA3ED'], // blue
+  ['#A9DDEA', '#6FB8CC'], // teal
+  ['#AEE3CB', '#71C09C'], // green
+  ['#F8D9A0', '#EFB25C'], // amber
+  ['#F8CFA0', '#EF9C5C'], // orange
+  ['#F5B8C4', '#E884A0'], // rose
+  ['#BFDDF7', '#8AB8ED'], // sky blue
+  ['#D7E8A8', '#AECB6B'], // lime
+  ['#F7C9AE', '#EF9B70'], // peach
+  ['#C7D0E0', '#98A6C2']  // slate
+];
+function donutStops(index) { return DONUT_PALETTE[index % DONUT_PALETTE.length]; }
+function donutGradientCss(index) {
+  var s = donutStops(index);
   return 'linear-gradient(135deg,' + s[0] + ',' + s[1] + ')';
 }
 
@@ -2242,23 +2282,23 @@ function buildDonutSvg(rows, total26) {
     var pct = actualPcts[i];
     var vpct = visualPcts[i];
     var len = circumference * vpct / 100;
-    var stops = donutStops(r.label);
+    var stops = donutStops(i);
     var gid = uid + 'donutGrad' + i;
     defsHtml += '<linearGradient id="' + gid + '" x1="0%" y1="0%" x2="100%" y2="100%">'
       + '<stop offset="0%" stop-color="' + stops[0] + '"/>'
       + '<stop offset="100%" stop-color="' + stops[1] + '"/>'
       + '</linearGradient>';
     var gap = (vpct > 0 && vpct < 100) ? 3 : 0;
+    var midAngle = (offset + len / 2) / circumference * 360 - 90;
+    var rad = midAngle * Math.PI / 180;
     segsHtml += '<circle cx="' + CX + '" cy="' + CY + '" r="' + R + '" fill="none" stroke="url(#' + gid + ')" stroke-width="' + STROKE
       + '" stroke-linecap="round"'
       + ' stroke-dasharray="' + Math.max(len - gap, 0).toFixed(2) + ' ' + (circumference - len + gap).toFixed(2) + '"'
       + ' stroke-dashoffset="' + (-offset).toFixed(2) + '" transform="rotate(-90 ' + CX + ' ' + CY + ')" filter="url(#' + uid + 'donutGlow)"></circle>';
-    var midAngle = (offset + len / 2) / circumference * 360 - 90;
-    var rad = midAngle * Math.PI / 180;
     if (vpct > 0) {
       var lx = CX + R * Math.cos(rad);
       var ly = CY + R * Math.sin(rad);
-      labelsHtml += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="800" fill="#fff">' + pct.toFixed(1) + '%</text>';
+      labelsHtml += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="800" fill="#fff">' + pct.toFixed(1) + '</text>';
     }
     offset += len;
   });
@@ -2268,9 +2308,9 @@ function buildDonutSvg(rows, total26) {
 
 // 도넛 차트 하단 범례 (항목명 + 색상 칩 + 비중)
 function buildDonutLegend(rows, total26) {
-  var items = rows.map(function (r) {
+  var items = rows.map(function (r, i) {
     var pct = total26 ? (r.y26 / total26 * 100) : 0;
-    return '<div class="item"><span class="name"><span class="chip" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</span><span class="pct">' + pct.toFixed(1) + '%</span></div>';
+    return '<div class="item"><span class="name"><span class="chip" style="background:' + donutGradientCss(i) + '"></span>' + escapeHtml(r.label) + '</span><span class="pct">' + pct.toFixed(1) + '%</span></div>';
   }).join('');
   return '<div class="donut-legend">' + items + '</div>';
 }
@@ -2284,8 +2324,8 @@ function renderFcRevenueSummary(cardsByName) {
   var total26 = rows.reduce(function (a, r) { return a + r.y26; }, 0);
   var total25 = rows.reduce(function (a, r) { return a + r.y25; }, 0);
 
-  var rowsHtml = rows.map(function (r) {
-    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+  var rowsHtml = rows.map(function (r, i) {
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(i) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var totalHtml = '<tr class="total"><td>합계</td><td>' + fmtWon(total26) + '</td><td>' + fmtWon(total25) + '</td>' + diffCellHtml(total25, total26) + '</tr>';
 
@@ -2727,7 +2767,7 @@ function ov2PersonnelVBarList(rows) {
 }
 
 function ov2PersonnelBarList(rows, hoverMap) {
-  return '<div class="ov2-pbar-list">' + rows.map(function (r) {
+  var rowsHtml = rows.map(function (r) {
     var hasCap = r.capacity != null && r.capacity > 0;
     var pct = r.pctOverride != null ? r.pctOverride : (hasCap ? Math.min(100, Math.round((r.current / r.capacity) * 100)) : (r.current > 0 ? 100 : 0));
     var fillCls = hasCap ? '' : ' na';
@@ -2740,17 +2780,18 @@ function ov2PersonnelBarList(rows, hoverMap) {
     var dividerHtml = r.sectionLabel ? '<div class="ov2-pbar-divider">' + escapeHtml(r.sectionLabel) + '</div>' : '';
     var hoverInfo = (hoverMap && hoverMap[mainLabel]) ? hoverMap[mainLabel] : null;
     var hoverHtml = hoverInfo ? hoverInfo.html : '';
-    var hoverDirCls = hoverInfo && hoverInfo.direction === 'down' ? ' ov2-tt-down' : '';
     var hoverCls = hoverHtml ? ' ov2-pbar-row-hoverable' : '';
     return dividerHtml + '<div class="ov2-pbar-row' + hoverCls + '">'
       + '<div class="ov2-pbar-label">'
         + '<div class="ov2-pbar-label-line"><span class="ov2-pbar-label-main">' + escapeHtml(mainLabel) + '</span><span class="ov2-pbar-val">' + valTxt + '</span></div>'
         + (subLabel ? '<div class="ov2-pbar-label-sub">' + escapeHtml(subLabel) + '</div>' : '')
       + '</div>'
-      + '<div class="ov2-pbar-track"><div class="ov2-pbar-fill' + fillCls + '" style="width:' + pct + '%;"></div>' + (hoverHtml ? '<button type="button" class="grade-btn"><svg xmlns="http://www.w3.org/2000/svg" width="13" viewBox="0 0 20 20" height="13" fill="none" class="grade-btn-icon"><g stroke-width="2" stroke-linecap="round" stroke="#22348E"><circle r="7.5" cy="10" cx="10"></circle><path d="m9.99998 6.5v7"></path><path d="m6.5 9.99998h7"></path></g></svg><span class="grade-btn-label">직급별 보기</span><div class="ov2-pbar-tooltip' + hoverDirCls + '">' + hoverHtml + '</div></button>' : '') + '</div>'
+      + '<div class="ov2-pbar-track"><div class="ov2-pbar-fill' + fillCls + '" style="width:' + pct + '%;"></div>' + (hoverHtml ? '<button type="button" class="grade-btn"><svg xmlns="http://www.w3.org/2000/svg" width="13" viewBox="0 0 20 20" height="13" fill="none" class="grade-btn-icon"><g stroke-width="2" stroke-linecap="round" stroke="#22348E"><circle r="7.5" cy="10" cx="10"></circle><path d="m9.99998 6.5v7"></path><path d="m6.5 9.99998h7"></path></g></svg><span class="grade-btn-label">직급별 보기</span></button>' : '') + '</div>'
       + '<div class="ov2-pbar-diff ' + diffCls + '">' + diffTxt + '</div>'
+      + (hoverHtml ? '<div class="ov2-box-tooltip">' + hoverHtml + '</div>' : '')
       + '</div>';
-  }).join('') + '</div>';
+  }).join('');
+  return '<div class="ov2-pbar-list">' + rowsHtml + '</div>';
 }
 
 function ov2ExecutionChart(rows, hasCompare) {
@@ -2850,8 +2891,8 @@ function renderOv2Overview(instKey) {
   // 4) 총수입 총괄 / 총지출 총괄
   var revTotal26 = d.revenueItems.reduce(function (a, r) { return a + r.y26; }, 0);
   var revTotal25 = d.revenueItems.reduce(function (a, r) { return a + r.y25; }, 0);
-  var revRowsHtml = d.revenueItems.map(function (r) {
-    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+  var revRowsHtml = d.revenueItems.map(function (r, i) {
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(i) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var revTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(revTotal26) + '</td><td>' + fmtWon(revTotal25) + '</td>' + diffCellHtml(revTotal25, revTotal26) + '</tr>';
   var revDetailHtml = '';
@@ -2867,8 +2908,8 @@ function renderOv2Overview(instKey) {
 
   var expTotal26 = d.budgetCompare.reduce(function (a, r) { return a + r.y26; }, 0);
   var expTotal25 = d.budgetCompare.reduce(function (a, r) { return a + r.y25; }, 0);
-  var expRowsHtml = d.budgetCompare.map(function (r) {
-    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+  var expRowsHtml = d.budgetCompare.map(function (r, i) {
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(i) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var expTotalHtml = '<tr class="total"><td>합계</td><td>' + fmtWon(expTotal26) + '</td><td>' + fmtWon(expTotal25) + '</td>' + diffCellHtml(expTotal25, expTotal26) + '</tr>';
 
@@ -2945,8 +2986,8 @@ function renderInstOverview(inst) {
   updateTopbarLogo(inst.key, 'overview-topbar-logo', 'overview-topbar-logo-text');
 
   var s = computeInstOverviewSummary();
-  var rowsHtml = s.rows.map(function (r) {
-    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+  var rowsHtml = s.rows.map(function (r, i) {
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(i) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var totalHtml = '<tr class="total"><td>' + escapeHtml(s.total.label) + '</td><td>' + fmtWon(s.total.y26) + '</td><td>' + fmtWon(s.total.y25) + '</td>' + diffCellHtml(s.total.y25, s.total.y26) + '</tr>';
   var svgHtml = buildDonutSvg(s.rows, s.total.y26);
@@ -3041,8 +3082,8 @@ function renderSummary_LEGACY_UNUSED() {
   }
   var s = state.fund === '위탁금' ? computeWtgFundSummary() : computeFundSummary();
 
-  var rowsHtml = s.rows.map(function (r) {
-    return '<tr><td><span class="dot" style="background:' + donutGradientCss(r.label) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+  var rowsHtml = s.rows.map(function (r, i) {
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(i) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var totalHtml = '<tr class="total"><td>' + escapeHtml(s.total.label) + '</td><td>' + fmtWon(s.total.y26) + '</td><td>' + fmtWon(s.total.y25) + '</td>' + diffCellHtml(s.total.y25, s.total.y26) + '</tr>';
 
@@ -3092,7 +3133,7 @@ function renderCards() {
   }).join('')
     + '<button type="button" id="tabScrollLeft" class="tab-scroll-btn left" onclick="scrollTabs(-1)" style="display:none;">\u2039</button>'
     + '<button type="button" id="tabScrollRight" class="tab-scroll-btn right" onclick="scrollTabs(1)" style="display:none;">\u203A</button>';
-  el.onscroll = function () { updateTabScrollButtons(); alignRoundTabsRow(); alignHeadcountBadgeRow(); };
+  el.onscroll = function () { updateTabScrollButtons(); alignHeadcountBadge(); };
   updateTabScrollButtons();
   var selectedBtn = el.querySelector('.org-tab.selected');
   if (selectedBtn) selectedBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -3128,20 +3169,20 @@ function fmtDiff(amt26, amt25) {
   return sign + fmtWon(Math.abs(d));
 }
 function fmtPct(amt26, amt25) {
-  if (!amt25) return amt26 ? '-' : '0%';
+  if (!amt25) return amt26 ? '<span style="color:var(--accent)">신규</span>' : '0%';
   var d = amt26 - amt25;
   return Math.round(d / amt25 * 100) + '%';
 }
 
 function getTreeColLabels() {
   var round = state.selectedRound;
-  var amtLabel = '2026년도 예산액';
-  var baseLabel = '2025년도 예산액';
+  var amtLabel = '2026 예산액';
+  var baseLabel = '2025 예산액';
   if (round && round !== 'base') {
     amtLabel = (ROUND_LABELS[round] || '') + '요구액';
     baseLabel = '기정액';
   }
-  return ['부서·정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '비교증감', '증감률', '확인'];
+  return ['정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '증감액', '증감률', '확인'];
 }
 var DEFAULT_TREE_COL_WIDTHS = [34, 18, 13, 13, 12, 10];
 function loadTreeColWidths() {
@@ -3278,7 +3319,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible) {
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + '</td>'
     + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
-    + '<td class="num">' + fmtPct(node.amt26, node.amt25) + '</td>'
+    + '<td class="num pct">' + fmtPct(node.amt26, node.amt25) + '</td>'
     + '<td class="num edit-check"><input type="checkbox" class="row-edit-checkbox" title="체크하면 위 내용이 저장되고 수정됨으로 표시됩니다"' + (node.edited ? ' checked' : '') + ' onchange="saveBudgetRowEdit(' + node.id + ', this)"></td>'
     + '</tr>');
   if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded); });
@@ -3600,7 +3641,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
       + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
       + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
-      + '<td class="num">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
+      + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
       + '<td class="num edit-check"></td>'
       + '</tr>';
   }
@@ -3703,7 +3744,7 @@ function renderDetail() {
     if (emptyBadge) emptyBadge.innerHTML = '';
     return;
   }
-  if (roundRow) roundRow.style.display = 'block';
+  if (roundRow) roundRow.style.display = 'flex';
   if (badgeRow) badgeRow.style.display = 'flex';
   // 예산액은 정현원과 분리된 큰 글씨 라인으로 표시하며, teams(정원현원) 데이터 유무와 무관하게 독립적으로 노출한다.
   var amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
@@ -3733,22 +3774,20 @@ function renderDetail() {
       var branches = LIBRARY_BRANCHES[b.name];
       var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : (namesOnly[0] || '');
       var totalLabel = anyCapacity ? ('정현원 ' + totalCap + '(' + totalCur + ')') : ('현원 ' + totalCur);
-      if (namesOnly.length <= 1) {
-        headcountLine = '<div class="detail-summary-line">' + totalLabel + (totalLabel && suffixName ? ' - ' : '') + suffixName + '</div>';
-      } else {
-        headcountLine = '<div class="detail-summary-line">' + totalLabel
-          + (numbered.length ? ((totalLabel ? ' - ' : '') + numbered.join(', ')) : '') + '</div>';
-      }
+      // 총계만 항상 노출하고, 팀별 세부내역은 호버 시에만 풍선으로 보여준다 (탭 옆 공간을 잡아먹지 않기 위함)
+      var detailText = (namesOnly.length <= 1) ? suffixName : numbered.join(', ');
+      var infoIconHtml = detailText
+        ? '<span class="headcount-info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>'
+        : '';
+      headcountLine = '<span class="headcount-summary">' + totalLabel + infoIconHtml + '</span>'
+        + (detailText ? '<div class="headcount-detail-pop">' + detailText + '</div>' : '');
     }
   }
 
-  // 정현원 줄은 #detail이 아니라 부서/사업명 탭(card-grid) 위쪽 뱃지 자리에 렌더링한다.
+  // 정현원 줄은 #detail이 아니라 부서/사업명 탭(card-grid) 아래쪽 뱃지 자리에 렌더링한다.
   var badgeEl = document.getElementById('tab-headcount-badge');
   if (badgeEl) badgeEl.innerHTML = headcountLine;
-
-  // 정현원 뱃지 줄과 회차 탭(본예산~3회추경)을 지금 선택된 부서/사업 탭 위/아래에 각각 맞춘다.
-  alignHeadcountBadgeRow();
-  alignRoundTabsRow();
+  alignHeadcountBadge();
 
   // 부서/사업 탭만 고른 상태에서는 정현원 + 회차 탭(본예산~3회추경)까지만 보여주고,
   // 그 아래 예산서(금액·트리)는 회차 탭을 하나 골라야 나오게 한다.
@@ -3855,9 +3894,9 @@ function renderDetail() {
   }
 }
 
-// 회차 탭(본예산/1회추경/2회추경/3회추경) 변경 - 본예산이 아니면 Supabase에서 그 회차의 트리를 새로 불러와 교체 렌더링한다.
-async function onRoundChange(input) {
-  var round = input.value;
+// 회차(본예산/1회추경/2회추경/3회추경) 적용 - 본예산이 아니면 Supabase에서 그 회차의 트리를 새로 불러와 교체 렌더링한다.
+// 회차 라디오 변경과, 부서/사업 탭을 바꾼 뒤 이전 회차 선택을 유지할 때 양쪽에서 재사용한다.
+async function applyRound(round) {
   state.selectedRound = round;
   var b = getBusiness(state.selectedId);
   if (!b) { renderDetail(); return; }
@@ -3881,38 +3920,26 @@ async function onRoundChange(input) {
   state.roundData = data;
   renderDetail();
 }
+function onRoundChange(input) {
+  applyRound(input.value);
+}
 
-// 정현원 뱃지 줄을 현재 선택된 부서/사업 탭 바로 위 위치로 정렬한다. (회차 탭과 동일한 방식, 위/아래만 다름)
-function alignHeadcountBadgeRow() {
+// 정현원 뱃지를 지금 선택된 부서/사업 탭 바로 아래 위치로 정렬한다.
+function alignHeadcountBadge() {
+  var badgeEl = document.getElementById('tab-headcount-badge');
   var rowEl = document.getElementById('tab-headcount-badge-row');
   var tabsEl = document.getElementById('card-grid');
-  if (!rowEl || !tabsEl) return;
+  if (!badgeEl || !rowEl || !tabsEl) return;
   if (getComputedStyle(rowEl).display === 'none') return;
   var selTab = tabsEl.querySelector('.org-tab.selected');
-  var PAD_DIFF = 12;
-  if (!selTab) { rowEl.style.marginLeft = (-PAD_DIFF) + 'px'; return; }
-  var left = selTab.offsetLeft - tabsEl.scrollLeft - PAD_DIFF;
-  var maxLeft = Math.max(-PAD_DIFF, tabsEl.clientWidth - 260 - PAD_DIFF);
-  left = Math.max(-PAD_DIFF, Math.min(left, maxLeft));
-  rowEl.style.marginLeft = left + 'px';
+  if (!selTab) { badgeEl.style.marginLeft = '0px'; return; }
+  var badgeWidth = badgeEl.offsetWidth || 180;
+  var left = selTab.offsetLeft - tabsEl.scrollLeft;
+  var maxLeft = Math.max(0, tabsEl.clientWidth - badgeWidth);
+  left = Math.max(0, Math.min(left, maxLeft));
+  badgeEl.style.marginLeft = left + 'px';
 }
-
-// 회차 탭(본예산~3회추경) 줄을 현재 선택된 부서/사업 탭 바로 아래 위치로 정렬한다.
-// detail-inner(패딩 22px)와 org-tabs(패딩 10px)의 좌측 여백 차이(12px)만큼 보정한다.
-function alignRoundTabsRow() {
-  var rowEl = document.getElementById('round-tabs-row');
-  var tabsEl = document.getElementById('card-grid');
-  if (!rowEl || !tabsEl) return;
-  if (getComputedStyle(rowEl).display === 'none') return;
-  var selTab = tabsEl.querySelector('.org-tab.selected');
-  var PAD_DIFF = 12;
-  if (!selTab) { rowEl.style.marginLeft = (-PAD_DIFF) + 'px'; return; }
-  var left = selTab.offsetLeft - tabsEl.scrollLeft - PAD_DIFF;
-  var maxLeft = Math.max(-PAD_DIFF, tabsEl.clientWidth - 260 - PAD_DIFF);
-  left = Math.max(-PAD_DIFF, Math.min(left, maxLeft));
-  rowEl.style.marginLeft = left + 'px';
-}
-window.addEventListener('resize', function () { alignRoundTabsRow(); alignHeadcountBadgeRow(); });
+window.addEventListener('resize', alignHeadcountBadge);
 
 function renderAll() {
   renderDeptTabs();
@@ -4441,7 +4468,7 @@ function renderSettlementPanel(instKey, inst) {
       + '<div class="settle-yoy-grid">'
         + renderSettleYoyCard('총수익', data.yoy.totalRevenue.curr, data.yoy.totalRevenue.prev, '천원', '#3457D5')
         + renderSettleYoyCard('총비용', data.yoy.totalExpense.curr, data.yoy.totalExpense.prev, '백만원', '#C97A1F', 1000)
-        + renderSettleYoyCard('당기순손익', data.yoy.netIncome.curr, data.yoy.netIncome.prev, '천원', '#7C5CD6')
+        + renderSettleYoyCard('당기순손익', data.yoy.netIncome.curr, data.yoy.netIncome.prev, '천원', '#3457D5')
       + '</div>';
   }
 
