@@ -3184,11 +3184,15 @@ function getTreeColLabels() {
   }
   return ['정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '증감액', '증감률', '확인'];
 }
-var DEFAULT_TREE_COL_WIDTHS = [34, 18, 13, 13, 12, 10];
+var DEFAULT_TREE_COL_WIDTHS = [28, 18, 13, 13, 12, 10, 6];
 function loadTreeColWidths() {
   try {
     var raw = localStorage.getItem('hscf_tree_col_widths');
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      // 컬럼 개수가 바뀐 적이 있으면(예: 확인 컬럼 추가) 옛 저장값을 버리고 기본값을 쓴다.
+      if (Array.isArray(parsed) && parsed.length === DEFAULT_TREE_COL_WIDTHS.length) return parsed;
+    }
   } catch (e) {}
   return DEFAULT_TREE_COL_WIDTHS.slice();
 }
