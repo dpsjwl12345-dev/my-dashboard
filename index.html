@@ -29,6 +29,12 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Isamanru';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
 :root {
   --bg: #F3F5FA;
   --bg-card: #ffffff;
@@ -170,51 +176,52 @@ table.summary td.diff.down { color: var(--accent); }
 .section-title-row.settle-section-gap { margin-top: 40px; }
 .section-title-row.settle-section-gap-lg { margin-top: 96px; }
 .settle-yoy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--page-gap); margin-bottom: 32px; }
-/* From Uiverse.io by uiverse-astronaut (폰트: 상단 결산총괄 KPI 박스와 동일한 Pretendard로 통일 / 카드별 고유 색상(--halo-accent) 적용) */
+/* 상단 결산총괄 KPI 박스(.settle-kpi-card)와 동일한 뉴모피즘 톤으로 통일. 카드별(총수익/총비용/당기순손익) 색상은 --halo-accent로 고정 지정해 기관이 바뀌어도 항상 동일하게 유지 */
 .halo-stat {
   position: relative;
   width: 100%;
   box-sizing: border-box;
-  background-color: var(--color-surface, #14151c);
-  border: 1px solid var(--color-border, #2a2d38);
+  background: #eef0f3;
+  box-shadow: 6px 6px 14px rgba(163,172,196,.34), -6px -6px 14px #ffffff;
   border-radius: 16px;
-  padding: 22px 20px 14px;
+  padding: 9px 18px 8px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 1px;
   overflow: hidden;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  color: var(--color-text-primary, #f2f4f8);
-  transition: border-color 150ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  color: var(--navy);
+  transition: transform .15s, box-shadow .15s;
 }
+.halo-stat:hover { transform: translateY(-2px); box-shadow: 8px 8px 16px rgba(163,172,196,.38), -8px -8px 16px #ffffff; }
 .halo-stat::before {
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
   height: 5px;
-  background-color: var(--halo-accent, #2be08c);
+  background-color: var(--halo-accent, var(--accent));
 }
-.halo-stat:hover { border-color: var(--color-border-strong, #3a3d4a); }
 .halo-stat-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.halo-stat-label { font-size: 19px; font-weight: 800; color: var(--color-text-primary, #f2f4f8); }
+.halo-stat-label { font-size: 19px; font-weight: 800; color: var(--text-muted); }
 .halo-stat-value {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  font-weight: 800; font-size: 2.05rem; letter-spacing: -0.02em; line-height: 1.15;
-  font-variant-numeric: tabular-nums; margin: 0; color: var(--color-text-primary, #f2f4f8);
+  font-weight: 800; font-size: 1.85rem; letter-spacing: -0.02em; line-height: 1.02;
+  font-variant-numeric: tabular-nums; margin: 0; color: var(--navy);
 }
-.halo-stat-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
+.halo-stat-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 0; }
 .halo-stat-delta {
-  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px;
-  background-color: color-mix(in srgb, var(--halo-accent, #2be08c) 16%, transparent);
-  color: var(--halo-accent, #2be08c);
+  display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; margin-top: 6px;
+  background-color: color-mix(in srgb, var(--halo-accent, var(--accent)) 12%, transparent);
+  color: var(--halo-accent, var(--accent));
   border-radius: 999px;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  font-size: 19px; font-weight: 800;
+  font-size: 15px; font-weight: 800;
 }
-.halo-stat-delta svg { width: 15px; height: 15px; }
+.halo-stat-delta svg { width: 13px; height: 13px; }
 .halo-stat-delta.down svg { transform: rotate(180deg); }
-.halo-stat-spark { width: 96px; height: 32px; color: var(--halo-accent, #2be08c); }
-.halo-stat-sub { font-size: 16px; font-weight: 700; text-align: right; color: var(--color-text-secondary, #9aa0ae); }
+.halo-stat-spark { width: 34px; height: 34px; flex: none; color: var(--halo-accent, var(--accent)); }
+.halo-stat-spark.down { transform: scaleY(-1); }
+.halo-stat-sub { font-size: 14px; font-weight: 700; text-align: right; color: var(--text-soft); margin-top: -1px; }
 @media (max-width: 980px) { .summary-grid { grid-template-columns: 1fr; } }
 .section-heading-lg { font-size: 22px; margin: 0; padding-left: 13px; border-left: 4px solid var(--accent); }
 .section-title-row { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; }
@@ -1103,6 +1110,33 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   position: relative; top: 28px;
 }
 .landing-grid { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 28px; max-width: 100%; margin: 20px auto 0; background: transparent; padding: 10px 16px; }
+
+/* 4개 기관 버튼 밑 중앙 - "예산재정과"는 고정 텍스트, "문화복지팀"은 그라데이션 글자+배경이 옆에서 펼쳐지듯 나타나고
+   깜빡이는 커서가 따라붙는 효과 - 주신 TextLoop(motion/react) 컴포넌트 동작을 vanilla로 옮김(회전 항목이 1개라 나타나는 것까지만) */
+.landing-subjects-row { display: flex; justify-content: center; align-items: center; margin: 48px auto 0; }
+.text-loop-widget {
+  display: flex; flex-direction: row; align-items: center;
+  font-family: 'Isamanru', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-size: 28px; font-weight: 400; letter-spacing: -0.5px;
+}
+.tl-static { margin-right: 12px; color: var(--navy); white-space: nowrap; }
+.tl-rotate-wrap {
+  position: relative; display: inline-flex; align-items: center; overflow: hidden; white-space: nowrap;
+  max-width: 0; opacity: 0; animation: tl-grow 2s ease forwards; animation-delay: 0.6s;
+}
+.tl-rotate-bg { position: absolute; inset: 0; background: linear-gradient(90deg, transparent, var(--accent-soft) 55%, rgba(52,87,213,.22)); }
+.tl-rotate-text {
+  position: relative; padding-right: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.tl-cursor { width: 3px; height: 1.1em; flex-shrink: 0; background: var(--accent); margin-left: 2px; animation: tl-blink 1.6s ease infinite alternate; }
+@keyframes tl-grow { to { max-width: 320px; opacity: 1; } }
+@keyframes tl-blink { from { opacity: 1; } to { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) {
+  .tl-rotate-wrap { animation: none; max-width: 320px; opacity: 1; }
+  .tl-cursor { animation: none; }
+}
 .landing-btn-row { display: flex; justify-content: center; gap: 32px; margin-top: 72px; }
 .landing-settle-btn {
   position: relative;
@@ -1709,6 +1743,16 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
         <h1 class="landing-title"><span class="l1">화성시 공공기관</span><span class="l2">예산통합 대시보드</span></h1>
         <p class="landing-subtitle-en">Integrated Budget Dashboard</p>
         <div class="landing-grid" id="landing-grid"></div>
+        <div class="landing-subjects-row">
+          <div class="text-loop-widget">
+            <span class="tl-static">예산재정과</span>
+            <span class="tl-rotate-wrap">
+              <span class="tl-rotate-bg"></span>
+              <span class="tl-rotate-text">문화복지팀</span>
+            </span>
+            <span class="tl-cursor"></span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -4696,13 +4740,6 @@ function renderSettleYoyCard(label, curr, prev, unit, accent, unitDivisor) {
   var dv = unitDivisor || 1;
   var dispCurr = dv === 1 ? fmtWon(curr) : fmtMillion(curr);
 
-  // 2점(전년→당해) 기반 미니 스파크라인. 실측 중간값이 없어 부드러운 3점 곡선으로 보간.
-  var lo = Math.min(curr, prev), hi = Math.max(curr, prev);
-  var range = (hi - lo) || 1;
-  var yOf = function (v) { return 24 - ((v - lo) / range) * 18; };
-  var yPrev = yOf(prev), yCurr = yOf(curr), yMid = (yPrev + yCurr) / 2;
-  var sparkPoints = '0,' + yPrev.toFixed(1) + ' 48,' + yMid.toFixed(1) + ' 96,' + yCurr.toFixed(1);
-
   return '<article class="halo-stat ' + cls + '" style="--halo-accent:' + accent + ';">'
     + '<header class="halo-stat-head">'
       + '<span class="halo-stat-label">' + label + '</span>'
@@ -4713,8 +4750,9 @@ function renderSettleYoyCard(label, curr, prev, unit, accent, unitDivisor) {
         + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 14l5-5 5 5"></path></svg>'
         + (pct === null ? '-' : Math.abs(pct) + '%')
       + '</span>'
-      + '<svg class="halo-stat-spark ' + cls + '" viewBox="0 0 96 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-        + '<polyline points="' + sparkPoints + '"></polyline>'
+      + '<svg class="halo-stat-spark ' + cls + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+        + '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>'
+        + '<polyline points="16 7 22 7 22 13"></polyline>'
       + '</svg>'
     + '</footer>'
     + '<div class="halo-stat-sub">전년 ' + (dv === 1 ? fmtWon(prev) : fmtMillion(prev)) + unit + '</div>'
@@ -4790,9 +4828,9 @@ function renderSettlementPanel(instKey, inst) {
   if (data.yoy) {
     yoyHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">전년 대비 증감</h2></div>'
       + '<div class="settle-yoy-grid">'
-        + renderSettleYoyCard('총수익', data.yoy.totalRevenue.curr, data.yoy.totalRevenue.prev, '천원', '#3457D5')
-        + renderSettleYoyCard('총비용', data.yoy.totalExpense.curr, data.yoy.totalExpense.prev, '백만원', '#C97A1F', 1000)
-        + renderSettleYoyCard('당기순손익', data.yoy.netIncome.curr, data.yoy.netIncome.prev, '천원', '#3457D5')
+        + renderSettleYoyCard('총수익', data.yoy.totalRevenue.curr, data.yoy.totalRevenue.prev, '백만원', 'var(--accent)', 1000)
+        + renderSettleYoyCard('총비용', data.yoy.totalExpense.curr, data.yoy.totalExpense.prev, '백만원', 'var(--danger)', 1000)
+        + renderSettleYoyCard('당기순손익', data.yoy.netIncome.curr, data.yoy.netIncome.prev, '백만원', 'var(--success)', 1000)
       + '</div>';
   }
 
