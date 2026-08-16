@@ -3216,7 +3216,7 @@ function renderOv2Overview(instKey) {
   // 4) 총수입 총괄 / 총지출 총괄
   var revTotal26 = d.revenueItems.reduce(function (a, r) { return a + r.y26; }, 0);
   var revTotal25 = d.revenueItems.reduce(function (a, r) { return a + r.y25; }, 0);
-  var REV_HIGHLIGHT_LABELS = ['대행사업수익', '자치단체출연금수익'];
+  var REV_HIGHLIGHT_LABELS = ['대행사업수익', '자치단체출연금수익', '출연금', '도시보조금'];
   var revRowsHtml = d.revenueItems.map(function (r, i) {
     var y26Html = REV_HIGHLIGHT_LABELS.indexOf(r.label) !== -1
       ? '<span class="ov2-rev-marker">' + fmtWon(r.y26) + '</span>'
@@ -3230,7 +3230,10 @@ function renderOv2Overview(instKey) {
     var revDetailTotal25 = d.revenueDetail.reduce(function (a, r) { return a + r.y25; }, 0);
     var revDetailTotalRow = '<tr class="total"><td>계</td><td>' + fmtWon(revDetailTotal26) + '</td><td>' + fmtWon(revDetailTotal25) + '</td>' + diffCellHtml(revDetailTotal25, revDetailTotal26) + '</tr>';
     var revDetailRows = d.revenueDetail.map(function (r) {
-      return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+      var detailY26Html = REV_HIGHLIGHT_LABELS.indexOf(r.label) !== -1
+        ? '<span class="ov2-rev-marker">' + fmtWon(r.y26) + '</span>'
+        : fmtWon(r.y26);
+      return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + detailY26Html + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
     }).join('');
     revDetailHtml = '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table"><thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead><tbody>' + revDetailTotalRow + revDetailRows + '</tbody></table></div>';
   }
