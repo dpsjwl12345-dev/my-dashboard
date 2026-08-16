@@ -471,23 +471,83 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
   visibility: visible; opacity: 1; transform: translateY(-50%) translateX(0);
   animation: headcount-pop-bounce .6s ease;
 }
+/* 뱃지가 화면 오른쪽 끝에 가까운 탭(도서관 목록 등)에 있을 때는 풍선이 오른쪽으로 넘쳐 잘리므로
+   JS(togglePopDirection)가 화면 밖으로 나갈 것 같으면 이 클래스를 붙여 왼쪽으로 뜨게 한다. */
+.headcount-detail-pop.pop-left {
+  left: auto; right: 100%;
+  transform: translateY(-50%) translateX(10px); margin-left: 0; margin-right: 8px;
+}
+.headcount-detail-pop.pop-left::after {
+  right: auto; left: 100%;
+  border-color: transparent transparent transparent var(--accent-soft);
+}
+@keyframes headcount-pop-bounce-left {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(-50%) translateX(0); }
+  40% { transform: translateY(-50%) translateX(-10px); }
+  60% { transform: translateY(-50%) translateX(-5px); }
+}
+.tab-headcount-badge:has(.headcount-summary:hover) .headcount-detail-pop.pop-left {
+  animation: headcount-pop-bounce-left .6s ease;
+}
 
-/* 회차 탭(본예산~3회추경) - 부서/사업 탭 줄 바로 위, 첫 번째 탭 자리에 고정. Download는 같은 줄 오른쪽 끝 */
+/* 회차 탭(본예산~3회추경) - 부서/사업 탭 줄 바로 위, 첫 번째 탭 자리에 고정. Upload/Download는 같은 줄 오른쪽 끝 */
 .round-tabs-row { display: none; align-items: center; margin: 0 0 10px; }
+
+/* 연도 선택 - 회차탭(본예산~3회추경)과 같은 네이비 바 안 첫 세그먼트. 회차탭 라벨과 구분되도록 글자색/배경을 다르게 줌 */
+.year-select-wrap { position: relative; flex-shrink: 0; }
+.year-select-btn {
+  display: flex; align-items: center; gap: 6px; height: 100%; padding: 7px 12px;
+  border: none; border-radius: 6px; background: rgba(255,255,255,.08); color: #fff;
+  font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; white-space: nowrap;
+  transition: background-color .15s ease;
+}
+.year-select-btn:hover, .year-select-wrap.open .year-select-btn { background: rgba(255,255,255,.22); }
+.year-select-caret { width: 14px; height: 14px; flex-shrink: 0; color: var(--accent-soft); transition: transform .15s ease; }
+.year-select-wrap.open .year-select-caret { transform: rotate(180deg); }
+.year-select-menu {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; min-width: 96px;
+  background: #fff; border-radius: 10px; box-shadow: 0 10px 28px rgba(16,23,42,.2), 0 1px 3px rgba(16,23,42,.08);
+  overflow: hidden; padding: 6px;
+}
+.year-select-item { padding: 8px 12px; border-radius: 7px; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; }
+.year-select-item:hover { background: var(--bg-hover); }
+.year-select-item.selected { color: var(--accent); font-weight: 800; }
+.year-select-divider { width: 1px; align-self: stretch; margin: 6px 2px; background: rgba(255,255,255,.18); flex-shrink: 0; }
+
+/* Upload/Download 아이콘+텍스트 필 - 옆 본예산 바(회차 탭)와 세로 높이(44px) 통일, 호버 시 확대+파란색 강조 */
+.io-btn-group {
+  display: flex; align-items: center; flex-shrink: 0; height: 44px; margin-left: auto; margin-right: 24px;
+  border: 1px solid var(--border); border-radius: 14px;
+  background: #fff; box-shadow: var(--shadow-sm); overflow: visible;
+}
+.io-btn:first-child { border-radius: 14px 0 0 14px; }
+.io-btn-group .download-menu-wrap:last-child .io-btn { border-radius: 0 14px 14px 0; }
+.io-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0;
+  height: 100%; padding: 0 16px; border: none; background: transparent; cursor: pointer;
+  color: var(--text-muted); font-size: 14px; font-weight: 700; font-family: inherit; white-space: nowrap;
+  transition: color .2s ease, background-color .2s ease;
+}
+.io-btn svg { width: 18px; height: 18px; flex-shrink: 0; transition: transform .2s ease; }
+.io-btn:hover { color: var(--accent); background: var(--bg-hover); }
+.io-btn:hover svg { transform: scale(1.15); }
+.io-btn-divider { width: 1px; align-self: stretch; margin: 8px 0; background: var(--border); flex-shrink: 0; }
+.io-btn-group .download-menu-wrap { margin: 0; height: 100%; position: relative; flex-shrink: 0; }
 
 /* 회차 탭 (본예산/추경) - 뼈대만, 스크롤 없이 한 줄 고정 */
 /* 회차 탭 (본예산/추경) - Uiverse 글라이더(glider) radio-input 스타일, 4개 옵션 기준 */
 #round-tabs.radio-input {
-  --container_width: 260px;
+  --container_width: 360px;
   position: relative;
   top: -2px;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   border-radius: 9px;
   background-color: var(--navy);
   color: #fff;
   width: var(--container_width);
-  overflow: hidden;
+  overflow: visible;
   border: none;
   padding: 4px;
   gap: 2px;
@@ -518,9 +578,9 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 /* 소관부서 총액 카드 (Uiverse neumorphic 카드 참고, 사이트 블루 톤 적용) */
 .dept-stat-card {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   padding: 0;
-  zoom: 0.66;
+  zoom: 0.72;
   background-color: #ffffff;
   box-shadow:
     -3px -3px 8px rgba(255,255,255,.7),
@@ -560,78 +620,61 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   color: #fff; font-size: 15px; font-weight: 800; line-height: 1; text-align: center;
 }
-/* 부서명 앞 체크박스 토글 아이콘 */
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
+/* 소관부서 카드 - 연도별 예산 요약을 왼쪽으로 펼치는 토글 버튼 (왼쪽 화살표, 눌리는 부분임을 색으로 표시) */
+.dept-yearly-toggle {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+  background: var(--accent-soft); color: var(--accent);
+  transition: background-color .15s ease, color .15s ease, transform .15s ease;
 }
-.container input {
-  position: relative;
-  top: -2px;
-  opacity: 1;
-  -webkit-appearance: none;
-  cursor: pointer;
-  height: 44px;
-  width: 44px;
-  box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
-  10px 10px 15px rgba(0,0,70,0.12);
-  border-radius: 50%;
-  border: 7px solid #ececec;
-  outline: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: .5s;
-}
-.container input::after {
-  transition: .5s;
-  font-family: monospace;
-  content: '';
-  color: #7a7a7a;
-  font-size: 25px;
-  left: 0.45em;
-  top: 0.25em;
-  width: 0.25em;
-  height: 0.5em;
-  border: solid #7a7a7a;
-  border-width: 0 0.15em 0.15em 0;
-  transform: rotate(45deg);
-}
-.container input:checked {
-  box-shadow: -10px -10px 15px rgba(255,255,255,0.5),
-  10px 10px 15px rgba(70,70,70,0.12),
-  inset -10px -10px 15px rgba(255,255,255,0.5),
-  inset 10px 10px 15px rgba(70,70,70,0.12);
-  transition: .5s;
-}
-.container input:checked::after {
-  transition: .5s;
-  border: solid var(--accent);
-  border-width: 0 0.15em 0.15em 0;
-  transform: rotate(45deg);
-}
+.dept-yearly-toggle:hover { background: var(--accent); color: #fff; transform: scale(1.08); }
+.dept-yearly-toggle input { display: none; }
+.dept-yearly-toggle svg { width: 15px; height: 15px; }
+.dept-yearly-toggle:has(input:checked) { background: var(--accent); color: #fff; }
 .dept-stat-title-text {
-  margin: 0 0 0 0.4rem; color: var(--navy); font-size: 23px; font-weight: 500; flex: 1; min-width: 0;
+  margin: 0; color: var(--navy); font-size: 23px; font-weight: 700; flex: 1; min-width: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
-.dept-stat-percent { margin: 0 0 0 0.3rem; color: var(--danger); font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 2px; white-space: nowrap; flex-shrink: 0; line-height: 1; }
+.dept-stat-percent { margin: 0 0 0 0.3rem; color: var(--danger); font-weight: 800; font-size: 22px; display: flex; align-items: center; gap: 2px; white-space: nowrap; flex-shrink: 0; line-height: 1; }
 .dept-stat-percent svg { width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
 .dept-stat-percent.down { color: var(--accent); }
 .dept-stat-percent.down svg { transform: rotate(180deg); }
-.dept-stat-data { display: flex; flex-direction: column; justify-content: flex-start; margin-top: 0.05rem; margin-left: 4.05rem; }
+.dept-stat-data { display: flex; flex-direction: column; justify-content: flex-start; margin-top: 0.05rem; margin-left: 0; }
+.dept-stat-amt-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .dept-stat-value {
-  margin-top: 0; margin-bottom: 0.2rem; color: var(--text); font-size: 1.35rem; line-height: 1.1; font-weight: 700; text-align: right;
+  margin-top: 0; margin-bottom: 0.2rem; color: var(--text); font-size: 23px; line-height: 1.2; font-weight: 700; text-align: right; flex: 1;
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 .dept-stat-range {
   position: relative; background-color: transparent;
   box-shadow: none;
-  width: 100%; height: 4px; border-radius: 2px;
+  width: 60%; margin-left: auto; height: 4px; border-radius: 2px;
 }
 .dept-stat-fill { position: absolute; top: 0; left: 0; background-color: var(--accent); width: 0%; height: 100%; border-radius: 2px; }
+/* 소관부서 카드 아이콘을 누르면 카드 왼쪽으로 뜨는 가로 막대 - 2025/2026/1~3회 편성액 요약.
+   부모 .dept-stat-card가 zoom:0.72라 그대로 두면 글씨가 실제보다 작게 렌더링되므로, 여기서 역보정한다. */
+.dept-stat-yearly-panel {
+  display: none; position: absolute; top: 50%; right: 100%; transform: translateY(-50%);
+  margin-right: 12px; z-index: 15; zoom: 1.389;
+  background: #fff; border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(16,23,42,.16), 0 1px 3px rgba(16,23,42,.08);
+  padding: 9px 14px; white-space: nowrap;
+}
+.dept-yearly-strip { display: flex; align-items: stretch; gap: 14px; }
+.dept-yearly-item { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.dept-yearly-item + .dept-yearly-item { padding-left: 14px; border-left: 1px solid var(--border); }
+.dept-yearly-item .dy-label { font-size: 11.5px; font-weight: 700; color: var(--text-soft); white-space: nowrap; }
+.dept-yearly-item .dy-amt { font-size: 13.5px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dept-yearly-item.no-data .dy-amt { color: var(--text-soft); font-weight: 500; }
+/* 사업(카드)별로 나눠 편성하는 부서용 - 회차 라벨(2026/1회/2회/3회)을 헤더 한 번만 쓰고, 그 아래 사업명별로 행을 쌓는 표 형태 */
+.dept-yearly-table { display: flex; flex-direction: column; gap: 4px; }
+.dyt-row { display: grid; grid-template-columns: minmax(90px, auto) repeat(4, minmax(70px, 1fr)); align-items: center; gap: 10px; }
+.dyt-row.dyt-head { padding-bottom: 5px; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
+.dyt-row.dyt-head .dyt-cell { font-size: 11px; font-weight: 700; color: var(--text-soft); text-align: center; }
+.dyt-cell { font-size: 13.5px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap; }
+.dyt-cell.no-data { color: var(--text-soft); font-weight: 500; }
+.dyt-cell.dyt-name-col { text-align: center; font-weight: 800; color: var(--accent-dark); font-size: 12.5px; }
 
 .dept-select { position: relative; }
 
@@ -680,18 +723,50 @@ table.tree tr:last-child td { border-bottom: none; }
 table.tree td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.tree td.num:last-child { text-align: center; }
 table.tree td.num.pct { text-align: center; }
-table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; }
+table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; position: relative; }
 table.tree td[contenteditable="true"]:hover { background: rgba(52,87,213,.06); box-shadow: inset 0 0 0 1px rgba(52,87,213,.2); }
 table.tree td[contenteditable="true"]:focus { background: #fff; outline: none; box-shadow: inset 0 0 0 1.5px var(--accent); }
 table.tree td.basis { color: var(--text-muted); font-size: 14.5px; text-align: left; white-space: pre-line; }
-table.tree td.edit-check { text-align: center; }
-table.tree td.edit-check input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--success); }
+/* 편집 중인 셀 모서리에 나타나는 저장 확인 핀 아이콘 - 체크하면(저장 트리거) 파랗게 채워짐 */
+table.tree td[contenteditable="true"] .cell-check-btn {
+  display: none; position: absolute; top: -9px; right: -7px; width: 22px; height: 22px;
+  align-items: center; justify-content: center; cursor: pointer; z-index: 5;
+  border-radius: 8px; background: #fff; box-shadow: 0 1px 4px rgba(16,23,42,.25);
+}
+table.tree td[contenteditable="true"].cell-touched .cell-check-btn { display: flex; }
+table.tree td[contenteditable="true"] .cell-check-btn input { display: none; }
+table.tree td[contenteditable="true"] .cell-check-btn .pin {
+  width: 11px; height: auto; transform: rotate(35deg); fill: none; stroke: var(--text-soft);
+  transition: transform .15s ease, stroke .15s ease, fill .15s ease;
+}
+table.tree td[contenteditable="true"] .cell-check-btn .pin line,
+table.tree td[contenteditable="true"] .cell-check-btn .pin path { stroke: inherit; }
+table.tree td[contenteditable="true"] .cell-check-btn:hover .pin { transform: rotate(35deg) scale(1.15); stroke: var(--accent); }
+table.tree td[contenteditable="true"] .cell-check-btn input:checked ~ .pin { fill: var(--accent); stroke: var(--accent); }
+table.tree td[contenteditable="true"] .cell-check-btn input:checked ~ .pin path { stroke: #fff; }
 table.tree tr.row-edited td { background: var(--success-soft); }
 table.tree tr.row-edited td[contenteditable="true"]:hover { background: rgba(22,146,79,.12); box-shadow: inset 0 0 0 1px rgba(22,146,79,.3); }
 table.tree tr.row-edited td:first-child::after { content: '\C218\C815\B428'; margin-left: 6px; font-size: 11px; font-weight: 700; color: var(--success); background: #fff; border: 1px solid var(--success); border-radius: 20px; padding: 1px 7px; vertical-align: middle; }
+/* 엑셀 업로드 미리보기 모달 */
+.upload-modal-overlay { position: fixed; inset: 0; background: rgba(16,23,42,.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.upload-modal { background: #fff; border-radius: 16px; width: min(920px, 100%); max-height: 84vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(16,23,42,.35); overflow: hidden; }
+.upload-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid #eee; }
+.upload-modal-head h3 { margin: 0; font-size: 17px; font-weight: 800; color: var(--text); }
+.upload-modal-head .um-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+.upload-modal-close { cursor: pointer; border: none; background: var(--bg-hover); width: 30px; height: 30px; border-radius: 50%; font-size: 16px; color: var(--text-muted); line-height: 1; }
+.upload-modal-body { padding: 18px 22px; overflow: auto; }
+.upload-modal-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 22px; border-top: 1px solid #eee; background: var(--bg-hover); }
+.um-btn { border: none; border-radius: 10px; padding: 9px 18px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.um-btn.cancel { background: #fff; color: var(--text-muted); box-shadow: inset 0 0 0 1px #ddd; }
+.um-btn.confirm { background: var(--accent); color: #fff; }
+.um-btn.confirm:disabled { background: #ccc; cursor: not-allowed; }
+table.um-preview { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.um-preview th { background: var(--accent-soft); color: var(--accent-dark); text-align: left; padding: 7px 9px; white-space: nowrap; position: sticky; top: 0; }
+table.um-preview td { padding: 6px 9px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+.um-notice { background: var(--accent-soft); color: var(--accent-dark); border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 14px; line-height: 1.5; }
 table.tree td.num.basis { text-align: left !important; white-space: pre-line !important; overflow-wrap: break-word; word-break: break-word; }
-tr.lvl-팀 td { font-weight: 700; font-size: 16px; border-top: 1px solid var(--border); color: var(--navy); }
-tr.lvl-팀 td.basis, tr.lvl-팀 td.num { color: var(--navy); }
+tr.lvl-팀 td { font-weight: 700; font-size: 16px; border-top: 1px solid var(--border); }
+tr.lvl-팀 td:first-child { color: var(--accent); }
 tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: #D7DEF5; color: var(--navy); border-top: 1.5px solid #A9B7E0; }
 tr.lvl-합계 td.basis, tr.lvl-합계 td.num { color: var(--navy); }
 tr.lvl-합계 td:first-child { text-align: center; }
@@ -1688,10 +1763,6 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
           <div class="dept-stat-blob"></div>
           <div class="dept-stat-content">
             <div class="dept-stat-title">
-              <label class="container" id="dept-select-icon">
-                <input checked="checked" type="checkbox">
-                <div class="checkmark"></div>
-              </label>
               <p class="dept-stat-title-text" id="dept-select-label">문화예술과</p>
               <p class="dept-stat-percent" id="dept-select-pct">
                 <svg viewBox="0 0 1792 1792" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1408 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"></path></svg>
@@ -1699,11 +1770,18 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
               </p>
             </div>
             <div class="dept-stat-data">
-              <p class="dept-stat-value" id="dept-select-amt"></p>
+              <div class="dept-stat-amt-row">
+                <label class="dept-yearly-toggle" id="dept-select-icon" title="연도별 예산 요약 보기">
+                  <input type="checkbox" onchange="toggleDeptYearlyPanel(this)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg>
+                </label>
+                <p class="dept-stat-value" id="dept-select-amt"></p>
+              </div>
               <div class="dept-stat-range"><div class="dept-stat-fill" id="dept-select-fill" style="width:0%;"></div></div>
             </div>
           </div>
           <div class="dept-select-menu" id="dept-select-menu"></div>
+          <div class="dept-stat-yearly-panel" id="dept-stat-yearly-panel" style="display:none;"></div>
         </div>
         <div class="dept-tabs" id="dept-tabs" style="display:none;"></div>
       </div>
@@ -1719,6 +1797,19 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
       <div class="business-section">
         <div class="round-tabs-row" id="round-tabs-row">
           <div class="radio-input" id="round-tabs">
+            <div class="year-select-wrap" id="year-select-wrap">
+              <button type="button" class="year-select-btn" id="year-select-btn" onclick="toggleYearMenu(event)">
+                <span id="year-select-label">2026년</span>
+                <svg class="year-select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+              <div class="year-select-menu" id="year-select-menu" style="display:none">
+                <div class="year-select-item" data-year="2025" onclick="selectYear(2025)">2025년</div>
+                <div class="year-select-item selected" data-year="2026" onclick="selectYear(2026)">2026년</div>
+                <div class="year-select-item" data-year="2027" onclick="selectYear(2027)">2027년</div>
+                <div class="year-select-item" data-year="2028" onclick="selectYear(2028)">2028년</div>
+              </div>
+            </div>
+            <span class="year-select-divider"></span>
             <label>
               <input type="radio" id="round-base" name="round-radio" value="base" onchange="onRoundChange(this)">
               <span>본예산</span>
@@ -1736,19 +1827,30 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
               <span>3회 추경</span>
             </label>
           </div>
-          <div class="download-menu-wrap">
-            <button type="button" class="button" id="export-btn" onclick="toggleDownloadMenu(event)">
-              <svg stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" height="40" width="40" class="button__icon" xmlns="http://www.w3.org/2000/svg">
-                <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+          <div class="io-btn-group">
+            <button type="button" class="io-btn" id="upload-btn" onclick="document.getElementById('upload-file-input').click()" title="Upload" aria-label="Upload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-                <path d="M7 11l5 5l5 -5"></path>
+                <path d="M7 9l5 -5l5 5"></path>
                 <path d="M12 4l0 12"></path>
               </svg>
-              <span class="button__text">Download</span>
+              <span>Upload</span>
             </button>
-            <div class="download-menu" id="download-menu" style="display:none">
-              <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xls)</div>
-              <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
+            <input type="file" id="upload-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleBudgetUploadFile(event)">
+            <span class="io-btn-divider"></span>
+            <div class="download-menu-wrap">
+              <button type="button" class="io-btn" id="export-btn" onclick="toggleDownloadMenu(event)" title="Download" aria-label="Download">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                  <path d="M7 11l5 5l5 -5"></path>
+                  <path d="M12 4l0 12"></path>
+                </svg>
+                <span>Download</span>
+              </button>
+              <div class="download-menu" id="download-menu" style="display:none">
+                <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xls)</div>
+                <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1765,6 +1867,7 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
   // ── 여기에 Supabase 프로젝트 정보를 넣으세요 ──
   var SUPABASE_URL = "https://gpzbjvumumkudarikbzm.supabase.co";
@@ -1832,7 +1935,8 @@ var state = {
   fund: '출연금',
   selectedId: null,
   selectedRound: null, // 정현원까지만 노출된 상태에서, 회차 탭(본예산/1~3회 추경)을 골라야 아래 예산서가 나옴
-  roundData: null // 본예산이 아닌 회차를 선택했을 때 Supabase에서 불러온 { trees, teams } - fetchRoundData 참고
+  roundData: null, // 본예산이 아닌 회차를 선택했을 때 Supabase에서 불러온 { trees, teams } - fetchRoundData 참고
+  selectedYear: 2026 // 연도 선택 - 현재 실제 데이터(amt26/amt25)는 2026년 기준뿐이라, 다른 연도는 "자료 없음"으로 표시
 };
 
 // 회차 탭 값 -> 화면 표시용 라벨 (자료 없음 안내 메시지 등에 사용)
@@ -1950,9 +2054,43 @@ async function loadInstBudgetData(inst) {
   var deptSet = [];
   businesses.forEach(function (b) { if (b.dept && deptSet.indexOf(b.dept) === -1) deptSet.push(b.dept); });
 
-  var cache = { teamTrees: teamTrees, businesses: businesses, departments: deptSet.length ? deptSet : DEPARTMENTS };
+  // 부서·재원·회차별 "편성액"(실제 확정 금액) - budget_items의 회차 데이터는 요구액이라 이거랑 다르다.
+  // business_card가 없으면 부서 전체 합계 한 줄, 있으면 사업(카드)별로 나눠서 보여준다 (예: 교육지원과는 경영기획본부/교육협력본부로 나눠 편성).
+  var enactedAmounts = {};
+  var enactedByCard = {};
+  var { data: enacted, error: e4 } = await db.from('dept_enacted_amounts').select('*').eq('institution_id', inst.id);
+  if (!e4 && enacted) {
+    enacted.forEach(function (row) {
+      if (row.business_card) {
+        var ckey = row.dept + '|' + row.fund_type;
+        if (!enactedByCard[ckey]) enactedByCard[ckey] = [];
+        var cardEntry = enactedByCard[ckey].filter(function (c) { return c.name === row.business_card; })[0];
+        if (!cardEntry) { cardEntry = { name: row.business_card, sortOrder: row.sort_order, rounds: {} }; enactedByCard[ckey].push(cardEntry); }
+        cardEntry.rounds[row.round] = row.amt;
+      } else {
+        enactedAmounts[row.dept + '|' + row.fund_type + '|' + row.round] = row.amt;
+      }
+    });
+    Object.keys(enactedByCard).forEach(function (k) { enactedByCard[k].sort(function (a, b) { return a.sortOrder - b.sortOrder; }); });
+  }
+
+  var cache = { teamTrees: teamTrees, businesses: businesses, departments: deptSet.length ? deptSet : DEPARTMENTS, enactedAmounts: enactedAmounts, enactedByCard: enactedByCard };
   instDataCache[inst.key] = cache;
   return cache;
+}
+// 부서·재원·회차의 실제 편성액(부서 전체 합계)을 조회한다. 값이 없으면 null(자료 없음).
+function getDeptEnactedAmount(dept, fundType, round) {
+  var cache = instDataCache[nav.instKey];
+  if (!cache || !cache.enactedAmounts) return null;
+  var key = dept + '|' + fundType + '|' + (round || 'base');
+  return cache.enactedAmounts.hasOwnProperty(key) ? cache.enactedAmounts[key] : null;
+}
+// 부서·재원이 사업(카드)별로 나뉘어 편성돼 있으면 그 목록을 반환한다. 없으면 null.
+function getDeptEnactedCards(dept, fundType) {
+  var cache = instDataCache[nav.instKey];
+  if (!cache || !cache.enactedByCard) return null;
+  var key = dept + '|' + fundType;
+  return cache.enactedByCard[key] || null;
 }
 
 function showLoadError(what, err) {
@@ -2008,7 +2146,6 @@ function renderDeptTabs() {
   if (oldTabs) { oldTabs.innerHTML = ''; oldTabs.style.display = 'none'; }
 
   var labelEl = document.getElementById('dept-select-label');
-  var iconEl = document.getElementById('dept-select-icon');
   var menuEl = document.getElementById('dept-select-menu');
   if (!labelEl || !menuEl) return;
 
@@ -2032,10 +2169,9 @@ function renderDeptTabs() {
     if (pctValEl && pctWrapEl) {
       if (total25) {
         var diff = totalForPct - total25;
-        var pct = (diff / total25 * 100).toFixed(1);
-        var sign = diff >= 0 ? '+' : '';
+        var pct = Math.abs(diff / total25 * 100).toFixed(1);
         pctWrapEl.classList.toggle('down', diff < 0);
-        pctValEl.textContent = sign + pct + '%';
+        pctValEl.textContent = pct + '%';
       } else {
         pctWrapEl.classList.remove('down');
         pctValEl.textContent = '-';
@@ -2045,6 +2181,58 @@ function renderDeptTabs() {
     // 하단 라인은 데이터 연동 없는 디자인 요소로 고정
     if (fillEl) {
       fillEl.style.width = '100%';
+    }
+
+    // 소관부서 카드 아이콘을 누르면 뜨는 가로 막대 - 2025년 최종예산액 + 2026년 회차별(본예산~3회추경) 편성액.
+    // budget_items의 회차 데이터는 "요구액"이라 실제 편성액과 다르므로, dept_enacted_amounts에 값이 있으면 그걸 우선 쓴다.
+    // 사업(카드)별로 나눠서 편성하는 부서(예: 교육지원과)는 카드별로 따로 보여준다.
+    // 위탁금은 본예산/추경 회차 구조 자체가 안 맞는 편성 방식이라, 이 기능 전체를 숨긴다.
+    var yearlyToggleIcon = document.getElementById('dept-select-icon');
+    var yearlyPanelEl = document.getElementById('dept-stat-yearly-panel');
+    if (state.fund !== '출연금') {
+      if (yearlyToggleIcon) yearlyToggleIcon.style.display = 'none';
+      if (yearlyPanelEl) { yearlyPanelEl.style.display = 'none'; yearlyPanelEl.innerHTML = ''; }
+    } else {
+      if (yearlyToggleIcon) yearlyToggleIcon.style.display = '';
+    }
+    if (yearlyPanelEl && state.fund === '출연금') {
+      var buildStripHtml = function (items) {
+        return '<div class="dept-yearly-strip">' + items.map(function (it) {
+          var hasAmt = it.amt > 0;
+          return '<div class="dept-yearly-item' + (hasAmt ? '' : ' no-data') + '">'
+            + '<span class="dy-label">' + escapeHtml(it.label) + '</span>'
+            + '<span class="dy-amt">' + (hasAmt ? (fmtWon(Math.round(it.amt / 1000)) + '백만원') : '자료 없음') + '</span>'
+            + '</div>';
+        }).join('') + '</div>';
+      };
+
+      var enactedCards = getDeptEnactedCards(state.dept, state.fund);
+      if (enactedCards && enactedCards.length) {
+        var roundCols = [{ key: 'base', label: '2026' }, { key: 'supp1', label: '1회' }, { key: 'supp2', label: '2회' }, { key: 'supp3', label: '3회' }];
+        var headHtml = '<div class="dyt-row dyt-head"><span class="dyt-cell dyt-name-col">부기명</span>'
+          + roundCols.map(function (c) { return '<span class="dyt-cell">' + c.label + '</span>'; }).join('')
+          + '</div>';
+        var bodyHtml = enactedCards.map(function (card) {
+          return '<div class="dyt-row"><span class="dyt-cell dyt-name-col">' + escapeHtml(card.name) + '</span>'
+            + roundCols.map(function (c) {
+              var amt = card.rounds[c.key] || 0;
+              return '<span class="dyt-cell' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? (fmtWon(Math.round(amt / 1000)) + '백만원') : '자료 없음') + '</span>';
+            }).join('')
+            + '</div>';
+        }).join('');
+        yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + bodyHtml + '</div>';
+      } else {
+        // 2026년(본예산~3회추경)은 편성액을 직접 입력해둔 값만 보여준다 - 요구액 트리 합계로 대체(fallback) 표시하지 않는다
+        // (요구액 ≠ 편성액이라 잘못된 숫자를 보여줄 수 있음). 2025년은 이미 마감된 과거 연도라 그 구분이 없으므로 기존 집계값을 그대로 쓴다.
+        var yearlyItems = [
+          { label: '2025', amt: total25 },
+          { label: '2026', amt: getDeptEnactedAmount(state.dept, state.fund, 'base') || 0 },
+          { label: '1회', amt: getDeptEnactedAmount(state.dept, state.fund, 'supp1') || 0 },
+          { label: '2회', amt: getDeptEnactedAmount(state.dept, state.fund, 'supp2') || 0 },
+          { label: '3회', amt: getDeptEnactedAmount(state.dept, state.fund, 'supp3') || 0 }
+        ];
+        yearlyPanelEl.innerHTML = buildStripHtml(yearlyItems);
+      }
     }
   }
 
@@ -2057,6 +2245,11 @@ function renderDeptTabs() {
 function toggleDeptMenu(e) {
   e.stopPropagation();
   document.getElementById('dept-select-menu').classList.toggle('open');
+}
+// 소관부서 카드 아래 아이콘 - 누르면 연도별 편성 예산액 패널이 펼쳐진다.
+function toggleDeptYearlyPanel(checkboxEl) {
+  var panel = document.getElementById('dept-stat-yearly-panel');
+  if (panel) panel.style.display = checkboxEl.checked ? 'block' : 'none';
 }
 function selectDeptFromMenu(d) {
   document.getElementById('dept-select-menu').classList.remove('open');
@@ -2101,6 +2294,41 @@ function syncRoundTabsUI() {
   var wrap = document.getElementById('round-tabs');
   if (!wrap) return;
   wrap.querySelectorAll('input[name="round-radio"]').forEach(function (r) { r.checked = (r.value === state.selectedRound); });
+}
+
+// 연도 선택 드롭다운 열기/닫기
+function toggleYearMenu(e) {
+  e.stopPropagation();
+  var menu = document.getElementById('year-select-menu');
+  var wrap = document.getElementById('year-select-wrap');
+  if (!menu || !wrap) return;
+  var willOpen = menu.style.display === 'none';
+  menu.style.display = willOpen ? 'block' : 'none';
+  wrap.classList.toggle('open', willOpen);
+}
+document.addEventListener('click', function (e) {
+  var wrap = document.getElementById('year-select-wrap');
+  var menu = document.getElementById('year-select-menu');
+  if (!wrap || !menu || menu.style.display === 'none') return;
+  if (!e.target.closest('.year-select-wrap')) {
+    menu.style.display = 'none';
+    wrap.classList.remove('open');
+  }
+});
+
+// 연도 선택 - 2026년(실제 데이터)만 예산서가 그대로 보이고, 나머지는 renderDetail()에서 "자료 없음"으로 처리한다.
+function selectYear(year) {
+  state.selectedYear = year;
+  var label = document.getElementById('year-select-label');
+  if (label) label.textContent = year + '년';
+  document.querySelectorAll('.year-select-item').forEach(function (it) {
+    it.classList.toggle('selected', Number(it.getAttribute('data-year')) === year);
+  });
+  var menu = document.getElementById('year-select-menu');
+  var wrap = document.getElementById('year-select-wrap');
+  if (menu) menu.style.display = 'none';
+  if (wrap) wrap.classList.remove('open');
+  renderDetail();
 }
 
 function classifyMokCode(code) {
@@ -3182,9 +3410,9 @@ function getTreeColLabels() {
     amtLabel = (ROUND_LABELS[round] || '') + '요구액';
     baseLabel = '기정액';
   }
-  return ['정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '증감액', '증감률', '확인'];
+  return ['정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '증감액', '증감률'];
 }
-var DEFAULT_TREE_COL_WIDTHS = [28, 18, 13, 13, 12, 10, 6];
+var DEFAULT_TREE_COL_WIDTHS = [27, 25, 13, 13, 12, 10];
 function loadTreeColWidths() {
   try {
     var raw = localStorage.getItem('hscf_tree_col_widths');
@@ -3317,14 +3545,21 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible) {
   var isNew = (!node.amt25 || Number(node.amt25) === 0) && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
   var editedCls = node.edited ? ' row-edited' : '';
-  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + '"' + mokAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
-    + '<td style="padding-left:' + (8 + depth * 14) + 'px">' + arrowHtml + ' ' + escapeHtml(label) + mismatchIcon + '</td>'
-    + '<td class="num basis" contenteditable="true" spellcheck="false" data-field="calc">' + escapeHtml(node.calc || '') + '</td>'
-    + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + '</td>'
-    + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + '</td>'
+  var cellCheckBtn = '<label class="cell-check-btn" title="눌러서 저장">'
+    + '<input type="checkbox" onchange="saveBudgetCellEdit(' + node.id + ', this)">'
+    + '<svg class="pin" viewBox="0 0 75 100" xmlns="http://www.w3.org/2000/svg">'
+    + '<line stroke-width="12" y2="100" x2="37" y1="64" x1="37"></line>'
+    + '<path stroke-width="10" d="M16.5 36V4.5H58.5V36V53.75V54.9752L59.1862 55.9903L66.9674 67.5H8.03256L15.8138 55.9903L16.5 54.9752V53.75V36Z"></path>'
+    + '</svg></label>';
+  // 편성목(목) 이후부터는(세목·leaf) 들여쓰기를 더 늘리지 않고 그 자리에서 맞춘다 - 코드/불릿 표시로 이미 구분되니까
+  var indentDepth = Math.min(depth, LEVEL_BASE_DEPTH['목']);
+  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + '" data-id="' + node.id + '"' + mokAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
+    + '<td style="padding-left:' + (8 + indentDepth * 14) + 'px">' + arrowHtml + ' ' + escapeHtml(label) + mismatchIcon + '</td>'
+    + '<td class="num basis" contenteditable="true" spellcheck="false" data-field="calc">' + escapeHtml(node.calc || '') + cellCheckBtn + '</td>'
+    + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
+    + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
     + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
     + '<td class="num pct">' + fmtPct(node.amt26, node.amt25) + '</td>'
-    + '<td class="num edit-check"><input type="checkbox" class="row-edit-checkbox" title="체크하면 위 내용이 저장되고 수정됨으로 표시됩니다"' + (node.edited ? ' checked' : '') + ' onchange="saveBudgetRowEdit(' + node.id + ', this)"></td>'
     + '</tr>');
   if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded); });
 }
@@ -3378,6 +3613,67 @@ function toggleNewOnly(checked) {
       tr.classList.add('new-only-hide');
     }
   });
+}
+
+// ===== 엑셀 업로드: 파싱 + 미리보기 =====
+// 1단계(현재 구현): 업로드한 엑셀을 시트 그대로 읽어 미리보기로 보여준다.
+// 2단계(추후): 기관별 컬럼 매핑 설정을 적용해 정책→단위→세부→목→세목→항목 트리로 변환 후
+//   budget_items에 실제 반영(각 회차는 덮어쓰지 않고 새 이력으로 추가)하는 로직을 여기에 연결한다.
+function handleBudgetUploadFile(e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file) return;
+  if (typeof XLSX === 'undefined') { alert('엑셀 파싱 라이브러리를 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.'); return; }
+
+  var reader = new FileReader();
+  reader.onload = function (ev) {
+    try {
+      var wb = XLSX.read(ev.target.result, { type: 'array' });
+      var sheetName = wb.SheetNames[0];
+      var ws = wb.Sheets[sheetName];
+      var rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      openUploadPreviewModal(file.name, sheetName, rows);
+    } catch (err) {
+      alert('엑셀 파일을 읽는 중 오류가 발생했습니다: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  e.target.value = '';
+}
+
+function openUploadPreviewModal(fileName, sheetName, rows) {
+  closeUploadPreviewModal();
+  var maxPreviewRows = 50;
+  var headerRow = rows[0] || [];
+  var bodyRows = rows.slice(1, 1 + maxPreviewRows);
+  var totalDataRows = Math.max(0, rows.length - 1);
+
+  var theadHtml = '<tr>' + headerRow.map(function (h, i) { return '<th>' + escapeHtml(String(h || ('열' + (i + 1)))) + '</th>'; }).join('') + '</tr>';
+  var tbodyHtml = bodyRows.map(function (r) {
+    return '<tr>' + headerRow.map(function (_, i) { return '<td>' + escapeHtml(String(r[i] != null ? r[i] : '')) + '</td>'; }).join('') + '</tr>';
+  }).join('');
+
+  var html = '<div class="upload-modal-overlay" id="upload-modal-overlay" onclick="if(event.target===this) closeUploadPreviewModal()">'
+    + '<div class="upload-modal">'
+    + '<div class="upload-modal-head"><div><h3>업로드 미리보기</h3><div class="um-sub">' + escapeHtml(fileName) + ' · 시트 "' + escapeHtml(sheetName) + '" · 총 ' + totalDataRows + '행'
+    + (totalDataRows > maxPreviewRows ? ' (상위 ' + maxPreviewRows + '행만 표시)' : '') + '</div></div>'
+    + '<button type="button" class="upload-modal-close" onclick="closeUploadPreviewModal()">✕</button></div>'
+    + '<div class="upload-modal-body">'
+    + '<div class="um-notice">파일이 정상적으로 읽혔는지 원본 그대로 미리보기로 보여드립니다. 이 내용을 실제 예산서 항목(정책·단위·세부·목·세목)에 반영하는 매핑 작업은 아직 연결 전이라, 확인만 가능하고 저장 버튼은 비활성화되어 있습니다.</div>'
+    + '<table class="um-preview"><thead>' + theadHtml + '</thead><tbody>' + tbodyHtml + '</tbody></table>'
+    + '</div>'
+    + '<div class="upload-modal-foot"><button type="button" class="um-btn cancel" onclick="closeUploadPreviewModal()">닫기</button>'
+    + '<button type="button" class="um-btn confirm" disabled title="기관별 매핑 연결 전에는 반영할 수 없습니다">확인 후 반영</button></div>'
+    + '</div></div>';
+
+  var wrap = document.createElement('div');
+  wrap.id = 'upload-modal-root';
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap);
+}
+
+function closeUploadPreviewModal() {
+  var el = document.getElementById('upload-modal-root');
+  if (el) el.remove();
 }
 
 // 현재 선택된 카드의 예산 트리를 [헤더, ...행] 2차원 배열로 수집 (엑셀/PDF/CSV 공통)
@@ -3516,56 +3812,63 @@ function filterTreeRows(query) {
 }
 
 
-// 산출기초/2026예산액/2025예산액 셀은 더 이상 blur만으로 자동 저장되지 않는다.
-// 행 끝의 "확인" 체크박스를 눌러야 그 시점의 셀 값이 한번에 저장되고, 그 행이 "수정됨"으로 영구 표시된다.
-// 체크 해제는 데이터를 되돌리지 않고 "수정됨" 표시만 지운다(이미 저장된 값은 그대로 유지).
-async function saveBudgetRowEdit(id, checkboxEl) {
+// 산출기초/2026예산액/2025예산액 셀은 blur만으로 자동 저장되지 않는다.
+// 셀을 편집(입력)하면 그 셀 모서리에 작은 체크 아이콘이 나타나고, 그 체크를 눌러야
+// 그 시점의 행(산출기초+2026예산액+2025예산액) 값이 한번에 저장되며 "수정됨"으로 영구 표시된다.
+(function () {
+  document.addEventListener('input', function (e) {
+    var td = e.target.closest && e.target.closest('table.tree td[contenteditable="true"]');
+    if (td) td.classList.add('cell-touched');
+  });
+})();
+
+async function saveBudgetCellEdit(id, btnEl) {
   var node = budgetItemIndex[id];
   if (!node) return;
-  var tr = checkboxEl.closest('tr');
-  var checked = checkboxEl.checked;
-  var payload = { edited: checked };
-  var newVals = null;
+  var tr = btnEl.closest('tr');
+  var calcEl = tr.querySelector('[data-field="calc"]');
+  var amt26El = tr.querySelector('[data-field="amt26"]');
+  var amt25El = tr.querySelector('[data-field="amt25"]');
 
-  if (checked) {
-    var calcEl = tr.querySelector('[data-field="calc"]');
-    var amt26El = tr.querySelector('[data-field="amt26"]');
-    var amt25El = tr.querySelector('[data-field="amt25"]');
+  var stripBtnText = function (el) {
+    if (!el) return '';
+    var clone = el.cloneNode(true);
+    var btn = clone.querySelector('.cell-check-btn');
+    if (btn) btn.remove();
+    return clone.textContent.trim();
+  };
 
-    var rawCalc = calcEl ? calcEl.textContent.trim() : (node.calc || '');
-    var rawAmt26 = amt26El ? amt26El.textContent.trim() : '';
-    var rawAmt25 = amt25El ? amt25El.textContent.trim() : '';
+  var rawCalc = stripBtnText(calcEl) || (node.calc || '');
+  var rawAmt26 = stripBtnText(amt26El);
+  var rawAmt25 = stripBtnText(amt25El);
 
-    var numAmt26 = Number(rawAmt26.replace(/[^0-9.-]/g, ''));
-    if (rawAmt26 === '' || rawAmt26 === '-') numAmt26 = 0;
-    if (isNaN(numAmt26)) { alert('2026년도 예산액은 숫자만 입력해주세요.'); checkboxEl.checked = false; return; }
+  var numAmt26 = Number(rawAmt26.replace(/[^0-9.-]/g, ''));
+  if (rawAmt26 === '' || rawAmt26 === '-') numAmt26 = 0;
+  if (isNaN(numAmt26)) { alert('2026년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
 
-    var numAmt25 = Number(rawAmt25.replace(/[^0-9.-]/g, ''));
-    if (rawAmt25 === '' || rawAmt25 === '-') numAmt25 = 0;
-    if (isNaN(numAmt25)) { alert('2025년도 예산액은 숫자만 입력해주세요.'); checkboxEl.checked = false; return; }
+  var numAmt25 = Number(rawAmt25.replace(/[^0-9.-]/g, ''));
+  if (rawAmt25 === '' || rawAmt25 === '-') numAmt25 = 0;
+  if (isNaN(numAmt25)) { alert('2025년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
 
-    newVals = { calc: rawCalc || null, amt26: numAmt26, amt25: numAmt25 };
-    payload.calc = newVals.calc;
-    payload.amt26 = newVals.amt26;
-    payload.amt25 = newVals.amt25;
-  }
+  var payload = { edited: true, calc: rawCalc || null, amt26: numAmt26, amt25: numAmt25 };
 
-  checkboxEl.disabled = true;
+  btnEl.disabled = true;
   var { error } = await db.from('budget_items').update(payload).eq('id', id);
-  checkboxEl.disabled = false;
-
   if (error) {
+    btnEl.disabled = false;
+    btnEl.checked = false;
     alert('저장 실패: ' + error.message);
-    checkboxEl.checked = !checked;
     return;
   }
 
-  node.edited = checked;
-  if (newVals) {
-    node.calc = newVals.calc;
-    node.amt26 = newVals.amt26;
-    node.amt25 = newVals.amt25;
-  }
+  node.edited = true;
+  node.calc = payload.calc;
+  node.amt26 = payload.amt26;
+  node.amt25 = payload.amt25;
+
+  // 저장 완료: 이 행의 편집 체크 아이콘 표시 해제(다음 렌더링에서 자연히 사라짐)
+  tr.querySelectorAll('td[contenteditable="true"]').forEach(function (t) { t.classList.remove('cell-touched'); });
+
   // 트리/요약/카드 화면 전체 재계산 (증감·비율·도넛차트 등에 즉시 반영)
   renderDetail();
   renderSummary();
@@ -3646,7 +3949,6 @@ function renderTeamTreesCombined(trees, totalLabel) {
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
       + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
       + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
-      + '<td class="num edit-check"></td>'
       + '</tr>';
   }
   var groupsHtml = trees.map(function (tree) {
@@ -3750,6 +4052,11 @@ function renderDetail() {
   }
   if (roundRow) roundRow.style.display = 'flex';
   if (badgeRow) badgeRow.style.display = 'flex';
+  // 2026년 외 연도는 아직 실제 데이터(amt26/amt25)가 없으므로, 탭·회차 선택은 그대로 두고 상세 영역만 안내 문구로 대체한다.
+  if (state.selectedYear && state.selectedYear !== 2026) {
+    el.innerHTML = '<div class="empty-state">' + state.selectedYear + '년 자료가 아직 없습니다.</div>';
+    return;
+  }
   // 예산액은 정현원과 분리된 큰 글씨 라인으로 표시하며, teams(정원현원) 데이터 유무와 무관하게 독립적으로 노출한다.
   var amtLine = (b.amt != null) ? '<div class="detail-total-amt">' + fmtWon(b.amt) + '<span class="unit">천원</span></div>' : '';
   var headcountLine = '';
@@ -3944,6 +4251,19 @@ function alignHeadcountBadge() {
   badgeEl.style.marginLeft = left + 'px';
 }
 window.addEventListener('resize', alignHeadcountBadge);
+
+// 정현원 호버 풍선이 화면 오른쪽 끝에 가까운 탭(도서관 목록 등)에서 잘리지 않도록,
+// 호버 시점에 실제로 뜰 공간이 있는지 측정해서 안 맞으면 왼쪽으로 뒤집는다.
+document.addEventListener('mouseover', function (e) {
+  var summary = e.target.closest && e.target.closest('.headcount-summary');
+  if (!summary) return;
+  var pop = summary.parentElement && summary.parentElement.querySelector('.headcount-detail-pop');
+  if (!pop) return;
+  var rect = summary.getBoundingClientRect();
+  var popWidth = pop.offsetWidth || 220;
+  var wouldOverflowRight = rect.right + 8 + popWidth > window.innerWidth;
+  pop.classList.toggle('pop-left', wouldOverflowRight);
+});
 
 function renderAll() {
   renderDeptTabs();
