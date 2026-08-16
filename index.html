@@ -2237,7 +2237,13 @@ function renderDeptTabs() {
       if (yearlyToggleIcon) yearlyToggleIcon.style.display = 'none';
       if (yearlyPanelEl) { yearlyPanelEl.style.display = 'none'; yearlyPanelEl.innerHTML = ''; }
     } else {
-      if (yearlyToggleIcon) yearlyToggleIcon.style.display = '';
+      // 부서/재원을 새로 선택할 때마다(=화면 진입 시) 패널을 펼친 상태로 시작한다. 버튼을 누르면 접히므로 초기값만 열어두면 됨.
+      if (yearlyToggleIcon) {
+        yearlyToggleIcon.style.display = '';
+        var yearlyToggleInput = yearlyToggleIcon.querySelector('input');
+        if (yearlyToggleInput) yearlyToggleInput.checked = true;
+      }
+      if (yearlyPanelEl) yearlyPanelEl.style.display = 'block';
     }
     if (yearlyPanelEl && state.fund === '출연금') {
       var buildStripHtml = function (items) {
