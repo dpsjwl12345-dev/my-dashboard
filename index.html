@@ -295,31 +295,49 @@ table.fc-summary td .dot {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2px 9px;
-  gap: 4px;
+  width: 22px;
   height: 22px;
-  width: max-content;
-  border: 1px solid rgba(255,255,255,.5);
-  background: rgba(255,255,255,.5);
-  backdrop-filter: blur(1px);
-  border-radius: 20px;
+  border: none;
+  border-radius: 50%;
+  background: #62abff;
+  box-shadow: 0 4px 10px rgba(34,52,142,.28);
   cursor: pointer;
   position: absolute;
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
+  transition: transform .15s ease;
 }
-.grade-btn:hover { background: rgba(255,255,255,.7); }
-.grade-btn:hover .grade-btn-icon { animation: gradeBtnRotate 1.3s linear infinite; }
-.grade-btn-label { line-height: 15px; font-size: 11.5px; font-weight: 800; color: #22348E; font-family: 'Pretendard', sans-serif; letter-spacing: .01em; }
-@keyframes gradeBtnRotate {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(10deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-10deg); }
-  100% { transform: rotate(0deg); }
+.grade-btn:hover { transform: translateY(-50%) scale(1.1); }
+.grade-btn-icon { width: 11px; height: 11px; }
+.grade-btn-tooltip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% + 10px);
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 999px;
+  padding: 5px 13px;
+  box-shadow: 0 10px 24px rgba(16,23,42,.16);
+  white-space: nowrap;
+  pointer-events: none;
 }
+.grade-btn-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  margin-left: -5px;
+  bottom: -5px;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+.grade-btn-tooltip-label { line-height: 15px; font-size: 11.5px; font-weight: 800; color: #22348E; font-family: 'Pretendard', sans-serif; letter-spacing: .01em; }
 .ov2-box-tooltip { display: none; position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: 6px; z-index: 40; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 24px rgba(16,23,42,.16); padding: 8px 10px; box-sizing: border-box; overflow: hidden; }
 .ov2-pbar-row:has(.grade-btn:hover) .ov2-box-tooltip { display: block; }
 .ov2-tt-title { font-size: 11.5px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
@@ -373,18 +391,23 @@ table.summary.ov2-budget-fmt tr.total td { font-weight: 800; }
 table.summary tr.ov2-eb-section td { font-weight: 800; background: var(--accent-soft); color: var(--accent-dark); }
 table.summary tr.ov2-eb-row td:first-child { padding-left: 22px; color: var(--text-muted); font-weight: 400; }
 table.summary tr.ov2-eb-row td { font-size: 13.5px; padding-top: 2px; padding-bottom: 2px; line-height: 1.15; }
-.ov2-eb-note { color: var(--danger); font-weight: 800; margin-left: 2px; }
-.ov2-eb-footnote { font-size: 12.5px; color: var(--text-soft); margin: 8px 0 0; }
+.ov2-eb-footnote { font-size: 14.5px; font-weight: 700; color: var(--text-muted); margin: 10px 2px 0; }
 table.summary.ov2-income-table th { font-size: 16px; }
 table.summary.ov2-income-table td { font-size: 14.5px; }
 table.summary.ov2-income-table th, table.summary.ov2-income-table td { padding-top: 5px; padding-bottom: 5px; }
 table.summary.ov2-rev-total-table { table-layout: fixed; }
 table.summary.ov2-rev-total-table th, table.summary.ov2-rev-total-table td { text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 6px; padding-right: 6px; letter-spacing: .01em; }
-table.summary.ov2-rev-total-table th:first-child, table.summary.ov2-rev-total-table td:first-child { text-align: center; width: 22%; white-space: nowrap; }
+table.summary.ov2-rev-total-table th:first-child, table.summary.ov2-rev-total-table td:first-child { text-align: center; width: 22%; white-space: nowrap; font-size: 13.5px; }
 table.summary.ov2-rev-total-table th:nth-child(2), table.summary.ov2-rev-total-table td:nth-child(2),
 table.summary.ov2-rev-total-table th:nth-child(3), table.summary.ov2-rev-total-table td:nth-child(3) { width: 23%; }
 table.summary.ov2-rev-total-table th:last-child, table.summary.ov2-rev-total-table td:last-child { width: 32%; padding-right: 10px; }
 table.summary.ov2-rev-total-table td.diff { white-space: nowrap; font-size: 13px; }
+.ov2-rev-marker {
+  background: linear-gradient(transparent 38%, #ffd400 38%, #ffd400 92%, transparent 92%);
+  padding: 0 4px;
+  font-weight: 800;
+  color: var(--navy);
+}
 table.summary.ov2-rev-total-table.ov2-inst-corp th, table.summary.ov2-rev-total-table.ov2-inst-corp td { padding-left: 2px; padding-right: 14px; }
 table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov2-rev-total-table.ov2-inst-corp td:first-child { width: 20%; padding-right: 6px; }
 .ov2-unit-note { font-size: 12px; font-weight: 400; color: var(--text-soft); text-align: right; margin: 0 2px 4px; }
@@ -2136,6 +2159,27 @@ function getDeptEnactedCards(dept, fundType) {
   var key = dept + '|' + fundType;
   return cache.enactedByCard[key] || null;
 }
+// 부서 카드 상단에 보여줄 "현재 예산액" — 요구액(budget_items 트리)이 아니라 실제 편성액 중 가장 최근 회차(3회>2회>1회>본예산) 값을 쓴다.
+// 사업(카드)별로 나눠 편성된 부서는 카드마다 각자의 최신 회차 값을 더해서 합산한다. 편성액이 하나도 입력 안 된 부서는 null(호출부에서 요구액으로 대체).
+function getDeptLatestEnactedTotal(dept, fundType) {
+  var rounds = ['supp3', 'supp2', 'supp1', 'base'];
+  var cards = getDeptEnactedCards(dept, fundType);
+  if (cards && cards.length) {
+    var total = 0, any = false;
+    cards.forEach(function (c) {
+      for (var i = 0; i < rounds.length; i++) {
+        var amt = c.rounds[rounds[i]];
+        if (amt) { total += amt; any = true; break; }
+      }
+    });
+    return any ? total : null;
+  }
+  for (var j = 0; j < rounds.length; j++) {
+    var v = getDeptEnactedAmount(dept, fundType, rounds[j]);
+    if (v) return v;
+  }
+  return null;
+}
 
 function showLoadError(what, err) {
   var box = document.querySelector('.main') || document.body;
@@ -2201,9 +2245,12 @@ function renderDeptTabs() {
   var fillEl = document.getElementById('dept-select-fill');
   if (amtEl) {
     var deptBiz = filteredBusinesses();
-    var total = (nav.instKey === 'hscf' && state.dept === '도서관정책과' && state.fund === '위탁금')
+    var requestedTotal = (nav.instKey === 'hscf' && state.dept === '도서관정책과' && state.fund === '위탁금')
       ? 18935831
       : deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
+    // 우상단 금액은 요구액이 아니라 실제 편성액(가장 최근 회차)을 보여준다 — 입력된 편성액이 없는 부서/위탁금은 기존대로 요구액 합계를 쓴다.
+    var enactedTotal = state.fund === '출연금' ? getDeptLatestEnactedTotal(state.dept, state.fund) : null;
+    var total = enactedTotal != null ? enactedTotal : requestedTotal;
     amtEl.textContent = total ? (fmtWon(Math.round(total / 1000)) + '백만원') : '';
 
     // 전년 대비 증감률 — "연도별 OO 현황" 표의 합계(총괄) 데이터와 동일한 소스를 사용해 항상 일치시킨다.
@@ -2792,7 +2839,7 @@ hscf: {
     { label: '대행사업수익', y26: 48069238, y25: 44574745 },
     { label: '자치단체출연금수익', y26: 14382623, y25: 12849409 },
     { label: '순세계잉여금', y26: 2813371, y25: 3035801 },
-    { label: '국비·자치단체보조금수익', y26: 483779, y25: 665900 },
+    { label: '보조금수익', y26: 483779, y25: 665900 },
     { label: '기부금수익', y26: 100000, y25: 114000 }
   ],
   budgetCompare: [
@@ -3064,7 +3111,7 @@ function ov2PersonnelBarList(rows, hoverMap) {
         + '<div class="ov2-pbar-label-line"><span class="ov2-pbar-label-main">' + escapeHtml(mainLabel) + '</span><span class="ov2-pbar-val">' + valTxt + '</span></div>'
         + (subLabel ? '<div class="ov2-pbar-label-sub">' + escapeHtml(subLabel) + '</div>' : '')
       + '</div>'
-      + '<div class="ov2-pbar-track"><div class="ov2-pbar-fill' + fillCls + '" style="width:' + pct + '%;"></div>' + (hoverHtml ? '<button type="button" class="grade-btn"><svg xmlns="http://www.w3.org/2000/svg" width="13" viewBox="0 0 20 20" height="13" fill="none" class="grade-btn-icon"><g stroke-width="2" stroke-linecap="round" stroke="#22348E"><circle r="7.5" cy="10" cx="10"></circle><path d="m9.99998 6.5v7"></path><path d="m6.5 9.99998h7"></path></g></svg><span class="grade-btn-label">직급별 보기</span></button>' : '') + '</div>'
+      + '<div class="ov2-pbar-track"><div class="ov2-pbar-fill' + fillCls + '" style="width:' + pct + '%;"></div>' + (hoverHtml ? '<button type="button" class="grade-btn"><span class="grade-btn-tooltip"><span class="grade-btn-tooltip-label">직급별 보기</span></span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" class="grade-btn-icon"><path d="M6 10h8M10 6v8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"></path></svg></button>' : '') + '</div>'
       + '<div class="ov2-pbar-diff ' + diffCls + '">' + diffTxt + '</div>'
       + (hoverHtml ? '<div class="ov2-box-tooltip">' + hoverHtml + '</div>' : '')
       + '</div>';
@@ -3169,8 +3216,12 @@ function renderOv2Overview(instKey) {
   // 4) 총수입 총괄 / 총지출 총괄
   var revTotal26 = d.revenueItems.reduce(function (a, r) { return a + r.y26; }, 0);
   var revTotal25 = d.revenueItems.reduce(function (a, r) { return a + r.y25; }, 0);
+  var REV_HIGHLIGHT_LABELS = ['대행사업수익', '자치단체출연금수익'];
   var revRowsHtml = d.revenueItems.map(function (r, i) {
-    return '<tr><td><span class="dot" style="background:' + donutGradientCss(i) + '"></span>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+    var y26Html = REV_HIGHLIGHT_LABELS.indexOf(r.label) !== -1
+      ? '<span class="ov2-rev-marker">' + fmtWon(r.y26) + '</span>'
+      : fmtWon(r.y26);
+    return '<tr><td><span class="dot" style="background:' + donutGradientCss(i) + '"></span>' + escapeHtml(r.label) + '</td><td>' + y26Html + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var revTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(revTotal26) + '</td><td>' + fmtWon(revTotal25) + '</td>' + diffCellHtml(revTotal25, revTotal26) + '</tr>';
   var revDetailHtml = '';
@@ -3200,22 +3251,19 @@ function renderOv2Overview(instKey) {
     var eb = d.expenseBreakdown;
     var ebCols = eb.columns;
     var ebHeadHtml = '<th>구&nbsp;&nbsp;분</th><th>계</th>' + ebCols.map(function (c) { return '<th>' + escapeHtml(c) + '</th>'; }).join('');
-    var ebFootnotes = [];
-    var ebMarkIfOther = function (label, values) {
-      if (values[2]) { ebFootnotes.push(escapeHtml(label) + ' ' + fmtWon(values[2]) + '천원'); return '<span class="ov2-eb-note">*</span>'; }
-      return '';
-    };
-    var ebGrandRow = '<tr class="total"><td>총 계' + ebMarkIfOther('총 계 중 기타재원', eb.grandTotal.values) + '</td><td>' + fmtWon(eb.grandTotal.total) + '</td>' + eb.grandTotal.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
+    var ebGrandRow = '<tr class="total"><td>총 계</td><td>' + fmtWon(eb.grandTotal.total) + '</td>' + eb.grandTotal.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
     var ebSectionsHtml = eb.sections.map(function (sec) {
-      var secMark = ebMarkIfOther(sec.label, sec.values);
-      var secRow = '<tr class="ov2-eb-section"><td>' + escapeHtml(sec.label) + secMark + '</td><td>' + fmtWon(sec.total) + '</td>' + sec.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
+      var secRow = '<tr class="ov2-eb-section"><td>' + escapeHtml(sec.label) + '</td><td>' + fmtWon(sec.total) + '</td>' + sec.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
       var subRows = sec.rows.map(function (r) {
-        var rMark = ebMarkIfOther(r.label, r.values);
-        return '<tr class="ov2-eb-row"><td>' + escapeHtml(r.label) + rMark + '</td><td>' + fmtWon(r.total) + '</td>' + r.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
+        return '<tr class="ov2-eb-row"><td>' + escapeHtml(r.label) + '</td><td>' + fmtWon(r.total) + '</td>' + r.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtWon(v) : '-') + '</td>'; }).join('') + '</tr>';
       }).join('');
       return secRow + subRows;
     }).join('');
-    var ebFootnoteHtml = ebFootnotes.length ? '<p class="ov2-eb-footnote">* 기타재원 포함: ' + ebFootnotes.join(', ') + '</p>' : '';
+    // 기타재원이 섞여 있는 항목(사업비)에만 지시선 형태의 설명을 붙인다 — 별표(*) 각주 대신 꺾은선으로 연결
+    var ebOtherFundSection = eb.sections.filter(function (sec) { return sec.values[2]; })[0];
+    var ebFootnoteHtml = ebOtherFundSection
+      ? '<p class="ov2-eb-footnote">※ ' + escapeHtml(ebOtherFundSection.label) + ' 기타재원 ' + fmtWon(ebOtherFundSection.values[2]) + '천원 포함</p>'
+      : '';
     expenseBreakdownHtml = '<div class="summary-box"><p class="ov2-unit-note" style="margin:0 2px 2px;">(단위: 천원)</p><div class="table-scroll ov2-eb-scroll"><table class="summary fc-summary ov2-income-table ov2-inst-' + instKey + '"><thead><tr>' + ebHeadHtml + '</tr></thead><tbody>' + ebGrandRow + ebSectionsHtml + '</tbody></table></div>' + ebFootnoteHtml + '</div>';
   }
 
