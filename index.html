@@ -687,13 +687,15 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .dept-stat-yearly-panel {
   /* 세로 중앙 정렬(top:50%)이었으나, 표가 커지면 위쪽이 화면 밖으로 밀려 잘리는 문제가 있어
      아이콘 위쪽에 맞춰 아래로만 펼쳐지도록 기준을 바꿨다. */
-  display: none; position: absolute; top: -24px; right: 100%;
+  display: none; position: absolute; top: -6px; right: 100%;
   margin-right: 12px; z-index: 15; zoom: 1.389;
   background: #fff; border: 1.5px solid var(--navy); border-radius: 12px;
   box-shadow: 0 10px 28px rgba(16,23,42,.16), 0 1px 3px rgba(16,23,42,.08);
   padding: 9px 14px; white-space: nowrap;
   max-height: calc(100vh - 40px); overflow-y: auto;
 }
+/* "더보기"로 표를 펼쳤을 때만 창을 좀 더 위로 올려서, 세로로 길어진 내용이 화면에 더 잘 들어오게 한다. */
+.dept-stat-yearly-panel.panel-expanded { top: -50px; }
 .dept-yearly-strip { display: flex; align-items: stretch; gap: 14px; }
 .dept-yearly-item { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
 .dept-yearly-item + .dept-yearly-item { padding-left: 14px; border-left: 1px solid var(--border); }
@@ -2350,6 +2352,7 @@ function renderDeptTabs() {
         }).join('');
         // 항목이 많으면(문화예술과/체육진흥과 등) 출연금 팝업만큼만 보이게 접어두고, "더보기"를 눌러야 전체 표가 펼쳐진다.
         var needsMore = enactedCards.length > 1;
+        yearlyPanelEl.classList.remove('panel-expanded'); // 부서를 새로 선택하면 항상 접힌 상태로 다시 시작한다.
         yearlyPanelEl.innerHTML = '<div class="dept-yearly-table' + (needsMore ? ' collapsed' : '') + '">' + headHtml + bodyHtml + '</div>'
           + (needsMore ? '<button type="button" class="dyt-more-btn" onclick="toggleDeptYearlyTableMore(this)">더보기 ▾</button>' : '');
       } else {
@@ -2405,6 +2408,8 @@ function toggleDeptYearlyTableMore(btn) {
   var expanded = table.classList.toggle('expanded');
   table.classList.toggle('collapsed', !expanded);
   btn.textContent = expanded ? '접기 ▴' : '더보기 ▾';
+  var panel = document.getElementById('dept-stat-yearly-panel');
+  if (panel) panel.classList.toggle('panel-expanded', expanded);
 }
 function selectDeptFromMenu(d) {
   document.getElementById('dept-select-menu').classList.remove('open');
