@@ -2371,8 +2371,10 @@ function renderDeptTabs() {
       } else {
         // 2026년(본예산~3회추경)은 편성액을 직접 입력해둔 값만 보여준다 - 요구액 트리 합계로 대체(fallback) 표시하지 않는다
         // (요구액 ≠ 편성액이라 잘못된 숫자를 보여줄 수 있음). 2025년은 이미 마감된 과거 연도라 그 구분이 없으므로 기존 집계값을 그대로 쓴다.
+        // 위탁금은 아직 검증 안 된 집계값을 2025년 자리에 잘못 보여줄 수 있어, 직접 입력해둔 y25 값이 있을 때만 표시하고 없으면 자료 없음으로 둔다.
+        var y25Amt = state.fund === '위탁금' ? (getDeptEnactedAmount(state.dept, state.fund, 'y25') || 0) : total25;
         var yearlyItems = [
-          { label: '2025', amt: total25 },
+          { label: '2025', amt: y25Amt },
           { label: '2026', amt: getDeptEnactedAmount(state.dept, state.fund, 'base') || 0 },
           { label: '1추', amt: getDeptEnactedAmount(state.dept, state.fund, 'supp1') || 0 },
           { label: '2추', amt: getDeptEnactedAmount(state.dept, state.fund, 'supp2') || 0 },
