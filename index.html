@@ -714,6 +714,7 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 }
 .dyt-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); }
 .dyt-modal-head h3 { margin: 0; font-size: 17px; font-weight: 800; color: var(--navy); }
+.dyt-modal-head h3 .dyt-modal-title-sub { font-size: 12px; font-weight: 600; color: var(--text-soft); }
 .dyt-modal-close {
   border: none; background: var(--bg-hover); color: var(--text-muted); width: 28px; height: 28px;
   border-radius: 50%; font-size: 16px; cursor: pointer; line-height: 1;
@@ -2404,7 +2405,7 @@ function openDeptYearlyModal() {
   var titleEl = document.getElementById('dept-yearly-modal-title');
   var bodyEl = document.getElementById('dept-yearly-modal-body');
   if (!overlay || !titleEl || !bodyEl) return;
-  titleEl.textContent = state.dept + ' 위탁금 편성액';
+  titleEl.innerHTML = escapeHtml(state.dept) + ' 위탁금<span class="dyt-modal-title-sub">(공기관등에대한경상적,자본적위탁비)</span> 편성액';
 
   var cards = getDeptEnactedCards(state.dept, state.fund) || [];
   if (!cards.length) {
