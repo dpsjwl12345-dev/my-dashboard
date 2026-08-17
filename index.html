@@ -2405,7 +2405,7 @@ function openDeptYearlyModal() {
   var titleEl = document.getElementById('dept-yearly-modal-title');
   var bodyEl = document.getElementById('dept-yearly-modal-body');
   if (!overlay || !titleEl || !bodyEl) return;
-  titleEl.innerHTML = escapeHtml(state.dept) + ' 위탁금<span class="dyt-modal-title-sub">(공기관등에대한경상적,자본적위탁비)</span> 편성액';
+  titleEl.innerHTML = escapeHtml(state.dept) + ' 위탁금<span class="dyt-modal-title-sub">(공기관등에대한경상적,자본적위탁비)</span>';
 
   var cards = getDeptEnactedCards(state.dept, state.fund) || [];
   if (!cards.length) {
