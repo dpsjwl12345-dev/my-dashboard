@@ -681,6 +681,8 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .dept-stat-fill { position: absolute; top: 0; left: 0; background-color: var(--accent); width: 0%; height: 100%; border-radius: 2px; }
 /* 소관부서 카드 아이콘을 누르면 카드 왼쪽으로 뜨는 가로 막대 - 2025/2026/1~3회 편성액 요약.
    부모 .dept-stat-card가 zoom:0.72라 그대로 두면 글씨가 실제보다 작게 렌더링되므로, 여기서 역보정한다. */
+/* 표를 펼쳤을 때(더보기) 뒤쪽 페이지 내용과 겹쳐 지저분해 보이는 걸 막는 반투명 배경 - 팝업보다 z-index를 한 단계 낮게 둔다. */
+.dept-yearly-backdrop { display: none; position: fixed; inset: 0; z-index: 14; background: rgba(16,19,28,.28); }
 .dept-stat-yearly-panel {
   /* 세로 중앙 정렬(top:50%)이었으나, 표가 커지면 위쪽이 화면 밖으로 밀려 잘리는 문제가 있어
      아이콘 위쪽에 맞춰 아래로만 펼쳐지도록 기준을 바꿨다. */
@@ -1860,6 +1862,7 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
             </div>
           </div>
           <div class="dept-select-menu" id="dept-select-menu"></div>
+          <div class="dept-yearly-backdrop" id="dept-yearly-backdrop" style="display:none;" onclick="closeDeptYearlyPanel()"></div>
           <div class="dept-stat-yearly-panel" id="dept-stat-yearly-panel" style="display:none;"></div>
         </div>
         <div class="dept-tabs" id="dept-tabs" style="display:none;"></div>
@@ -2302,9 +2305,11 @@ function renderDeptTabs() {
         || getDeptEnactedAmount(state.dept, state.fund, 'supp2') || getDeptEnactedAmount(state.dept, state.fund, 'supp3'))
       : null;
     var hasWtgData = wtgHasCards || !!wtgFlatAmount;
+    var yearlyBackdropEl = document.getElementById('dept-yearly-backdrop');
     if (state.fund !== '출연금' && !hasWtgData) {
       if (yearlyToggleIcon) yearlyToggleIcon.style.display = 'none';
       if (yearlyPanelEl) { yearlyPanelEl.style.display = 'none'; yearlyPanelEl.innerHTML = ''; }
+      if (yearlyBackdropEl) yearlyBackdropEl.style.display = 'none';
     } else {
       // 부서/재원을 새로 선택할 때마다(=화면 진입 시) 패널을 펼친 상태로 시작한다. 버튼을 누르면 접히므로 초기값만 열어두면 됨.
       if (yearlyToggleIcon) {
@@ -2313,6 +2318,7 @@ function renderDeptTabs() {
         if (yearlyToggleInput) yearlyToggleInput.checked = true;
       }
       if (yearlyPanelEl) yearlyPanelEl.style.display = 'block';
+      if (yearlyBackdropEl) yearlyBackdropEl.style.display = 'block';
     }
     if (yearlyPanelEl && (state.fund === '출연금' || hasWtgData)) {
       var buildStripHtml = function (items) {
@@ -2375,7 +2381,18 @@ function toggleDeptMenu(e) {
 // 소관부서 카드 아래 아이콘 - 누르면 연도별 편성 예산액 패널이 펼쳐진다.
 function toggleDeptYearlyPanel(checkboxEl) {
   var panel = document.getElementById('dept-stat-yearly-panel');
+  var backdrop = document.getElementById('dept-yearly-backdrop');
   if (panel) panel.style.display = checkboxEl.checked ? 'block' : 'none';
+  if (backdrop) backdrop.style.display = checkboxEl.checked ? 'block' : 'none';
+}
+function closeDeptYearlyPanel() {
+  var icon = document.getElementById('dept-select-icon');
+  var input = icon && icon.querySelector('input');
+  if (input) input.checked = false;
+  var panel = document.getElementById('dept-stat-yearly-panel');
+  var backdrop = document.getElementById('dept-yearly-backdrop');
+  if (panel) panel.style.display = 'none';
+  if (backdrop) backdrop.style.display = 'none';
 }
 // 위탁금도 이제 출연금과 같은 플로팅 팝업을 쓴다(모달은 폐기) - 접힌 표를 펼치는 버튼만 별도로 있다.
 function handleDeptYearlyToggle(checkboxEl) {
