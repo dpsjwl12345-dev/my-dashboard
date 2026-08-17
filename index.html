@@ -2285,7 +2285,7 @@ function renderDeptTabs() {
     // 우상단 금액은 요구액이 아니라 실제 편성액(가장 최근 회차)을 보여준다 — 입력된 편성액이 없는 부서/위탁금은 기존대로 요구액 합계를 쓴다.
     var enactedTotal = state.fund === '출연금' ? getDeptLatestEnactedTotal(state.dept, state.fund) : null;
     var total = enactedTotal != null ? enactedTotal : requestedTotal;
-    amtEl.textContent = total ? fmtWon(Math.round(total / 1000)) : '';
+    amtEl.textContent = total ? (fmtWon(Math.round(total / 1000)) + '백만원') : '';
 
     // 전년 대비 증감률 — "연도별 OO 현황" 표의 합계(총괄) 데이터와 동일한 소스를 사용해 항상 일치시킨다.
     var fundSummary = state.fund === '위탁금' ? computeWtgFundSummary() : computeFundSummary();
