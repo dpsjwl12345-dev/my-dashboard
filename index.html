@@ -709,14 +709,17 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .dyt-cell.no-data { color: var(--text-soft); font-weight: 500; }
 .dyt-cell.dyt-name-col { text-align: center; font-weight: 800; color: var(--accent-dark); font-size: 12.5px; }
 
-/* 위탁금도 이제 출연금과 같은 플로팅 팝업(dept-yearly-table)을 쓴다. 사업(부기명)이 많은 부서는 표를 아예 숨겨두고
-   출연금 단일 스트립만큼 작은 문구(dyt-teaser) 하나만 보여준다 - 눌러야 그제서야 표가 나타난다. */
+/* 위탁금도 이제 출연금과 같은 플로팅 팝업(dept-yearly-table)을 쓴다. 사업(부기명)이 많은 부서는 헤더+합계 행만
+   기본으로 보여준다 - 합계도 표와 똑같은 dyt-row 그리드라 세부 행을 펼쳐도 열이 그대로 맞는다. */
 .dyt-row.child .dyt-cell.dyt-name-col { font-weight: 600; color: var(--text-muted); padding-left: 14px; }
-.dyt-teaser {
-  font-size: 11px; font-weight: 700; color: var(--accent); cursor: pointer; white-space: nowrap;
-  margin-top: 6px; padding-top: 5px; border-top: 1px solid var(--border); text-align: center;
+.dyt-row.dyt-total .dyt-cell { font-weight: 800; color: var(--accent-dark); }
+.dyt-row.dyt-total { padding-top: 3px; border-top: 1px solid var(--border); }
+.dyt-more-btn {
+  display: block; width: 100%; margin-top: 6px; padding: 4px 0; text-align: center;
+  font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft);
+  border: none; border-radius: 7px; cursor: pointer;
 }
-.dyt-teaser:hover { text-decoration: underline; }
+.dyt-more-btn:hover { background: var(--accent); color: #fff; }
 .dept-yearly-table.expanded { max-height: 55vh; overflow-y: auto; }
 
 .dept-select { position: relative; }
@@ -2346,9 +2349,8 @@ function renderDeptTabs() {
             }).join('')
             + '</div>';
         }).join('');
-        // 항목이 많으면(문화예술과/체육진흥과 등) 기본값은 출연금과 똑같은 가로 스트립 형태(합계)로 보여준다 -
-        // 표 자체가 아니라 "가로바" 모양을 유지해야 하므로, 텍스트 링크가 아니라 실제 합계 숫자가 담긴 스트립을 쓴다.
-        // 더보기를 눌러야 그 아래 부기명별 상세 표가 펼쳐진다(다시 누르면 접힘).
+        // 항목이 많으면(문화예술과/체육진흥과 등) 기본값은 헤더 + 합계 행만 보여준다. 합계도 표와 똑같은
+        // dyt-row 그리드를 그대로 써서, 나중에 세부 행이 펼쳐져도 열이 어긋나지 않고 그대로 맞는다.
         var needsMore = enactedCards.length > 1;
         if (needsMore) {
           var totalY25 = 0, totalBase = 0, totalSupp1 = 0;
@@ -2358,16 +2360,14 @@ function renderDeptTabs() {
             totalBase += c.rounds.base || 0;
             totalSupp1 += c.rounds.supp1 || 0;
           });
-          var totalStripHtml = buildStripHtml([
-            { label: '2025', amt: totalY25 },
-            { label: '2026', amt: totalBase },
-            { label: '1추', amt: totalSupp1 },
-            { label: '2추', amt: 0 },
-            { label: '3추', amt: 0 }
-          ]);
-          yearlyPanelEl.innerHTML = totalStripHtml
-            + '<div class="dyt-teaser" onclick="toggleDeptYearlyTableMore(this)">더보기 ▾</div>'
-            + '<div class="dept-yearly-table" style="display:none;">' + headHtml + bodyHtml + '</div>';
+          var totalRowHtml = '<div class="dyt-row dyt-total"><span class="dyt-cell dyt-name-col">합계</span>'
+            + [totalY25, totalBase, totalSupp1, 0, 0].map(function (amt) {
+              return '<span class="dyt-cell' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</span>';
+            }).join('')
+            + '</div>';
+          yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + totalRowHtml + '</div>'
+            + '<button type="button" class="dyt-more-btn" onclick="toggleDeptYearlyTableMore(this)">더보기 ▾</button>'
+            + '<div class="dept-yearly-table" style="display:none;">' + bodyHtml + '</div>';
         } else {
           yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + bodyHtml + '</div>';
         }
