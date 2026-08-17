@@ -2418,10 +2418,10 @@ function openDeptYearlyModal() {
   if (!overlay || !titleEl || !bodyEl) return;
 
   var cards = getDeptEnactedCards(state.dept, state.fund) || [];
-  // 경상/자본이 이미 표 안에 소계·세부내역으로 나뉘어 보이는 부서(도서관정책과 등)는 제목에 또 안 붙이고,
-  // 시설별로 경상+자본을 합쳐서 한 줄로만 보여주는 부서(문화예술과/교육지원과 등)만 통계목을 제목 옆에 표시한다.
-  var hasHierarchy = cards.some(function (c) { return /^\s*ㅇ/.test(c.name); });
-  var titleSuffix = hasHierarchy ? '' : '<span class="dyt-modal-title-sub">(공기관등에대한경상적,자본적위탁비)</span>';
+  // 표의 부모 행 이름 자체가 "경상적위탁사업비/자본적위탁사업비"로 통계목을 이미 보여주는 부서(도서관정책과 등)만
+  // 제목에 또 안 붙이고, 그 외(시설별 합산이든 지점별 세부든)는 통계목을 제목 옆에 표시한다.
+  var showsStatAccountAsRow = cards.some(function (c) { return c.name === '경상적위탁사업비' || c.name === '자본적위탁사업비'; });
+  var titleSuffix = showsStatAccountAsRow ? '' : '<span class="dyt-modal-title-sub">(공기관등에대한경상적,자본적위탁비)</span>';
   titleEl.innerHTML = escapeHtml(state.dept) + ' 위탁금' + titleSuffix;
   if (!cards.length) {
     bodyEl.innerHTML = '<div class="empty-state">편성 자료가 아직 없습니다.</div>';
