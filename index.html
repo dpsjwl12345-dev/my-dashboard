@@ -5227,10 +5227,9 @@ function renderLaborCalc() {
     return '<tr><td>' + p.label + '</td><td>' + pctInput + '</td><td class="lc-formula">' + formulaTxt + '</td><td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
   }).join('');
   var section05 = '<div class="lc-section"><h3>304 연금부담금등 (4대보험 사업자부담분)</h3>'
-    + '<p class="lc-hint">⚠ 이 항목은 목(관·항) 코드가 <b>304</b>로, 101 인건비와 별도입니다. 지침상 4대보험 사업자부담분은 <b>총인건비 인상률 산정에서 제외</b>되는 항목이라 위 01~04와 다른 성격입니다 — 실제 요율 × 산정기준액으로 계산됩니다.</p>'
-    + '<div class="lc-grandtotal" style="margin-bottom:14px;"><span class="lc-gt-label">연금부담금 합계</span><span class="lc-gt-amt">' + fmtWon(lcRound(pensionTotal)) + '<span>천원</span></span></div>'
     + '<div class="lc-raise-row" style="margin-bottom:12px;">보험료 산정 기준액(원) ' + lcNumInput('pensionBase', 130) + '&nbsp;(2026년 실데이터 기본값 — 실제로는 보수총액 등 기관 산정기준에 따라 매년 갱신)</div>'
-    + '<table class="lc-table"><thead><tr><th>구분</th><th>요율</th><th class="lc-th-formula">산출식</th><th>금액</th></tr></thead><tbody>' + pensionRows
+    + '<table class="lc-table"><thead><tr><th>구분</th><th>요율</th><th class="lc-th-formula">산출식</th><th>금액</th></tr></thead><tbody>'
+    + lcSubtotalRow('연금부담금 합계', pensionTotal, 3) + pensionRows
     + '</tbody></table></div>';
 
   var toggleHtml = '<div id="firstFilter" class="filter-switch">'
@@ -5242,7 +5241,7 @@ function renderLaborCalc() {
     + '</div>';
 
   var payHtml = section01 + section02 + section03 + section04;
-  el.innerHTML = toggleHtml + raiseHtml + (LC.view === 'pension' ? section05 : payHtml);
+  el.innerHTML = toggleHtml + (LC.view === 'pension' ? section05 : (raiseHtml + payHtml));
 }
 
 function showLaborCalc() {
