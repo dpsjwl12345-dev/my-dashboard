@@ -2351,7 +2351,8 @@ function renderDeptTabs() {
         }).join('');
         // 항목이 많으면(문화예술과/체육진흥과 등) 기본값은 헤더 + 합계 행만 보여준다. 합계도 표와 똑같은
         // dyt-row 그리드를 그대로 써서, 나중에 세부 행이 펼쳐져도 열이 어긋나지 않고 그대로 맞는다.
-        var needsMore = enactedCards.length > 1;
+        // 출연금은 원래부터 항상 표 전체를 그대로 보여줬다(카드 수도 원체 적음) - 더보기 접기는 위탁금(사업 수가 많은 경우)에만 적용한다.
+        var needsMore = state.fund === '위탁금' && enactedCards.length > 1;
         if (needsMore) {
           var totalY25 = 0, totalBase = 0, totalSupp1 = 0;
           enactedCards.forEach(function (c) {
