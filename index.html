@@ -713,7 +713,8 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
    출연금 단일 스트립만큼 작은 문구(dyt-teaser) 하나만 보여준다 - 눌러야 그제서야 표가 나타난다. */
 .dyt-row.child .dyt-cell.dyt-name-col { font-weight: 600; color: var(--text-muted); padding-left: 14px; }
 .dyt-teaser {
-  font-size: 13px; font-weight: 700; color: var(--accent); cursor: pointer; padding: 2px 1px; white-space: nowrap;
+  font-size: 11px; font-weight: 700; color: var(--accent); cursor: pointer; white-space: nowrap;
+  margin-top: 6px; padding-top: 5px; border-top: 1px solid var(--border); text-align: center;
 }
 .dyt-teaser:hover { text-decoration: underline; }
 .dept-yearly-table.expanded { max-height: 55vh; overflow-y: auto; }
@@ -2345,11 +2346,27 @@ function renderDeptTabs() {
             }).join('')
             + '</div>';
         }).join('');
-        // 항목이 많으면(문화예술과/체육진흥과 등) 표 자체를 아예 감춰두고 - 출연금 단일 스트립만큼 작은 문구 하나만 보여준다.
-        // 눌러서 펼치고(더보기) 다시 눌러서 접을(접기) 수 있고, 팝업 자체의 크기·위치는 출연금과 항상 동일하게 유지한다.
+        // 항목이 많으면(문화예술과/체육진흥과 등) 기본값은 출연금과 똑같은 가로 스트립 형태(합계)로 보여준다 -
+        // 표 자체가 아니라 "가로바" 모양을 유지해야 하므로, 텍스트 링크가 아니라 실제 합계 숫자가 담긴 스트립을 쓴다.
+        // 더보기를 눌러야 그 아래 부기명별 상세 표가 펼쳐진다(다시 누르면 접힘).
         var needsMore = enactedCards.length > 1;
         if (needsMore) {
-          yearlyPanelEl.innerHTML = '<div class="dyt-teaser" onclick="toggleDeptYearlyTableMore(this)">더보기 ▾</div>'
+          var totalY25 = 0, totalBase = 0, totalSupp1 = 0;
+          enactedCards.forEach(function (c) {
+            if (/^\s*ㅇ/.test(c.name)) return;
+            totalY25 += c.rounds.y25 || 0;
+            totalBase += c.rounds.base || 0;
+            totalSupp1 += c.rounds.supp1 || 0;
+          });
+          var totalStripHtml = buildStripHtml([
+            { label: '2025', amt: totalY25 },
+            { label: '2026', amt: totalBase },
+            { label: '1추', amt: totalSupp1 },
+            { label: '2추', amt: 0 },
+            { label: '3추', amt: 0 }
+          ]);
+          yearlyPanelEl.innerHTML = totalStripHtml
+            + '<div class="dyt-teaser" onclick="toggleDeptYearlyTableMore(this)">더보기 ▾</div>'
             + '<div class="dept-yearly-table" style="display:none;">' + headHtml + bodyHtml + '</div>';
         } else {
           yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + bodyHtml + '</div>';
