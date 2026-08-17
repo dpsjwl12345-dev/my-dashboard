@@ -711,17 +711,14 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .dyt-cell.no-data { color: var(--text-soft); font-weight: 500; }
 .dyt-cell.dyt-name-col { text-align: center; font-weight: 800; color: var(--accent-dark); font-size: 12.5px; }
 
-/* 위탁금도 이제 출연금과 같은 플로팅 팝업(dept-yearly-table)을 쓴다. 사업(부기명)이 많은 부서는 기본은 몇 줄만 보이게
-   접어두고, "더보기"를 눌러야 전체가 펼쳐진다 - 좁은 팝업이 항목 수만큼 무한정 길어지는 걸 막기 위함. */
+/* 위탁금도 이제 출연금과 같은 플로팅 팝업(dept-yearly-table)을 쓴다. 사업(부기명)이 많은 부서는 표를 아예 숨겨두고
+   출연금 단일 스트립만큼 작은 문구(dyt-teaser) 하나만 보여준다 - 눌러야 그제서야 표가 나타난다. */
 .dyt-row.child .dyt-cell.dyt-name-col { font-weight: 600; color: var(--text-muted); padding-left: 14px; }
-.dept-yearly-table.collapsed { max-height: 56px; overflow: hidden; }
-.dept-yearly-table.expanded { max-height: 55vh; overflow-y: auto; }
-.dyt-more-btn {
-  display: block; width: 100%; margin-top: 8px; padding: 5px 0; text-align: center;
-  font-size: 11.5px; font-weight: 800; color: var(--accent); background: var(--accent-soft);
-  border: none; border-radius: 8px; cursor: pointer;
+.dyt-teaser {
+  font-size: 13px; font-weight: 700; color: var(--accent); cursor: pointer; padding: 2px 1px; white-space: nowrap;
 }
-.dyt-more-btn:hover { background: var(--accent); color: #fff; }
+.dyt-teaser:hover { text-decoration: underline; }
+.dept-yearly-table.expanded { max-height: 55vh; overflow-y: auto; }
 
 .dept-select { position: relative; }
 
@@ -2350,11 +2347,16 @@ function renderDeptTabs() {
             }).join('')
             + '</div>';
         }).join('');
-        // 항목이 많으면(문화예술과/체육진흥과 등) 출연금 팝업만큼만 보이게 접어두고, "더보기"를 눌러야 전체 표가 펼쳐진다.
+        // 항목이 많으면(문화예술과/체육진흥과 등) 표 자체를 아예 감춰두고 - 출연금 단일 스트립만큼 작은 문구 하나만 보여준다.
+        // "더보기"를 눌러야 그때 표가 나타난다.
         var needsMore = enactedCards.length > 1;
         yearlyPanelEl.classList.remove('panel-expanded'); // 부서를 새로 선택하면 항상 접힌 상태로 다시 시작한다.
-        yearlyPanelEl.innerHTML = '<div class="dept-yearly-table' + (needsMore ? ' collapsed' : '') + '">' + headHtml + bodyHtml + '</div>'
-          + (needsMore ? '<button type="button" class="dyt-more-btn" onclick="toggleDeptYearlyTableMore(this)">더보기 ▾</button>' : '');
+        if (needsMore) {
+          yearlyPanelEl.innerHTML = '<div class="dyt-teaser" onclick="toggleDeptYearlyTableMore(this)">' + escapeHtml(state.dept) + ' 편성액 더보기 ▾</div>'
+            + '<div class="dept-yearly-table" style="display:none;">' + headHtml + bodyHtml + '</div>';
+        } else {
+          yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + bodyHtml + '</div>';
+        }
       } else {
         // 2026년(본예산~3회추경)은 편성액을 직접 입력해둔 값만 보여준다 - 요구액 트리 합계로 대체(fallback) 표시하지 않는다
         // (요구액 ≠ 편성액이라 잘못된 숫자를 보여줄 수 있음). 2025년은 이미 마감된 과거 연도라 그 구분이 없으므로 기존 집계값을 그대로 쓴다.
@@ -2402,14 +2404,14 @@ function closeDeptYearlyPanel() {
 function handleDeptYearlyToggle(checkboxEl) {
   toggleDeptYearlyPanel(checkboxEl);
 }
-function toggleDeptYearlyTableMore(btn) {
-  var table = btn.previousElementSibling;
+function toggleDeptYearlyTableMore(teaserEl) {
+  var table = teaserEl.nextElementSibling;
   if (!table) return;
-  var expanded = table.classList.toggle('expanded');
-  table.classList.toggle('collapsed', !expanded);
-  btn.textContent = expanded ? '접기 ▴' : '더보기 ▾';
+  teaserEl.style.display = 'none';
+  table.style.display = 'flex';
+  table.classList.add('expanded');
   var panel = document.getElementById('dept-stat-yearly-panel');
-  if (panel) panel.classList.toggle('panel-expanded', expanded);
+  if (panel) panel.classList.add('panel-expanded');
 }
 function selectDeptFromMenu(d) {
   document.getElementById('dept-select-menu').classList.remove('open');
