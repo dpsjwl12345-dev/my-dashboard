@@ -2418,34 +2418,33 @@ function openDeptYearlyModal() {
   if (!overlay || !titleEl || !bodyEl) return;
 
   var cards = getDeptEnactedCards(state.dept, state.fund) || [];
-  // 표의 부모 행 이름 자체가 "경상적위탁사업비/자본적위탁사업비"로 통계목을 이미 보여주는 부서(도서관정책과 등)만
-  // 제목에 또 안 붙이고, 그 외(시설별 합산이든 지점별 세부든)는 통계목을 제목 옆에 표시한다.
-  var showsStatAccountAsRow = cards.some(function (c) { return c.name === '경상적위탁사업비' || c.name === '자본적위탁사업비'; });
-  var titleSuffix = showsStatAccountAsRow ? '' : '<span class="dyt-modal-title-sub">(공기관등에대한경상적,자본적위탁비)</span>';
-  titleEl.innerHTML = escapeHtml(state.dept) + ' 위탁금' + titleSuffix;
+  titleEl.innerHTML = '';
   if (!cards.length) {
     bodyEl.innerHTML = '<div class="empty-state">편성 자료가 아직 없습니다.</div>';
   } else {
     var fmt = function (amt) { return amt ? fmtWon(Math.round(amt / 1000)) : null; };
     // business_card 이름이 "  ㅇ..."로 시작하면 바로 위 항목의 산출내역(세부) 행이다 - 합계에는 안 더하고 들여써서만 보여준다.
     var isChildRow = function (name) { return /^\s*ㅇ/.test(name); };
-    var totalBase = 0, totalSupp1 = 0;
+    var totalY25 = 0, totalBase = 0, totalSupp1 = 0;
     cards.forEach(function (c) {
       if (isChildRow(c.name)) return;
+      totalY25 += c.rounds.y25 || 0;
       totalBase += c.rounds.base || 0;
       totalSupp1 += c.rounds.supp1 || 0;
     });
     var rowsHtml = cards.map(function (c) {
       var child = isChildRow(c.name);
+      var y25 = c.rounds.y25 || 0;
       var base = c.rounds.base || 0;
       var supp1 = c.rounds.supp1 || 0;
+      var y25Html = y25 ? fmt(y25) : '-';
       var baseHtml = base ? fmt(base) : '<span class="no-data-inline">자료 없음</span>';
       // 본예산과 1추 금액이 같으면(=추경 중 변동 없음) 1추 칸은 대시로 표시한다. 2추/3추는 아직 편성 자료가 없어 항상 대시.
       var supp1Html = (supp1 && supp1 !== base) ? fmt(supp1) : '-';
-      return '<tr' + (child ? ' class="child"' : '') + '><td class="name">' + escapeHtml(c.name.replace(/^\s+/, '')) + '</td><td>' + baseHtml + '</td><td>' + supp1Html + '</td><td>-</td><td>-</td></tr>';
+      return '<tr' + (child ? ' class="child"' : '') + '><td class="name">' + escapeHtml(c.name.replace(/^\s+/, '')) + '</td><td>' + y25Html + '</td><td>' + baseHtml + '</td><td>' + supp1Html + '</td><td>-</td><td>-</td></tr>';
     }).join('');
-    var totalHtml = '<tr class="total"><td>합계</td><td>' + (fmt(totalBase) || '-') + '</td><td>' + (fmt(totalSupp1) || '-') + '</td><td>-</td><td>-</td></tr>';
-    bodyEl.innerHTML = '<table class="dyt-modal-table"><thead><tr><th>부기명</th><th>2026</th><th>1추</th><th>2추</th><th>3추</th></tr></thead><tbody>'
+    var totalHtml = '<tr class="total"><td>합계</td><td>' + (fmt(totalY25) || '-') + '</td><td>' + (fmt(totalBase) || '-') + '</td><td>' + (fmt(totalSupp1) || '-') + '</td><td>-</td><td>-</td></tr>';
+    bodyEl.innerHTML = '<table class="dyt-modal-table"><thead><tr><th>부기명</th><th>2025</th><th>2026</th><th>1추</th><th>2추</th><th>3추</th></tr></thead><tbody>'
       + totalHtml + rowsHtml + '</tbody></table>';
   }
   overlay.style.display = 'flex';
