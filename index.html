@@ -726,6 +726,7 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .dyt-modal-table th:first-child { text-align: center; }
 .dyt-modal-table td { padding: 9px 6px; text-align: center; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--border); }
 .dyt-modal-table td.name { text-align: center; font-weight: 700; color: var(--text); }
+.dyt-modal-table tr.child td.name { font-weight: 600; color: var(--text-muted); }
 .dyt-modal-table td.no-data { color: var(--text-soft); font-weight: 500; }
 .no-data-inline { color: var(--text-soft); font-weight: 500; }
 .dyt-modal-table tr.total td { border-bottom: 2px solid var(--border-strong); font-weight: 800; color: var(--accent-dark); }
@@ -2414,23 +2415,29 @@ function openDeptYearlyModal() {
   var titleEl = document.getElementById('dept-yearly-modal-title');
   var bodyEl = document.getElementById('dept-yearly-modal-body');
   if (!overlay || !titleEl || !bodyEl) return;
-  titleEl.innerHTML = escapeHtml(state.dept) + ' 위탁금<span class="dyt-modal-title-sub">(공기관등에대한경상적,자본적위탁비)</span>';
+  titleEl.textContent = state.dept + ' 위탁금';
 
   var cards = getDeptEnactedCards(state.dept, state.fund) || [];
   if (!cards.length) {
     bodyEl.innerHTML = '<div class="empty-state">편성 자료가 아직 없습니다.</div>';
   } else {
     var fmt = function (amt) { return amt ? fmtWon(Math.round(amt / 1000)) : null; };
+    // business_card 이름이 "  ㅇ..."로 시작하면 바로 위 항목의 산출내역(세부) 행이다 - 합계에는 안 더하고 들여써서만 보여준다.
+    var isChildRow = function (name) { return /^\s*ㅇ/.test(name); };
     var totalBase = 0, totalSupp1 = 0;
+    cards.forEach(function (c) {
+      if (isChildRow(c.name)) return;
+      totalBase += c.rounds.base || 0;
+      totalSupp1 += c.rounds.supp1 || 0;
+    });
     var rowsHtml = cards.map(function (c) {
+      var child = isChildRow(c.name);
       var base = c.rounds.base || 0;
       var supp1 = c.rounds.supp1 || 0;
-      totalBase += base;
-      totalSupp1 += supp1;
       var baseHtml = base ? fmt(base) : '<span class="no-data-inline">자료 없음</span>';
       // 본예산과 1추 금액이 같으면(=추경 중 변동 없음) 1추 칸은 대시로 표시한다. 2추/3추는 아직 편성 자료가 없어 항상 대시.
       var supp1Html = (supp1 && supp1 !== base) ? fmt(supp1) : '-';
-      return '<tr><td class="name">' + escapeHtml(c.name) + '</td><td>' + baseHtml + '</td><td>' + supp1Html + '</td><td>-</td><td>-</td></tr>';
+      return '<tr' + (child ? ' class="child"' : '') + '><td class="name">' + escapeHtml(c.name.replace(/^\s+/, '')) + '</td><td>' + baseHtml + '</td><td>' + supp1Html + '</td><td>-</td><td>-</td></tr>';
     }).join('');
     var totalHtml = '<tr class="total"><td>합계</td><td>' + (fmt(totalBase) || '-') + '</td><td>' + (fmt(totalSupp1) || '-') + '</td><td>-</td><td>-</td></tr>';
     bodyEl.innerHTML = '<table class="dyt-modal-table"><thead><tr><th>부기명</th><th>2026</th><th>1추</th><th>2추</th><th>3추</th></tr></thead><tbody>'
