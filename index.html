@@ -2202,6 +2202,7 @@ function getDeptLatestEnactedTotal(dept, fundType) {
   if (cards && cards.length) {
     var total = 0, any = false;
     cards.forEach(function (c) {
+      if (/^\s*ㅇ/.test(c.name)) return; // 소계(부모) 행의 세부내역(자식) - 합계에 중복으로 더하지 않는다
       for (var i = 0; i < rounds.length; i++) {
         var amt = c.rounds[rounds[i]];
         if (amt) { total += amt; any = true; break; }
@@ -2283,8 +2284,8 @@ function renderDeptTabs() {
     var requestedTotal = (nav.instKey === 'hscf' && state.dept === '도서관정책과' && state.fund === '위탁금')
       ? 18935831
       : deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
-    // 우상단 금액은 요구액이 아니라 실제 편성액(가장 최근 회차)을 보여준다 — 입력된 편성액이 없는 부서/위탁금은 기존대로 요구액 합계를 쓴다.
-    var enactedTotal = state.fund === '출연금' ? getDeptLatestEnactedTotal(state.dept, state.fund) : null;
+    // 우상단 금액은 요구액이 아니라 실제 편성액(가장 최근 회차)을 보여준다 — 입력된 편성액이 없는 부서는 기존대로 요구액 합계를 쓴다.
+    var enactedTotal = getDeptLatestEnactedTotal(state.dept, state.fund);
     var total = enactedTotal != null ? enactedTotal : requestedTotal;
     amtEl.textContent = total ? (fmtWon(Math.round(total / 1000)) + '백만원') : '';
 
