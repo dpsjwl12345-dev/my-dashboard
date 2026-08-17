@@ -709,13 +709,14 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 /* 위탁금도 이제 출연금과 같은 플로팅 팝업(dept-yearly-table)을 쓴다. 사업(부기명)이 많은 부서는 기본은 몇 줄만 보이게
    접어두고, "더보기"를 눌러야 전체가 펼쳐진다 - 좁은 팝업이 항목 수만큼 무한정 길어지는 걸 막기 위함. */
 .dyt-row.child .dyt-cell.dyt-name-col { font-weight: 600; color: var(--text-muted); padding-left: 14px; }
-.dept-yearly-table.collapsed { max-height: 100px; overflow: hidden; }
+.dept-yearly-table.collapsed { max-height: 56px; overflow: hidden; }
 .dept-yearly-table.expanded { max-height: 55vh; overflow-y: auto; }
 .dyt-more-btn {
-  display: block; width: 100%; margin-top: 6px; padding: 4px 0; text-align: center;
-  font-size: 11.5px; font-weight: 700; color: var(--accent); background: none; border: none; cursor: pointer;
+  display: block; width: 100%; margin-top: 8px; padding: 5px 0; text-align: center;
+  font-size: 11.5px; font-weight: 800; color: var(--accent); background: var(--accent-soft);
+  border: none; border-radius: 8px; cursor: pointer;
 }
-.dyt-more-btn:hover { text-decoration: underline; }
+.dyt-more-btn:hover { background: var(--accent); color: #fff; }
 
 .dept-select { position: relative; }
 
@@ -2341,7 +2342,7 @@ function renderDeptTabs() {
             + '</div>';
         }).join('');
         // 항목이 많으면(문화예술과/체육진흥과 등) 출연금 팝업만큼만 보이게 접어두고, "더보기"를 눌러야 전체 표가 펼쳐진다.
-        var needsMore = enactedCards.length > 3;
+        var needsMore = enactedCards.length > 1;
         yearlyPanelEl.innerHTML = '<div class="dept-yearly-table' + (needsMore ? ' collapsed' : '') + '">' + headHtml + bodyHtml + '</div>'
           + (needsMore ? '<button type="button" class="dyt-more-btn" onclick="toggleDeptYearlyTableMore(this)">더보기 ▾</button>' : '');
       } else {
