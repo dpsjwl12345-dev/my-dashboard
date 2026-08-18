@@ -5202,7 +5202,7 @@ function lcBasisSelect(path, value) {
   if (path === 'fundType') { LC.basis.fundType = value; LC.basis.dept = ''; }
   if (path === 'dept') { LC.basis.dept = value; LC.basis.sectionId = ''; }
   if (path === 'sectionId') LC.basis.sectionId = value;
-  if (path === 'sectionId') { LC.basis.sectionId = ''; renderLaborCalc(); return; }
+  if (path === 'sectionId') { renderLaborCalc(); return; }
   lcLoadBasisRows();
 }
 
@@ -5297,29 +5297,23 @@ function lcBasisSummary(rows) {
 
 function lcBasisAggregateTable(rows) {
   var base = {}, allow = {};
-  var expected = [{type:'일반직', grade:'2급'}, {type:'일반직', grade:'3급'}, {type:'일반직', grade:'4급'}, {type:'일반직', grade:'5급'}, {type:'일반직', grade:'6급'}, {type:'기타직', grade:'가급'}, {type:'기타직', grade:'나급'}, {type:'기타직', grade:'다급'}, {type:'기타직', grade:'라급'}, {type:'기타직', grade:'마급'}, {type:'무기계약직', grade:'-'}, {type:'기간제', grade:'-'}];
-  expected.forEach(function (e) { base[e.type + '|' + e.grade + '|기본급'] = { type:e.type, grade:e.grade, name:'기본급', units:[], count:0, months:[], rates:[], rows:0 }; });
   rows.forEach(function (r) {
-    var x = lcExtractBasis(r), text = lcBasisContext(r) + ' ' + String(r.name || '') + ' ' + String(r.calc || ''), gm = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/), grade = gm ? gm[1] : '-', type = lcBasisType(r), name = String(r.name || '').trim();
-    var isBase = /기본급|보수/.test(name) || /기본급/.test(String(r.calc || '')) || /^(대표이사|기관장|[0-9]+급|[가-마]급)$/.test(name);
+    var x = lcExtractBasis(r), text = lcBasisContext(r) + ' ' + String(r.name || '') + ' ' + String(r.calc || ''), gm = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/), grade = gm ? gm[1] : '직급없음', type = lcBasisType(r), name = String(r.name || '').trim();
     if (!x.extracted || !x.unit) return;
+    var isBase = /기본급|보수/.test(name) || /기본급/.test(String(r.calc || ''));
     var map = isBase ? base : allow, key = type + '|' + grade + '|' + name;
-    if (!map[key]) map[key] = { type:type, grade:grade, name:name || '수당', units:[], count:0, months:[], rates:[], rows:0 };
-    var g = map[key]; g.rows++; if (g.units.indexOf(x.unit) < 0) g.units.push(x.unit); g.count += Number(x.count || 0); if (x.months != null && g.months.indexOf(x.months) < 0) g.months.push(x.months); if (x.rate && g.rates.indexOf(x.rate) < 0) g.rates.push(x.rate);
+    if (!map[key]) map[key] = { type: type, grade: grade, name: name || '수당', units: [], counts: [], months: [], rates: [], rows: 0 };
+    var g = map[key]; g.rows++; if (g.units.indexOf(x.unit) < 0) g.units.push(x.unit); if (g.count != null) {} else g.count = 0; g.count += Number(x.count || 0); if (g.months.indexOf(x.months) < 0) g.months.push(x.months); if (x.rate && g.rates.indexOf(x.rate) < 0) g.rates.push(x.rate);
   });
-  function render(map, title, onlyNonEmpty) {
-    var keys = Object.keys(map).filter(function (k) { return !onlyNonEmpty || map[k].rows > 0; });
+  function render(map, title) {
+    var keys = Object.keys(map);
     if (!keys.length) return '<div class="summary-box"><h4>' + title + '</h4><p style="color:var(--text-muted);">추출된 기준값이 없습니다.</p></div>';
-    var body = keys.map(function (k) { var g = map[k]; return '<tr><td>' + escapeHtml(g.type) + '</td><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name) + '</td><td style="text-align:right">' + (g.units.length ? g.units.map(function (v) { return fmtWon(v); }).join(' / ') : '') + '</td><td style="text-align:right">' + (g.rows ? g.count : '') + '</td><td style="text-align:right">' + (g.months.length ? g.months.join(' / ') : '') + '</td><td>' + escapeHtml(g.rates.join(' · ')) + '</td><td>' + (g.rows ? g.rows + '건' : '') + '</td></tr>'; }).join('');
+    var body = keys.map(function (k) { var g = map[k]; return '<tr><td>' + escapeHtml(g.type) + '</td><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name) + '</td><td style="text-align:right">' + g.units.map(function (v) { return fmtWon(v); }).join(' / ') + '</td><td style="text-align:right">' + g.count + '</td><td style="text-align:right">' + g.months.join(' / ') + '</td><td>' + escapeHtml(g.rates.join(' · ') || '-') + '</td><td>' + g.rows + '건</td></tr>'; }).join('');
     return '<div class="summary-box"><h4>' + title + '</h4><div style="overflow:auto;"><table class="lc-table"><thead><tr><th>고용형태</th><th>급수</th><th>부기명</th><th>기준단가(원)</th><th>요구인원 합계</th><th>개월</th><th>적용률</th><th>자료건수</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
   }
-  return render(base, '기관별 기본급 기준값', false) + render(allow, '기관별 인정 수당 기준값', true);
+  return render(base, '기관별 기본급 기준값') + render(allow, '기관별 수당 기준값');
 }
 
-function lcIsLaborRow(row) {
-  var text = lcBasisContext(row) + ' ' + String(row.name || '') + ' ' + String(row.calc || '');
-  return text.indexOf('인건비') >= 0 || text.indexOf('보수') >= 0 || text.indexOf('수당') >= 0 || text.indexOf('급식비') >= 0 || text.indexOf('명절') >= 0 || text.indexOf('기간제') >= 0 || text.indexOf('무기계약') >= 0 || text.indexOf('공무직') >= 0;
-}
 function lcBasisPathLabel(section) {
   return section.name + ' #' + section.id;
 }
@@ -5343,11 +5337,10 @@ function lcBasisSection() {
   var basisInst = (INSTITUTIONS || []).filter(function (x) { return String(x.id) === String(b.institutionId); })[0];
   var deptList = b.fundType === '위탁금' && basisInst ? (WTG_DEPTS[basisInst.key] || []) : [];
   var deptOptions = '<option value="">전체 부서</option>' + deptList.map(function (d) { return '<option' + (d === b.dept ? ' selected' : '') + '>' + escapeHtml(d) + '</option>'; }).join('');
-  var sectionOptions = '';
+  var sectionOptions = '<option value="">편성목 선택</option>' + b.sections.map(function (s) { return '<option value="' + s.id + '"' + (String(s.id) === String(b.sectionId) ? ' selected' : '') + '>' + escapeHtml(lcBasisPathLabel(s)) + '</option>'; }).join('');
   var ids = b.sectionId ? lcBasisDescendantIds(b.sectionId) : {};
   var filteredRows = b.rows.filter(function (r) {
-    var inSelected = b.sectionId ? ids[String(r.id)] && String(r.id) !== String(b.sectionId) : lcIsLaborRow(r);
-    return inSelected && (String(r.calc || '').trim() || r.level === '□' || r.level === 'i');
+    return b.sectionId && ids[String(r.id)] && String(r.id) !== String(b.sectionId) && (String(r.calc || '').trim() || r.level === '□' || r.level === 'i');
   });
   var summary = lcBasisSummary(filteredRows);
   var aggregate = lcBasisAggregateTable(filteredRows);
@@ -5355,12 +5348,13 @@ function lcBasisSection() {
     var x = lcExtractBasis(r), calculated = x.extracted ? x.unit * x.count * x.months * x.rateFactor / 1000 : null, requested = Number(r.amt26 || 0), diff = calculated == null ? null : calculated - requested, matched = calculated != null && Math.abs(diff) <= 1, status = calculated == null ? '확인필요' : (matched ? '일치' : '불일치');
     return '<tr><td>' + escapeHtml(lcBasisType(r)) + '</td><td>' + escapeHtml(lcBasisGrade(r)) + '</td><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.calc || '') + '</td><td style="text-align:right">' + (x.unit == null ? '-' : fmtWon(x.unit)) + '</td><td style="text-align:right">' + (x.count == null ? '-' : x.count) + '</td><td style="text-align:right">' + (x.months == null ? '-' : x.months) + '</td><td style="text-align:right">' + (calculated == null ? '-' : fmtWon(calculated)) + '</td><td style="text-align:right">' + fmtWon(requested) + '</td><td style="text-align:right;color:' + (matched ? 'var(--success)' : (calculated == null ? 'var(--text-muted)' : 'var(--danger)')) + '">' + (diff == null ? '-' : (diff > 0 ? '+' : '') + fmtWon(diff)) + '</td><td><span class="' + (matched ? 'lc-ok' : 'lc-warn') + '">' + status + '</span></td></tr>';
   }).join('');
-  if (!rows && !b.loading) rows = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:24px;">예산자료가 없거나 산출기초가 없습니다.</td></tr>';
-  return '<div class="summary-box"><h3>화성시문화관광재단 인건비 기준값</h3><p style="margin:0 0 14px;color:var(--text-muted);">필터된 인건비 원자료를 통합해 결과값을 먼저 표시하고, 아래에 원본 산출기초를 표시합니다.</p>'
+  if (!rows && !b.loading) rows = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:24px;">편성목을 선택하면 산출기초에서 기준값을 자동 추출합니다.</td></tr>';
+  return '<div class="summary-box"><h3>기준값 작업 (임시)</h3><p style="margin:0 0 14px;color:var(--text-muted);">편성목을 먼저 선택한 뒤, 그 안의 부기명과 산출기초를 확인합니다.</p>'
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">'
     + '<select onchange="lcBasisSelect(\'institutionId\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:180px;">' + instOptions + '</select>'
     + '<select onchange="lcBasisSelect(\'fundType\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:120px;"><option' + (b.fundType === '출연금' ? ' selected' : '') + '>출연금</option><option' + (b.fundType === '위탁금' ? ' selected' : '') + '>위탁금</option></select>'
     + '<select onchange="lcBasisSelect(\'dept\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:160px;">' + deptOptions + '</select>'
+    + '<select onchange="lcBasisSelect(\'sectionId\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:180px;">' + sectionOptions + '</select>'
     + '</div>'
     + (b.loading ? '<p>불러오는 중입니다.</p>' : '') + (b.error ? '<p class="lc-warn">' + escapeHtml(b.error) + '</p>' : '')
     + (filteredRows.length ? aggregate + '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px;">' + summary + '</div>' : '')
