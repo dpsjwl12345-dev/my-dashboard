@@ -4977,8 +4977,7 @@ function switchPanel(panelId) {
 // 지침: 2026년도 지방출자·출연기관 예산편성지침 Ⅲ-1(인건비)
 // ============================================================
 var LC = {
-  view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'basis'(기준값 작업)
-  basis: { institutionId: '', fundType: '출연금', dept: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '' },
+  view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) — 상단 토글 선택 상태
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
   // 대우수당(treatmentCount)은 실제 데이터상 기본급 인원과 다른 별도 인원 기준으로 산정됨(직급 내 일부 대상자만 해당) — 2026년 실측치 그대로 반영.
@@ -5195,170 +5194,6 @@ function lcMiniTotal(label, amt) {
 }
 function lcSubtotalRow(label, amt, colspan) {
   return '<tr class="lc-subtotal"><td colspan="' + colspan + '">' + label + '</td><td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
-}
-
-function lcBasisSelect(path, value) {
-  if (path === 'institutionId') LC.basis.institutionId = value;
-  if (path === 'fundType') { LC.basis.fundType = value; LC.basis.dept = ''; }
-  if (path === 'dept') { LC.basis.dept = value; LC.basis.sectionId = ''; }
-  if (path === 'sectionId') LC.basis.sectionId = value;
-  if (path === 'sectionId') { renderLaborCalc(); return; }
-  lcLoadBasisRows();
-}
-
-async function lcLoadBasisRows() {
-  var b = LC.basis;
-  b.rows = []; b.sections = []; b.teams = []; b.overview = null; b.sectionId = ''; b.error = '';
-  var inst = (INSTITUTIONS || []).filter(function (x) { return String(x.id) === String(b.institutionId); })[0];
-  if (!inst || !b.fundType) { renderLaborCalc(); return; }
-  b.loading = true; renderLaborCalc();
-  b.overview = (typeof OV2_DATA !== 'undefined' && OV2_DATA[inst.key]) ? OV2_DATA[inst.key] : null;
-  try {
-    var q = db.from('budget_items').select('id, parent_id, institution_id, fund_type, dept, business_card, level, code, name, amt26, calc, round, sort_order')
-      .eq('institution_id', inst.id).eq('fund_type', b.fundType).eq('round', 'base');
-    if (b.dept) q = q.eq('dept', b.dept);
-    var res = await q.order('sort_order').order('id');
-    if (res.error) throw res.error;
-    b.rows = res.data || [];
-    b.sections = b.rows.filter(function (r) { return r.level === '목' && r.name === '인건비'; });
-    var cardsQ = db.from('business_cards').select('id').eq('institution_id', inst.id).eq('fund_type', b.fundType);
-    if (b.dept) cardsQ = cardsQ.eq('dept', b.dept);
-    var cardsRes = await cardsQ;
-    var cardIds = (cardsRes.data || []).map(function (c) { return c.id; });
-    if (cardIds.length) {
-      var teamsRes = await db.from('card_teams').select('team_name,capacity,current,card_id').in('card_id', cardIds).eq('round', 'base');
-      if (teamsRes.error) throw teamsRes.error;
-      b.teams = teamsRes.data || [];
-    }
-  } catch (err) { b.error = err.message || '자료를 불러오지 못했습니다.'; }
-  b.loading = false; renderLaborCalc();
-}
-
-function lcBasisContext(row) {
-  var byId = {}; LC.basis.rows.forEach(function (r) { byId[String(r.id)] = r; });
-  var parts = [String(row.name || '')], cur = row, guard = 0;
-  while (cur && cur.parent_id != null && guard++ < 20) { cur = byId[String(cur.parent_id)]; if (cur && cur.name) parts.unshift(String(cur.name)); }
-  return parts.join(' > ');
-}
-function lcBasisType(row) {
-  var text = (lcBasisContext(row) + ' ' + String(row.calc || '')).toLowerCase();
-  if (text.indexOf('기간제') >= 0 || text.indexOf('단시간근로') >= 0) return '기간제';
-  if (text.indexOf('무기계약') >= 0 || text.indexOf('공무직') >= 0) return '무기계약직';
-  if (text.indexOf('기타직') >= 0 || text.indexOf('전문계약') >= 0) return '기타직';
-  return '일반직';
-}
-function lcBasisGrade(row) {
-  var text = lcBasisContext(row) + ' ' + String(row.calc || '');
-  var m = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/);
-  return m ? m[1] : '';
-}
-function lcExtractBasis(row) {
-  var text = String(row.calc || '').replace(/\s/g, '');
-  var unit = (text.match(/([0-9][0-9,]*)원/) || [])[1];
-  var count = (text.match(/([0-9][0-9,]*)명/) || [])[1];
-  var months = (text.match(/([0-9][0-9,]*)(?:월|개월)/) || [])[1];
-  if (!months && /년/.test(text)) months = String(Number((text.match(/([0-9][0-9,]*)년/) || [])[1] || 1) * 12);
-  var rates = (text.match(/([0-9]+(?:\.[0-9]+)?)%/g) || []).map(function (x) { return Number(x.replace('%','')); });
-  var rateFactor = rates.reduce(function (acc, n) { return acc * n / 100; }, 1);
-  return { unit: unit ? Number(unit.replace(/,/g,'')) : null, count: count ? Number(count.replace(/,/g,'')) : null, months: months ? Number(months.replace(/,/g,'')) : null, rate: rates.length ? rates.join('% · ') + '%' : '', rateFactor: rateFactor, extracted: !!(unit && count && months), status: unit && count && months ? '추출완료' : '확인필요' };
-}
-function lcBasisSummary(rows) {
-  var groups = {};
-  var mismatchCount = 0, reviewCount = 0, matchCount = 0;
-  var overviewPersonnel = [];
-  if (LC.basis.overview && LC.basis.overview.personnelGroups) {
-    LC.basis.overview.personnelGroups.forEach(function (g) { (g.rows || []).forEach(function (r) { overviewPersonnel.push(r); }); });
-  }
-  var totalCapacity = (LC.basis.teams || []).reduce(function (s, t) { return s + Number(t.capacity || 0); }, 0);
-  var totalCurrent = (LC.basis.teams || []).reduce(function (s, t) { return s + Number(t.current || 0); }, 0);
-  rows.forEach(function (r) {
-    var x = lcExtractBasis(r), type = lcBasisType(r), calcAmt = x.extracted ? x.unit * x.count * x.months * x.rateFactor / 1000 : null, reqAmt = Number(r.amt26 || 0);
-    if (calcAmt == null) reviewCount++; else if (Math.abs(calcAmt - reqAmt) <= 1) matchCount++; else mismatchCount++;
-    if (!groups[type]) groups[type] = { count: 0, parsed: 0, rows: [] };
-    groups[type].count++;
-    if (x.extracted) groups[type].parsed++;
-    groups[type].rows.push({ row: r, parsed: x });
-  });
-  var overviewCards = LC.basis.overview && LC.basis.overview.org && LC.basis.overview.org.cards ? LC.basis.overview.org.cards : [];
-  var overviewHtml = overviewCards.map(function (c) { return '<div style="font-size:13px;color:var(--text-muted);">' + escapeHtml(c.label || '') + ': <b>' + escapeHtml(c.value || '') + '</b></div>'; }).join('');
-  var headHtml = '<div style="border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-width:230px;background:var(--surface-2);"><div style="font-weight:700;margin-bottom:6px;">기관 현황 참고</div>' + (overviewHtml || '<div style="font-size:13px;color:var(--text-muted);">기관 현황 자료 없음</div>') + '<div style="font-size:13px;color:var(--text-muted);margin-top:6px;">사업별 정현원 합계: 정원 ' + totalCapacity + '명 / 현원 ' + totalCurrent + '명</div></div><div style="border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-width:230px;background:var(--surface-2);"><div style="font-weight:700;margin-bottom:6px;">요구액 재계산 결과</div><div style="font-size:13px;color:var(--success);">일치: ' + matchCount + '건</div><div style="font-size:13px;color:var(--danger);">불일치: ' + mismatchCount + '건</div><div style="font-size:13px;color:var(--text-muted);">확인필요: ' + reviewCount + '건</div></div>';
-  return headHtml + Object.keys(groups).map(function (type) {
-    var g = groups[type];
-    var basic = g.rows.filter(function (x) { return /기본급|보수/.test(String(x.row.name || '')) && x.parsed.extracted; });
-    var allowance = g.rows.filter(function (x) { return /수당|급식비|명절|가족|직급|정근|연차|초과|야간|교통/.test(String(x.row.name || '') + String(x.row.calc || '')); });
-    var usedCount = basic.reduce(function (s, x) { return s + Number(x.parsed.count || 0); }, 0);
-    var compareType = type === '무기계약직' ? ['무기계약직','공무직'] : [type];
-    var ref = overviewPersonnel.filter(function (p) { return compareType.indexOf(p.label) >= 0; }).reduce(function (s, p) { return s + Number(p.current || 0); }, 0);
-    var basicText = basic.length ? basic.map(function (x) { return x.parsed.unit ? fmtWon(x.parsed.unit) + '원' : '단가 확인필요'; }).join(', ') : '기본급 단가 확인필요';
-    var compareText = ref ? '요구 적용인원 ' + usedCount + '명 / 기관현황 현원 ' + ref + '명' : '기관현황 고용형태 자료 확인필요';
-    return '<div style="border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-width:230px;background:var(--surface-2);"><div style="font-weight:700;margin-bottom:6px;">' + escapeHtml(type) + '</div><div style="font-size:13px;color:var(--text-muted);">기본급 단가: ' + escapeHtml(basicText) + '</div><div style="font-size:13px;color:var(--text-muted);">기준값 추출: ' + g.parsed + ' / ' + g.count + '건</div><div style="font-size:13px;color:var(--text-muted);">' + escapeHtml(compareText) + '</div><div style="font-size:13px;color:var(--text-muted);">수당 자료: ' + allowance.length + '건</div></div>';
-  }).join('');
-}
-
-function lcBasisAggregateTable(rows) {
-  var base = {}, allow = {};
-  rows.forEach(function (r) {
-    var x = lcExtractBasis(r), text = lcBasisContext(r) + ' ' + String(r.name || '') + ' ' + String(r.calc || ''), gm = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/), grade = gm ? gm[1] : '직급없음', type = lcBasisType(r), name = String(r.name || '').trim();
-    if (!x.extracted || !x.unit) return;
-    var isBase = /기본급|보수/.test(name) || /기본급/.test(String(r.calc || ''));
-    var map = isBase ? base : allow, key = type + '|' + grade + '|' + name;
-    if (!map[key]) map[key] = { type: type, grade: grade, name: name || '수당', units: [], counts: [], months: [], rates: [], rows: 0 };
-    var g = map[key]; g.rows++; if (g.units.indexOf(x.unit) < 0) g.units.push(x.unit); if (g.count != null) {} else g.count = 0; g.count += Number(x.count || 0); if (g.months.indexOf(x.months) < 0) g.months.push(x.months); if (x.rate && g.rates.indexOf(x.rate) < 0) g.rates.push(x.rate);
-  });
-  function render(map, title) {
-    var keys = Object.keys(map);
-    if (!keys.length) return '<div class="summary-box"><h4>' + title + '</h4><p style="color:var(--text-muted);">추출된 기준값이 없습니다.</p></div>';
-    var body = keys.map(function (k) { var g = map[k]; return '<tr><td>' + escapeHtml(g.type) + '</td><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name) + '</td><td style="text-align:right">' + g.units.map(function (v) { return fmtWon(v); }).join(' / ') + '</td><td style="text-align:right">' + g.count + '</td><td style="text-align:right">' + g.months.join(' / ') + '</td><td>' + escapeHtml(g.rates.join(' · ') || '-') + '</td><td>' + g.rows + '건</td></tr>'; }).join('');
-    return '<div class="summary-box"><h4>' + title + '</h4><div style="overflow:auto;"><table class="lc-table"><thead><tr><th>고용형태</th><th>급수</th><th>부기명</th><th>기준단가(원)</th><th>요구인원 합계</th><th>개월</th><th>적용률</th><th>자료건수</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
-  }
-  return render(base, '기관별 기본급 기준값') + render(allow, '기관별 수당 기준값');
-}
-
-function lcBasisPathLabel(section) {
-  return section.name + ' #' + section.id;
-}
-function lcBasisDescendantIds(sectionId) {
-  var ids = {}, changed = true;
-  ids[String(sectionId)] = true;
-  while (changed) {
-    changed = false;
-    LC.basis.rows.forEach(function (r) {
-      if (r.parent_id != null && ids[String(r.parent_id)] && !ids[String(r.id)]) { ids[String(r.id)] = true; changed = true; }
-    });
-  }
-  return ids;
-}
-
-function lcBasisSection() {
-  var b = LC.basis;
-  var instOptions = '<option value="">기관 선택</option>' + (INSTITUTIONS || []).map(function (x) {
-    return '<option value="' + x.id + '"' + (String(x.id) === String(b.institutionId) ? ' selected' : '') + '>' + escapeHtml(x.name) + '</option>';
-  }).join('');
-  var basisInst = (INSTITUTIONS || []).filter(function (x) { return String(x.id) === String(b.institutionId); })[0];
-  var deptList = b.fundType === '위탁금' && basisInst ? (WTG_DEPTS[basisInst.key] || []) : [];
-  var deptOptions = '<option value="">전체 부서</option>' + deptList.map(function (d) { return '<option' + (d === b.dept ? ' selected' : '') + '>' + escapeHtml(d) + '</option>'; }).join('');
-  var sectionOptions = '<option value="">편성목 선택</option>' + b.sections.map(function (s) { return '<option value="' + s.id + '"' + (String(s.id) === String(b.sectionId) ? ' selected' : '') + '>' + escapeHtml(lcBasisPathLabel(s)) + '</option>'; }).join('');
-  var ids = b.sectionId ? lcBasisDescendantIds(b.sectionId) : {};
-  var filteredRows = b.rows.filter(function (r) {
-    return b.sectionId && ids[String(r.id)] && String(r.id) !== String(b.sectionId) && (String(r.calc || '').trim() || r.level === '□' || r.level === 'i');
-  });
-  var summary = lcBasisSummary(filteredRows);
-  var aggregate = lcBasisAggregateTable(filteredRows);
-  var rows = filteredRows.map(function (r) {
-    var x = lcExtractBasis(r), calculated = x.extracted ? x.unit * x.count * x.months * x.rateFactor / 1000 : null, requested = Number(r.amt26 || 0), diff = calculated == null ? null : calculated - requested, matched = calculated != null && Math.abs(diff) <= 1, status = calculated == null ? '확인필요' : (matched ? '일치' : '불일치');
-    return '<tr><td>' + escapeHtml(lcBasisType(r)) + '</td><td>' + escapeHtml(lcBasisGrade(r)) + '</td><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.calc || '') + '</td><td style="text-align:right">' + (x.unit == null ? '-' : fmtWon(x.unit)) + '</td><td style="text-align:right">' + (x.count == null ? '-' : x.count) + '</td><td style="text-align:right">' + (x.months == null ? '-' : x.months) + '</td><td style="text-align:right">' + (calculated == null ? '-' : fmtWon(calculated)) + '</td><td style="text-align:right">' + fmtWon(requested) + '</td><td style="text-align:right;color:' + (matched ? 'var(--success)' : (calculated == null ? 'var(--text-muted)' : 'var(--danger)')) + '">' + (diff == null ? '-' : (diff > 0 ? '+' : '') + fmtWon(diff)) + '</td><td><span class="' + (matched ? 'lc-ok' : 'lc-warn') + '">' + status + '</span></td></tr>';
-  }).join('');
-  if (!rows && !b.loading) rows = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:24px;">편성목을 선택하면 산출기초에서 기준값을 자동 추출합니다.</td></tr>';
-  return '<div class="summary-box"><h3>기준값 작업 (임시)</h3><p style="margin:0 0 14px;color:var(--text-muted);">편성목을 먼저 선택한 뒤, 그 안의 부기명과 산출기초를 확인합니다.</p>'
-    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">'
-    + '<select onchange="lcBasisSelect(\'institutionId\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:180px;">' + instOptions + '</select>'
-    + '<select onchange="lcBasisSelect(\'fundType\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:120px;"><option' + (b.fundType === '출연금' ? ' selected' : '') + '>출연금</option><option' + (b.fundType === '위탁금' ? ' selected' : '') + '>위탁금</option></select>'
-    + '<select onchange="lcBasisSelect(\'dept\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:160px;">' + deptOptions + '</select>'
-    + '<select onchange="lcBasisSelect(\'sectionId\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:180px;">' + sectionOptions + '</select>'
-    + '</div>'
-    + (b.loading ? '<p>불러오는 중입니다.</p>' : '') + (b.error ? '<p class="lc-warn">' + escapeHtml(b.error) + '</p>' : '')
-    + (filteredRows.length ? aggregate + '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px;">' + summary + '</div>' : '')
-    + '<div style="overflow:auto;"><table class="lc-table"><thead><tr><th>고용형태</th><th>급수</th><th>부기명</th><th>산출기초</th><th>단가(원)</th><th>인원</th><th>개월</th><th>자동계산액(천원)</th><th>요구액(천원)</th><th>차이(천원)</th><th>상태</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
 }
 
 function renderLaborCalc() {
@@ -5589,8 +5424,6 @@ function renderLaborCalc() {
     + '<label class="option" for="lc-opt-eval">평가급</label>'
     + '<input ' + (LC.view === 'pension' ? 'checked' : '') + ' id="lc-opt-pension" name="lc-options" type="radio" onchange="lcSetView(\'pension\')" />'
     + '<label class="option" for="lc-opt-pension">연금</label>'
-    + '<input ' + (LC.view === 'basis' ? 'checked' : '') + ' id="lc-opt-basis" name="lc-options" type="radio" onchange="lcSetView(\'basis\')" />'
-    + '<label class="option" for="lc-opt-basis">기준값 작업</label>'
     + '<span class="background"></span>'
     + '</div>';
 
@@ -5614,7 +5447,6 @@ function renderLaborCalc() {
   var viewHtml = LC.view === 'retire' ? section06
     : LC.view === 'eval' ? section07
     : LC.view === 'pension' ? section05
-    : LC.view === 'basis' ? lcBasisSection()
     : laborHtml;
   var topRow = '<div class="lc-top-row">' + toggleHtml + (LC.view === 'labor' ? raiseHtml : '') + '</div>';
   el.innerHTML = topRow + viewHtml;
