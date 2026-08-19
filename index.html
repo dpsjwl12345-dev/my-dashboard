@@ -5244,7 +5244,7 @@ function lcBasisType(row) {
   var text = (lcBasisContext(row) + ' ' + String(row.calc || '')).toLowerCase();
   if (text.indexOf('기간제') >= 0 || text.indexOf('단시간근로') >= 0) return '기간제';
   if (text.indexOf('무기계약') >= 0 || text.indexOf('공무직') >= 0) return '무기계약직';
-  if (text.indexOf('기타직') >= 0 || text.indexOf('전문계약') >= 0) return '기타직';
+  if (text.indexOf('기타직') >= 0 || text.indexOf('전문계약') >= 0 || /예술단원|음악감독|코디네이터/.test(text)) return '기타직';
   return '일반직';
 }
 function lcBasisGrade(row) {
