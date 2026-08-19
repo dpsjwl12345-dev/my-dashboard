@@ -5312,9 +5312,15 @@ function lcBasisAggregateTable(rows) {
     var keys = Object.keys(map).filter(function (k) { return !onlyNonEmpty || map[k].rows > 0; });
     if (!keys.length) return '<div class="summary-box"><h4>' + title + '</h4><p style="color:var(--text-muted);">추출된 기준값이 없습니다.</p></div>';
     var order = ['일반직','기타직','무기계약직','기간제'];
+    var gradeOrder = {'대표이사':0, '기관장':0, '2급':1, '3급':2, '4급':3, '5급':4, '6급':5, '가급':10, '나급':11, '다급':12, '라급':13, '마급':14, '-':99};
     var byType = {};
     keys.forEach(function (k) { var g = map[k]; (byType[g.type] = byType[g.type] || []).push(g); });
     var sections = order.filter(function (t) { return byType[t] && byType[t].length; }).concat(Object.keys(byType).filter(function (t) { return order.indexOf(t) < 0; })).map(function (type) {
+      byType[type].sort(function (a, b) {
+        var ar = Object.prototype.hasOwnProperty.call(gradeOrder, a.grade) ? gradeOrder[a.grade] : 50;
+        var br = Object.prototype.hasOwnProperty.call(gradeOrder, b.grade) ? gradeOrder[b.grade] : 50;
+        return ar - br || String(a.grade).localeCompare(String(b.grade), 'ko');
+      });
       var body = byType[type].map(function (g) { return '<tr><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name) + '</td><td style="text-align:right">' + (g.units.length ? g.units.map(function (v) { return fmtWon(v); }).join(' / ') : '') + '</td><td style="text-align:right">' + (g.rows ? g.count : '') + '</td><td style="text-align:right">' + (g.months.length ? g.months.join(' / ') : '') + '</td><td>' + escapeHtml(g.rates.join(' · ')) + '</td><td>' + (g.rows ? g.rows + '건' : '') + '</td></tr>'; }).join('');
       return '<div style="margin-top:20px;padding-top:14px;border-top:2px solid var(--border-strong);"><h4 style="margin:0 0 8px;padding:7px 10px;border-left:5px solid var(--primary);background:var(--surface-2);">' + escapeHtml(type) + '</h4><div style="overflow:auto;"><table class="lc-table"><thead><tr><th>급수</th><th>부기명</th><th>기준단가(원)</th><th>요구인원 합계</th><th>개월</th><th>적용률</th><th>자료건수</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
     }).join('');
