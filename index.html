@@ -5327,10 +5327,10 @@ function lcBasisAllowanceParts(row) {
 }
 function lcBasisAggregateTable(rows) {
   var base = {}, allow = {};
-  var expected = [{type:'일반직', grade:'2급'}, {type:'일반직', grade:'3급'}, {type:'일반직', grade:'4급'}, {type:'일반직', grade:'5급'}, {type:'일반직', grade:'6급'}, {type:'기타직', grade:'가급'}, {type:'기타직', grade:'나급'}, {type:'기타직', grade:'다급'}, {type:'기타직', grade:'라급'}, {type:'기타직', grade:'마급'}, {type:'무기계약직', grade:'-'}, {type:'기간제', grade:'-'}];
-  expected.forEach(function (e) { base[e.type + '|' + e.grade + '|기본급'] = { type:e.type, grade:e.grade, name:'기본급', units:[], count:0, months:[], rates:[], rows:0 }; });
+  var expected = [{type:'일반직', grade:'2급'}, {type:'일반직', grade:'3급'}, {type:'일반직', grade:'4급'}, {type:'일반직', grade:'5급'}, {type:'일반직', grade:'6급'}, {type:'기타직', grade:'통합 평균'}, {type:'무기계약직', grade:'-'}, {type:'기간제', grade:'-'}];
+  expected.forEach(function (e) { base[e.type + '|' + e.grade + '|기본급|기본급'] = { type:e.type, grade:e.grade, group:'기본급', name:'기본급', units:[], count:0, months:[], rates:[], rows:0 }; });
   rows.forEach(function (r) {
-    var x = lcExtractBasis(r), text = lcBasisContext(r) + ' ' + String(r.name || '') + ' ' + String(r.calc || ''), gm = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/), grade = gm ? gm[1] : '-', type = lcBasisType(r), name = String(r.name || '').trim();
+    var x = lcExtractBasis(r), text = lcBasisContext(r) + ' ' + String(r.name || '') + ' ' + String(r.calc || ''), gm = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/), parsedGrade = gm ? gm[1] : '-', type = lcBasisType(r), grade = type === '기타직' ? '통합 평균' : parsedGrade, name = String(r.name || '').trim();
     var isGradeRow = /^(대표이사|기관장|[0-9]+급|[가-마]급)$/.test(name);
     var isBase = /기본급/.test(name) || /기본급/.test(String(r.calc || '')) || /보수/.test(name) || (isGradeRow && x.unit >= 1000000);
     if (!x.extracted || !x.unit) return;
