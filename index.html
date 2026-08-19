@@ -5338,6 +5338,7 @@ function lcBasisAggregateTable(rows) {
     var isGradeRow = /^(대표이사|기관장|[0-9]+급|[가-마]급)$/.test(name);
     var isGradeLike = parsedGrade !== '-' || /대표이사|기관장|기본연봉/.test(name) || /기본연봉/.test(String(r.calc || ''));
     var isBase = /기본급/.test(name) || /기본급/.test(String(r.calc || '')) || /기본연봉/.test(name) || /기본연봉/.test(String(r.calc || '')) || /보수/.test(name) || (type === '일반직' && isGradeLike && x.unit >= 1000000);
+    if (!x.extracted && isBase && x.unit && x.count) { x.months = 12; x.extracted = true; }
     if (!x.extracted || !x.unit) return;
     var allowanceParts = isBase ? { group:'기본급', detail:'기본급' } : lcBasisAllowanceParts(r);
     var map = isBase ? base : allow, normalizedName = isBase ? '기본급' : allowanceParts.detail, groupName = allowanceParts.group, key = type + '|' + grade + '|' + groupName + '|' + normalizedName;
