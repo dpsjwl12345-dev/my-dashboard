@@ -4978,7 +4978,7 @@ function switchPanel(panelId) {
 // ============================================================
 var LC = {
   view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'basis'(기준값 작업)
-  basis: { institutionId: '', fundType: '출연금', dept: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '' },
+  basis: { institutionId: '', fundType: '출연금', dept: '', workGroup: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '' },
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
   // 대우수당(treatmentCount)은 실제 데이터상 기본급 인원과 다른 별도 인원 기준으로 산정됨(직급 내 일부 대상자만 해당) — 2026년 실측치 그대로 반영.
@@ -5200,7 +5200,8 @@ function lcSubtotalRow(label, amt, colspan) {
 function lcBasisSelect(path, value) {
   if (path === 'institutionId') LC.basis.institutionId = value;
   if (path === 'fundType') { LC.basis.fundType = value; LC.basis.dept = ''; }
-  if (path === 'dept') { LC.basis.dept = value; LC.basis.sectionId = ''; }
+  if (path === 'dept') { LC.basis.dept = value; LC.basis.workGroup = ''; LC.basis.sectionId = ''; }
+  if (path === 'workGroup') { LC.basis.workGroup = value; LC.basis.sectionId = ''; }
   if (path === 'sectionId') LC.basis.sectionId = value;
   if (path === 'sectionId') { LC.basis.sectionId = ''; renderLaborCalc(); return; }
   lcLoadBasisRows();
@@ -5370,6 +5371,11 @@ function lcIsLaborRow(row) {
   var text = lcBasisContext(row) + ' ' + String(row.name || '') + ' ' + String(row.calc || '');
   return text.indexOf('인건비') >= 0 || text.indexOf('보수') >= 0 || text.indexOf('수당') >= 0 || text.indexOf('급식비') >= 0 || text.indexOf('명절') >= 0 || text.indexOf('기간제') >= 0 || text.indexOf('무기계약') >= 0 || text.indexOf('공무직') >= 0;
 }
+function lcBasisWorkGroup(row) {
+  var parts = lcBasisContext(row).split(' > ').map(function (x) { return String(x || '').trim(); }).filter(Boolean);
+  var match = parts.filter(function (x) { return /본부|팀/.test(x); })[0];
+  return match || (parts.length ? parts[0] : '미분류');
+}
 function lcBasisPathLabel(section) {
   return section.name + ' #' + section.id;
 }
@@ -5393,11 +5399,14 @@ function lcBasisSection() {
   var basisInst = (INSTITUTIONS || []).filter(function (x) { return String(x.id) === String(b.institutionId); })[0];
   var deptList = b.fundType === '위탁금' && basisInst ? (WTG_DEPTS[basisInst.key] || []) : [];
   var deptOptions = '<option value="">전체 부서</option>' + deptList.map(function (d) { return '<option' + (d === b.dept ? ' selected' : '') + '>' + escapeHtml(d) + '</option>'; }).join('');
+  var groupList = b.fundType === '위탁금' ? Array.from(new Set(b.rows.filter(lcIsLaborRow).map(lcBasisWorkGroup).filter(Boolean))).sort(function (a, z) { return a.localeCompare(z, 'ko'); }) : [];
+  var workGroupOptions = b.fundType === '위탁금' ? '<option value="">전체 요구서 사업·담당 본부</option>' + groupList.map(function (g) { return '<option value="' + escapeHtml(g) + '"' + (g === b.workGroup ? ' selected' : '') + '>' + escapeHtml(g) + '</option>'; }).join('') : '';
   var sectionOptions = '';
   var ids = b.sectionId ? lcBasisDescendantIds(b.sectionId) : {};
   var filteredRows = b.rows.filter(function (r) {
     var inSelected = b.sectionId ? ids[String(r.id)] && String(r.id) !== String(b.sectionId) : lcIsLaborRow(r);
-    return inSelected && (String(r.calc || '').trim() || r.level === '□' || r.level === 'i');
+    var inWorkGroup = !b.workGroup || lcBasisWorkGroup(r) === b.workGroup;
+    return inSelected && inWorkGroup && (String(r.calc || '').trim() || r.level === '□' || r.level === 'i');
   });
   var summary = lcBasisSummary(filteredRows);
   var aggregate = lcBasisAggregateTable(filteredRows);
@@ -5413,6 +5422,7 @@ function lcBasisSection() {
     + '<select onchange="lcBasisSelect(\'institutionId\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:180px;">' + instOptions + '</select>'
     + '<select onchange="lcBasisSelect(\'fundType\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:120px;"><option' + (b.fundType === '출연금' ? ' selected' : '') + '>출연금</option><option' + (b.fundType === '위탁금' ? ' selected' : '') + '>위탁금</option></select>'
     + '<select onchange="lcBasisSelect(\'dept\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:160px;">' + deptOptions + '</select>'
+    + (b.fundType === '위탁금' ? '<select onchange="lcBasisSelect(\'workGroup\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:240px;">' + workGroupOptions + '</select>' : '')
     + '</div>'
     + (b.loading ? '<p>불러오는 중입니다.</p>' : '') + (b.error ? '<p class="lc-warn">' + escapeHtml(b.error) + '</p>' : '')
     + (filteredRows.length ? aggregate + '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px;">' + summary + '</div>' : '')
