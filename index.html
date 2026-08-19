@@ -5448,7 +5448,7 @@ function lcBasisSection() {
     + (b.fundType === '위탁금' ? '<select onchange="lcBasisSelect(\'workGroup\',this.value)" style="padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;min-width:240px;">' + workGroupOptions + '</select>' : '')
     + '</div>'
     + (b.loading ? '<p>불러오는 중입니다.</p>' : '') + (b.error ? '<p class="lc-warn">' + escapeHtml(b.error) + '</p>' : '')
-    + (filteredRows.length ? aggregate + '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px;">' + summary + '</div>' : '')
+    + (filteredRows.length ? lcBasisExplanation(basisInst, b.fundType) + aggregate + '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px;">' + summary + '</div>' : '')
     + '<div style="overflow:auto;"><table class="lc-table"><thead><tr><th>고용형태</th><th>급수</th><th>부기명</th><th>산출기초</th><th>단가(원)</th><th>인원</th><th>개월</th><th>자동계산액(천원)</th><th>요구액(천원)</th><th>차이(천원)</th><th>상태</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
 }
 
@@ -5697,8 +5697,6 @@ function renderLaborCalc() {
     + '<label class="option" for="lc-opt-pension">연금</label>'
     + '<input ' + (LC.view === 'basis' ? 'checked' : '') + ' id="lc-opt-basis" name="lc-options" type="radio" onchange="lcSetView(\'basis\')" />'
     + '<label class="option" for="lc-opt-basis">기준값 작업</label>'
-    + '<input ' + (LC.view === 'basisGuide' ? 'checked' : '') + ' id="lc-opt-basis-guide" name="lc-options" type="radio" onchange="lcSetView(\'basisGuide\')" />'
-    + '<label class="option" for="lc-opt-basis-guide">기준값 설명</label>'
     + '<span class="background"></span>'
     + '</div>';
 
@@ -5723,7 +5721,6 @@ function renderLaborCalc() {
     : LC.view === 'eval' ? section07
     : LC.view === 'pension' ? section05
     : LC.view === 'basis' ? lcBasisSection()
-    : LC.view === 'basisGuide' ? lcBasisGuideSection()
     : laborHtml;
   var topRow = '<div class="lc-top-row">' + toggleHtml + (LC.view === 'labor' ? raiseHtml : '') + '</div>';
   el.innerHTML = topRow + viewHtml;
