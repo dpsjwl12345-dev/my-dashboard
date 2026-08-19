@@ -5301,6 +5301,14 @@ function lcBasisAllowanceName(row) {
   var names = parts.filter(function (x) { return !generic[x]; });
   return names.length ? names.join(' > ') : String(row.name || '').trim();
 }
+function lcBasisAllowanceParts(row) {
+  var parts = lcBasisContext(row).split(' > ').map(function (x) { return String(x || '').trim(); }).filter(Boolean);
+  var generic = {'인건비':true, '보수':true, '수당':true, '기타직보수':true, '무기계약직보수':true, '기간제근로자등보수':true, '기본급':true};
+  var names = parts.filter(function (x) { return !generic[x]; });
+  var group = names.length ? names[0] : (String(row.name || '').trim() || '수당명 확인필요');
+  var detail = names.length > 1 ? names.slice(1).join(' > ') : (String(row.name || '').trim() || group);
+  return { group: group, detail: detail };
+}
 function lcBasisAggregateTable(rows) {
   var base = {}, allow = {};
   var expected = [{type:'일반직', grade:'2급'}, {type:'일반직', grade:'3급'}, {type:'일반직', grade:'4급'}, {type:'일반직', grade:'5급'}, {type:'일반직', grade:'6급'}, {type:'기타직', grade:'가급'}, {type:'기타직', grade:'나급'}, {type:'기타직', grade:'다급'}, {type:'기타직', grade:'라급'}, {type:'기타직', grade:'마급'}, {type:'무기계약직', grade:'-'}, {type:'기간제', grade:'-'}];
@@ -5310,8 +5318,9 @@ function lcBasisAggregateTable(rows) {
     var isGradeRow = /^(대표이사|기관장|[0-9]+급|[가-마]급)$/.test(name);
     var isBase = /기본급/.test(name) || /기본급/.test(String(r.calc || '')) || /보수/.test(name) || (isGradeRow && x.unit >= 1000000);
     if (!x.extracted || !x.unit) return;
-    var map = isBase ? base : allow, normalizedName = isBase ? '기본급' : (lcBasisAllowanceName(r) || name || '수당명 확인필요'), key = type + '|' + grade + '|' + normalizedName;
-    if (!map[key]) map[key] = { type:type, grade:grade, name:normalizedName, units:[], count:0, months:[], rates:[], rows:0 };
+    var allowanceParts = isBase ? { group:'기본급', detail:'기본급' } : lcBasisAllowanceParts(r);
+    var map = isBase ? base : allow, normalizedName = isBase ? '기본급' : allowanceParts.detail, groupName = allowanceParts.group, key = type + '|' + grade + '|' + groupName + '|' + normalizedName;
+    if (!map[key]) map[key] = { type:type, grade:grade, group:groupName, name:normalizedName, units:[], count:0, months:[], rates:[], rows:0 };
     var g = map[key]; g.rows++; if (g.units.indexOf(x.unit) < 0) g.units.push(x.unit); g.count += Number(x.count || 0); if (x.months != null && g.months.indexOf(x.months) < 0) g.months.push(x.months); if (x.rate && g.rates.indexOf(x.rate) < 0) g.rates.push(x.rate);
   });
   function render(map, title, onlyNonEmpty) {
@@ -5325,9 +5334,14 @@ function lcBasisAggregateTable(rows) {
       byType[type].sort(function (a, b) {
         var ar = Object.prototype.hasOwnProperty.call(gradeOrder, a.grade) ? gradeOrder[a.grade] : 50;
         var br = Object.prototype.hasOwnProperty.call(gradeOrder, b.grade) ? gradeOrder[b.grade] : 50;
-        return ar - br || String(a.grade).localeCompare(String(b.grade), 'ko');
+        return String(a.group || '').localeCompare(String(b.group || ''), 'ko') || ar - br || String(a.grade).localeCompare(String(b.grade), 'ko') || String(a.name).localeCompare(String(b.name), 'ko');
       });
-      var body = byType[type].map(function (g) { return '<tr><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name || (onlyNonEmpty ? '수당명 확인필요' : '')) + '</td><td style="text-align:right">' + (g.units.length ? g.units.map(function (v) { return fmtWon(v); }).join(' / ') : '') + '</td><td style="text-align:right">' + (g.rows ? g.count : '') + '</td><td style="text-align:right">' + (g.months.length ? g.months.join(' / ') : '') + '</td><td>' + escapeHtml(g.rates.join(' · ')) + '</td><td>' + (g.rows ? g.rows + '건' : '') + '</td></tr>'; }).join('');
+      var previousGroup = '';
+      var body = byType[type].map(function (g) {
+        var groupRow = onlyNonEmpty && g.group && g.group !== previousGroup ? '<tr><th colspan="7" style="text-align:left;background:var(--surface-2);border-top:2px solid var(--border-strong);">' + escapeHtml(g.group) + '</th></tr>' : '';
+        previousGroup = g.group || previousGroup;
+        return groupRow + '<tr><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name || (onlyNonEmpty ? '수당명 확인필요' : '')) + '</td><td style="text-align:right">' + (g.units.length ? g.units.map(function (v) { return fmtWon(v); }).join(' / ') : '') + '</td><td style="text-align:right">' + (g.rows ? g.count : '') + '</td><td style="text-align:right">' + (g.months.length ? g.months.join(' / ') : '') + '</td><td>' + escapeHtml(g.rates.join(' · ')) + '</td><td>' + (g.rows ? g.rows + '건' : '') + '</td></tr>';
+      }).join('');
       var nameHeader = onlyNonEmpty ? '수당명(부기명)' : '부기명';
       return '<div style="margin-top:20px;padding-top:14px;border-top:2px solid var(--border-strong);"><h4 style="margin:0 0 8px;padding:7px 10px;border-left:5px solid var(--primary);background:var(--surface-2);">' + escapeHtml(type) + '</h4><div style="overflow:auto;"><table class="lc-table"><thead><tr><th>급수</th><th>' + nameHeader + '</th><th>기준단가(원)</th><th>요구인원 합계</th><th>개월</th><th>적용률</th><th>자료건수</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
     }).join('');
