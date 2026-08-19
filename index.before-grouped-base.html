@@ -5301,24 +5301,17 @@ function lcBasisAggregateTable(rows) {
   expected.forEach(function (e) { base[e.type + '|' + e.grade + '|기본급'] = { type:e.type, grade:e.grade, name:'기본급', units:[], count:0, months:[], rates:[], rows:0 }; });
   rows.forEach(function (r) {
     var x = lcExtractBasis(r), text = lcBasisContext(r) + ' ' + String(r.name || '') + ' ' + String(r.calc || ''), gm = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/), grade = gm ? gm[1] : '-', type = lcBasisType(r), name = String(r.name || '').trim();
-    var isGradeRow = /^(대표이사|기관장|[0-9]+급|[가-마]급)$/.test(name);
-    var isBase = /기본급/.test(name) || /기본급/.test(String(r.calc || '')) || /보수/.test(name) || (isGradeRow && x.unit >= 1000000);
+    var isBase = /기본급|보수/.test(name) || /기본급/.test(String(r.calc || '')) || /^(대표이사|기관장|[0-9]+급|[가-마]급)$/.test(name);
     if (!x.extracted || !x.unit) return;
-    var map = isBase ? base : allow, normalizedName = isBase ? '기본급' : (name || '수당'), key = type + '|' + grade + '|' + normalizedName;
-    if (!map[key]) map[key] = { type:type, grade:grade, name:normalizedName, units:[], count:0, months:[], rates:[], rows:0 };
+    var map = isBase ? base : allow, key = type + '|' + grade + '|' + name;
+    if (!map[key]) map[key] = { type:type, grade:grade, name:name || '수당', units:[], count:0, months:[], rates:[], rows:0 };
     var g = map[key]; g.rows++; if (g.units.indexOf(x.unit) < 0) g.units.push(x.unit); g.count += Number(x.count || 0); if (x.months != null && g.months.indexOf(x.months) < 0) g.months.push(x.months); if (x.rate && g.rates.indexOf(x.rate) < 0) g.rates.push(x.rate);
   });
   function render(map, title, onlyNonEmpty) {
     var keys = Object.keys(map).filter(function (k) { return !onlyNonEmpty || map[k].rows > 0; });
     if (!keys.length) return '<div class="summary-box"><h4>' + title + '</h4><p style="color:var(--text-muted);">추출된 기준값이 없습니다.</p></div>';
-    var order = ['일반직','기타직','무기계약직','기간제'];
-    var byType = {};
-    keys.forEach(function (k) { var g = map[k]; (byType[g.type] = byType[g.type] || []).push(g); });
-    var sections = order.filter(function (t) { return byType[t] && byType[t].length; }).concat(Object.keys(byType).filter(function (t) { return order.indexOf(t) < 0; })).map(function (type) {
-      var body = byType[type].map(function (g) { return '<tr><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name) + '</td><td style="text-align:right">' + (g.units.length ? g.units.map(function (v) { return fmtWon(v); }).join(' / ') : '') + '</td><td style="text-align:right">' + (g.rows ? g.count : '') + '</td><td style="text-align:right">' + (g.months.length ? g.months.join(' / ') : '') + '</td><td>' + escapeHtml(g.rates.join(' · ')) + '</td><td>' + (g.rows ? g.rows + '건' : '') + '</td></tr>'; }).join('');
-      return '<h4 style="margin:14px 0 6px;">' + escapeHtml(type) + '</h4><div style="overflow:auto;"><table class="lc-table"><thead><tr><th>급수</th><th>부기명</th><th>기준단가(원)</th><th>요구인원 합계</th><th>개월</th><th>적용률</th><th>자료건수</th></tr></thead><tbody>' + body + '</tbody></table></div>';
-    }).join('');
-    return '<div class="summary-box"><h4>' + title + '</h4>' + sections + '</div>';
+    var body = keys.map(function (k) { var g = map[k]; return '<tr><td>' + escapeHtml(g.type) + '</td><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name) + '</td><td style="text-align:right">' + (g.units.length ? g.units.map(function (v) { return fmtWon(v); }).join(' / ') : '') + '</td><td style="text-align:right">' + (g.rows ? g.count : '') + '</td><td style="text-align:right">' + (g.months.length ? g.months.join(' / ') : '') + '</td><td>' + escapeHtml(g.rates.join(' · ')) + '</td><td>' + (g.rows ? g.rows + '건' : '') + '</td></tr>'; }).join('');
+    return '<div class="summary-box"><h4>' + title + '</h4><div style="overflow:auto;"><table class="lc-table"><thead><tr><th>고용형태</th><th>급수</th><th>부기명</th><th>기준단가(원)</th><th>요구인원 합계</th><th>개월</th><th>적용률</th><th>자료건수</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
   }
   return render(base, '기관별 기본급 기준값', false) + render(allow, '기관별 인정 수당 기준값', true);
 }
