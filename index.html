@@ -5336,7 +5336,8 @@ function lcBasisAggregateTable(rows) {
   rows.forEach(function (r) {
     var x = lcExtractBasis(r), text = lcBasisContext(r) + ' ' + String(r.name || '') + ' ' + String(r.calc || ''), gm = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/), parsedGrade = gm ? gm[1] : '-', type = lcBasisType(r), grade = type === '기타직' ? '통합 평균' : parsedGrade, name = String(r.name || '').trim();
     var isGradeRow = /^(대표이사|기관장|[0-9]+급|[가-마]급)$/.test(name);
-    var isBase = /기본급/.test(name) || /기본급/.test(String(r.calc || '')) || /보수/.test(name) || (isGradeRow && x.unit >= 1000000);
+    var isGradeLike = /(?:대표이사|기관장|[0-9]+급|[가-마]급)/.test(name) || /기본연봉/.test(name) || /기본연봉/.test(String(r.calc || ''));
+    var isBase = /기본급/.test(name) || /기본급/.test(String(r.calc || '')) || /기본연봉/.test(name) || /기본연봉/.test(String(r.calc || '')) || /보수/.test(name) || (isGradeLike && x.unit >= 1000000);
     if (!x.extracted || !x.unit) return;
     var allowanceParts = isBase ? { group:'기본급', detail:'기본급' } : lcBasisAllowanceParts(r);
     var map = isBase ? base : allow, normalizedName = isBase ? '기본급' : allowanceParts.detail, groupName = allowanceParts.group, key = type + '|' + grade + '|' + groupName + '|' + normalizedName;
