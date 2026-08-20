@@ -5040,6 +5040,11 @@ var nav = { view: 'dashboard', instKey: null, fund: null, settleYear: null, expa
 // 화성시체육회 하위 항목(민간단체법정운영보조/민간사업보조)은 소관부서가 모두 체육진흥과이므로,
 // 다른 기관 예산 화면과 동일하게 좌상단엔 기관명(화성시체육회), 우상단엔 소관부서명을 보여준다.
 var SPORTS_SUB_DEPT = { '민간단체법정운영보조': '체육진흥과', '민간사업보조': '체육진흥과' };
+// 우상단 "체육진흥과" 편성액 - 다른 기관의 dept_enacted_amounts와 동일한 형태(부기명별 회차 금액, 단위 천원)로 수기 입력.
+var SPORTS_DEPT_ENACTED_CARDS = [
+  { name: '인건비 및 운영비', rounds: { base: 1927000, supp1: 216000 } },
+  { name: '인건비 보조', rounds: { base: 12000 } }
+];
 function showPlaceholderInst(name) {
   var dept = SPORTS_SUB_DEPT[name] || null;
   var instLabel = dept ? '화성시체육회' : name;
@@ -5062,14 +5067,49 @@ function showPlaceholderInst(name) {
     var pctValEl = document.getElementById('dept-select-pct-value');
     if (pctWrapEl) pctWrapEl.classList.remove('down');
     if (pctValEl) pctValEl.textContent = '-';
+
+    // 가장 최근 회차(3추>2추>1추>본예산) 금액 합계 - 다른 기관과 동일한 규칙(요구액이 아니라 실제 편성액, 최신 회차 우선)
+    var roundsPriority = ['supp3', 'supp2', 'supp1', 'base'];
+    var latestTotal = 0;
+    SPORTS_DEPT_ENACTED_CARDS.forEach(function (c) {
+      for (var ri = 0; ri < roundsPriority.length; ri++) {
+        var rAmt = c.rounds[roundsPriority[ri]];
+        if (rAmt) { latestTotal += rAmt; break; }
+      }
+    });
     var amtEl = document.getElementById('dept-select-amt');
-    if (amtEl) amtEl.textContent = '';
+    if (amtEl) amtEl.textContent = latestTotal ? (fmtWon(Math.round(latestTotal / 1000)) + '백만원') : '';
     var fillEl = document.getElementById('dept-select-fill');
-    if (fillEl) fillEl.style.width = '0%';
+    if (fillEl) fillEl.style.width = latestTotal ? '100%' : '0%';
     var menuEl = document.getElementById('dept-select-menu');
     if (menuEl) { menuEl.innerHTML = ''; menuEl.classList.remove('open'); }
+
+    // 연도별 편성 현황 팝업 - 다른 기관의 위탁금 부서(사업별 편성) 표와 동일한 구조.
     var yearlyToggleIcon = document.getElementById('dept-select-icon');
-    if (yearlyToggleIcon) yearlyToggleIcon.style.display = 'none';
+    var yearlyPanelEl = document.getElementById('dept-stat-yearly-panel');
+    if (yearlyToggleIcon) {
+      yearlyToggleIcon.style.display = '';
+      var yearlyToggleInput = yearlyToggleIcon.querySelector('input');
+      if (yearlyToggleInput) yearlyToggleInput.checked = true;
+    }
+    if (yearlyPanelEl) {
+      var roundCols = [{ key: 'y25', label: '2025' }, { key: 'base', label: '2026' }, { key: 'supp1', label: '1추' }, { key: 'supp2', label: '2추' }, { key: 'supp3', label: '3추' }];
+      var yearlyHeadHtml = '<div class="dyt-row dyt-head"><span class="dyt-cell dyt-name-col">부기명</span>'
+        + roundCols.map(function (c) { return '<span class="dyt-cell">' + c.label + '</span>'; }).join('')
+        + '</div>';
+      var yearlyBodyHtml = SPORTS_DEPT_ENACTED_CARDS.map(function (card) {
+        return '<div class="dyt-row"><span class="dyt-cell dyt-name-col">' + escapeHtml(card.name) + '</span>'
+          + roundCols.map(function (c) {
+            var amt = card.rounds[c.key] || 0;
+            return '<span class="dyt-cell' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</span>';
+          }).join('')
+          + '</div>';
+      }).join('');
+      yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + yearlyHeadHtml + yearlyBodyHtml + '</div>';
+      yearlyPanelEl.style.display = 'block';
+    }
+    var yearlyBackdropEl = document.getElementById('dept-yearly-backdrop');
+    if (yearlyBackdropEl) yearlyBackdropEl.style.display = 'block';
   } else {
     if (deptSelect) deptSelect.style.display = 'none';
   }
