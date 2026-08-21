@@ -5055,7 +5055,14 @@ var nav = { view: 'dashboard', instKey: null, fund: null, settleYear: null, expa
 // 예산 목차에만 임시로 추가된 항목(예: 화성시체육회) 클릭 시 - 실제 연동 데이터가 없다는 안내만 보여준다.
 // 화성시체육회 하위 항목(민간단체법정운영보조/민간사업보조)은 소관부서가 모두 체육진흥과이므로,
 // 다른 기관 예산 화면과 동일하게 좌상단엔 기관명(화성시체육회), 우상단엔 소관부서명을 보여준다.
-var SPORTS_SUB_DEPT = { '민간단체법정운영보조': '체육진흥과', '민간사업보조': '체육진흥과', '민간위탁금': '체육진흥과' };
+var SPORTS_SUB_DEPT = { '민간단체법정운영보조': '체육진흥과', '민간사업보조': '체육진흥과', '민간위탁금': '체육진흥과', '장애인단체법정운영보조': '체육진흥과', '장애인사업보조': '체육진흥과', '장애인위탁금': '체육진흥과' };
+// 하위 항목명 -> 사이드바에 어느 "가짜 기관" 그룹(화성시체육회/화성시장애인체육회) 밑에 있는지. 좌상단 기관명 표시에 쓰인다.
+var SPORTS_SUB_GROUP = { '민간단체법정운영보조': '화성시체육회', '민간사업보조': '화성시체육회', '민간위탁금': '화성시체육회', '장애인단체법정운영보조': '화성시장애인체육회', '장애인사업보조': '화성시장애인체육회', '장애인위탁금': '화성시장애인체육회' };
+// 화성시장애인체육회 하위 항목의 내부 키(장애인단체법정운영보조 등)는 화성시체육회 쪽 키와 겹치지 않게 다르지만,
+// 실제 통계목 이름은 화성시체육회와 동일해야 하므로 사이드바 표시 텍스트만 원래 이름으로 바꿔준다.
+var SPORTS_SUB_LABEL_OVERRIDE = { '장애인단체법정운영보조': '민간단체법정운영보조', '장애인사업보조': '민간사업보조', '장애인위탁금': '민간위탁금' };
+// 기관 그룹명 -> 사이드바 아코디언(expandedInst) 키. 하위 항목 클릭 시 이 그룹의 아코디언만 펼친 채로 유지한다.
+var SPORTS_GROUP_EXPAND_KEY = { '화성시체육회': '__sportsCouncil', '화성시장애인체육회': '__disabledSportsCouncil' };
 // 우상단 "체육진흥과" 편성액 - 다른 기관의 dept_enacted_amounts와 동일한 형태(부기명별 회차 금액, 단위 천원)로 수기 입력.
 // 화성시체육회 하위 3개 항목(민간단체법정운영보조/민간사업보조/민간위탁금)마다 소관부서 편성 내역이 서로 달라서 항목별로 분리해 관리한다.
 var SPORTS_DEPT_ENACTED_CARDS_BY_NAME = {
@@ -5066,14 +5073,19 @@ var SPORTS_DEPT_ENACTED_CARDS_BY_NAME = {
   '민간위탁금': [
     { name: '민간위탁금', rounds: { base: 306582 } }
   ],
-  '민간사업보조': []
+  '민간사업보조': [],
+  '장애인단체법정운영보조': [],
+  '장애인사업보조': [],
+  '장애인위탁금': []
 };
 function showPlaceholderInst(name) {
   var dept = SPORTS_SUB_DEPT[name] || null;
-  var instLabel = dept ? '화성시체육회' : name;
+  var group = dept ? (SPORTS_SUB_GROUP[name] || '화성시체육회') : name;
+  var instLabel = group;
   nav.view = 'placeholder'; nav.instKey = null; nav.fund = null; nav.placeholderName = name;
   nav.expandedInst = {};
-  nav.expandedInst['__sportsCouncil'] = true;
+  // 클릭한 하위 항목이 화성시체육회/화성시장애인체육회 중 어느 그룹 소속인지에 맞춰 그 그룹의 아코디언만 펼쳐진 채로 유지한다.
+  nav.expandedInst[SPORTS_GROUP_EXPAND_KEY[group] || '__sportsCouncil'] = true;
   // 실제 기관 데이터가 아직 없지만, 화면 구성(상단 로고 자리·총괄·부서별 예산 섹션)은 다른 예산 기관과 동일하게 맞춘다.
   switchPanel('panel-hscf');
 
@@ -5616,6 +5628,7 @@ var SPORTS_COUNCIL_DATA = {
     { label: '시설운영과', current: 2, subTeams: [ { name: '과장', current: 1 }, { name: '사무원', current: 1 } ] },
     { label: '소통협력과', current: 12, subTeams: [ { name: '과장', current: 1 }, { name: '사무원', current: 2 }, { name: '지도자', current: 9 } ] }
   ],
+
   // 구글드라이브 "2026년-수입지출예산서.pdf" 기준. 수입은 관 단위(보조금/세외수입/자체수입금/보전수입) 그대로,
   // 지출은 지출총괄표의 통계목(47개 세부사업 라인) 전부를 인건비/운영경비/사업비 3구간으로 집계 — 합계가 원문 총계와 정확히 일치함을 검증함.
   // 수입총괄표의 관/항/목/세목 중 값이 그대로 이어지는(자식이 하나뿐인) 단계는 생략하고, 실제로 갈라지는 항목만 남긴 목록.
@@ -5747,6 +5760,45 @@ var SPORTS_COUNCIL_DATA = {
   ]
 };
 
+// 화성시장애인체육회 정현원 현황 - 구글드라이브 "장애인체육회 현황.hwpx"(사무국 구성표) 기준 수기 입력.
+// 정원(17)보다 현원(27)이 많은 건 원본 그대로(계약직·지도자 등 정원 외 인력 포함으로 추정) - 임의로 보정하지 않음.
+var DISABLED_SPORTS_COUNCIL_DATA = {
+  name: '화성시장애인체육회',
+  org: {
+    subtitle: '사무국 · 2과 1센터',
+    cards: [
+      { tone: 'blue', iconKey: 'budget', label: '정원', value: '17명' },
+      { tone: 'purple', iconKey: 'settle', label: '현원', value: '27명' }
+    ]
+  },
+  personnelGroups: [
+    { title: '직급별 현황', rows: [
+      { label: '결원(사무국장·센터장)', current: 0, pctOverride: 100, tone: 'danger' },
+      { label: '차장', current: 1 },
+      { label: '과장', current: 1 },
+      { label: '사무원', current: 8 },
+      { label: '지도자', current: 6 },
+      { label: '계약직', current: 11 }
+    ] }
+  ],
+  byDept: [
+    { label: '경영기획과', current: 9, subTeams: [ { name: '과장', current: 1 }, { name: '사무원', current: 2 }, { name: '지도자', current: 6 } ] },
+    { label: '체육지원과', current: 3, subTeams: [ { name: '사무원', current: 3 } ] },
+    { label: '반다비체육센터', current: 15, subTeams: [ { name: '차장', current: 1 }, { name: '사무원', current: 3 }, { name: '계약직', current: 11 } ] }
+  ],
+  // 구글드라이브 "2026년 장애인체육회 수입 내역 및 지출 계획.pdf" 1쪽(2026년 국·도·시 보조금 수입 내역) 기준.
+  // 회계별(화성시보조금/화성시위탁금/생활체육지도자배치/국도지원프로그램/체육진흥기금) 소계 5개 합이 총계(3,509,000천원/3,405,876천원)와 정확히 일치함을 검증함.
+  budgetCompare: [],
+  revenueItems: [
+    { label: '국도비 보조금', y26: 52200, y25: 97906 },
+    { label: '시보조금', y26: 1308706, y25: 1288453 },
+    { label: '체육진흥기금', y26: 70000, y25: 68900 },
+    { label: '위탁금', y26: 1790304, y25: 1669595 },
+    { label: '장애인생활체육지도자 배치', sub: '국/도/시', y26: 287790, y25: 281022 }
+  ],
+  expenseDetail: []
+};
+
 // 예산 목차 임시 항목의 기관명(헤더)을 눌렀을 때 - 실제 기관과 동일하게 "기관 현황"(정현원/수입/지출/예산편성) 화면 구성을 보여준다.
 // 실 데이터가 있는 섹션(현재는 화성시체육회의 정현원 현황)만 채우고, 나머지는 계속 빈 상태로 둔다.
 function showPlaceholderInstOverview(name) {
@@ -5768,7 +5820,7 @@ function showPlaceholderInstOverview(name) {
 
   document.getElementById('overview-summary-title').textContent = name + ' 총괄';
 
-  var personnelData = (name === '화성시체육회') ? SPORTS_COUNCIL_DATA : null;
+  var personnelData = (name === '화성시체육회') ? SPORTS_COUNCIL_DATA : (name === '화성시장애인체육회' ? DISABLED_SPORTS_COUNCIL_DATA : null);
   var emptyBox = function (label) {
     return '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">' + escapeHtml(label) + '</h2></div>'
       + '<div class="summary-box"><div class="empty-state">데이터가 아직 연동되지 않았습니다.</div></div>';
@@ -5885,6 +5937,16 @@ function toggleSportsCouncilHeader() {
   nav.expandedInst['__sportsCouncil'] = willExpand;
   if (willExpand) {
     showPlaceholderInstOverview('화성시체육회');
+    return;
+  }
+  renderSidebarNav();
+}
+function toggleDisabledSportsCouncilHeader() {
+  var willExpand = !isInstExpanded('__disabledSportsCouncil');
+  if (willExpand) { nav.expandedInst = {}; }
+  nav.expandedInst['__disabledSportsCouncil'] = willExpand;
+  if (willExpand) {
+    showPlaceholderInstOverview('화성시장애인체육회');
     return;
   }
   renderSidebarNav();
@@ -6015,6 +6077,21 @@ function renderSidebarNav() {
         + '<span class="side-item-label"><span class="side-icon" style="background:#E6F6EC">' + sidebarInstIcon('corp') + '</span><span>화성시체육회</span></span>'
         + '<span class="caret' + (sportsExpanded ? ' open' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span></div>'
         + '<div class="side-sub' + (sportsExpanded ? '' : ' collapsed') + '">' + sportsSubHtml + '</div>';
+      // 화성시장애인체육회 - 화성시체육회 바로 아래에 형제 항목으로 추가(별도 법인, 실제 연동 데이터 없음).
+      var disabledSportsExpanded = isInstExpanded('__disabledSportsCouncil');
+      var disabledSportsHeaderActive = nav.view === 'placeholder' && nav.placeholderName === '화성시장애인체육회';
+      var disabledSportsSubNames = ['장애인단체법정운영보조', '장애인사업보조', '장애인위탁금'];
+      var disabledSportsSubHtml = disabledSportsSubNames.map(function (name) {
+        var isActive = nav.view === 'placeholder' && nav.placeholderName === name;
+        // 내부 키(장애인단체법정운영보조 등)는 화성시체육회 쪽과 구분하려고 다르게 두되,
+        // 화면에 보이는 통계목 이름은 화성시체육회와 완전히 동일하게 표시한다.
+        var displayLabel = SPORTS_SUB_LABEL_OVERRIDE[name] || name;
+        return '<div class="side-item fund-item' + (isActive ? ' active' : '') + '" onclick="event.stopPropagation(); showPlaceholderInst(\'' + name + '\')">' + escapeHtml(displayLabel) + '</div>';
+      }).join('');
+      html += '<div class="side-item inst-header' + (disabledSportsHeaderActive ? ' active' : '') + '" onclick="toggleDisabledSportsCouncilHeader()">'
+        + '<span class="side-item-label"><span class="side-icon" style="background:#E6F6EC">' + sidebarInstIcon('corp') + '</span><span>화성시장애인체육회</span></span>'
+        + '<span class="caret' + (disabledSportsExpanded ? ' open' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span></div>'
+        + '<div class="side-sub' + (disabledSportsExpanded ? '' : ' collapsed') + '">' + disabledSportsSubHtml + '</div>';
     }
     return html;
   }).join('');
@@ -6052,7 +6129,7 @@ function switchPanel(panelId) {
 // ============================================================
 var LC = {
   view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'basis'(기준값 작업)
-  basis: { institutionId: '', fundType: '출연금', dept: '', workGroup: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '' },
+  basis: { institutionId: '', fundType: '출연금', dept: '', workGroup: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '', statusFilter: '' },
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
   // 대우수당(treatmentCount)은 실제 데이터상 기본급 인원과 다른 별도 인원 기준으로 산정됨(직급 내 일부 대상자만 해당) — 2026년 실측치 그대로 반영.
@@ -6280,10 +6357,15 @@ function lcBasisSelect(path, value) {
   if (path === 'sectionId') { LC.basis.sectionId = ''; renderLaborCalc(); return; }
   lcLoadBasisRows();
 }
+// 상태(일치/불일치/확인필요) 필터 - 이미 불러온 자료를 다시 조회하지 않고 화면만 다시 그린다.
+function lcBasisSetStatusFilter(value) {
+  LC.basis.statusFilter = value;
+  renderLaborCalc();
+}
 
 async function lcLoadBasisRows() {
   var b = LC.basis;
-  b.rows = []; b.sections = []; b.teams = []; b.overview = null; b.sectionId = ''; b.error = '';
+  b.rows = []; b.sections = []; b.teams = []; b.overview = null; b.sectionId = ''; b.error = ''; b.statusFilter = '';
   var inst = (INSTITUTIONS || []).filter(function (x) { return String(x.id) === String(b.institutionId); })[0];
   if (!inst || !b.fundType) { renderLaborCalc(); return; }
   b.loading = true; renderLaborCalc();
@@ -6327,6 +6409,23 @@ function lcBasisGrade(row) {
   var m = text.match(/(대표이사|기관장|[0-9]+급|[가-마]급)/);
   return m ? m[1] : '';
 }
+// 산출기초 텍스트를 "단가×인원×개월" 3항 곱셈 하나로만 보지 않고, 시간·회·복수항(+) 등이 섞인 실제 산식을
+// 그대로 계산한다. 단위 낱말(원/명/월/개월/년/시간/일/회 등)만 지우고 남는 숫자·연산자(+ - * / ( ) %)를
+// 안전한지 검증한 뒤 계산 — 콤마 있는 숫자, 괄호, 여러 항의 합산(가족수당 등)까지 정확히 처리된다.
+function lcEvalCalcAmount(calcText) {
+  var expr = String(calcText || '').replace(/\s/g, '').replace(/,/g, '')
+    // 기관마다 곱셈 기호를 *, ×(특수기호), x/X(영문자)로 제각각 써서 전부 "*"로 통일한다.
+    .replace(/[×xX]/g, '*')
+    .replace(/([0-9]+(?:\.[0-9]+)?)%/g, '($1/100)')
+    .replace(/[원명월년시간일회식개소부인주]/g, '')
+    // 산출기초 맨 끝에 "=" 만 남거나 "=계산결과"처럼 답이 이미 적혀있는 경우, 그 뒤는 계산에 안 쓰므로 잘라낸다.
+    .replace(/=.*$/, '');
+  if (!expr || !/^[0-9.+\-*/()]+$/.test(expr)) return null;
+  try {
+    var val = Function('"use strict";return (' + expr + ')')();
+    return (typeof val === 'number' && isFinite(val)) ? val / 1000 : null;
+  } catch (e) { return null; }
+}
 function lcExtractBasis(row) {
   var text = String(row.calc || '').replace(/\s/g, '');
   var unit = (text.match(/([0-9][0-9,]*)원/) || [])[1];
@@ -6337,7 +6436,14 @@ function lcExtractBasis(row) {
   if (!months && /년/.test(text)) months = (text.match(/([0-9][0-9,]*)년/) || [])[1] || '1';
   var rates = (text.match(/([0-9]+(?:\.[0-9]+)?)%/g) || []).map(function (x) { return Number(x.replace('%','')); });
   var rateFactor = rates.reduce(function (acc, n) { return acc * n / 100; }, 1);
-  return { unit: unit ? Number(unit.replace(/,/g,'')) : null, count: count ? Number(count.replace(/,/g,'')) : null, months: months ? Number(months.replace(/,/g,'')) : null, rate: rates.length ? rates.join('% · ') + '%' : '', rateFactor: rateFactor, extracted: !!(unit && count && months), status: unit && count && months ? '추출완료' : '확인필요' };
+  var evalAmt = lcEvalCalcAmount(row.calc);
+  return { unit: unit ? Number(unit.replace(/,/g,'')) : null, count: count ? Number(count.replace(/,/g,'')) : null, months: months ? Number(months.replace(/,/g,'')) : null, rate: rates.length ? rates.join('% · ') + '%' : '', rateFactor: rateFactor, extracted: !!(unit && count && months), evalAmt: evalAmt, status: unit && count && months ? '추출완료' : '확인필요' };
+}
+// 화면에 보여줄 최종 계산액 - 산식을 그대로 계산한 값(evalAmt)을 우선 쓰고, 계산할 수 없는 산식일 때만
+// 기존의 단가×인원×개월×적용률 3항 곱셈으로 대체한다.
+function lcCalcAmount(x) {
+  if (x.evalAmt != null) return x.evalAmt;
+  return x.extracted ? x.unit * x.count * x.months * x.rateFactor / 1000 : null;
 }
 function lcBasisSummary(rows) {
   var groups = {};
@@ -6349,7 +6455,7 @@ function lcBasisSummary(rows) {
   var totalCapacity = (LC.basis.teams || []).reduce(function (s, t) { return s + Number(t.capacity || 0); }, 0);
   var totalCurrent = (LC.basis.teams || []).reduce(function (s, t) { return s + Number(t.current || 0); }, 0);
   rows.forEach(function (r) {
-    var x = lcExtractBasis(r), type = lcBasisType(r), calcAmt = x.extracted ? x.unit * x.count * x.months * x.rateFactor / 1000 : null, reqAmt = Number(r.amt26 || 0);
+    var x = lcExtractBasis(r), type = lcBasisType(r), calcAmt = lcCalcAmount(x), reqAmt = Number(r.amt26 || 0);
     if (calcAmt == null) reviewCount++; else if (Math.abs(calcAmt - reqAmt) <= 1) matchCount++; else mismatchCount++;
     if (!groups[type]) groups[type] = { count: 0, parsed: 0, rows: [] };
     groups[type].count++;
@@ -6540,11 +6646,26 @@ function lcBasisSection() {
   });
   var summary = lcBasisSummary(filteredRows);
   var aggregate = lcBasisAggregateTable(filteredRows);
-  var rows = filteredRows.map(function (r) {
-    var x = lcExtractBasis(r), calculated = x.extracted ? x.unit * x.count * x.months * x.rateFactor / 1000 : null, requested = Number(r.amt26 || 0), diff = calculated == null ? null : calculated - requested, matched = calculated != null && Math.abs(diff) <= 1, status = calculated == null ? '확인필요' : (matched ? '일치' : '불일치');
-    return '<tr><td>' + escapeHtml(lcBasisType(r)) + '</td><td>' + escapeHtml(lcBasisGrade(r)) + '</td><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.calc || '') + '</td><td style="text-align:right">' + (x.unit == null ? '-' : fmtWon(x.unit)) + '</td><td style="text-align:right">' + (x.count == null ? '-' : x.count) + '</td><td style="text-align:right">' + (x.months == null ? '-' : x.months) + '</td><td style="text-align:right">' + (calculated == null ? '-' : fmtWon(calculated)) + '</td><td style="text-align:right">' + fmtWon(requested) + '</td><td style="text-align:right;color:' + (matched ? 'var(--success)' : (calculated == null ? 'var(--text-muted)' : 'var(--danger)')) + '">' + (diff == null ? '-' : (diff > 0 ? '+' : '') + fmtWon(diff)) + '</td><td><span class="' + (matched ? 'lc-ok' : 'lc-warn') + '">' + status + '</span></td></tr>';
-  }).join('');
-  if (!rows && !b.loading) rows = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:24px;">예산자료가 없거나 산출기초가 없습니다.</td></tr>';
+  var statusRows = filteredRows.map(function (r) {
+    var x = lcExtractBasis(r), calculated = lcCalcAmount(x), requested = Number(r.amt26 || 0), diff = calculated == null ? null : calculated - requested, matched = calculated != null && Math.abs(diff) <= 1, status = calculated == null ? '확인필요' : (matched ? '일치' : '불일치');
+    var html = '<tr><td>' + escapeHtml(lcBasisType(r)) + '</td><td>' + escapeHtml(lcBasisGrade(r)) + '</td><td>' + escapeHtml(r.name || '') + '</td><td>' + escapeHtml(r.calc || '') + '</td><td style="text-align:right">' + (x.unit == null ? '-' : fmtWon(x.unit)) + '</td><td style="text-align:right">' + (x.count == null ? '-' : x.count) + '</td><td style="text-align:right">' + (x.months == null ? '-' : x.months) + '</td><td style="text-align:right">' + (calculated == null ? '-' : fmtWon(calculated)) + '</td><td style="text-align:right">' + fmtWon(requested) + '</td><td style="text-align:right;color:' + (matched ? 'var(--success)' : (calculated == null ? 'var(--text-muted)' : 'var(--danger)')) + '">' + (diff == null ? '-' : (diff > 0 ? '+' : '') + fmtWon(diff)) + '</td><td><span class="' + (matched ? 'lc-ok' : 'lc-warn') + '">' + status + '</span></td></tr>';
+    return { status: status, html: html };
+  });
+  var statusCounts = { '일치': 0, '불일치': 0, '확인필요': 0 };
+  statusRows.forEach(function (sr) { statusCounts[sr.status]++; });
+  var visibleStatusRows = b.statusFilter ? statusRows.filter(function (sr) { return sr.status === b.statusFilter; }) : statusRows;
+  var rows = visibleStatusRows.map(function (sr) { return sr.html; }).join('');
+  if (!rows && !b.loading) rows = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:24px;">' + (b.statusFilter ? '해당 상태의 항목이 없습니다.' : '예산자료가 없거나 산출기초가 없습니다.') + '</td></tr>';
+  var statusFilterHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 12px;">'
+    + ['', '일치', '불일치', '확인필요'].map(function (s) {
+      var label = s || '전체';
+      var count = s ? statusCounts[s] : statusRows.length;
+      var active = b.statusFilter === s;
+      return '<button type="button" onclick="lcBasisSetStatusFilter(\'' + s + '\')" style="padding:6px 12px;border-radius:999px;border:1px solid var(--border-strong);cursor:pointer;font-size:13px;font-weight:600;'
+        + (active ? 'background:var(--accent);color:#fff;border-color:var(--accent);' : 'background:var(--surface-2);color:var(--text-muted);')
+        + '">' + label + ' ' + count + '</button>';
+    }).join('')
+    + '</div>';
   var basisTitle = basisInst ? escapeHtml(basisInst.name) + ' 인건비 기준값' : '인건비 기준값';
   var emptyNotice = basisInst ? '' : '<p style="margin:0 0 14px;color:var(--text-muted);">기관을 선택하면 해당 기관의 인건비 기준값과 원자료가 표시됩니다.</p>';
   return '<div class="summary-box"><h3>' + basisTitle + '</h3>' + emptyNotice + '<p style="margin:0 0 14px;color:var(--text-muted);">필터된 인건비 원자료를 통합해 결과값을 먼저 표시하고, 아래에 원본 산출기초를 표시합니다.</p>'
@@ -6556,6 +6677,7 @@ function lcBasisSection() {
     + '</div>'
     + (b.loading ? '<p>불러오는 중입니다.</p>' : '') + (b.error ? '<p class="lc-warn">' + escapeHtml(b.error) + '</p>' : '')
     + (filteredRows.length ? lcBasisExplanation(basisInst, b.fundType) + lcCulturalEmploymentCompare(basisInst) + aggregate + '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px;">' + summary + '</div>' : '')
+    + (filteredRows.length ? statusFilterHtml : '')
     + '<div style="overflow:auto;"><table class="lc-table"><thead><tr><th>고용형태</th><th>급수</th><th>부기명</th><th>산출기초</th><th>단가(원)</th><th>인원</th><th>개월</th><th>자동계산액(천원)</th><th>요구액(천원)</th><th>차이(천원)</th><th>상태</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
 }
 
