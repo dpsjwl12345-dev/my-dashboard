@@ -290,7 +290,6 @@ table.fc-summary td .dot {
 .ov2-outside-detail { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-weight: 300; }
 .ov2-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 18px; align-items: stretch; }
 .ov2-two-col .summary-box { margin-bottom: 0; height: 100%; box-sizing: border-box; }
-.ov2-two-col.ov2-inst-hscf, .ov2-two-col.ov2-inst-corp, .ov2-two-col.ov2-inst-talent, .ov2-two-col.ov2-inst-fc { grid-template-columns: 0.8fr 1.2fr; }
 @media (max-width: 980px) { .ov2-two-col { grid-template-columns: 1fr; } }
 
 .summary-box h3:has(+ .ov2-pbar-list) { margin-bottom: 4px; }
@@ -412,11 +411,11 @@ table.summary tr.ov2-eb-section td { font-weight: 800; background: var(--accent-
 table.summary tr.ov2-eb-row td:first-child { padding-left: 22px; color: var(--text-muted); font-weight: 400; }
 table.summary tr.ov2-eb-row td { font-size: 13.5px; padding-top: 2px; padding-bottom: 2px; line-height: 1.15; }
 table.summary.ov2-expense-table { table-layout: fixed; }
-table.summary.ov2-expense-table th:first-child, table.summary.ov2-expense-table td:first-child { text-align: left; width: 19%; word-break: break-all; white-space: normal; padding-right: 2px; font-size: 13.5px; }
+table.summary.ov2-expense-table th:first-child, table.summary.ov2-expense-table td:first-child { text-align: left; width: 19%; word-break: break-all; white-space: normal; padding-right: 2px; }
 table.summary.ov2-expense-table.ov2-inst-corp th:first-child, table.summary.ov2-expense-table.ov2-inst-corp td:first-child { width: 33%; }
 table.summary.ov2-expense-table.ov2-inst-corp tr.ov2-eb-row td:first-child { font-size: 11.5px; white-space: nowrap; padding-left: 18px; }
 table.summary.ov2-expense-table.ov2-inst-corp th, table.summary.ov2-expense-table.ov2-inst-corp td { font-size: 12.5px; padding-left: 4px; padding-right: 4px; }
-.ov2-two-col.ov2-inst-sports { grid-template-columns: 0.75fr 1.25fr; }
+.ov2-two-col.ov2-inst-sports { grid-template-columns: 0.8fr 1.2fr; }
 table.summary.ov2-inst-sports th:first-child, table.summary.ov2-inst-sports td:first-child { width: 46%; text-align: left; }
 table.summary.ov2-inst-sports th:not(:first-child), table.summary.ov2-inst-sports td:not(:first-child) { text-align: right; padding-right: 16px; }
 table.summary.ov2-rev-total-table.ov2-inst-sports th:last-child, table.summary.ov2-rev-total-table.ov2-inst-sports td:last-child { width: auto; padding-right: 16px; }
@@ -426,7 +425,7 @@ table.summary.ov2-income-table td { font-size: 14.5px; }
 table.summary.ov2-income-table th, table.summary.ov2-income-table td { padding-top: 5px; padding-bottom: 5px; }
 table.summary.ov2-rev-total-table { table-layout: fixed; }
 table.summary.ov2-rev-total-table th, table.summary.ov2-rev-total-table td { text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 6px; padding-right: 6px; letter-spacing: .01em; }
-table.summary.ov2-rev-total-table th:first-child, table.summary.ov2-rev-total-table td:first-child { text-align: left; width: 22%; white-space: nowrap; font-size: 13.5px; }
+table.summary.ov2-rev-total-table th:first-child, table.summary.ov2-rev-total-table td:first-child { text-align: center; width: 22%; white-space: nowrap; font-size: 13.5px; }
 table.summary.ov2-rev-total-table th:nth-child(2), table.summary.ov2-rev-total-table td:nth-child(2),
 table.summary.ov2-rev-total-table th:nth-child(3), table.summary.ov2-rev-total-table td:nth-child(3) { width: 23%; }
 table.summary.ov2-rev-total-table th:last-child, table.summary.ov2-rev-total-table td:last-child { width: 32%; padding-right: 10px; }
@@ -442,8 +441,6 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
   color: var(--navy);
 }
 .ov2-rev-sub-label { font-size: 11.5px; color: var(--text-soft); font-weight: 400; }
-.ov2-rev-sub-inline { white-space: nowrap; }
-.ov2-rev-footnote { font-size: 11.5px; color: var(--text-soft); margin: 6px 2px 0; }
 table.summary.ov2-rev-total-table.ov2-inst-corp th, table.summary.ov2-rev-total-table.ov2-inst-corp td { padding-left: 2px; padding-right: 14px; }
 table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov2-rev-total-table.ov2-inst-corp td:first-child { width: 20%; padding-right: 6px; }
 .ov2-unit-note { font-size: 12px; font-weight: 400; color: var(--text-soft); text-align: right; margin: 0 2px 4px; }
@@ -528,15 +525,12 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .headcount-info-icon svg { width: 14px; height: 14px; }
 .tab-headcount-badge:has(.headcount-summary:hover) .headcount-info-icon { transform: rotate(360deg) scale(1.2); }
 .headcount-detail-pop {
-  visibility: hidden; opacity: 0; position: absolute; left: 100%; top: 50%;
+  visibility: visible; opacity: 1; position: absolute; left: 100%; top: 50%;
   transform: translateY(calc(-50% + 24px)); margin-left: 8px; z-index: 5;
   background: color-mix(in srgb, var(--accent-soft) 65%, transparent); border: 1px solid var(--border); border-radius: 6px;
   padding: 5px 14px; font-size: 13.5px; font-weight: 500; color: var(--text-muted);
   white-space: normal; width: 560px; line-height: 1.5;
-  transition: opacity .15s ease, visibility .15s ease; pointer-events: none;
 }
-/* 배지 한 줄 유지 - 세부내역은 평소엔 숨겨두고 배지에 마우스를 올렸을 때만 풍선으로 띄운다 */
-.headcount-summary:hover + .headcount-detail-pop { visibility: visible; opacity: 1; }
 .headcount-detail-pop::after {
   content: ""; position: absolute; right: 100%; top: 50%; margin-top: -5px;
   border-width: 5px; border-style: solid; border-color: transparent var(--accent-soft) transparent transparent;
@@ -2210,10 +2204,6 @@ td.lc-warn-cell { position: relative; }
         <div class="tab-headcount-badge-row" id="tab-headcount-badge-row">
           <div class="tab-headcount-badge" id="tab-headcount-badge"></div>
         </div>
-        <!-- 화성시체육회·화성시장애인체육회 사업카드 전용 "N개 사업" 뱃지 - 기관 정현원 뱃지(tab-headcount-badge)와 완전히 분리된 별도 자리 -->
-        <div class="tab-headcount-badge-row" id="sports-biz-badge-row" style="display:none;">
-          <div class="tab-headcount-badge" id="sports-biz-badge"></div>
-        </div>
 
         <div class="detail" id="detail"></div>
       </div>
@@ -3290,7 +3280,7 @@ hscf: {
     ] }
   ],
   revenueItems: [
-    { label: '위탁사업수익', y26: 48069238, y25: 44574745 },
+    { label: '대행사업수익', y26: 48069238, y25: 44574745 },
     { label: '자치단체출연금수익', y26: 14382623, y25: 12849409 },
     { label: '순세계잉여금', y26: 2813371, y25: 3035801 },
     { label: '보조금수익', y26: 483779, y25: 665900 },
@@ -3421,17 +3411,17 @@ corp: {
     ] }
   ],
   revenueItems: [
-    { label: '위탁사업수익', y26: 116463923, y25: 173084807 },
-    { label: '자본금수익', y26: 40000000, y25: 0 },
-    { label: '기타자본적수입', y26: 16262284, y25: 2531238 },
-    { label: '자치단체보조금수입', y26: 6280226, y25: 2780211 },
-    { label: '기타영업외수익', y26: 4555255, y25: 4068000 },
-    { label: '이자수익', y26: 3000000, y25: 900000 },
-    { label: '임대사업수익', y26: 1968000, y25: 2317320 },
+    { label: '대행사업수익', y26: 116463923, y25: 173084807 },
     { label: '용지 및 주택판매수익', y26: 1041670, y25: 900000 },
+    { label: '임대사업수익', y26: 1968000, y25: 2317320 },
     { label: '기타영업수익', y26: 944400, y25: 800000 },
+    { label: '이자수익', y26: 3000000, y25: 900000 },
+    { label: '기타영업외수익', y26: 4555255, y25: 4068000 },
     { label: '보증금회수입', y26: 552504, y25: 1300000 },
-    { label: '기타비유동부채수입', y26: 0, y25: 200000 }
+    { label: '기타비유동부채수입', y26: 0, y25: 200000 },
+    { label: '자본금수익', y26: 40000000, y25: 0 },
+    { label: '자치단체보조금수입', y26: 6280226, y25: 2780211 },
+    { label: '기타자본적수입', y26: 16262284, y25: 2531238 }
   ],
   budgetCompare: [
     { label: '인건비', y26: 47007945, y25: 45928227 },
@@ -3526,14 +3516,14 @@ talent: {
     ] }
   ],
   revenueItems: [
-    { label: '위탁사업수익', y26: 16346536, y25: 15249150 },
-    { label: '자치단체출연금수익', y26: 9871907, y25: 9512650 },
-    { label: '순세계잉여금', y26: 2014249, y25: 2095027 },
-    { label: '기타자본적수입', y26: 1009275, y25: 1041865 },
+    { label: '대행사업수익', y26: 16346536, y25: 15249150 },
     { label: '보조금수익', y26: 320860, y25: 718722 },
-    { label: '출연금이자수익', y26: 269812, y25: 269186 },
     { label: '기부금수익', y26: 132308, y25: 211064 },
-    { label: '기타영업외수익', y26: 16981, y25: 44333 }
+    { label: '자치단체출연금수익', y26: 9871907, y25: 9512650 },
+    { label: '출연금이자수익', y26: 269812, y25: 269186 },
+    { label: '기타영업외수익', y26: 16981, y25: 44333 },
+    { label: '순세계잉여금', y26: 2014249, y25: 2095027 },
+    { label: '기타자본적수입', y26: 1009275, y25: 1041865 }
   ],
   budgetCompare: [
     { label: '인건비', y26: 10396295, y25: 8830152 },
@@ -3622,8 +3612,8 @@ fc: {
   ],
   revenueItems: [
     { label: '출연금', y26: 10050353, y25: 6095154 },
-    { label: '보조금', y26: 1122000, y25: 1000000 },
-    { label: '자체수입금', y26: 1661037, y25: 1566289 }
+    { label: '자체수입금', y26: 1661037, y25: 1566289 },
+    { label: '보조금', y26: 1122000, y25: 1000000 }
   ],
   revenueDetailTitle: '자체수입금 세부내역',
   revenueDetail: [
@@ -3834,16 +3824,12 @@ function renderOv2Overview(instKey) {
   // 4) 총수입 총괄 / 총지출 총괄
   var revTotal26 = d.revenueItems.reduce(function (a, r) { return a + r.y26; }, 0);
   var revTotal25 = d.revenueItems.reduce(function (a, r) { return a + r.y25; }, 0);
-  var REV_HIGHLIGHT_LABELS = ['위탁사업수익', '자치단체출연금수익', '출연금', '보조금'];
-  var REV_BOLD_LABELS = ['위탁사업수익', '자치단체출연금수익'];
+  var REV_HIGHLIGHT_LABELS = ['대행사업수익', '자치단체출연금수익', '출연금', '보조금'];
   var revRowsHtml = d.revenueItems.map(function (r, i) {
     var y26Html = REV_HIGHLIGHT_LABELS.indexOf(r.label) !== -1
       ? '<span class="ov2-rev-marker">' + fmtWon(r.y26) + '</span>'
       : fmtWon(r.y26);
-    var labelHtml = REV_BOLD_LABELS.indexOf(r.label) !== -1
-      ? '<span class="ov2-rev-marker">' + escapeHtml(r.label) + '</span>'
-      : escapeHtml(r.label);
-    return '<tr><td>' + labelHtml + '</td><td>' + y26Html + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+    return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + y26Html + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var revTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(revTotal26) + '</td><td>' + fmtWon(revTotal25) + '</td>' + diffCellHtml(revTotal25, revTotal26) + '</tr>';
   var revDetailHtml = '';
@@ -3855,10 +3841,7 @@ function renderOv2Overview(instKey) {
       var detailY26Html = REV_HIGHLIGHT_LABELS.indexOf(r.label) !== -1
         ? '<span class="ov2-rev-marker">' + fmtWon(r.y26) + '</span>'
         : fmtWon(r.y26);
-      var detailLabelHtml = REV_BOLD_LABELS.indexOf(r.label) !== -1
-        ? '<span class="ov2-rev-marker">' + escapeHtml(r.label) + '</span>'
-        : escapeHtml(r.label);
-      return '<tr><td>' + detailLabelHtml + '</td><td>' + detailY26Html + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+      return '<tr><td>' + escapeHtml(r.label) + '</td><td>' + detailY26Html + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
     };
     var revDetailRows;
     if (d.revenueDetail.some(function (r) { return r.group; })) {
@@ -4258,11 +4241,6 @@ function parseCalcAmount(calc) {
   }
   return nums.reduce(function (a, b) { return a * b; }, 1);
 }
-// 산출기초 표시용 - "60,000원×12개월=" 처럼 끝에 붙는 "=" 기호는 화면에 보여줄 필요가 없어 잘라낸다.
-// (계산 로직인 parseCalcAmount는 원본 calc를 그대로 받으므로 이 함수와 무관하게 동작한다.)
-function stripCalcEquals(calc) {
-  return (calc || '').replace(/\s*=\s*$/, '');
-}
 // node.calc와 node.amt26(천원)을 비교해 불일치 여부 판정. 검증 불가/일치 시 null, 불일치 시 계산값(천원) 반환
 function checkCalcMismatch(node) {
   var computed = parseCalcAmount(node.calc);
@@ -4315,7 +4293,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible) {
   var indentDepth = Math.min(depth, LEVEL_BASE_DEPTH['목']);
   out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + '" data-id="' + node.id + '"' + mokAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
     + '<td style="padding-left:' + (8 + indentDepth * 14) + 'px">' + arrowHtml + ' ' + escapeHtml(label) + mismatchIcon + '</td>'
-    + '<td class="num basis" contenteditable="true" spellcheck="false" data-field="calc">' + escapeHtml(stripCalcEquals(node.calc)) + cellCheckBtn + '</td>'
+    + '<td class="num basis" contenteditable="true" spellcheck="false" data-field="calc">' + escapeHtml(node.calc || '') + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
     + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
@@ -4447,7 +4425,7 @@ function collectCurrentTreeRows() {
       var prefix = depth > 0 ? Array(depth + 1).join('  ') : '';
       var diff = (node.amt26 || 0) - (node.amt25 || 0);
       var pct = node.amt25 ? ((diff / node.amt25) * 100).toFixed(1) + '%' : '';
-      sportsRows.push([prefix + sportsBizNodeLabel(node), stripCalcEquals(node.calc), node.amt26 || 0, node.amt25 || 0, diff, pct]);
+      sportsRows.push([prefix + sportsBizNodeLabel(node), node.calc || '', node.amt26 || 0, node.amt25 || 0, diff, pct]);
       (node.children || []).forEach(function (c) { walk(c, depth + 1); });
     })(sportsTree, 0);
     return { name: sportsBiz.label, rows: sportsRows };
@@ -4468,7 +4446,7 @@ function collectCurrentTreeRows() {
       : node.name);
     var diff = (node.amt26 || 0) - (node.amt25 || 0);
     var pct = node.amt25 ? ((diff / node.amt25) * 100).toFixed(1) + '%' : '';
-    rows.push([prefix + label, stripCalcEquals(node.calc), node.amt26 || 0, node.amt25 || 0, diff, pct]);
+    rows.push([prefix + label, node.calc || '', node.amt26 || 0, node.amt25 || 0, diff, pct]);
     (node.children || []).forEach(function (c) { walk(c, depth + 1); });
   }
   trees.forEach(function (t) { walk(t, 0); });
@@ -5032,9 +5010,9 @@ function onRoundChange(input) {
 }
 
 // 정현원 뱃지를 지금 선택된 부서/사업 탭 바로 아래 위치로 정렬한다.
-function alignHeadcountBadge(badgeId, rowId) {
-  var badgeEl = document.getElementById(badgeId || 'tab-headcount-badge');
-  var rowEl = document.getElementById(rowId || 'tab-headcount-badge-row');
+function alignHeadcountBadge() {
+  var badgeEl = document.getElementById('tab-headcount-badge');
+  var rowEl = document.getElementById('tab-headcount-badge-row');
   var tabsEl = document.getElementById('card-grid');
   if (!badgeEl || !rowEl || !tabsEl) return;
   if (getComputedStyle(rowEl).display === 'none') return;
@@ -5045,9 +5023,9 @@ function alignHeadcountBadge(badgeId, rowId) {
   var maxLeft = Math.max(0, tabsEl.clientWidth - badgeWidth);
   left = Math.max(0, Math.min(left, maxLeft));
   badgeEl.style.marginLeft = left + 'px';
-  updateHeadcountPopDirection(badgeId);
+  updateHeadcountPopDirection();
 }
-window.addEventListener('resize', function () { alignHeadcountBadge(); });
+window.addEventListener('resize', alignHeadcountBadge);
 
 // 정현원 세부내역 풍선이 화면 오른쪽 끝에 가까운 탭(도서관 목록 등)에서 잘리지 않도록,
 // 렌더링/정렬 시점에 실제로 뜰 공간이 있는지 측정해서 안 맞으면 왼쪽으로 뒤집는다.
@@ -5096,14 +5074,9 @@ var SPORTS_DEPT_ENACTED_CARDS_BY_NAME = {
     { name: '민간위탁금', rounds: { base: 306582 } }
   ],
   '민간사업보조': [],
-  '장애인단체법정운영보조': [
-    { name: '인건비 및 운영비', rounds: { y25: 581000, base: 602000 } }
-  ],
+  '장애인단체법정운영보조': [],
   '장애인사업보조': [],
-  '장애인위탁금': [
-    { name: '인건비', rounds: { y25: 444000, base: 699000, supp1: 32000 } },
-    { name: '운영비', rounds: { y25: 845000, base: 1065000, supp1: 49000 } }
-  ]
+  '장애인위탁금': []
 };
 function showPlaceholderInst(name) {
   var dept = SPORTS_SUB_DEPT[name] || null;
@@ -5128,29 +5101,21 @@ function showPlaceholderInst(name) {
     if (deptLabelEl) deptLabelEl.textContent = dept;
     var pctWrapEl = document.getElementById('dept-select-pct');
     var pctValEl = document.getElementById('dept-select-pct-value');
+    if (pctWrapEl) pctWrapEl.classList.remove('down');
+    if (pctValEl) pctValEl.textContent = '-';
 
-    // 본예산+추경 누적 합계 - 회차별 금액은 그 회차에 "추가"된 금액이라 본예산부터 최신 추경까지 전부 더한다.
-    var roundsPriority = ['base', 'supp1', 'supp2', 'supp3'];
+    // 가장 최근 회차(3추>2추>1추>본예산) 금액 합계 - 다른 기관과 동일한 규칙(요구액이 아니라 실제 편성액, 최신 회차 우선)
+    var roundsPriority = ['supp3', 'supp2', 'supp1', 'base'];
     var deptEnactedCards = SPORTS_DEPT_ENACTED_CARDS_BY_NAME[name] || [];
-    var latestTotal = 0, y25Total = 0;
+    var latestTotal = 0;
     deptEnactedCards.forEach(function (c) {
-      y25Total += c.rounds.y25 || 0;
-      roundsPriority.forEach(function (rk) { latestTotal += c.rounds[rk] || 0; });
+      for (var ri = 0; ri < roundsPriority.length; ri++) {
+        var rAmt = c.rounds[roundsPriority[ri]];
+        if (rAmt) { latestTotal += rAmt; break; }
+      }
     });
     var amtEl = document.getElementById('dept-select-amt');
     if (amtEl) amtEl.textContent = latestTotal ? (fmtWon(Math.round(latestTotal / 1000)) + '백만원') : '';
-    // 우상단 전년대비 증감률 박스 - 다른 기관과 동일하게 최신 회차 합계를 2025년 합계와 비교해서 채운다.
-    if (pctValEl && pctWrapEl) {
-      if (y25Total) {
-        var pctDiff = latestTotal - y25Total;
-        var pctAbs = Math.abs(pctDiff / y25Total * 100).toFixed(1);
-        pctWrapEl.classList.toggle('down', pctDiff < 0);
-        pctValEl.textContent = pctAbs + '%';
-      } else {
-        pctWrapEl.classList.remove('down');
-        pctValEl.textContent = '-';
-      }
-    }
     var fillEl = document.getElementById('dept-select-fill');
     if (fillEl) fillEl.style.width = latestTotal ? '100%' : '0%';
     var menuEl = document.getElementById('dept-select-menu');
@@ -5202,16 +5167,8 @@ function showPlaceholderInst(name) {
     if (summarySlotEl) summarySlotEl.innerHTML = '<div class="empty-state">데이터가 아직 연동되지 않았습니다.</div>';
   }
   var bizLabels = SPORTS_SUB_BUSINESS_LABELS[name];
-  // 화성시장애인체육회 소속 카드는 화성시체육회 데이터가 아니라 DISABLED_SPORTS_COUNCIL_DATA.expenseDetail에서 찾는다.
-  // 단, "시보조금"처럼 재원(지출총괄표) 기준 금액과 사업카드(통계목) 기준 금액이 서로 다른 경우
-  // DISABLED_SPORTS_PRIVATE_BIZ_CATEGORIES 쪽 값을 우선하고 expenseDetail의 동명 항목은 제외한다(중복 카드 방지).
-  var bizSourceList = (group === '화성시장애인체육회')
-    ? DISABLED_SPORTS_COUNCIL_DATA.expenseDetail.filter(function (p) {
-        return !DISABLED_SPORTS_PRIVATE_BIZ_CATEGORIES.some(function (q) { return q.label === p.label; });
-      }).concat(DISABLED_SPORTS_PRIVATE_BIZ_CATEGORIES)
-    : SPORTS_COUNCIL_DATA.expenseDetail.concat(SPORTS_PRIVATE_BIZ_CATEGORIES);
   var bizList = bizLabels
-    ? bizSourceList.filter(function (p) { return bizLabels.indexOf(p.label) !== -1; })
+    ? SPORTS_COUNCIL_DATA.expenseDetail.concat(SPORTS_PRIVATE_BIZ_CATEGORIES).filter(function (p) { return bizLabels.indexOf(p.label) !== -1; })
     : null;
   var cardGrid = document.getElementById('card-grid');
   var detailEl = document.getElementById('detail');
@@ -5240,12 +5197,9 @@ function showPlaceholderInst(name) {
     if (roundRow) roundRow.style.display = 'none';
     if (roundRadio) roundRadio.style.display = '';
   }
-  // 기관 정현원 뱃지(tab-headcount-badge-row)는 실제 기관 전용이라 화성시체육회/장애인체육회 화면에서는 항상 숨긴다.
-  // "N개 사업" 뱃지(sports-biz-badge-row)는 renderSportsBizDetail()이 사업카드 전환마다 직접 채우거나 숨긴다.
-  var instBadgeRow = document.getElementById('tab-headcount-badge-row');
-  if (instBadgeRow) instBadgeRow.style.display = 'none';
+  // 뱃지(정현원 자리)는 renderSportsBizDetail()이 사업카드 전환마다 직접 채우거나 숨긴다 - 여기서는 건드리지 않는다.
   if (!bizList || !bizList.length) {
-    var emptyBadgeRow = document.getElementById('sports-biz-badge-row');
+    var emptyBadgeRow = document.getElementById('tab-headcount-badge-row');
     if (emptyBadgeRow) emptyBadgeRow.style.display = 'none';
   }
 
@@ -5258,21 +5212,8 @@ var SPORTS_SUB_BUSINESS_LABELS = {
   '민간위탁금': ['구봉산다목적체육관 운영'],
   '민간사업보조': [
     '자체 개최 행사', '상급대회 출전 지원', '학교·청소년 체육 육성', '생활체육 지도자 인건비', '생활체육 클럽·단체 지원'
-  ],
-  '장애인단체법정운영보조': ['장애인체육회 운영'],
-  '장애인사업보조': ['민간경상사업보조', '민간행사사업보조'],
-  '장애인위탁금': ['반다비체육센터 운영']
+  ]
 };
-// 화성시장애인체육회 하위 항목 중 DISABLED_SPORTS_COUNCIL_DATA.expenseDetail에 없거나(반다비체육센터 운영) 값이 다시 분류된(시보조금·민간경상/행사사업보조) 사업카드용.
-// "시보조금"·"장애인생활체육지도자 배치"에 있던 개별 지원사업 12건은 지방보조금 관리조례상 민간경상사업보조/민간행사사업보조 통계목별로
-// 카드 2개(탭)로 나눠 옮기고, "시보조금" 카드에는 자체 운영성 경비인 화성시장애인체육회 운영만 남긴다.
-// (지출총괄표의 재원별 금액 - 시보조금 1,308,706 / 장애인생활체육지도자 배치 287,790 등 - 은 그대로 유지되며, 이 값들은 사업카드용 재분류 총액이다.)
-var DISABLED_SPORTS_PRIVATE_BIZ_CATEGORIES = [
-  { label: '반다비체육센터 운영', y26: 1790304, y25: 1971294 },
-  { label: '장애인체육회 운영', y26: 611476, y25: 0 },
-  { label: '민간경상사업보조', y26: 826832, y25: 0 },
-  { label: '민간행사사업보조', y26: 148000, y25: 0 }
-];
 // 민간사업보조 카테고리 카드(사업카드 개수를 줄이려고 성격이 비슷한 세부사업끼리 묶은 합계) - 각 값은 SPORTS_BIZ_TREES의 동명 트리 최상위(정책) 합계와 일치.
 var SPORTS_PRIVATE_BIZ_CATEGORIES = [
   { label: '자체 개최 행사', y26: 1059600, y25: 1093700 },
@@ -5382,553 +5323,6 @@ var SPORTS_BIZ_TREES = {
                   { id: 'sb2-101', level: '목', code: '101', name: '인건비', amt26: 12000, amt25: 0,
                     children: [
                       { id: 'sb2-101-note', name: '화성시체육회 인건비 지원', calc: '1,000,000원*12개월', amt26: 12000, amt25: 0 }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  // 화성시장애인체육회 "장애인체육회 운영"(민간단체법정운영보조 카드) - 개별 지원사업 12건은 지방보조금 관리조례상 민간경상·민간행사사업보조로
-  // 재분류되어 "민간경상/행사사업보조" 카드로 옮겼고, "장애인 생활체육 활성화 지원"은 삭제 요청으로 제외되어 화성시장애인체육회 운영만 남는다.
-  // 민간단체법정운영비 보조 산출내역서 기준으로 인건비·운영비 통계목별 세부 산출근거까지 반영함
-  // (인건비 443,896 + 운영비 167,580 = 611,476천원 - 기존 지출계획서 수치 602,306천원과는 9,170천원 차이나며, 이 산출내역서 쪽이 더 상세하고 최신 자료임).
-  '장애인체육회 운영': {
-    id: 'disabled-siboj-team', level: '팀', name: '화성시장애인체육회',
-    children: [
-      { id: 'disabled-siboj-pol', level: '정책', name: '일반사업보조금', amt26: 611476, amt25: 0,
-        children: [
-          { id: 'disabled-siboj-unit', level: '단위', name: '일반사업보조금', amt26: 611476, amt25: 0,
-            children: [
-              { id: 'disabled-siboj-detail2', level: '세부', name: '화성시장애인체육회 운영', amt26: 611476, amt25: 0,
-                children: [
-                  { id: 'disabled-siboj-inkun', level: '목', name: '인건비', amt26: 443896, amt25: 0,
-                    children: [
-                      { id: 'disabled-siboj-in-1', name: '사무국장', calc: '(기본급)69,326,400+(수당)4,680,000=74,006,400', amt26: 74006, amt25: 0 },
-                      { id: 'disabled-siboj-in-2', name: '과장', calc: '(기본급)44,996,900+(수당)13,689,600=58,686,500', amt26: 58687, amt25: 0 },
-                      { id: 'disabled-siboj-in-3', name: '대리1', calc: '(기본급)32,056,200+(수당)11,271,500=43,327,700', amt26: 43328, amt25: 0 },
-                      { id: 'disabled-siboj-in-4', name: '대리2', calc: '(기본급)29,915,100+(수당)10,378,600=40,293,700', amt26: 40294, amt25: 0 },
-                      { id: 'disabled-siboj-in-5', name: '주임1', calc: '(기본급)25,762,400+(수당)7,844,000=33,606,400', amt26: 33606, amt25: 0 },
-                      { id: 'disabled-siboj-in-6', name: '주임2', calc: '(기본급)25,330,800+(수당)7,378,600=32,709,400', amt26: 32709, amt25: 0 },
-                      { id: 'disabled-siboj-in-7', name: '주임3', calc: '(기본급)24,968,200+(수당)7,579,600=32,547,800', amt26: 32548, amt25: 0 },
-                      { id: 'disabled-siboj-in-8', name: '퇴직적립금(7명)', calc: '26,269,200×1년=26,269,200(개인별상이)', amt26: 26269, amt25: 0 },
-                      { id: 'disabled-siboj-in-9', name: '법정부담금(7명)', calc: '30,000,000×1년=30,000,000(개인별상이)', amt26: 30000, amt25: 0 },
-                      { id: 'disabled-siboj-in-10', name: '연가보상비(7명)', calc: '5,026,500×1년=5,026,500(개인별상이)', amt26: 5027, amt25: 0 },
-                      { id: 'disabled-siboj-in-11', name: '초과근무수당(6명)', calc: '34,632,000×1년=34,632,000(개인별상이)', amt26: 34632, amt25: 0 },
-                      { id: 'disabled-siboj-in-12', name: '건강검진비(7명)', calc: '2,300,000×1년=2,300,000(500,000원 1명, 300,000원 6명)', amt26: 2300, amt25: 0 },
-                      { id: 'disabled-siboj-in-13', name: '단체상해보험(7명)', calc: '25,000×7명×12월=2,100,000', amt26: 2100, amt25: 0 },
-                      { id: 'disabled-siboj-in-14', name: '성과상여금(6명)', calc: '18,200,000×1회=18,200,000(개인별상이)', amt26: 18200, amt25: 0 },
-                      { id: 'disabled-siboj-in-15', name: '복지포인트(7명)', calc: '10,190,000×1회=10,190,000(개인별상이)', amt26: 10190, amt25: 0 }
-                    ]
-                  },
-                  { id: 'disabled-siboj-unyeong', level: '목', name: '운영비', amt26: 167580, amt25: 0,
-                    children: [
-                      { id: 'disabled-siboj-un-1', name: '공과금 및 제세금', calc: '8,500,000×1년=8,500,000', amt26: 8500, amt25: 0 },
-                      { id: 'disabled-siboj-un-2', name: '홈페이지유지보수', calc: '1,500,000×1년=1,500,000', amt26: 1500, amt25: 0 },
-                      { id: 'disabled-siboj-un-3', name: '우편료', calc: '2,000×40명×5회=400,000', amt26: 400, amt25: 0 },
-                      { id: 'disabled-siboj-un-4', name: '위원회수당', calc: '200,000×4명×10회=8,000,000', amt26: 8000, amt25: 0 },
-                      { id: 'disabled-siboj-un-5', name: '차량유지비', calc: '4,000,000×2대=8,000,000', amt26: 8000, amt25: 0 },
-                      { id: 'disabled-siboj-un-6', name: '법정의무교육', calc: '1,700,000×1회=1,700,000', amt26: 1700, amt25: 0 },
-                      { id: 'disabled-siboj-un-7', name: '사무실임대료', calc: '17,000,000×1년=17,000,000', amt26: 17000, amt25: 0 },
-                      { id: 'disabled-siboj-un-8', name: '출장여비(일비)', calc: '25,000×15일×13일=4,875,000', amt26: 4875, amt25: 0 },
-                      { id: 'disabled-siboj-un-9', name: '전산시스템 유지비', calc: '4,650,000×12월=55,800,000', amt26: 55800, amt25: 0 },
-                      { id: 'disabled-siboj-un-10', name: '출장여비(식비)', calc: '25,000×3일×7명=525,000', amt26: 525, amt25: 0 },
-                      { id: 'disabled-siboj-un-11', name: '세무법인기장료', calc: '170,000×12월=2,040,000', amt26: 2040, amt25: 0 },
-                      { id: 'disabled-siboj-un-12', name: '출장여비(숙박)', calc: '70,000×3일×7명=1,470,000', amt26: 1470, amt25: 0 },
-                      { id: 'disabled-siboj-un-13', name: '일반수용비', calc: '750,000×13명=9,750,000', amt26: 9750, amt25: 0 },
-                      { id: 'disabled-siboj-un-14', name: '시책업무추진비', calc: '500,000×12월=6,000,000', amt26: 6000, amt25: 0 },
-                      { id: 'disabled-siboj-un-15', name: '급량비', calc: '600,000×7명=4,200,000', amt26: 4200, amt25: 0 },
-                      { id: 'disabled-siboj-un-16', name: '부서운영업무추진비', calc: '250,000×12월=3,000,000', amt26: 3000, amt25: 0 },
-                      { id: 'disabled-siboj-un-17', name: '회의비', calc: '300,000×15회=4,500,000', amt26: 4500, amt25: 0 },
-                      { id: 'disabled-siboj-un-18', name: '기관운영업무추진비', calc: '2,000,000×1년=2,000,000', amt26: 2000, amt25: 0 },
-                      { id: 'disabled-siboj-un-19', name: '공기청정기임차', calc: '60,000×12월=720,000', amt26: 720, amt25: 0 },
-                      { id: 'disabled-siboj-un-20', name: '법률자문료', calc: '550,000×12월=6,600,000', amt26: 6600, amt25: 0 },
-                      { id: 'disabled-siboj-un-21', name: '복합기임차(2대)', calc: '440,000×12월=5,280,000', amt26: 5280, amt25: 0 },
-                      { id: 'disabled-siboj-un-22', name: '회계검증료', calc: '10,000,000×1식=10,000,000', amt26: 10000, amt25: 0 },
-                      { id: 'disabled-siboj-un-23', name: '정수기 임차', calc: '60,000×12월=720,000', amt26: 720, amt25: 0 },
-                      { id: 'disabled-siboj-un-24', name: '홍보기념품 등 제작', calc: '5,000,000×1년=5,000,000', amt26: 5000, amt25: 0 }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  // 화성시장애인체육회 "민간경상사업보조" / "민간행사사업보조" - 지방보조금 관리조례상 통계목별로 카드(탭) 2개로 나눴다.
-  // 원래 "시보조금"·"장애인생활체육지도자 배치"(재원별 지출계획) 안에 있던 개별 지원사업 12건을 통계목 관점으로 재분류해 옮겼다.
-  // 금액은 본예산이 아니라 1차 추경까지 반영된 최종예산액이고, 산출기초(calc)는 "2026년 장애인체육회 수입 내역 및 지출 계획.pdf"의 "내역" 칸을 그대로 옮겼다.
-  '민간경상사업보조': {
-    id: 'disabled-mgbjg-team', level: '팀', name: '화성시장애인체육회',
-    children: [
-      { id: 'disabled-mgbjg-pol', level: '정책', name: '민간경상사업보조', amt26: 826832, amt25: 0,
-        children: [
-          { id: 'disabled-mgbjg-unit', level: '단위', name: '민간경상사업보조', amt26: 826832, amt25: 0,
-            children: [
-              // 세부사업 산출내역(2026년 체육진흥과 편성 사업리스트) - 세부(세부사업)를 사업 단위로 나누고, 각 세부사업 밑에 통계목(민간경상사업보조)을 목으로 둔다.
-              // 통계목 정의 출처: "2026년도 지방출자·출연기관 예산편성지침" Ⅴ장 경비 해설(사무관리비/행사운영비/행사실비보상금)
-              { id: 'disabled-mgbjg-detail-g1', level: '세부', name: '장애인생활체육지도자 배치 지원', amt26: 194364, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g1', level: '목', name: '민간경상사업보조', calc: '2,699,500원×6명×12월', amt26: 194364, amt25: 0 }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g2', level: '세부', name: '경기도장애인체육대회출전', amt26: 100000, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g2', level: '목', name: '민간경상사업보조', amt26: 100000, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-g2-samu', name: '사무관리비', amt26: 48665, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-g2-samu-1', name: '선수단 단복', calc: '100,000원×260벌', amt26: 26000, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-samu-2', name: '용품비', calc: '100,000원×190명', amt26: 19000, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-samu-3', name: '기타수용비(본부)', calc: '3,665,000원×1식', amt26: 3665, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-g2-haeng', name: '행사운영비', amt26: 13125, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-g2-haeng-1', name: '경기장 현수막', calc: '75,000원×15장', amt26: 1125, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-haeng-2', name: '결·해단식', calc: '6,000,000원×2식', amt26: 12000, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-g2-silbi', name: '행사실비보상금', amt26: 38210, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-g2-silbi-1', name: '숙박비', calc: '70,000원×95실×2일', amt26: 13300, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-silbi-2', name: '교통비', calc: '30,000원×95대×1일', amt26: 2850, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-silbi-3', name: '대회식대', calc: '9,000원×190명×6식', amt26: 10260, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-silbi-4', name: '훈련비', calc: '9,000원×120명×5식', amt26: 5400, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-silbi-5', name: '협회(연맹)실무자활동비', calc: '300,000원×11명', amt26: 3300, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-silbi-6', name: '숙박비(본부)', calc: '70,000원×10실×2일', amt26: 1400, amt25: 0 },
-                          { id: 'disabled-mgbj-g2-silbi-7', name: '만찬 및 식대(본부)', calc: '1,700,000원×1식', amt26: 1700, amt25: 0 }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g3', level: '세부', name: '장애인 우수선수 육성 지원', amt26: 228000, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g3', level: '목', name: '민간경상사업보조', amt26: 228000, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-g3-1', name: '우수선수(A등급)', calc: '400,000원×12개월×22명', amt26: 105600, amt25: 0 },
-                      { id: 'disabled-mgbj-g3-2', name: '우수선수(B등급)', calc: '300,000원×12개월×18명', amt26: 64800, amt25: 0 },
-                      { id: 'disabled-mgbj-g3-3', name: '우수선수(C등급)', calc: '200,000원×12개월×24명', amt26: 57600, amt25: 0 }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g4', level: '세부', name: '장애인생활체육지도자 배치(자체)', amt26: 79530, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g4', level: '목', name: '민간경상사업보조', calc: '각종 수당(시100%)', amt26: 79530, amt25: 0 }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g5', level: '세부', name: '경기도장애인생활체육대회 출전', amt26: 60000, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g5', level: '목', name: '민간경상사업보조', amt26: 60000, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-g5-samu', name: '사무관리비', amt26: 39500, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-g5-samu-1', name: '단체복', calc: '90,000원×250명', amt26: 22500, amt25: 0 },
-                          { id: 'disabled-mgbj-g5-samu-2', name: '용품비', calc: '100,000원×170명', amt26: 17000, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-g5-haeng', name: '행사운영비', amt26: 5980, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-g5-haeng-1', name: '본부운영비', calc: '5,980,000원×1식', amt26: 5980, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-g5-silbi', name: '행사실비보상금', amt26: 14520, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-g5-silbi-1', name: '식대', calc: '9,000원×170명×4식', amt26: 6120, amt25: 0 },
-                          { id: 'disabled-mgbj-g5-silbi-2', name: '숙박비', calc: '100,000원×50실×1일', amt26: 5000, amt25: 0 },
-                          { id: 'disabled-mgbj-g5-silbi-3', name: '교통비', calc: '40,000원×85대×1일', amt26: 3400, amt25: 0 }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g6', level: '세부', name: '장애인종목별 출전지원', amt26: 66000, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g6', level: '목', name: '민간경상사업보조', amt26: 66000, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-g6-1', name: '탁구', calc: '3개 대회 출전 희망', amt26: 7000, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-2', name: '지체', calc: '5개 대회 출전 희망', amt26: 4000, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-3', name: '슐런', calc: '11개 대회 출전 희망', amt26: 4700, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-4', name: '사격', calc: '4개 대회 출전 희망', amt26: 2500, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-5', name: '볼링', calc: '10개 대회 출전 희망', amt26: 5900, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-6', name: '보치아', calc: '3개 대회 출전 희망', amt26: 4200, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-7', name: '게이트볼', calc: '20개 대회 출전 희망', amt26: 5000, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-8', name: '골프', calc: '14개 대회 출전 희망', amt26: 9200, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-9', name: '당구', calc: '13개 대회 출전 희망', amt26: 5300, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-10', name: '론볼', calc: '13개 대회 출전 희망', amt26: 8000, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-11', name: '배드민턴', calc: '6개 대회 출전 희망', amt26: 4700, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-12', name: '태권도', calc: '5개 대회 출전 희망', amt26: 2000, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-13', name: '유형별단체 및 기타', calc: '3개 대회 출전 희망', amt26: 2500, amt25: 0 },
-                      { id: 'disabled-mgbj-g6-14', name: 'E스포츠', calc: '신규 가맹 단체', amt26: 1000, amt25: 0 }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g7', level: '세부', name: '장애인 전문체육 활성화 지원', amt26: 54210, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g7', level: '목', name: '민간경상사업보조', amt26: 54210, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-g7-1', name: '파크골프', calc: '시설이용료 175,000원×30명', amt26: 5250, amt25: 0 },
-                      { id: 'disabled-mgbj-g7-2', name: '게이트볼', calc: '강사료 100,000원×50회', amt26: 5000, amt25: 0 },
-                      { id: 'disabled-mgbj-g7-3', name: '사격', calc: '강사료 100,000원×50회, 시설이용료 90,000원×9개월', amt26: 5810, amt25: 0 },
-                      { id: 'disabled-mgbj-g7-4', name: '볼링', calc: '강사료 100,000원×50회, 시설이용료 100,000원×50회', amt26: 10000, amt25: 0 },
-                      { id: 'disabled-mgbj-g7-5', name: '테니스', calc: '강사료 100,000원×50회, 시설이용료 30,000원×10개월', amt26: 5300, amt25: 0 },
-                      { id: 'disabled-mgbj-g7-6', name: '배드민턴', calc: '강사료 100,000원×50회', amt26: 5000, amt25: 0 },
-                      { id: 'disabled-mgbj-g7-7', name: '수영', calc: '강사료 1,050,000원×9개월', amt26: 9450, amt25: 0 },
-                      { id: 'disabled-mgbj-g7-8', name: '육상', calc: '강사료 100,000원×84회', amt26: 8400, amt25: 0 }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g8', level: '세부', name: '장애인체육 보급 및 활성화 지원', amt26: 19600, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g8', level: '목', name: '민간경상사업보조', amt26: 19600, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-g8-1', name: '골프협회', calc: '파크골프 공 50,000원×24개', amt26: 1200, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-2', name: '론볼연맹', calc: '론볼 공 800,000원×1세트, 론볼 공(B4) 400,000원×1세트', amt26: 1200, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-3', name: '게이트볼연맹', calc: '게이트볼 공 100,000원×10개, 게이트볼 장갑 20,000원×10개', amt26: 1200, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-4', name: '사격연맹', calc: '사격탄 1,000,000원×2식', amt26: 2000, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-5', name: '탁구협회', calc: '탁구러버 50,000원×24개', amt26: 1200, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-6', name: '테니스협회', calc: '롤 4G 500,000원×2개', amt26: 1000, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-7', name: '볼링협회', calc: '볼링 공 250,000원×4개', amt26: 1000, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-8', name: '육상연맹', calc: '런닝화 200,000원×5개', amt26: 1000, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-9', name: '보치아연맹', calc: '보치아 공(공인구) 1,200,000원×1세트', amt26: 1200, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-10', name: '배드민턴협회', calc: '배드민턴 채 175,000원×5개, 셔틀콕 25,000원×13줄', amt26: 1200, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-11', name: '태권도협회', calc: '단미트 40,000원×10개, 호구 60,000원×10개', amt26: 1000, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-12', name: '수영연맹', calc: '탄탄이 수영복 85,000원×6개, 수경 40,000원×3개, 가방 100,000원×3개, 오리발 70,000원×1개', amt26: 1000, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-13', name: '당구협회', calc: '상대 500,000원×2개', amt26: 1000, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-14', name: '지체장애인스포츠', calc: '한궁세트 500,000원×2개, 파크골프 공 50,000원×4개', amt26: 1200, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-15', name: 'e스포츠연맹', calc: '키보드 80,000원×5개, 마우스 50,000원×6개, 헤드셋 100,000원×3개', amt26: 1000, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-16', name: '슐런협회', calc: '슐런보드 450,000원×2개, 전용가방 150,000원×2개', amt26: 1200, amt25: 0 },
-                      { id: 'disabled-mgbj-g8-17', name: '예비비', calc: '운동용품 1,000,000원×1식', amt26: 1000, amt25: 0 }
-                    ]
-                  }
-                ]
-              },
-              // 통계목이 수당(기타보상금)/용품(사무관리비)로 섞여 있는데 종목별 금액 분리 근거가 없어 부기명만 그대로 나열
-              { id: 'disabled-mgbjg-detail-g9', level: '세부', name: '장애인 생활체육교실 지원', amt26: 8400, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g9', level: '목', name: '민간경상사업보조', amt26: 8400, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-g9-1', name: '요가', calc: '지도자 및 보조요원 수당, 소모성 운동용품 구매', amt26: 1050, amt25: 0 },
-                      { id: 'disabled-mgbj-g9-2', name: '슐런', calc: '지도자 및 보조요원 수당, 소모성 운동용품 구매', amt26: 1050, amt25: 0 },
-                      { id: 'disabled-mgbj-g9-3', name: '재활승마', calc: '지도자 및 보조요원 수당, 소모성 운동용품 구매', amt26: 1050, amt25: 0 },
-                      { id: 'disabled-mgbj-g9-4', name: '볼링A', calc: '지도자 및 보조요원 수당, 소모성 운동용품 구매', amt26: 1050, amt25: 0 },
-                      { id: 'disabled-mgbj-g9-5', name: '볼링B', calc: '지도자 및 보조요원 수당, 소모성 운동용품 구매', amt26: 1050, amt25: 0 },
-                      { id: 'disabled-mgbj-g9-6', name: '보치아', calc: '지도자 및 보조요원 수당, 소모성 운동용품 구매', amt26: 1050, amt25: 0 },
-                      { id: 'disabled-mgbj-g9-7', name: '뉴스포츠', calc: '지도자 및 보조요원 수당, 소모성 운동용품 구매', amt26: 1050, amt25: 0 },
-                      { id: 'disabled-mgbj-g9-8', name: '한궁', calc: '지도자 및 보조요원 수당, 소모성 운동용품 구매', amt26: 1050, amt25: 0 }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g10', level: '세부', name: '장애인생활체육지도자 처우개선 지원', amt26: 7128, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g10', level: '목', name: '민간경상사업보조', amt26: 7128, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-g10-1', name: '명절수당', calc: '500,000원×2회×6명', amt26: 6000, amt25: 0 },
-                      { id: 'disabled-mgbj-g10-2', name: '법정부담금', calc: '1,128,000원', amt26: 1128, amt25: 0 }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-mgbjg-detail-g11', level: '세부', name: '화성시 장애인체육회 전무이사 활동비', amt26: 9600, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-g11', level: '목', name: '민간경상사업보조', calc: '50,000원×16명×12개월', amt26: 9600, amt25: 0 }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  '민간행사사업보조': {
-    id: 'disabled-mgbjh-team', level: '팀', name: '화성시장애인체육회',
-    children: [
-      { id: 'disabled-mgbjh-pol', level: '정책', name: '민간행사사업보조', amt26: 148000, amt25: 0,
-        children: [
-          { id: 'disabled-mgbjh-unit', level: '단위', name: '민간행사사업보조', amt26: 148000, amt25: 0,
-            children: [
-              { id: 'disabled-mgbjh-detail-h1', level: '세부', name: '장애인종목별 대회 개최지원', amt26: 84000, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-h1', level: '목', name: '민간행사사업보조', calc: '론볼·배드민턴·탁구·슐런·파크골프·당구·게이트볼·사격·보치아 9개 종목, 시상비·대회운영비용·인건비·식비 등 참가규모별(참여인원) 차등 산출', amt26: 84000, amt25: 0 }
-                ]
-              },
-              { id: 'disabled-mgbjh-detail-h2', level: '세부', name: '장애인 한마음 체육대회 개최', amt26: 44000, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-h2', level: '목', name: '민간행사사업보조', amt26: 44000, amt25: 0,
-                    children: [
-                      { id: 'disabled-mgbj-h2-inkun', name: '인건비', amt26: 3800, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-h2-inkun-1', name: '사회자·보조요원', calc: '3,700,000원×1식', amt26: 3700, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-inkun-2', name: '수어통역사', calc: '100,000원×1식', amt26: 100, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-h2-imcha', name: '임차료', amt26: 12570, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-h2-imcha-1', name: '무대·음향 등', calc: '5,200,000원×1식', amt26: 5200, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-imcha-2', name: '테이블·의자·아이스박스', calc: '3,500,000원×1식', amt26: 3500, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-imcha-3', name: '정수기', calc: '120,000원×1식', amt26: 120, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-imcha-4', name: '차단봉', calc: '1,850,000원×1식', amt26: 1850, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-imcha-5', name: '체험부스·부스현수막', calc: '1,700,000원×1식', amt26: 1700, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-imcha-6', name: '전선 작업', calc: '200,000원×1식', amt26: 200, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-h2-hongbo', name: '홍보물', amt26: 7000, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-h2-hongbo-1', name: '현수막(육교·안내·체육관)', calc: '2,200,000원×1식', amt26: 2200, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-hongbo-2', name: '포토월·배너·A보드', calc: '1,510,000원×1식', amt26: 1510, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-hongbo-3', name: '폼보드·초대장·팜플렛·식권', calc: '3,290,000원×1식', amt26: 3290, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-h2-susong', name: '일반수용비', amt26: 7070, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-h2-susong-1', name: '도시락', calc: '9,000원×700개', amt26: 6300, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-susong-2', name: '생수', calc: '500원×1,000개', amt26: 500, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-susong-3', name: '대회진행 사무용품', calc: '270,000원×1식', amt26: 270, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-h2-booth', name: '종목대회 및 부스운영비', amt26: 5600, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-h2-booth-1', name: '체험부스 운영비', calc: '1,000,000원×1식', amt26: 1000, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-booth-2', name: '보험료', calc: '900,000원×1식', amt26: 900, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-booth-3', name: '명랑운동회 인건비·운영비', calc: '2,700,000원×1식', amt26: 2700, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-booth-4', name: '메달', calc: '1,000,000원×1식', amt26: 1000, amt25: 0 }
-                        ]
-                      },
-                      { id: 'disabled-mgbj-h2-etc', name: '기타', amt26: 7960, amt25: 0,
-                        children: [
-                          { id: 'disabled-mgbj-h2-etc-1', name: '구급차·공과금·청소비', calc: '3,760,000원×1식', amt26: 3760, amt25: 0 },
-                          { id: 'disabled-mgbj-h2-etc-2', name: '대행사 이윤 등', calc: '4,200,000원×1식', amt26: 4200, amt25: 0 }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-mgbjh-detail-h3', level: '세부', name: '화성시 장애인체육인의 밤', amt26: 10000, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-h3', level: '목', name: '민간행사사업보조', calc: '만찬진행비, 영상제작료 및 기타운영비', amt26: 10000, amt25: 0 }
-                ]
-              },
-              { id: 'disabled-mgbjh-detail-h4', level: '세부', name: '임직원 및 종목단체 통합 워크숍', amt26: 10000, amt25: 0,
-                children: [
-                  { id: 'disabled-mgbj-h4', level: '목', name: '민간행사사업보조', calc: '식비, 버스 임차비 및 기타수용비', amt26: 10000, amt25: 0 }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  // 화성시장애인체육회 "반다비체육센터 운영" - 구글드라이브 "6.(화성반다비체육센터) 2026년 본예산(안)_수입지출예산요구서(251014) - 최종.xlsx" 기준(실제 예산요구서).
-  // 세부사업 3개(운영/인건비/자산취득비)의 목·세목까지는 원문 그대로, 세목 산식은 원문의 산출기초를 그대로 옮겼다.
-  // 인건비·퇴직금 관련 세목은 직급/직종별 인원 합산 금액만 남기고(화성시체육회 인건비 표기 방식과 동일) 세부 수당 산식은 생략했다.
-  // 3개 세부 합계(1,065,385+698,639+26,280=1,790,304천원, 2025년 1,146,506+443,643+381,145=1,971,294천원)가 총계와 정확히 일치함을 검증함.
-  '반다비체육센터 운영': {
-    id: 'disabled-bdb-team', level: '팀', name: '화성시장애인체육회',
-    children: [
-      { id: 'disabled-bdb-pol', level: '정책', name: '체육기반 확충 지원', amt26: 1790304, amt25: 1971294,
-        children: [
-          { id: 'disabled-bdb-unit', level: '단위', name: '체육 인프라 구축', amt26: 1790304, amt25: 1971294,
-            children: [
-              { id: 'disabled-bdb-detail1', level: '세부', name: '화성반다비체육센터운영', amt26: 1065385, amt25: 1146506,
-                children: [
-                  { id: 'disabled-bdb-201', level: '목', code: '201', name: '일반운영비', amt26: 507835, amt25: 581420,
-                    children: [
-                      { id: 'disabled-bdb-201-01', level: '세목', code: '201-01', name: '사무관리비', amt26: 43080, amt25: 109450, children: [
-                        { id: 'disabled-bdb-201-01-1', name: '사무용품 구입', calc: '60,000원×12개월=', amt26: 720, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-2', name: '복사용지', calc: '20,000원×2박스×12개월=', amt26: 480, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-3', name: '전산소모품(프린트, 팩스 등 소모품)', calc: '300,000원×8개월=', amt26: 2400, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-4', name: '종량제 봉투 및 폐기물포대 구입', calc: '1,500원×50장×8개월=', amt26: 600, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-5', name: '수질관리 용품', calc: '1,000,000원×12개월=', amt26: 12000, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-6', name: '청사관리용품구입', calc: '1,500,000원×12개월=', amt26: 18000, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-7', name: '홍보물(전단지) 제작', calc: '1,000원×1,000부×2회=', amt26: 2000, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-8', name: '홍보 현수막 제작', calc: '60,000원×6장×8개월=', amt26: 2880, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-9', name: '수영장 운영 물품 구입', calc: '200,000원×10개월=', amt26: 2000, amt25: 0 },
-                        { id: 'disabled-bdb-201-01-10', name: '체력단련실, 체육관 운영 물품 구입', calc: '200,000원×10개월=', amt26: 2000, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-201-02', level: '세목', code: '201-02', name: '공공운영비', amt26: 12800, amt25: 16000, children: [
-                        { id: 'disabled-bdb-201-02-1', name: '의약품 구입', calc: '400,000원×2회=', amt26: 800, amt25: 0 },
-                        { id: 'disabled-bdb-201-02-2', name: '환불금', calc: '1,000,000원×12개월=', amt26: 12000, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-201-11', level: '세목', code: '201-11', name: '지급수수료', amt26: 383972, amt25: 330500, children: [
-                        { id: 'disabled-bdb-201-11-1', name: '무인경비 용역비', calc: '1,300,000원×12개월=', amt26: 15600, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-2', name: '청소용역비', calc: '311,840,000×1식=', amt26: 311840, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-3', name: '카드수수료', calc: '1,000,000원×12개월=', amt26: 12000, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-4', name: '수영장 수질 검사 의뢰비', calc: '90,000원×12개월=', amt26: 1080, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-5', name: '청사소독', calc: '431,000원×12개월=', amt26: 5172, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-6', name: '조경용역비', calc: '1,650,000원×12회', amt26: 19800, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-7', name: '전기안전관리용역비', calc: '440,000원×12개월=', amt26: 5280, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-8', name: '소방시설유지관리용역비', calc: '400,000원×12개월=', amt26: 4800, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-9', name: '승강기유지관리용역비', calc: '250,000원×12개월=', amt26: 3000, amt25: 0 },
-                        { id: 'disabled-bdb-201-11-10', name: '오수처리시설관리용역비', calc: '450,000원×12개월=', amt26: 5400, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-201-12', level: '세목', code: '201-12', name: '교육훈련비', amt26: 1570, amt25: 3770, children: [
-                        { id: 'disabled-bdb-201-12-1', name: '승강기안전관리자', calc: '30,000원×1명×1회=', amt26: 30, amt25: 0 },
-                        { id: 'disabled-bdb-201-12-2', name: '전기안전기술', calc: '100,000원×1명×1회=', amt26: 100, amt25: 0 },
-                        { id: 'disabled-bdb-201-12-3', name: '소방안전관리자교육', calc: '200,000원×1명×1회=', amt26: 200, amt25: 0 },
-                        { id: 'disabled-bdb-201-12-4', name: '건축물관리자(수도시설)교육', calc: '40,000원×1명×1회=', amt26: 40, amt25: 0 },
-                        { id: 'disabled-bdb-201-12-5', name: '수영장 안전 관리자 교육', calc: '250,000원×2명×1회=', amt26: 500, amt25: 0 },
-                        { id: 'disabled-bdb-201-12-6', name: '가스안전관리자 교육', calc: '50,000원×1명×1회=', amt26: 50, amt25: 0 },
-                        { id: 'disabled-bdb-201-12-7', name: '검사대상기기(보일러)', calc: '50,000원×1명×1회=', amt26: 50, amt25: 0 },
-                        { id: 'disabled-bdb-201-12-8', name: '교육훈련여비', calc: '150,000원×4명=', amt26: 600, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-201-13', level: '세목', code: '201-13', name: '임차료', amt26: 15648, amt25: 17256, children: [
-                        { id: 'disabled-bdb-201-13-1', name: '복합기 임차료', calc: '200,000원×2대×12개월=', amt26: 4800, amt25: 0 },
-                        { id: 'disabled-bdb-201-13-2', name: '정수기 임차료', calc: '51,000원×5대×12개월=', amt26: 3060, amt25: 0 },
-                        { id: 'disabled-bdb-201-13-3', name: '공기청정기 임차료', calc: '55,000원×3대×12개월=', amt26: 1980, amt25: 0 },
-                        { id: 'disabled-bdb-201-13-4', name: '비데 임차료', calc: '22,000원×22대×12개월=', amt26: 5808, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-201-14', level: '세목', code: '201-14', name: '회의비', amt26: 2400, amt25: 4000, children: [
-                        { id: 'disabled-bdb-201-14-1', name: '회의비', calc: '100,000원×4회=', amt26: 400, amt25: 0 },
-                        { id: 'disabled-bdb-201-14-2', name: '운영위원회 수당', calc: '100,000원×5명×4회=', amt26: 2000, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-201-15', level: '세목', code: '201-15', name: '복리후생비', amt26: 1473, amt25: 8000, children: [
-                        { id: 'disabled-bdb-201-15-1', name: '근무복 구입', calc: '100,000원×3명×2회=', amt26: 600, amt25: 0 },
-                        { id: 'disabled-bdb-201-15-2', name: '안전장비 구입', calc: '45,000원×5명×1회=', amt26: 225, amt25: 0 },
-                        { id: 'disabled-bdb-201-15-3', name: '야간근무자등 급식비', calc: '9,000원×3명×2일×12개월=', amt26: 648, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-201-21', level: '세목', code: '201-21', name: '공공요금 및 제세', amt26: 46892, amt25: 92444, children: [
-                        { id: 'disabled-bdb-201-21-1', name: '상하수도 요금', calc: '2,000,000원×12개월=', amt26: 24000, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-2', name: '주민세(사업소분)', calc: '1,300,000원×1회=', amt26: 1300, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-3', name: '문자사용료', calc: '150,000원×12개월=', amt26: 1800, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-4', name: '인터넷요금', calc: '500,000원×12개월=', amt26: 6000, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-5', name: '그린카드 통신료', calc: '11,000원×12개월=', amt26: 132, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-6', name: '협회비(전기,소방,보일러)', calc: '120,000원×3종×1회=', amt26: 360, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-7', name: '배상공제 보험료', calc: '10,000,000원×1회=', amt26: 10000, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-8', name: '배상공제면책금', calc: '100,000원×12회=', amt26: 1200, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-9', name: '치료비 실비변상금', calc: '2,000,000원×1회=', amt26: 2000, amt25: 0 },
-                        { id: 'disabled-bdb-201-21-10', name: '우편요금', calc: '100,000원×1회=', amt26: 100, amt25: 0 }
-                      ] }
-                    ]
-                  },
-                  { id: 'disabled-bdb-202', level: '목', code: '202', name: '여비', amt26: 3840, amt25: 3600,
-                    children: [
-                      { id: 'disabled-bdb-202-01', level: '세목', code: '202-01', name: '국내여비', amt26: 3840, amt25: 3600, children: [
-                        { id: 'disabled-bdb-202-01-1', name: '업무추진기본여비', calc: '20,000원×4회×4명×12개월=', amt26: 3840, amt25: 0 }
-                      ] }
-                    ]
-                  },
-                  { id: 'disabled-bdb-jsn', level: '목', name: '전산개발비', amt26: 0, amt25: 25632,
-                    children: [
-                      { id: 'disabled-bdb-jsn-1', name: '사물함 전자키 변경', calc: '(2026년 미편성)', amt26: 0, amt25: 0 }
-                    ]
-                  },
-                  { id: 'disabled-bdb-214', level: '목', code: '214', name: '수선유지교체비', amt26: 44670, amt25: 57200,
-                    children: [
-                      { id: 'disabled-bdb-214-05', level: '세목', code: '214-05', name: '수선유지비', amt26: 44670, amt25: 57200, children: [
-                        { id: 'disabled-bdb-214-05-1', name: '건축물 유지보수(건축,전기,기계,소방)', calc: '1,500,000원×12개월=', amt26: 18000, amt25: 0 },
-                        { id: 'disabled-bdb-214-05-2', name: '회원관리시스템 유지관리 용역', calc: '1,100,000원×7개월=', amt26: 7700, amt25: 0 },
-                        { id: 'disabled-bdb-214-05-3', name: '검사기기대상 정기검사(대기배출시설)', calc: '1,700,000원×2회=', amt26: 3400, amt25: 0 },
-                        { id: 'disabled-bdb-214-05-4', name: '수배전 설비 정기검사', calc: '3,000,000원×1회=', amt26: 3000, amt25: 0 },
-                        { id: 'disabled-bdb-214-05-5', name: '수영장 저수조 청소비', calc: '1,500,000원×2회=', amt26: 3000, amt25: 0 },
-                        { id: 'disabled-bdb-214-05-6', name: '수영장 대청소', calc: '3,000,000원×1회=', amt26: 3000, amt25: 0 },
-                        { id: 'disabled-bdb-214-05-7', name: '열원설비 유지보수(보일러세관 등)', calc: '5,770,000원×1회=', amt26: 5770, amt25: 0 },
-                        { id: 'disabled-bdb-214-05-8', name: '가스시설 안전 정기점검', calc: '500,000원×1회=', amt26: 500, amt25: 0 },
-                        { id: 'disabled-bdb-214-05-9', name: '승강기 안전 정기점검', calc: '300,000원×1회=', amt26: 300, amt25: 0 }
-                      ] }
-                    ]
-                  },
-                  { id: 'disabled-bdb-215', level: '목', code: '215', name: '동력비', amt26: 288000, amt25: 288000,
-                    children: [
-                      { id: 'disabled-bdb-215-01', level: '세목', code: '215-01', name: '동력비', amt26: 288000, amt25: 288000, children: [
-                        { id: 'disabled-bdb-215-01-1', name: '전기요금', calc: '10,000,000원×12개월=', amt26: 120000, amt25: 0 },
-                        { id: 'disabled-bdb-215-01-2', name: '도시가스요금', calc: '14,000,000원×12개월=', amt26: 168000, amt25: 0 }
-                      ] }
-                    ]
-                  },
-                  { id: 'disabled-bdb-217', level: '목', code: '217', name: '관서업무비', amt26: 3600, amt25: 6420,
-                    children: [
-                      { id: 'disabled-bdb-217-01', level: '세목', code: '217-01', name: '정원가산업무비', amt26: 600, amt25: 4320, children: [
-                        { id: 'disabled-bdb-217-01-1', name: '정원가산업무비', calc: '40,000원×15명=', amt26: 600, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-217-02', level: '세목', code: '217-02', name: '부서업무비', amt26: 3000, amt25: 2100, children: [
-                        { id: 'disabled-bdb-217-02-1', name: '부서업무비', calc: '250,000원×12개월=', amt26: 3000, amt25: 0 }
-                      ] }
-                    ]
-                  },
-                  { id: 'disabled-bdb-301', level: '목', code: '301', name: '일반보전금', amt26: 217440, amt25: 180300,
-                    children: [
-                      { id: 'disabled-bdb-301-12', level: '세목', code: '301-12', name: '기타보상금', amt26: 217440, amt25: 180300, children: [
-                        { id: 'disabled-bdb-301-12-1', name: '강사료(수영강습)', calc: '30,000원×2명×11시간×52주=', amt26: 34320, amt25: 0 },
-                        { id: 'disabled-bdb-301-12-2', name: '강사료(수상안전)', calc: '18,000원×16명×11시간×52주=', amt26: 164736, amt25: 0 },
-                        { id: 'disabled-bdb-301-12-3', name: '강사료(아쿠아로빅)', calc: '57,000원×1명×6시간×52주=', amt26: 17784, amt25: 0 },
-                        { id: 'disabled-bdb-301-12-4', name: '강사 근무복 구입', calc: '30,000원×20명×1회=', amt26: 600, amt25: 0 }
-                      ] }
-                    ]
-                  },
-                  { id: 'disabled-bdb-yebi', level: '목', name: '예비비', amt26: 0, amt25: 3934,
-                    children: [
-                      { id: 'disabled-bdb-yebi-1', name: '기타수용비(법률자문료 등 각종수수료)', calc: '(2026년 미편성)', amt26: 0, amt25: 0 }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-bdb-detail2', level: '세부', name: '화성반다비체육센터(인건비)', amt26: 698639, amt25: 443643,
-                children: [
-                  { id: 'disabled-bdb-101', level: '목', code: '101', name: '인건비', amt26: 497644, amt25: 332347,
-                    children: [
-                      { id: 'disabled-bdb-101-01', level: '세목', code: '101-01', name: '보수', amt26: 176924, amt25: 141474, children: [
-                        { id: 'disabled-bdb-101-01-1', name: '6급(1명)', amt26: 63633, amt25: 0 },
-                        { id: 'disabled-bdb-101-01-2', name: '9급(1명, 8개월 근무)', amt26: 33163, amt25: 0 },
-                        { id: 'disabled-bdb-101-01-3', name: '9급(1명, 11개월 근무)', amt26: 40270, amt25: 0 },
-                        { id: 'disabled-bdb-101-01-4', name: '9급(1명, 4개월 근무)', amt26: 39858, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-101-03', level: '세목', code: '101-03', name: '기간제근로자보수', amt26: 320720, amt25: 190873, children: [
-                        { id: 'disabled-bdb-101-03-1', name: '수영선임지도자(1명)', amt26: 36672, amt25: 0 },
-                        { id: 'disabled-bdb-101-03-2', name: '수영전임지도자(2명)', amt26: 69744, amt25: 0 },
-                        { id: 'disabled-bdb-101-03-3', name: '헬스지도자(1명)', amt26: 30752, amt25: 0 },
-                        { id: 'disabled-bdb-101-03-4', name: '안내데스크(3명)', amt26: 91296, amt25: 0 },
-                        { id: 'disabled-bdb-101-03-5', name: '수질관리사(3명)', amt26: 92256, amt25: 0 }
-                      ] }
-                    ]
-                  },
-                  { id: 'disabled-bdb-107', level: '목', code: '107', name: '퇴직금 등 기타', amt26: 200995, amt25: 111296,
-                    children: [
-                      { id: 'disabled-bdb-107-03', level: '세목', code: '107-03', name: '일반직 퇴직금 등 기타', amt26: 86158, amt25: 0, children: [
-                        { id: 'disabled-bdb-107-03-1', name: '퇴직적립금', calc: '차장·주임(행정)·주임(기술1,2) 4명분×12개월', amt26: 14744, amt25: 0 },
-                        { id: 'disabled-bdb-107-03-2', name: '4대보험법정부담금', calc: '1,500,000원×12개월×1=', amt26: 18000, amt25: 0 },
-                        { id: 'disabled-bdb-107-03-3', name: '연가보상비', calc: '4명분×7일', amt26: 3952, amt25: 0 },
-                        { id: 'disabled-bdb-107-03-4', name: '초과근무수당', calc: '4명분×240시간', amt26: 25392, amt25: 0 },
-                        { id: 'disabled-bdb-107-03-5', name: '건강검진(계약직 포함 14명)', calc: '500,000원×2명+400,000원×1명+300,000원×11명', amt26: 4700, amt25: 0 },
-                        { id: 'disabled-bdb-107-03-6', name: '단체상해보험', calc: '25,000원×12개월×4명=', amt26: 1200, amt25: 0 },
-                        { id: 'disabled-bdb-107-03-7', name: '성과상여금', calc: '6급(A) 1명, 9급(A) 2명, 9급(B) 1명', amt26: 12000, amt25: 0 },
-                        { id: 'disabled-bdb-107-03-8', name: '복지포인트', calc: '차장·주임(행정)·주임1,2(기술) 4명×1식', amt26: 6170, amt25: 0 }
-                      ] },
-                      { id: 'disabled-bdb-107-05', level: '세목', name: '기간제근로자 퇴직금 등 기타', amt26: 114837, amt25: 0, children: [
-                        { id: 'disabled-bdb-107-05-1', name: '퇴직적립금', calc: '기간제 8명분(정규+추가인원)×12개월', amt26: 26727, amt25: 0 },
-                        { id: 'disabled-bdb-107-05-2', name: '4대보험법정부담금', calc: '3,080,000원×12개월=', amt26: 36960, amt25: 0 },
-                        { id: 'disabled-bdb-107-05-3', name: '연가보상비', calc: '기간제 8명분(정규+추가인원)×5일', amt26: 5115, amt25: 0 },
-                        { id: 'disabled-bdb-107-05-4', name: '초과근무수당', calc: '기간제 8명분(정규+추가인원)×240시간', amt26: 46036, amt25: 0 }
-                      ] }
-                    ]
-                  }
-                ]
-              },
-              { id: 'disabled-bdb-detail3', level: '세부', name: '화성반다비체육센터(자산취득비)', amt26: 26280, amt25: 381145,
-                children: [
-                  { id: 'disabled-bdb-405', level: '목', code: '405', name: '자산취득비', amt26: 26280, amt25: 381145,
-                    children: [
-                      { id: 'disabled-bdb-405-01', level: '세목', code: '405-01', name: '자산및물품취득비', amt26: 26280, amt25: 381145, children: [
-                        { id: 'disabled-bdb-405-01-1', name: '사무용컴퓨터 구입', calc: '780,000원×3대=', amt26: 2340, amt25: 0 },
-                        { id: 'disabled-bdb-405-01-2', name: '사무용모니터 구입', calc: '180,000원×3대=', amt26: 540, amt25: 0 },
-                        { id: 'disabled-bdb-405-01-3', name: '사무용책상 구입', calc: '210,000원×1개=', amt26: 210, amt25: 0 },
-                        { id: 'disabled-bdb-405-01-4', name: '사무용의자 구입', calc: '170,000원×3개=', amt26: 510, amt25: 0 },
-                        { id: 'disabled-bdb-405-01-5', name: '책상서랍 구입', calc: '170,000원×4개=', amt26: 680, amt25: 0 },
-                        { id: 'disabled-bdb-405-01-6', name: '배리어프리 키오스크 구입', calc: '22,000,000원×1대=', amt26: 22000, amt25: 0 }
-                      ] }
                     ]
                   }
                 ]
@@ -6086,10 +5480,6 @@ var SPORTS_BIZ_TREES = {
   });
 })(SPORTS_BIZ_TREES);
 var sportsBizState = { list: [], selected: 0 };
-// 사업카드 중 실제 운영인력이 있는 곳(반다비체육센터 등)의 현원 - 사업개요 기준. "N개 사업" 뱃지 대신 이 정보를 우선 보여준다.
-var SPORTS_BIZ_HEADCOUNT = {
-  '반다비체육센터 운영': { total: 15, groups: [ { label: '일반직', count: 4 }, { label: '계약직', count: 11 } ] }
-};
 function renderSportsBizCards(list, selectedIdx) {
   var el = document.getElementById('card-grid');
   if (!el) return;
@@ -6110,28 +5500,20 @@ function renderSportsBizDetail(idx) {
   applyTreeColWidths();
   setupTreeColResize();
 
-  // 기관 정현원 뱃지와는 완전히 분리된 전용 자리(sports-biz-badge)에 표시할 내용을 정한다.
-  // 실제 운영인력 정보가 있는 사업(반다비체육센터 등)은 현원을 우선 보여주고,
-  // 그 외 민간사업보조처럼 여러 세부사업을 하나의 카테고리 카드로 묶은 경우엔 "N개 사업" 뱃지 + 호버 시 사업명 목록을 보여준다.
-  var badgeRow = document.getElementById('sports-biz-badge-row');
-  var badgeEl = document.getElementById('sports-biz-badge');
+  // 민간사업보조처럼 여러 세부사업을 하나의 카테고리 카드로 묶은 경우, 정현원 뱃지 자리에
+  // "N개 사업" 뱃지 + 호버 시 사업명 목록을 보여준다(다른 기관의 정현원 뱃지와 동일한 UI를 재사용).
+  var badgeRow = document.getElementById('tab-headcount-badge-row');
+  var badgeEl = document.getElementById('tab-headcount-badge');
   var tree = SPORTS_BIZ_TREES[biz.label];
   var subNames = (tree && tree.children[0] && tree.children[0].children[0])
     ? tree.children[0].children[0].children.map(function (d) { return d.name; })
     : [];
-  var infoIconHtml = '<span class="headcount-info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>';
-  var bizHeadcount = SPORTS_BIZ_HEADCOUNT[biz.label];
-  if (badgeEl && bizHeadcount) {
-    var hcDetailText = bizHeadcount.groups.map(function (g) { return g.label + ' ' + g.count; }).join(', ');
-    badgeEl.innerHTML = '<span class="headcount-summary">현원 ' + bizHeadcount.total + infoIconHtml + '</span>'
-      + '<div class="headcount-detail-pop">' + escapeHtml(hcDetailText) + '</div>';
-    if (badgeRow) badgeRow.style.display = 'flex';
-    alignHeadcountBadge('sports-biz-badge', 'sports-biz-badge-row');
-  } else if (badgeEl && subNames.length > 1) {
+  if (badgeEl && subNames.length > 1) {
+    var infoIconHtml = '<span class="headcount-info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>';
     badgeEl.innerHTML = '<span class="headcount-summary">' + subNames.length + '개 사업' + infoIconHtml + '</span>'
       + '<div class="headcount-detail-pop">' + subNames.map(escapeHtml).join(', ') + '</div>';
     if (badgeRow) badgeRow.style.display = 'flex';
-    alignHeadcountBadge('sports-biz-badge', 'sports-biz-badge-row');
+    alignHeadcountBadge();
   } else {
     if (badgeEl) badgeEl.innerHTML = '';
     if (badgeRow) badgeRow.style.display = 'none';
@@ -6210,10 +5592,7 @@ function sportsBizDetailHtml(biz) {
 
   var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters">' + filterToggleHtml + '</div>' + noteBtnHtml + '</div>';
 
-  // 화성시체육회의 "민간사업보조" 5개 카테고리와 동일하게, 장애인체육회의 "민간사업보조" 성격 카드(민간경상사업보조/민간행사사업보조)도
-  // 세부사업명 셀을 강조 표시한다. (반다비체육센터 운영·장애인체육회 운영은 화성시체육회의 민간위탁금·민간단체법정운영보조에 대응하므로 제외)
-  var isPrivateBizCategory = SPORTS_PRIVATE_BIZ_CATEGORIES.some(function (c) { return c.label === biz.label; })
-    || biz.label === '민간경상사업보조' || biz.label === '민간행사사업보조';
+  var isPrivateBizCategory = SPORTS_PRIVATE_BIZ_CATEGORIES.some(function (c) { return c.label === biz.label; });
   return '<div class="detail-inner' + (isPrivateBizCategory ? ' private-biz-category-tree' : '') + '">'
     + bottomRowHtml
     + teamTreesHtml
@@ -6254,14 +5633,14 @@ var SPORTS_COUNCIL_DATA = {
   // 지출은 지출총괄표의 통계목(47개 세부사업 라인) 전부를 인건비/운영경비/사업비 3구간으로 집계 — 합계가 원문 총계와 정확히 일치함을 검증함.
   // 수입총괄표의 관/항/목/세목 중 값이 그대로 이어지는(자식이 하나뿐인) 단계는 생략하고, 실제로 갈라지는 항목만 남긴 목록.
   revenueItems: [
+    { label: '국고보조금 등', y26: 162120, y25: 214190 },
+    { label: '도비보조금 등', y26: 194268, y25: 780326 },
     { label: '시비보조금 등', y26: 8550475, y25: 9193918 },
     { label: '체육진흥기금', y26: 351500, y25: 313900 },
-    { label: '도비보조금 등', y26: 194268, y25: 780326 },
-    { label: '국고보조금 등', y26: 162120, y25: 214190 },
-    { label: '보전수입 등', sub: '전년도 이월사업비', subDisplay: 'footnote', y26: 128809, y25: 164294 },
-    { label: '자체수입금 등', sub: '종목단체(장) 및 임원회비', subDisplay: 'footnote', y26: 116000, y25: 114000 },
-    { label: '기타수입', sub: '기부금수입', subDisplay: 'inline', y26: 22000, y25: 110546 },
-    { label: '세외수입', sub: '이자수입', subDisplay: 'inline', y26: 22, y25: 113 }
+    { label: '세외수입', sub: '이자수입', y26: 22, y25: 113 },
+    { label: '기타수입', sub: '기부금수입', y26: 22000, y25: 110546 },
+    { label: '자체수입금 등', sub: '종목단체(장) 및 임원회비', y26: 116000, y25: 114000 },
+    { label: '보전수입 등', sub: '전년도 이월사업비', y26: 128809, y25: 164294 }
   ],
   budgetCompare: [
     { label: '인건비', y26: 2881500, y25: 2582712 },
@@ -6411,33 +5790,13 @@ var DISABLED_SPORTS_COUNCIL_DATA = {
   // 회계별(화성시보조금/화성시위탁금/생활체육지도자배치/국도지원프로그램/체육진흥기금) 소계 5개 합이 총계(3,509,000천원/3,405,876천원)와 정확히 일치함을 검증함.
   budgetCompare: [],
   revenueItems: [
-    { label: '위탁금', y26: 1790304, y25: 1669595 },
+    { label: '국도비 보조금', y26: 52200, y25: 97906 },
     { label: '시보조금', y26: 1308706, y25: 1288453 },
-    { label: '장애인생활체육지도자 배치', sub: '국/도/시', y26: 287790, y25: 281022 },
     { label: '체육진흥기금', y26: 70000, y25: 68900 },
-    { label: '국도비 보조금', y26: 52200, y25: 97906 }
+    { label: '위탁금', y26: 1790304, y25: 1669595 },
+    { label: '장애인생활체육지도자 배치', sub: '국/도/시', y26: 287790, y25: 281022 }
   ],
-  // 구글드라이브 "2026년 장애인체육회 수입 내역 및 지출 계획.pdf" 2쪽(2026년 국·도·시 보조금 지출 계획) 기준.
-  // 장/관/항/목 구조 중 장(재원구분)·관(사업명) 단위까지만 남기고, 항·목(세부 통계목) 단계는 제외.
-  // 2025년 지출 계획은 원문에 없어 0으로 비워둠(증감액은 2026년 금액과 동일하게, 증감률은 0.0%로 표시됨).
-  // 5개 장 합이 총계(3,513,900천원)와 정확히 일치함을 검증함.
-  expenseDetail: [
-    { label: '시보조금', y26: 1308706, y25: 0, items: [
-      { label: '일반사업보조금', y26: 1308706, y25: 0 }
-    ] },
-    { label: '시위탁금', y26: 1790304, y25: 0, items: [
-      { label: '화성 반다비체육센터 운영', y26: 1790304, y25: 0 }
-    ] },
-    { label: '장애인생활체육지도자 배치', y26: 287790, y25: 0, items: [
-      { label: '장애인생활체육지도자 배치', y26: 287790, y25: 0 }
-    ] },
-    { label: '국·도 기금 지원', y26: 57100, y25: 0, items: [
-      { label: '생활체육프로그램', y26: 57100, y25: 0 }
-    ] },
-    { label: '체육진흥기금', y26: 70000, y25: 0, items: [
-      { label: '체육진흥관리비', y26: 70000, y25: 0 }
-    ] }
-  ]
+  expenseDetail: []
 };
 
 // 예산 목차 임시 항목의 기관명(헤더)을 눌렀을 때 - 실제 기관과 동일하게 "기관 현황"(정현원/수입/지출/예산편성) 화면 구성을 보여준다.
@@ -6505,53 +5864,35 @@ function showPlaceholderInstOverview(name) {
     // 2026년 수입총괄 - 수입총괄표의 관/항/목/세목 중 실제로 갈라지는 항목만 남긴 전체 목록
     var revTotal26 = d.revenueItems.reduce(function (a, r) { return a + r.y26; }, 0);
     var revTotal25 = d.revenueItems.reduce(function (a, r) { return a + r.y25; }, 0);
-    var revFootnotes = [];
     var revRowsHtml = d.revenueItems.map(function (r) {
-      var labelHtml = escapeHtml(r.label);
-      if (r.sub) {
-        if (r.subDisplay === 'inline') {
-          labelHtml += ' <span class="ov2-rev-sub-label ov2-rev-sub-inline">(' + escapeHtml(r.sub) + ')</span>';
-        } else if (r.subDisplay === 'footnote') {
-          revFootnotes.push(r.label + ': ' + r.sub);
-        } else {
-          labelHtml += '<br><span class="ov2-rev-sub-label">(' + escapeHtml(r.sub) + ')</span>';
-        }
-      }
+      var labelHtml = escapeHtml(r.label) + (r.sub ? '<br><span class="ov2-rev-sub-label">(' + escapeHtml(r.sub) + ')</span>' : '');
       return '<tr><td>' + labelHtml + '</td><td>' + fmtWon(r.y26) + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
     }).join('');
     var revTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(revTotal26) + '</td><td>' + fmtWon(revTotal25) + '</td>' + diffCellHtml(revTotal25, revTotal26) + '</tr>';
-    var revFootnoteHtml = revFootnotes.length ? '<p class="ov2-rev-footnote">* ' + revFootnotes.map(escapeHtml).join(' · ') + '</p>' : '';
     var incomeHtml = '<div class="summary-box">' + buildIncomeProportionBar(d.revenueItems, revTotal26)
       + '<p class="ov2-unit-note">(단위: 천원)</p>'
-      + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table"><thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>' + revFootnoteHtml + '</div>';
+      + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table"><thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div></div>';
 
     // 2026년 지출총괄 - 지출총괄표의 세부사업 54개 전부. 통계목 하나뿐인 사업은 "사업명 (통계목)" 한 줄로, 여러 개면 소계+세부 행으로.
-    // 사업명 옆 "(일반운영비)" 등 통계목 표기는 구분 열에서는 생략하고 사업명만 보여준다.
-    var stripAcctSuffix = function (label) {
-      return label.replace(/\s\((일반운영비|민간이전|인건비)\)$/, '');
-    };
     var expProgramBlocks = d.expenseDetail.map(function (p) {
       if (p.items) {
-        var headRow = '<tr class="ov2-eb-section"><td>' + escapeHtml(stripAcctSuffix(p.label)) + '</td><td>' + fmtWon(p.y26) + '</td><td>' + fmtWon(p.y25) + '</td>' + diffCellHtml(p.y25, p.y26) + '</tr>';
+        var headRow = '<tr class="ov2-eb-section"><td>' + escapeHtml(p.label) + '</td><td>' + fmtWon(p.y26) + '</td><td>' + fmtWon(p.y25) + '</td>' + diffCellHtml(p.y25, p.y26) + '</tr>';
         var subRows = p.items.map(function (it) {
-          return '<tr class="ov2-eb-row"><td>' + escapeHtml(stripAcctSuffix(it.label)) + '</td><td>' + fmtWon(it.y26) + '</td><td>' + fmtWon(it.y25) + '</td>' + diffCellHtml(it.y25, it.y26) + '</tr>';
+          return '<tr class="ov2-eb-row"><td>' + escapeHtml(it.label) + '</td><td>' + fmtWon(it.y26) + '</td><td>' + fmtWon(it.y25) + '</td>' + diffCellHtml(it.y25, it.y26) + '</tr>';
         }).join('');
         return { html: headRow + subRows, rows: 1 + p.items.length };
       }
-      return { html: '<tr><td>' + escapeHtml(stripAcctSuffix(p.label)) + '</td><td>' + fmtWon(p.y26) + '</td><td>' + fmtWon(p.y25) + '</td>' + diffCellHtml(p.y25, p.y26) + '</tr>', rows: 1 };
+      return { html: '<tr><td>' + escapeHtml(p.label) + '</td><td>' + fmtWon(p.y26) + '</td><td>' + fmtWon(p.y25) + '</td>' + diffCellHtml(p.y25, p.y26) + '</tr>', rows: 1 };
     });
     var expDetailTotal26 = d.expenseDetail.reduce(function (a, p) { return a + p.y26; }, 0);
     var expDetailTotal25 = d.expenseDetail.reduce(function (a, p) { return a + p.y25; }, 0);
     var expDetailTotalHtml = '<tr class="total"><td>총 계</td><td>' + fmtWon(expDetailTotal26) + '</td><td>' + fmtWon(expDetailTotal25) + '</td>' + diffCellHtml(expDetailTotal25, expDetailTotal26) + '</tr>';
     var expTableHead = '<thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead>';
     // 옆 수입총괄 표(총계 1행 + 항목 8행 = 9행) 길이만큼만 기본 노출하고, 그 이후는 "더보기"로 - 사업 중간을 자르지 않고 완결 단위로 끊는다.
-    // 단, 표 전체 행 수가 짧으면(예: 장애인체육회) 굳이 나눌 필요가 없으니 통째로 다 보여준다.
     var targetVisibleRows = d.revenueItems.length;
-    var totalExpRows = expProgramBlocks.reduce(function (a, blk) { return a + blk.rows; }, 0);
     var visibleHtml = '', hiddenHtml = '', visibleRowCount = 0, hiddenCount = 0, splitDone = false;
-    var skipSplit = totalExpRows <= 12;
     expProgramBlocks.forEach(function (blk) {
-      if (skipSplit || (!splitDone && visibleRowCount < targetVisibleRows)) {
+      if (!splitDone && visibleRowCount < targetVisibleRows) {
         visibleHtml += blk.html;
         visibleRowCount += blk.rows;
       } else {
@@ -6787,7 +6128,7 @@ function switchPanel(panelId) {
 // 지침: 2026년도 지방출자·출연기관 예산편성지침 Ⅲ-1(인건비)
 // ============================================================
 var LC = {
-  view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'basis'(기준값 작업)
+  view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'basis'(기준값 작업) | 'final'(기준값 최종 정리)
   basis: { institutionId: '', fundType: '출연금', dept: '', workGroup: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '', statusFilter: '' },
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
@@ -7355,6 +6696,150 @@ function lcBasisGuideSection() {
     + '</div>';
 }
 
+// ---- 기준값 (최종) — "기준값 작업" 탭에서 4개 기관 전체를 대조해 확정한 정리본. 기관이 실제 보유한 재원만 표시(FC=출연금만, 도시공사=위탁금만). ----
+function lcFinalBadge(status) {
+  var color = status === '일치' ? 'var(--success)' : status === '불일치' ? 'var(--danger)' : 'var(--dept-tour)';
+  return '<span style="color:' + color + ';font-weight:700;">' + status + '</span>';
+}
+function lcFinalPill(label, count, kind) {
+  var color = kind === 'good' ? 'var(--success)' : kind === 'bad' ? 'var(--danger)' : 'var(--dept-tour)';
+  var bg = kind === 'good' ? 'var(--success-soft)' : kind === 'bad' ? 'var(--danger-soft)' : 'var(--dept-tour-bg)';
+  return '<span style="display:inline-block;padding:3px 10px;border-radius:999px;background:' + bg + ';color:' + color + ';font-weight:700;font-size:12.5px;margin-right:6px;">' + label + ' ' + count + '</span>';
+}
+function lcFinalTable(headers, rowsHtml) {
+  return '<div style="overflow:auto;"><table class="lc-table"><thead><tr>'
+    + headers.map(function (h) { return '<th' + (h.formula ? ' class="lc-th-formula"' : '') + '>' + h.t + '</th>'; }).join('')
+    + '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+}
+function lcFinalRow(cells) {
+  return '<tr>' + cells.map(function (c) {
+    if (c && c.formula) return '<td class="lc-formula">' + c.v + '</td>';
+    if (c && c.status) return '<td>' + lcFinalBadge(c.v) + '</td>';
+    if (c && typeof c === 'object') return '<td style="text-align:right">' + c.v + '</td>';
+    return '<td>' + c + '</td>';
+  }).join('') + '</tr>';
+}
+function lcFinalFundBlock(title, tag, counts, bodyHtml) {
+  return '<div style="margin:18px 0 30px;">'
+    + '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">'
+    + '<h4 style="margin:0;font-size:15.5px;font-weight:800;">' + title + '</h4>'
+    + '<span style="font-size:11.5px;color:var(--text-soft);background:var(--bg-hover);border-radius:999px;padding:2px 10px;">' + tag + '</span>'
+    + '<span style="margin-left:auto;">' + lcFinalPill('일치', counts[0], 'good') + lcFinalPill('불일치', counts[1], 'bad') + lcFinalPill('확인필요', counts[2], 'warn') + '</span>'
+    + '</div>' + bodyHtml + '</div>';
+}
+function lcFinalSection() {
+  var out = '<div class="summary-box" style="border-left:4px solid var(--accent);background:var(--surface-2, var(--bg-hover));">'
+    + '<h3>인건비 기준값 (최종) <span style="font-size:12.5px;font-weight:600;color:var(--text-soft);">— 2026년 예산요구서 · 기준값 작업 전수 대조 결과</span></h3>'
+    + '<p style="color:var(--text-muted);margin:0 0 4px;">기관마다 실제 보유한 재원(출연금/위탁금)만 수록했습니다. 화성FC는 위탁금이, 화성시도시공사는 출연금이 없어 각각 한쪽만 표시합니다.</p>'
+    + '</div>';
+
+  // ===== 1. 화성시문화관광재단 =====
+  out += '<div class="lc-section" style="border-left-color:var(--dept-culture)">'
+    + '<h3>① 화성시문화관광재단 <span class="lc-cat-tag" style="background:var(--dept-culture-bg);color:var(--dept-culture);">정원 408 · 현원 386 · 결원율 5.4%</span></h3>';
+
+  out += lcFinalFundBlock('출연금', '기관 운영 요구서 전체 통합', [108, 6, 37],
+    lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }, { t: '적용률' }],
+      lcFinalRow(['대표이사', { v: '95,793,000' }, { v: '1' }, '103.5%'])
+      + lcFinalRow(['2급', { v: '—' }, { v: '0(공석)' }, '3·4급 격차비 추정치, 검증 필요'])
+      + lcFinalRow(['3급', { v: '4,775,000' }, { v: '28' }, '103.5% / 60%(명절)'])
+      + lcFinalRow(['4급', { v: '3,745,000' }, { v: '18' }, '103.5% / 60%'])
+      + lcFinalRow(['5급', { v: '3,231,000' }, { v: '38' }, '103.5% / 60%'])
+      + lcFinalRow(['6급', { v: '2,435,000 / 2,335,000' }, { v: '56' }, '103.5% / 60%'])
+      + lcFinalRow(['기타직(통합평균)', { v: '76,234,600' }, { v: '4' }, '103.5%'])
+      + lcFinalRow(['무기계약직', { v: '2,563,020' }, { v: '9' }, '—'])
+      + lcFinalRow(['기간제', { v: '2,156,880' }, { v: '4' }, '—']))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b> · 기술자격수당 3·4급 60,000 / 5·6급 50,000 · 정근수당가산금 30,000~130,000(5년미만~10년이상) · 정액급식비(3급~6급) 140,000 · 직급보조비 3급 185,000 / 4급 180,000 / 5·6급 175,000</p>'
+    + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '자동계산(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['퇴직급여 및 퇴직급여충당금', { v: '6,460,798,000÷12×103.8%', formula: true }, { v: '558,859' }, { v: '0' }, { v: '불일치', status: true }])
+      + lcFinalRow(['가급 기관장 평가급', { v: '7,900,000×190%', formula: true }, { v: '15,010' }, { v: '0' }, { v: '불일치', status: true }])
+      + lcFinalRow(['가급 기관 평가급', { v: '200,000,000×1식', formula: true }, { v: '200,000' }, { v: '0' }, { v: '불일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>4대보험(목304, 기준액 6,460,798,000원)</b> · 국민연금 6.75%=436,104 · 건강보험 3.645%=235,497 · 장기요양(건강보험×12.95%)=30,497 · 고용보험 1.55%=100,143 · 산재보험 0.726%=46,906천원 — <span style="color:var(--danger);font-weight:700;">국민연금 6.75%는 법정 사업주부담률(2025년 4.5% / 2026년 4.75%)과 불일치, 출처 재확인 필요</span></p>'
+    + '<p class="lc-hint"><b>불일치 6건 전부 &ldquo;요구액 0원&rdquo; 패턴</b> · 위 3건 외에 전시공간 보수 및 작품수선유지비(10,000,000×1회, +10,000) · 심사수당(300,000×5명×2회, +3,000) · 심사수당(200,000×10명×1회, +2,000). 확인필요 37건은 대부분 상위 합계행으로 하위 개별항목은 이미 일치 처리됨.</p>'
+  );
+
+  out += lcFinalFundBlock('위탁금', '사업·본부별 통합(동일 산식만)', [68, 4, 0],
+    '<p class="lc-hint"><b>퇴직급여충당금</b> — 사업(본부) 5건, 전부 정상 편성(요구액과 일치): 2,228,917,000 / 1,525,028,000 / 386,561,000 / 477,961,000 / 1,953,981,000원 각각 ÷12×103.8%. <span style="color:var(--danger);font-weight:700;">같은 산식인데 출연금 쪽만 요구액 0원 — 담당 부서 확인 필요.</span></p>'
+    + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '차이(천원)' }],
+      lcFinalRow(['수영장 타일 보수공사', { v: '167,000,000×1회', formula: true }, { v: '+167,000' }])
+      + lcFinalRow(['청사관리', { v: '1,167,000×12월', formula: true }, { v: '+14,004' }])
+      + lcFinalRow(['참석수당', { v: '40,000×20명×10회', formula: true }, { v: '+8,000' }])
+      + lcFinalRow(['문화가 있는 날', { v: '500,000×3회', formula: true }, { v: '+1,500' }]))
+  );
+  out += '</div>';
+
+  // ===== 2. 화성시인재육성재단 =====
+  out += '<div class="lc-section" style="border-left-color:var(--dept-library)">'
+    + '<h3>② 화성시인재육성재단 <span class="lc-cat-tag" style="background:var(--dept-library-bg);color:var(--dept-library);">정원 170 · 현원 164 · 결원율 3.5%(기준 이내)</span></h3>';
+
+  out += lcFinalFundBlock('출연금', '기관 운영 요구서 전체 통합', [148, 1, 8],
+    lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
+      lcFinalRow(['대표이사', { v: '8,676,400 / 8,136,400' }, { v: '2' }])
+      + lcFinalRow(['3급', { v: '3,848,900 / 3,732,280 / 4,897,470' }, { v: '61' }])
+      + lcFinalRow(['4급', { v: '4,168,660 / 3,219,200' }, { v: '40' }])
+      + lcFinalRow(['5급', { v: '2,434,400 / 3,174,560' }, { v: '62' }])
+      + lcFinalRow(['6급', { v: '2,068,300 / 2,688,400' }, { v: '44' }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b> · 가족수당 배우자 40,000 / 직계비속 50,000·80,000·120,000 / 직계존속 20,000 · 정액급식비 140,000 · 직급보조비 대표이사 400,000 / 3급 185,000 / 4급 180,000 / 5·6급 175,000</p>'
+    + '<div class="callout" style="border-left:3px solid var(--dept-tour);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>퇴직급여·평가급 항목 없음.</b> 148건 전체에 관련 산식이 원자료에 존재하지 않습니다. HSCF처럼 &ldquo;산식은 있는데 요구액 0원&rdquo;이 아니라 항목 자체가 없는 것이므로, 별도 퇴직연금(DC/DB) 가입 여부와 회계 처리 방식을 먼저 확인해야 합니다.</div>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>불일치 1건</b> · 홈페이지 기능개선(20,350,000×1식) → 요구액 0원, +20,350천원. <b>확인필요 8건</b>은 전부 시스템 유지보수(홈페이지·통합경영정보시스템 등 분기 산정) — 경비성 항목이 인건비 원자료에 섞여있는 것으로 추정.</p>'
+  );
+
+  out += lcFinalFundBlock('위탁금', '도서관 운영 등 사업별', [31, 1, 1],
+    '<p class="lc-hint"><b>기본급</b> · 일반직 3급 4,090,900 / 4,161,200 / 3,848,900원 · 무기계약직(도서관 실무) 2,620,024 · 166,770 · 140,000 · 2,221,590(1단계)원</p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출기초', formula: true }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['퇴직급여(무기계약직)', { v: '2,620,024×7명×12월×8.33%', formula: true }, { v: '18,333' }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">8.33%는 근로자퇴직급여보장법의 표준 1개월분/12개월 방식 — HSCF의 103.8% 충당금 산식과 계산 근거 자체가 다릅니다.</p>'
+    + '<p class="lc-hint"><b>불일치 1건</b> · 운영협의회 선출 심사수당(500,000×2명) → +1,000천원</p>'
+  );
+  out += '</div>';
+
+  // ===== 3. 화성FC =====
+  out += '<div class="lc-section" style="border-left-color:var(--dept-tour)">'
+    + '<h3>③ 화성FC <span class="lc-cat-tag" style="background:var(--dept-tour-bg);color:var(--dept-tour);">정원 19 · 현원 16 · 결원율 15.8%(기준 대폭 초과)</span></h3>';
+
+  out += lcFinalFundBlock('출연금', '위탁금 재원 없음 · 유일한 재원', [102, 0, 0],
+    '<p class="lc-hint">4개 기관 중 유일하게 102건 전 항목이 산식·요구액 완전 일치합니다.</p>'
+    + lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
+      lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300' }, { v: '2' }])
+      + lcFinalRow(['2급(사무국장, 5급상당)', { v: '6,735,000' }, { v: '2' }])
+      + lcFinalRow(['3급', { v: '4,733,000 / 3,859,000' }, { v: '24' }])
+      + lcFinalRow(['4급', { v: '3,790,000 / 2,997,000' }, { v: '16' }])
+      + lcFinalRow(['5급', { v: '3,335,000 / 2,574,000' }, { v: '32' }])
+      + lcFinalRow(['6급', { v: '2,708,000 / 2,087,000' }, { v: '56' }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>축구단 직군 개별 단가</b>(&ldquo;기본급&rdquo; 목 안에 42건 혼재) · 감독 200,000,000/년 · 수석코치 6,125,000/월 · 스카우터 5,833,333/월 · 코치 4,375,000/월 · 피지컬코치 5,950,000/월 · U-12·15·18 감독·코치 3,000,000~4,500,000/월</p>'
+    + '<div class="callout" style="border-left:3px solid var(--dept-tour);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>퇴직급여·평가급 항목 없음.</b> 인재육성재단 출연금과 같은 양상 — 축구단 특유 계약직군(감독·코치 등)의 퇴직금 처리 방식을 별도 확인 필요.</div>'
+  );
+  out += '</div>';
+
+  // ===== 4. 화성시도시공사 =====
+  out += '<div class="lc-section" style="border-left-color:var(--dept-temp)">'
+    + '<h3>④ 화성시도시공사 <span class="lc-cat-tag" style="background:var(--dept-temp-bg);color:var(--dept-temp);">정원 907 · 현원 787 · 결원율 13.2%(기준 대폭 초과)</span></h3>';
+
+  out += lcFinalFundBlock('위탁금', '출연금 재원 없음 · 유일한 재원', [49, 0, 31],
+    lcFinalTable([{ t: '구분' }, { t: '단가(원/년)' }],
+      lcFinalRow(['2급', { v: '84,991,284 / 84,992,000' }])
+      + lcFinalRow(['3급', { v: '66,213,828 / 66,514,284 / 66,514,668' }])
+      + lcFinalRow(['4급', { v: '57,233,368' }])
+      + lcFinalRow(['기간제', { v: '2,526,810(월) / 30,321,720(년)' }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(DB형 퇴직연금, 1/12 방식)</b> · 무기계약직(13명) 606,269,000×1/12=50,523천원(일치) · 기간제(2명) 73,025,000×1/12=6,086천원(일치)</p>'
+    + '<p class="lc-hint"><b>평가급(공무직 경영평가급)</b> · 2,962,930×10명×100%=29,630천원(일치) · 2,962,930×13명×100%=38,519천원(일치)</p>'
+    + '<p class="lc-hint"><b>4대보험</b> · 국민연금 4.5%로 여러 사업에 일관 적용, 요구액과 전부 일치. 2025년까지의 법정 사업주부담률과 같은 값이나, <span style="color:var(--danger);font-weight:700;">2026년 4.75%, 2027년 5.0%로 법정 인상이 이미 시작</span>되어 갱신이 필요합니다.</p>'
+    + '<p class="lc-hint">확인필요 31건은 대부분 &ldquo;기본연봉(N명)&rdquo; 형태의 부서별 합계행 — 하위 급수별 항목은 이미 일치 처리됨.</p>'
+  );
+  out += '</div>';
+
+  // ===== 공통 검토사항 =====
+  out += '<div class="summary-box" style="border-left:4px solid var(--danger);">'
+    + '<h3>공통 검토사항</h3>'
+    + '<ol style="margin:0;padding-left:20px;color:var(--text-muted);line-height:1.9;">'
+    + '<li><b style="color:var(--text);">HSCF 출연금 퇴직급여충당금 5.6억원 미편성</b> — 4개 기관 중 &ldquo;산식은 있는데 요구액 0원&rdquo;으로 확정 지을 수 있는 유일한 사례. 같은 재단 위탁금 사업 5건은 동일 산식으로 전부 정상 편성돼 대비가 뚜렷함.</li>'
+    + '<li><b style="color:var(--text);">4대보험 요율 최신화</b> — 국민연금 사업주부담률은 2025년 4.5% → 2026년 4.75% → 2027년 5.0%로 법정 인상 중. HSCF 계산기 기본값(6.75%)은 출처 불명, 도시공사 실제자료(4.5%)는 인상 전 구요율. 건강보험(2026년 3.595%)·장기요양(2026년 13.14%)도 함께 갱신 필요.</li>'
+    + '<li><b style="color:var(--text);">결원율 지침 기준(5%) 초과 — FC·도시공사</b> — FC 15.8%, 도시공사 13.2%로 대폭 초과. 채용 절차 진행 등 지침상 예외 사유 해당 여부 확인 필요. 문화관광재단(5.4%) 근소 초과, 인재육성재단(3.5%)만 기준 이내.</li>'
+    + '<li><b style="color:var(--text);">퇴직급여·평가급 산식이 기관마다 상이</b> — HSCF는 기준액÷12×103.8% 충당금 방식, 인재육성재단·도시공사는 1/12(=8.33%) 표준 방식. 인재육성재단·FC 출연금은 일반직 퇴직급여 산식 자체가 원자료에 없어 별도 확인 필요.</li>'
+    + '</ol></div>';
+
+  return out;
+}
+
 function renderLaborCalc() {
   var el = document.getElementById('laborcalc-body');
   if (!el) return;
@@ -7585,6 +7070,8 @@ function renderLaborCalc() {
     + '<label class="option" for="lc-opt-pension">연금</label>'
     + '<input ' + (LC.view === 'basis' ? 'checked' : '') + ' id="lc-opt-basis" name="lc-options" type="radio" onchange="lcSetView(\'basis\')" />'
     + '<label class="option" for="lc-opt-basis">기준값 작업</label>'
+    + '<input ' + (LC.view === 'final' ? 'checked' : '') + ' id="lc-opt-final" name="lc-options" type="radio" onchange="lcSetView(\'final\')" />'
+    + '<label class="option" for="lc-opt-final">기준값 (최종)</label>'
     + '<span class="background"></span>'
     + '</div>';
 
@@ -7609,6 +7096,7 @@ function renderLaborCalc() {
     : LC.view === 'eval' ? section07
     : LC.view === 'pension' ? section05
     : LC.view === 'basis' ? lcBasisSection()
+    : LC.view === 'final' ? lcFinalSection()
     : laborHtml;
   var topRow = '<div class="lc-top-row">' + toggleHtml + (LC.view === 'labor' ? raiseHtml : '') + '</div>';
   el.innerHTML = topRow + viewHtml;
@@ -7671,9 +7159,6 @@ async function selectBudget(instKey, fund) {
     if (roundRadioEl) roundRadioEl.style.display = '';
     var badgeRowEl = document.getElementById('tab-headcount-badge-row');
     if (badgeRowEl) badgeRowEl.style.display = '';
-    // 화성시체육회/장애인체육회 화면에서 쓰던 "N개 사업" 뱃지가 남아있지 않도록 초기화
-    var sportsBizBadgeRowEl = document.getElementById('sports-biz-badge-row');
-    if (sportsBizBadgeRowEl) sportsBizBadgeRowEl.style.display = 'none';
     var summaryTitleElRestore = document.getElementById('summary-title');
     var summaryTitleRowRestore = summaryTitleElRestore ? summaryTitleElRestore.closest('.section-title-row') : null;
     if (summaryTitleRowRestore) summaryTitleRowRestore.style.display = '';
