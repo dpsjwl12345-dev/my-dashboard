@@ -7181,8 +7181,9 @@ function switchPanel(panelId) {
 // 지침: 2026년도 지방출자·출연기관 예산편성지침 Ⅲ-1(인건비)
 // ============================================================
 var LC = {
-  view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'basis'(기준값 작업) | 'final'(기준값 최종 정리)
+  view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'final'(기준값 최종 정리, 원자료 조회 포함)
   basis: { institutionId: '', fundType: '출연금', dept: '', workGroup: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '', statusFilter: '' },
+  final: { instKey: 'hscf', fundType: '', rawOpen: false }, // 기준값 (최종) 탭 상단 고정 필터: instKey(기관) | fundType(''=전체, '출연금'|'위탁금') | rawOpen(원자료 아코디언 열림 상태 — 리렌더 후에도 유지하려고 DOM classList 대신 여기서 추적)
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
   // 대우수당(treatmentCount)은 실제 데이터상 기본급 인원과 다른 별도 인원 기준으로 산정됨(직급 내 일부 대상자만 해당) — 2026년 실측치 그대로 반영.
@@ -7801,20 +7802,74 @@ function lcFinalFundBlock(title, tag, counts, bodyHtml) {
     + '<span style="margin-left:auto;">' + lcFinalPill('일치', counts[0], 'good') + lcFinalPill('불일치', counts[1], 'bad') + lcFinalPill('확인필요', counts[2], 'warn') + '</span>'
     + '</div>' + bodyHtml + '</div>';
 }
+var LC_FINAL_INSTS = [
+  { key: 'hscf', label: '① 화성시문화관광재단', funds: ['출연금', '위탁금'] },
+  { key: 'talent', label: '② 화성시인재육성재단', funds: ['출연금', '위탁금'] },
+  { key: 'fc', label: '③ 화성FC', funds: ['출연금'] },
+  { key: 'corp', label: '④ 화성시도시공사', funds: ['위탁금'] }
+];
+function lcFinalSetInst(key) {
+  LC.final.instKey = key;
+  var inst = LC_FINAL_INSTS.filter(function (i) { return i.key === key; })[0];
+  if (inst && inst.funds.indexOf(LC.final.fundType) === -1) LC.final.fundType = '';
+  renderLaborCalc();
+}
+function lcFinalSetFund(fund) {
+  LC.final.fundType = fund;
+  renderLaborCalc();
+}
+function lcFinalToggleRaw() {
+  LC.final.rawOpen = !LC.final.rawOpen;
+  renderLaborCalc();
+}
+function lcFinalFilterBar() {
+  var f = LC.final;
+  var inst = LC_FINAL_INSTS.filter(function (i) { return i.key === f.instKey; })[0] || LC_FINAL_INSTS[0];
+  var instBtns = LC_FINAL_INSTS.map(function (i) {
+    var active = i.key === f.instKey;
+    return '<button type="button" onclick="lcFinalSetInst(\'' + i.key + '\')" style="padding:7px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap;">' + i.label + '</button>';
+  }).join('');
+  var fundBtns = [''].concat(inst.funds).map(function (fund) {
+    var active = fund === f.fundType;
+    return '<button type="button" onclick="lcFinalSetFund(\'' + fund + '\')" style="padding:6px 12px;border-radius:999px;border:1px solid ' + (active ? 'var(--dept-tour)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--dept-tour)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:12.5px;font-weight:600;">' + (fund || '전체 재원') + '</button>';
+  }).join('');
+  return '<div style="position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--border-strong);padding:10px 0 12px;margin-bottom:16px;">'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">' + instBtns + '</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;">' + fundBtns + '</div>'
+    + '</div>';
+}
 function lcFinalSection() {
+  var f = LC.final;
+  var fundOk = function (fund) { return !f.fundType || f.fundType === fund; };
   var out = '<div class="summary-box" style="border-left:4px solid var(--accent);background:var(--surface-2, var(--bg-hover));">'
     + '<h3>인건비 기준값 (최종) <span style="font-size:12.5px;font-weight:600;color:var(--text-soft);">— 2026년 예산요구서 · 기준값 작업 전수 대조 결과</span></h3>'
     + '<p style="color:var(--text-muted);margin:0 0 4px;">기관마다 실제 보유한 재원(출연금/위탁금)만 수록했습니다. 화성FC는 위탁금이, 화성시도시공사는 출연금이 없어 각각 한쪽만 표시합니다.</p>'
     + '<p style="color:var(--text-muted);margin:0;">2026-08-23 대사 로직 2차 수정: ① &ldquo;보수/수당&rdquo; 문자열 매칭 대신 예산과목 트리에서 <b>목(統計目)=&ldquo;인건비&rdquo;의 자손</b>인지로 판정하도록 변경(수영장 타일 보수공사 같은 비인건비 오탐 제거) ② Supabase 쿼리에 페이지네이션이 없어 1,000행 초과분이 조용히 잘려나가던 버그 수정(HSCF 위탁금 실제 4,182행 중 1,000행만 조회되고 있었음). 아래 수치는 두 수정을 모두 반영한, 전체 데이터 기준 최신값입니다. 퇴직급여·평가급은 별도 목(統計目)에 속해 이 자동 집계 범위 밖이라 계속 수동 검증 값으로 표기합니다.</p>'
     + '</div>';
 
+  out += lcFinalFilterBar();
+
+  out += '<div class="summary-box" style="border-left:4px solid var(--danger);">'
+    + '<h3>퇴직급여 미편성 조직 — 4건 (기관 필터와 무관하게 항상 표시)</h3>'
+    + '<p style="color:var(--text-muted);margin:0 0 10px;">목(統計目)=퇴직급여 노드 중 산출식이 있거나(계산 가능) 요구액이 0원인 항목만 추린 목록입니다. 계산 가능한데 요구액이 0원이면 &ldquo;미편성 확정&rdquo;, 산출식 자체가 없이 요구액도 0원이면 &ldquo;산출근거 없음&rdquo;으로 구분했습니다.</p>'
+    + lcFinalTable([{ t: '기관' }, { t: '재원' }, { t: '사업(부서)' }, { t: '계산상 예상액(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['화성시문화관광재단', '출연금', '기관 전체(목304 인건비 전체)', { v: '558,859', formula: true }, { v: '0' }, { v: '미편성 확정', status: true }])
+      + lcFinalRow(['화성시문화관광재단', '위탁금', '화성예술의전당 인건비(세목①)', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }])
+      + lcFinalRow(['화성시문화관광재단', '위탁금', '화성열린문화예술공간(라크몽)', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }])
+      + lcFinalRow(['화성시도시공사', '위탁금', '향남복합문화센터TF', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }]))
+    + '<p style="color:var(--text-muted);margin:10px 0 0;">인재육성재단·FC·인재육성재단 위탁금·도시공사의 나머지 사업들은 전부 요구액이 잡혀 있어 이 목록에서 제외됨(인재육성재단 출연금 208,509천원은 요구액은 있으나 산출식이 없는 &ldquo;확인필요&rdquo; 케이스라 이 표에는 넣지 않았습니다 — 각 기관 상세 표에서 확인 가능).</p>'
+    + '</div>';
+
   // ===== 1. 화성시문화관광재단 =====
+  if (f.instKey === 'hscf') {
   out += '<div class="lc-section" style="border-left-color:var(--dept-culture)">'
     + '<h3>① 화성시문화관광재단 <span class="lc-cat-tag" style="background:var(--dept-culture-bg);color:var(--dept-culture);">정원 408 · 현원 386 · 결원율 5.4%</span></h3>';
 
+  if (fundOk('출연금')) {
   out += lcFinalFundBlock('출연금', '기관 운영 요구서 전체 통합', [83, 0, 5],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }, { t: '적용률' }],
       lcFinalRow(['대표이사', { v: '95,793,000 / 8,360,200' }, { v: '2' }, '103.5%'])
+      + lcFinalRow(['2급', { v: '—' }, { v: '—' }, '자료 없음'])
       + lcFinalRow(['3급', { v: '4,775,000 / 5,839,600 등' }, { v: '84' }, '103.5% · 60%(명절) · 70%(초과) · 4.1%(가산)'])
       + lcFinalRow(['4급', { v: '3,745,000 / 4,953,000 / 3,912,400 등' }, { v: '56' }, '103.5% · 60% · 70%'])
       + lcFinalRow(['5급', { v: '3,231,000 / 3,922,000 등' }, { v: '112' }, '103.5% · 60% · 70%'])
@@ -7822,14 +7877,39 @@ function lcFinalSection() {
       + lcFinalRow(['기타직(통합평균)', { v: '76,234,600' }, { v: '4' }, '103.5%'])
       + lcFinalRow(['무기계약직', { v: '2,563,020' }, { v: '9' }, '—'])
       + lcFinalRow(['기간제', { v: '2,156,880' }, { v: '4' }, '—']))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b> · 가족수당 배우자 40,000 등 · 기술자격수당 3·4급 60,000 / 5·6급 50,000 · 업무대행수당 200,000(6월) · 정근수당가산금 30,000~130,000(5년미만~25년이상) · 정액급식비(3급~6급) 140,000 · 직급보조비 3급 185,000 / 4급 180,000 / 5·6급 175,000 · 특정업무수행경비 80,000. 초과근무·야간근무는 (단가×1.5/209×시간)×인원×개월×가산율% 형태의 복합 산식으로 신고돼 전부 자동 검증됨(예: 3급 (5,839,600×1.5/209×30시간)×14명×12월×70%).</p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
+    + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
+      lcFinalRow(['가족수당(배우자)', { v: '40,000' }, '12월 등'])
+      + lcFinalRow(['기술자격수당', { v: '60,000 / 50,000' }, '3·4급 / 5·6급'])
+      + lcFinalRow(['업무대행수당', { v: '200,000' }, '6월'])
+      + lcFinalRow(['정근수당가산금', { v: '30,000 ~ 130,000' }, '5년미만 ~ 25년이상, 6구간'])
+      + lcFinalRow(['정액급식비', { v: '140,000' }, '3급~6급'])
+      + lcFinalRow(['직급보조비', { v: '185,000 / 180,000 / 175,000' }, '3급 / 4급 / 5·6급'])
+      + lcFinalRow(['특정업무수행경비', { v: '80,000' }, '—'])
+      + lcFinalRow(['초과근무·야간근무수당', { v: '복합 산식', formula: true }, '(단가×1.5/209×시간)×인원×개월×가산율% — 예: 3급 (5,839,600×1.5/209×30시간)×14명×12월×70%']))
     + '<p class="lc-hint" style="margin-top:10px;"><b>확인필요 5건</b>(전부 요구액 0원 자리표시 항목) · 단시간근로자 인건비 · 인건비(밖에서 만난 예술) · 인건비(동탄아트스페이스 전시) · 정근수당 근속연수 구간(3년미만·4년미만, 대상자 0명) — 실질 금액 없어 검토 우선순위 낮음. 목:인건비 범위 안에서는 <b>불일치 0건</b>.</p>'
-    + '<div class="callout" style="border-left:3px solid var(--danger);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>퇴직급여·평가급(별도 목, 수동 검증)</b> — 퇴직급여 및 퇴직급여충당금 6,460,798,000÷12×103.8%=558,859천원 계산되나 요구액 0원(불일치) · 가급 기관장 평가급 7,900,000×190%=15,010천원 계산되나 요구액 0원(불일치) · 가급 기관 평가급 200,000,000×1식=200,000천원 계산되나 요구액 0원(불일치). <b>4대보험(목304, 기준액 6,460,798,000원)</b> 국민연금 6.75%=436,104 · 건강보험 3.645%=235,497 · 장기요양(건강보험×12.95%)=30,497 · 고용보험 1.55%=100,143 · 산재보험 0.726%=46,906천원 — <span style="color:var(--danger);font-weight:700;">국민연금 6.75%는 법정 사업주부담률(2025년 4.5% / 2026년 4.75%)과 불일치, 출처 재확인 필요</span>.</div>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여·평가급(별도 목, 수동 검증)</b></p>'
+    + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['퇴직급여 및 퇴직급여충당금', { v: '6,460,798,000÷12×103.8%', formula: true }, { v: '558,859' }, { v: '0' }, { v: '불일치', status: true }])
+      + lcFinalRow(['가급 기관장 평가급', { v: '7,900,000×190%', formula: true }, { v: '15,010' }, { v: '0' }, { v: '불일치', status: true }])
+      + lcFinalRow(['가급 기관 평가급', { v: '200,000,000×1식', formula: true }, { v: '200,000' }, { v: '0' }, { v: '불일치', status: true }]))
+    + '<div class="callout" style="border-left:3px solid var(--danger);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>목(統計目) 레벨 정합성 문제.</b> &ldquo;평가급&rdquo; 목 자체의 요구액 합계는 <b>600,000천원(6억원)</b>으로 잡혀 있는데, 그 아래 계산 가능한 세부 항목 2건(기관장·기관 평가급)은 둘 다 요구액 0원입니다. 즉 목 합계 600,000천원의 근거가 되는 세부 산출내역이 이 계산기 데이터에는 없습니다 — 원본 예산요구서에서 이 600,000천원이 어떤 항목들로 구성됐는지 직접 확인 필요.</div>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>4대보험(목304, 기준액 6,460,798,000원)</b></p>'
+    + lcFinalTable([{ t: '보험' }, { t: '요율' }, { t: '금액(천원)' }],
+      lcFinalRow(['국민연금', '6.75%', { v: '436,104' }])
+      + lcFinalRow(['건강보험', '3.645%', { v: '235,497' }])
+      + lcFinalRow(['장기요양(건강보험×12.95%)', '—', { v: '30,497' }])
+      + lcFinalRow(['고용보험', '1.55%', { v: '100,143' }])
+      + lcFinalRow(['산재보험', '0.726%', { v: '46,906' }]))
+    + '<p class="lc-hint" style="color:var(--danger);font-weight:700;">국민연금 6.75%는 법정 사업주부담률(2025년 4.5% / 2026년 4.75%)과 불일치, 출처 재확인 필요.</p>'
   );
+  }
 
+  if (fundOk('위탁금')) {
   out += lcFinalFundBlock('위탁금', '사업·본부별 통합(목:인건비 자손 전체)', [507, 2, 275],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }, { t: '자료건수' }],
-      lcFinalRow(['일반직 3급', { v: '4,775,000 / 4,660,600 / 4,918,250 등' }, { v: '86' }, { v: '44건' }])
+      lcFinalRow(['일반직 2급', { v: '—' }, { v: '—' }, '자료 없음'])
+      + lcFinalRow(['일반직 3급', { v: '4,775,000 / 4,660,600 / 4,918,250 등' }, { v: '86' }, { v: '44건' }])
       + lcFinalRow(['일반직 4급', { v: '4,067,900 / 3,635,000 / 3,702,000 등' }, { v: '139' }, { v: '43건' }])
       + lcFinalRow(['일반직 5급', { v: '3,665,600 / 2,931,000 / 3,327,000 등' }, { v: '225' }, { v: '39건' }])
       + lcFinalRow(['일반직 6급', { v: '2,685,950 / 2,335,000 / 2,967,000 등' }, { v: '296' }, { v: '44건' }])
@@ -7838,46 +7918,126 @@ function lcFinalSection() {
       + lcFinalRow(['무기계약직', { v: '2,563,020 / 2,770,300 / 2,221,590 / 2,307,870 / 2,264,730' }, { v: '59' }, { v: '8건' }])
       + lcFinalRow(['기간제', { v: '2,156,880 / 12,090 / 11,730' }, { v: '72' }, { v: '5건' }]))
     + '<p class="lc-hint" style="margin-top:10px;">사업·팀 단위로 흩어져 있어 자료건수가 많습니다(전체 <b>784건</b> — 일치 507 · 불일치 2 · 확인필요 275). 정근수당가산금·초과근무수당(시간외·휴일)·수당류가 팀마다 개별 신고돼 예술의전당운영지원팀·예술의전당무대기술팀 등 팀명이 붙은 수당명이 다수입니다.</p>'
-    + '<div class="callout" style="border-left:3px solid var(--danger);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>확인필요 275건, 합계 13,969,209천원(139.7억원)</b> — 산출식 없이 합계액만 기재된 진짜 인건비 항목(목:인건비 자손으로 확인됨). 상위 항목 — &ldquo;보수&rdquo;(일반명, 6건) 4,425,525천원 · 무기계약근로자 보수(5건) 1,944,483천원 · &ldquo;수당&rdquo;(일반명, 12건) 728,629천원 · 기간제근로자 등 보수(6건+7건, 표기 2종) 1,036,446천원 · 공연장운영지원팀 기본급(1건) 522,170천원 · 기본급(무명, 1건) 503,036천원 · 초과근무수당(시간외·휴일)(8건) 488,614천원 · 예술의전당운영지원팀 기본급(2건) 401,038천원 · 예술의전당공연기획팀 기본급(2건) 348,954천원 · 예술의전당무대기술팀 기본급(2건) 339,813천원 · 예술의전당운영지원팀 수당(2건) 243,263천원 · 예술의전당무대기술팀 수당(2건) 226,104천원 등. 원본 세목 명세를 사업·팀별로 직접 대조해야 합니다.</div>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>불일치 2건</b> · 업무대행수당 계산값 16,800천원인데 요구액 0원(+16,800) · &ldquo;6급&rdquo; 계산값 8,700천원인데 요구액 19,380천원(-10,680, 요구액이 더 많음).</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여충당금(별도 목, 수동 검증)</b> — 사업(본부) 5건, 전부 정상 편성(요구액과 일치): 2,228,917,000 / 1,525,028,000 / 386,561,000 / 477,961,000 / 1,953,981,000원 각각 ÷12×103.8%. <span style="color:var(--danger);font-weight:700;">같은 산식인데 출연금 쪽만 요구액 0원 — 담당 부서 확인 필요.</span></p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>확인필요 275건, 합계 13,969,209천원(139.7억원)</b> — 산출식 없이 합계액만 기재된 진짜 인건비 항목(목:인건비 자손으로 확인됨). 원본 세목 명세를 사업·팀별로 직접 대조해야 합니다. 상위 12개 항목(합계 11,208,075천원, 전체의 80%):</p>'
+    + lcFinalTable([{ t: '항목명' }, { t: '건수' }, { t: '합계(천원)' }],
+      lcFinalRow(['보수(일반명)', { v: '6건' }, { v: '4,425,525' }])
+      + lcFinalRow(['무기계약근로자 보수', { v: '5건' }, { v: '1,944,483' }])
+      + lcFinalRow(['기간제근로자 등 보수(표기 2종)', { v: '13건' }, { v: '1,036,446' }])
+      + lcFinalRow(['수당(일반명)', { v: '12건' }, { v: '728,629' }])
+      + lcFinalRow(['공연장운영지원팀 기본급', { v: '1건' }, { v: '522,170' }])
+      + lcFinalRow(['기본급(무명)', { v: '1건' }, { v: '503,036' }])
+      + lcFinalRow(['초과근무수당(시간외·휴일)', { v: '8건' }, { v: '488,614' }])
+      + lcFinalRow(['예술의전당운영지원팀 기본급', { v: '2건' }, { v: '401,038' }])
+      + lcFinalRow(['예술의전당공연기획팀 기본급', { v: '2건' }, { v: '348,954' }])
+      + lcFinalRow(['예술의전당무대기술팀 기본급', { v: '2건' }, { v: '339,813' }])
+      + lcFinalRow(['예술의전당운영지원팀 수당', { v: '2건' }, { v: '243,263' }])
+      + lcFinalRow(['예술의전당무대기술팀 수당', { v: '2건' }, { v: '226,104' }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>불일치 2건</b></p>'
+    + lcFinalTable([{ t: '항목' }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '차이(천원)' }],
+      lcFinalRow(['업무대행수당', { v: '16,800' }, { v: '0' }, { v: '+16,800' }])
+      + lcFinalRow(['6급(부기명 없음)', { v: '8,700' }, { v: '19,380' }, { v: '-10,680' }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(별도 목, 수동 검증) — 사업(본부)별 11개 목 전수 대조, 합계 1,335,807천원(13.4억원).</b></p>'
+    + lcFinalTable([{ t: '사업(본부)' }, { t: '산출기초', formula: true }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['동탄복합문화센터 시설관리', { v: '33,951,000÷12', formula: true }, { v: '2,830' }, { v: '일치', status: true }])
+      + lcFinalRow(['동탄복합문화센터 시민응대', { v: '238,165,000÷12', formula: true }, { v: '19,848' }, { v: '일치', status: true }])
+      + lcFinalRow(['복합문화센터 인건비', { v: '2,228,917,000÷12×103.8%', formula: true }, { v: '192,802' }, { v: '일치', status: true }])
+      + lcFinalRow(['공연장 인건비', { v: '1,525,028,000÷12×103.8%', formula: true }, { v: '131,915' }, { v: '일치', status: true }])
+      + lcFinalRow(['미디어센터 운영 인건비', { v: '386,561,000÷12×103.8%', formula: true }, { v: '33,438' }, { v: '일치', status: true }])
+      + lcFinalRow(['생활문화센터 운영 인건비', { v: '477,961,000÷12×103.8%', formula: true }, { v: '41,344' }, { v: '일치', status: true }])
+      + lcFinalRow(['화성예술의전당 인건비(세목①)', { v: '산출식 없음', formula: true }, { v: '0' }, { v: '미편성', status: true }])
+      + lcFinalRow(['화성예술의전당 인건비(세목②)', { v: '1,953,981,000÷12×103.8%', formula: true }, { v: '169,020' }, { v: '일치', status: true }])
+      + lcFinalRow(['화성열린문화예술공간(라크몽)', { v: '산출식 없음', formula: true }, { v: '0' }, { v: '미편성', status: true }])
+      + lcFinalRow(['도서관인건비', { v: '7,920,437,000×1/12', formula: true }, { v: '660,037' }, { v: '일치', status: true }])
+      + lcFinalRow(['공공도서관 개관시간 연장(시비추가분)', { v: '2,562,810×33명', formula: true }, { v: '84,573' }, { v: '일치', status: true }]))
+    + '<div class="callout" style="border-left:3px solid var(--danger);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>정정: 이전에 &ldquo;5건 전부 정상 편성&rdquo;이라고 보고했던 건 표본 오류였습니다.</b> 실제로는 11개 목이 있고, 그중 <b>2건(화성예술의전당 인건비 세목①, 화성열린문화예술공간 라크몽)이 산출식조차 없이 요구액 0원으로 미편성</b>돼 있습니다. 나머지 9건은 계산값과 요구액이 정확히 일치합니다. 도서관인건비(660,037천원)는 다른 사업들과 달리 ÷12×103.8% 충당금 방식이 아니라 8.33%(1/12) 표준 방식을 씁니다 — 같은 재단 안에서도 사업별로 퇴직급여 산식이 다름.</div>'
   );
+  }
   out += '</div>';
+  }
 
   // ===== 2. 화성시인재육성재단 =====
+  if (f.instKey === 'talent') {
   out += '<div class="lc-section" style="border-left-color:var(--dept-library)">'
     + '<h3>② 화성시인재육성재단 <span class="lc-cat-tag" style="background:var(--dept-library-bg);color:var(--dept-library);">정원 170 · 현원 164 · 결원율 3.5%(기준 이내)</span></h3>';
 
+  if (fundOk('출연금')) {
   out += lcFinalFundBlock('출연금', '기관 운영 요구서 전체 통합', [112, 0, 0],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
       lcFinalRow(['대표이사', { v: '8,676,400 / 8,136,400' }, { v: '2' }])
+      + lcFinalRow(['2급', { v: '—' }, '자료 없음'])
       + lcFinalRow(['3급', { v: '3,586,810 / 4,897,470 / 3,848,900 / 3,732,280' }, { v: '69' }])
       + lcFinalRow(['4급', { v: '4,168,660 / 3,219,200' }, { v: '40' }])
       + lcFinalRow(['5급', { v: '3,174,560 / 2,434,400' }, { v: '68' }])
-      + lcFinalRow(['6급', { v: '2,688,400 / 2,068,300' }, { v: '48' }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b> · 가족수당 배우자 40,000 / 직계비속 50,000·80,000·120,000 / 직계존속 20,000 · 기술자격수당 50,000 · 전산직수당 50,000 · 정근수당가산금 30,000~60,000(5년미만~15년미만) · 정액급식비 140,000 · 직급보조비 대표이사 400,000 / 3급 185,000 / 4급 180,000 / 5·6급 175,000 · 특정업무수행경비 80,000 · 기타직(가급·나급) 별도 단가·수당 체계.</p>'
+      + lcFinalRow(['6급', { v: '2,688,400 / 2,068,300' }, { v: '48' }])
+      + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
+      + lcFinalRow(['무기계약직', { v: '—' }, '자료 없음'])
+      + lcFinalRow(['기간제', { v: '—' }, '자료 없음']))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
+    + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
+      lcFinalRow(['가족수당', { v: '40,000 / 50,000 / 80,000 / 120,000 / 20,000' }, '배우자 / 직계비속(첫째·둘째·셋째) / 직계존속'])
+      + lcFinalRow(['기술자격수당', { v: '50,000' }, '—'])
+      + lcFinalRow(['전산직수당', { v: '50,000' }, '—'])
+      + lcFinalRow(['정근수당가산금', { v: '30,000 ~ 60,000' }, '5년미만 ~ 15년미만'])
+      + lcFinalRow(['정액급식비', { v: '140,000' }, '—'])
+      + lcFinalRow(['직급보조비', { v: '400,000 / 185,000 / 180,000 / 175,000' }, '대표이사 / 3급 / 4급 / 5·6급'])
+      + lcFinalRow(['특정업무수행경비', { v: '80,000' }, '—']))
+    + '<p class="lc-hint" style="margin-top:8px;">기타직(가급·나급)은 별도 단가·수당 체계를 사용합니다.</p>'
     + '<p class="lc-hint" style="margin-top:10px;"><b>일치 112건, 불일치 0건, 확인필요 0건</b> — 목:인건비 범위에서는 완전히 깨끗합니다.</p>'
-    + '<div class="callout" style="border-left:3px solid var(--dept-tour);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>퇴직급여·평가급 항목 없음(별도 목).</b> 관련 산식이 원자료에 존재하지 않습니다. HSCF처럼 &ldquo;산식은 있는데 요구액 0원&rdquo;이 아니라 항목 자체가 없는 것이므로, 별도 퇴직연금(DC/DB) 가입 여부와 회계 처리 방식을 먼저 확인해야 합니다.</div>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여·평가급(별도 목, 수동 검증) — 정정: 실제로는 둘 다 있습니다.</b> 이전에 &ldquo;항목 자체가 없다&rdquo;고 보고했던 건 검색 범위가 좁아서 놓친 것이었습니다.</p>'
+    + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['퇴직급여(목 전체)', { v: '산출식 없음(합계만 기재)', formula: true }, { v: '208,509' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['평가급 - 기관장 경영평가', { v: '7,900,000×1명×230%', formula: true }, { v: '18,170' }, { v: '일치', status: true }])
+      + lcFinalRow(['평가급 - 직원(가급) 경영평가', { v: '6,100,000×5명×110%', formula: true }, { v: '33,550' }, { v: '일치', status: true }])
+      + lcFinalRow(['평가급 - 직원(나급) 경영평가', { v: '6,000,000×1명×110%', formula: true }, { v: '6,600' }, { v: '일치', status: true }])
+      + lcFinalRow(['평가급 - 직원(3급) 경영평가', { v: '4,700,000×14명×110%', formula: true }, { v: '72,380' }, { v: '일치', status: true }])
+      + lcFinalRow(['평가급 - 직원(4급) 경영평가', { v: '4,000,000×23명×110%', formula: true }, { v: '101,200' }, { v: '일치', status: true }])
+      + lcFinalRow(['평가급 - 직원(5급,라급) 경영평가', { v: '3,100,000×46명×110%', formula: true }, { v: '156,860' }, { v: '일치', status: true }])
+      + lcFinalRow(['평가급 - 직원(6급,마급) 경영평가', { v: '2,700,000×68명×110%', formula: true }, { v: '201,960' }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">평가급은 7건 합계 590,720천원(5.9억원), 산출식 전부 요구액과 정확히 일치. 퇴직급여는 208,509천원(2.1억원)이 잡혀 있지만 산출식이 없어 단가·인원 근거를 원자료에서 직접 확인해야 합니다.</p>'
   );
+  }
 
+  if (fundOk('위탁금')) {
   out += lcFinalFundBlock('위탁금', '도서관 운영 등 사업별', [139, 0, 0],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
-      lcFinalRow(['일반직 3급', { v: '3,895,800 / 5,195,450 / 4,090,900 등 9종' }, { v: '113' }])
+      lcFinalRow(['일반직 2급', { v: '—' }, '자료 없음'])
+      + lcFinalRow(['일반직 3급', { v: '3,895,800 / 5,195,450 / 4,090,900 등 9종' }, { v: '113' }])
       + lcFinalRow(['일반직 4급', { v: '4,152,560 / 3,219,200 / 3,952,310 등' }, { v: '49' }])
       + lcFinalRow(['일반직 5급', { v: '3,499,650 / 2,717,900 / 3,810,780 등' }, { v: '109' }])
       + lcFinalRow(['일반직 6급', { v: '2,735,510 / 2,104,000 / 2,756,550 등' }, { v: '132' }])
-      + lcFinalRow(['무기계약직(도서관 실무 등)', { v: '166,770 / 2,221,590(1단계)' }, { v: '31' }])
-      + lcFinalRow(['기간제', { v: '12,090 / 12,536' }, { v: '29' }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b> · 사서수당 30,000 · 위험근무수당 40,000 · 정근수당가산금 30,000~80,000 · 정액급식비 140,000 · 직급보조비 185,000/180,000/175,000 · 무기계약직 초과근무수당(연장근로) 2,620,024원 기준.</p>'
+      + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
+      + lcFinalRow(['무기계약직', { v: '—' }, '기본급 항목 없음(수당 표 참조)'])
+      + lcFinalRow(['기간제', { v: '—' }, '기본급 항목 없음(수당 표 참조)']))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
+    + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
+      lcFinalRow(['도서관 실무(공무직)', { v: '166,770' }, '무기계약직, 19명·12월'])
+      + lcFinalRow(['도서관 실무(공무직) 1단계', { v: '2,221,590' }, '무기계약직, 12명·12월'])
+      + lcFinalRow(['도서관실무(초단시간) 등', { v: '12,090' }, '기간제, 10명·12월'])
+      + lcFinalRow(['영상미디어·악기대여·도예지도 등', { v: '12,536' }, '기간제, 7명·12월'])
+      + lcFinalRow(['사서수당', { v: '30,000' }, '—'])
+      + lcFinalRow(['위험근무수당', { v: '40,000' }, '—'])
+      + lcFinalRow(['정근수당가산금', { v: '30,000 ~ 80,000' }, '—'])
+      + lcFinalRow(['정액급식비', { v: '140,000' }, '—'])
+      + lcFinalRow(['직급보조비', { v: '185,000 / 180,000 / 175,000' }, '3급 / 4급 / 5·6급'])
+      + lcFinalRow(['무기계약직 초과근무수당', { v: '2,620,024' }, '연장근로, 기준단가']))
     + '<p class="lc-hint" style="margin-top:10px;"><b>일치 139건, 불일치 0건, 확인필요 0건</b> — 목:인건비 범위에서는 완전히 깨끗합니다.</p>'
-    + '<div class="callout" style="border-left:3px solid var(--danger);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>퇴직급여(무기계약직, 별도 목, 수동 검증)</b> — 2,620,024×7명×12월×8.33%=18,333천원(일치). 8.33%는 근로자퇴직급여보장법의 표준 1개월분/12개월 방식 — HSCF의 103.8% 충당금 산식과 계산 근거 자체가 다릅니다.</div>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(별도 목, 수동 검증) — 정정: 1건이 아니라 사업 4개 목, 합계 432,079천원(4.3억원), 전부 일치.</b> 8.33%(1/12) 근로자퇴직급여보장법 표준 방식 — HSCF의 103.8% 충당금 산식과 계산 근거 자체가 다릅니다.</p>'
+    + lcFinalTable([{ t: '사업(부서)' }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['일반직 전체(3~6급 통상임금평균 등)', { v: '229,829' }, { v: '일치(5건 소계)', status: true }])
+      + lcFinalRow(['일반직 전체(3~6급, 라·마급 통상임금평균)', { v: '79,131' }, { v: '일치(2건 소계)', status: true }])
+      + lcFinalRow(['도서관 운영(무기계약직)', { v: '18,333' }, { v: '일치', status: true }])
+      + lcFinalRow(['도서관 운영(3~6급, 도서관실무, 장애인 도서관실무)', { v: '104,786' }, { v: '일치(3건 소계)', status: true }]))
   );
+  }
   out += '</div>';
+  }
 
   // ===== 3. 화성FC =====
+  if (f.instKey === 'fc') {
   out += '<div class="lc-section" style="border-left-color:var(--dept-tour)">'
     + '<h3>③ 화성FC <span class="lc-cat-tag" style="background:var(--dept-tour-bg);color:var(--dept-tour);">정원 19 · 현원 16 · 결원율 15.8%(기준 대폭 초과)</span></h3>';
 
+  if (fundOk('출연금')) {
   out += lcFinalFundBlock('출연금', '위탁금 재원 없음 · 유일한 재원', [92, 0, 10],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
       lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300' }, { v: '2' }])
@@ -7885,18 +8045,52 @@ function lcFinalSection() {
       + lcFinalRow(['3급', { v: '4,733,000 / 3,859,000' }, { v: '24' }])
       + lcFinalRow(['4급', { v: '3,790,000 / 2,997,000' }, { v: '16' }])
       + lcFinalRow(['5급', { v: '3,335,000 / 2,574,000' }, { v: '32' }])
-      + lcFinalRow(['6급', { v: '2,708,000 / 2,087,000' }, { v: '56' }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>축구단 직군 개별 단가</b>(&ldquo;기본급&rdquo; 목 안에 42건 혼재) · 감독 200,000,000/년 · 수석코치 6,125,000/월 · 스카우터 5,833,333/월 · 코치 4,375,000/월 · 피지컬코치 5,950,000/월 · U-12·15·18 감독·코치 3,000,000~4,500,000/월. <b>주요 수당</b> · 가족수당 배우자 40,000 · 정근수당가산금 30,000/50,000 · 정액급식비 140,000 · 파견공무원수당 400,000.</p>'
+      + lcFinalRow(['6급', { v: '2,708,000 / 2,087,000' }, { v: '56' }])
+      + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
+      + lcFinalRow(['무기계약직', { v: '—' }, '자료 없음'])
+      + lcFinalRow(['기간제', { v: '—' }, '자료 없음']))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>축구단 직군 개별 단가</b>(&ldquo;기본급&rdquo; 목 안에 42건 혼재)</p>'
+    + lcFinalTable([{ t: '직군' }, { t: '단가(원)' }, { t: '단위' }],
+      lcFinalRow(['감독', { v: '200,000,000' }, '년'])
+      + lcFinalRow(['수석코치', { v: '6,125,000' }, '월'])
+      + lcFinalRow(['스카우터', { v: '5,833,333' }, '월'])
+      + lcFinalRow(['코치', { v: '4,375,000' }, '월'])
+      + lcFinalRow(['피지컬코치', { v: '5,950,000' }, '월'])
+      + lcFinalRow(['U-12·15·18 감독·코치', { v: '3,000,000 ~ 4,500,000' }, '월']))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
+    + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
+      lcFinalRow(['가족수당(배우자)', { v: '40,000' }, '—'])
+      + lcFinalRow(['정근수당가산금', { v: '30,000 / 50,000' }, '—'])
+      + lcFinalRow(['정액급식비', { v: '140,000' }, '—'])
+      + lcFinalRow(['파견공무원수당', { v: '400,000' }, '—']))
     + '<p class="lc-hint" style="margin-top:10px;"><b>일치 92건, 불일치 0건</b> — 산식이 있는 항목은 요구액과 전부 일치합니다.</p>'
-    + '<div class="callout" style="border-left:3px solid var(--dept-tour);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>퇴직급여·평가급 항목 없음(별도 목).</b> 인재육성재단 출연금과 같은 양상 — 축구단 특유 계약직군(감독·코치 등)의 퇴직금 처리 방식을 별도 확인 필요.</div>'
-    + '<div class="callout" style="border-left:3px solid var(--danger);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>확인필요 10건, 합계 10,461,060천원(104.6억원)</b> — 오탐 없이 순수 인건비만. 가장 큰 항목은 <b>선수단 연봉(35명/옵션포함) 2건 합계 10,000,000천원(100억원)</b>으로, 산출식 없이 총액만 기재돼 있어 반드시 원자료 대조가 필요합니다. 그 외 승리수당(10회) 2건 324,000천원 · 인턴 사원 보수(화성시 생활임금 적용) 2건 101,000천원 · 지도자 인건비 2건 28,800천원 · 인턴 초과근무수당 2건 7,260천원.</div>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여·평가급(별도 목, 수동 검증) — 정정: 둘 다 있습니다.</b></p>'
+    + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['퇴직연금 부담금', { v: '1,004,390,000÷12개월', formula: true }, { v: '83,700' }, { v: '일치', status: true }])
+      + lcFinalRow(['퇴직연금(DB형) 운용수수료', { v: '187,381,000×0.65%', formula: true }, { v: '1,220' }, { v: '일치', status: true }])
+      + lcFinalRow(['직원(3급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,760' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['직원(4급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,040' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['직원(5급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,880' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['직원(6급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '6,720' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">퇴직급여 84,920천원(0.85억)은 산식이 있고 전부 일치. 평가급 14,400천원(0.14억)은 요구액만 있고 산출식이 없어 단가 근거 확인 필요. (원자료에 동일 항목이 중복 저장되어 있어 2배로 보일 수 있음 — 실제 금액은 위 표 기준.)</p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>확인필요 10건, 합계 10,461,060천원(104.6억원)</b> — 오탐 없이 순수 인건비만, 산출식 없이 총액만 기재돼 있어 원자료 대조가 필요합니다.</p>'
+    + lcFinalTable([{ t: '항목명' }, { t: '건수' }, { t: '합계(천원)' }],
+      lcFinalRow(['선수단 연봉(35명/옵션포함)', { v: '2건' }, { v: '10,000,000' }])
+      + lcFinalRow(['승리수당(10회)', { v: '2건' }, { v: '324,000' }])
+      + lcFinalRow(['인턴 사원 보수(화성시 생활임금 적용)', { v: '2건' }, { v: '101,000' }])
+      + lcFinalRow(['지도자 인건비', { v: '2건' }, { v: '28,800' }])
+      + lcFinalRow(['인턴 초과근무수당', { v: '2건' }, { v: '7,260' }]))
   );
+  }
   out += '</div>';
+  }
 
   // ===== 4. 화성시도시공사 =====
+  if (f.instKey === 'corp') {
   out += '<div class="lc-section" style="border-left-color:var(--dept-temp)">'
     + '<h3>④ 화성시도시공사 <span class="lc-cat-tag" style="background:var(--dept-temp-bg);color:var(--dept-temp);">정원 907 · 현원 787 · 결원율 13.2%(기준 대폭 초과)</span></h3>';
 
+  if (fundOk('위탁금')) {
   out += lcFinalFundBlock('위탁금', '출연금 재원 없음 · 유일한 재원', [115, 5, 30],
     lcFinalTable([{ t: '구분' }, { t: '단가(원/년)' }, { t: '요구인원' }],
       lcFinalRow(['2급', { v: '84,991,284 / 84,992,000' }, { v: '2' }])
@@ -7904,15 +8098,56 @@ function lcFinalSection() {
       + lcFinalRow(['4급', { v: '57,233,368 / 54,189,906 / 54,411,710 등' }, { v: '20' }])
       + lcFinalRow(['5급', { v: '45,712,584 / 45,531,114 등' }, { v: '17' }])
       + lcFinalRow(['6급', { v: '40,102,665 / 38,063,782 등' }, { v: '10' }])
+      + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
       + lcFinalRow(['무기계약직', { v: '37,387,739 / 37,226,844 / 41,172,107 등 7종' }, { v: '70' }])
       + lcFinalRow(['기간제', { v: '2,526,810(월) / 30,321,720(년) / 27,112,130(년)' }, { v: '13' }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(DB형 퇴직연금, 1/12 방식, 별도 목, 수동 검증)</b> · 무기계약직(13명) 606,269,000×1/12=50,523천원(일치) · 기간제(2명) 73,025,000×1/12=6,086천원(일치)</p>'
-    + '<p class="lc-hint"><b>평가급(공무직 경영평가급, 별도 목, 수동 검증)</b> · 2,962,930×10명×100%=29,630천원(일치) · 2,962,930×13명×100%=38,519천원(일치)</p>'
-    + '<p class="lc-hint"><b>4대보험</b> · 국민연금 4.5%로 여러 사업에 일관 적용, 요구액과 전부 일치. 2025년까지의 법정 사업주부담률과 같은 값이나, <span style="color:var(--danger);font-weight:700;">2026년 4.75%, 2027년 5.0%로 법정 인상이 이미 시작</span>되어 갱신이 필요합니다.</p>'
-    + '<div class="callout" style="border-left:3px solid var(--danger);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>확인필요 30건, 합계 899,124천원(9.0억원)</b> — 대부분(25건, 899,124천원)이 <b>초과근무수당</b>(시간외근무·휴일근무, 무기계약직·기간제 다수 사업)으로, 산출식 없이 합계액만 기재돼 있어 단가·인원별 근거를 원자료에서 직접 확인해야 합니다. 나머지 3건(보수·무기계약근로자보수·기간제근로자등보수)은 요구액 0원 자리표시.</div>'
-    + '<div class="callout" style="border-left:3px solid var(--danger);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>불일치 5건</b> — 3건은 &ldquo;기본연봉(N명)&rdquo;류 반올림 오차(-3~-7천원, 무시 가능). 나머지 2건은 <b>계산기 파서 이슈로 추정</b>: 무기계약근로자보수(계산값 988,131천원 vs 요구액 40,420천원, +947,711) · 기간제근로자등보수(계산값 650,691천원 vs 요구액 26,411천원, +624,280) — 두 항목 모두 원자료 산출식이 &ldquo;기본급 + (법정)수당 + 연차수당&rdquo;처럼 여러 줄에 항목별 소계가 섞인 복합 서식이라, 계산기가 이를 하나의 수식으로 잘못 해석해 20배 이상 부풀려진 것으로 보입니다. 실제 편성 오류가 아니라 <b>파서 버그 가능성이 높으며, 별도 확인·수정이 필요</b>합니다.</div>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(별도 목, 수동 검증) — 정정: 2건이 아니라 사업 12개 목, 합계 702,048천원(7.0억원).</b> 전부 DB형 퇴직연금 1/12(=8.33%) 방식. 대부분 일치, 1건 미편성, 1건 소액 불일치.</p>'
+    + lcFinalTable([{ t: '사업(부서)' }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['화성체력인증센터(거점체력_국비)', { v: '13,844' }, { v: '확인필요(산출식 복합서식)', status: true }])
+      + lcFinalRow(['경기타운부', { v: '104,335' }, { v: '일치(2건 소계)', status: true }])
+      + lcFinalRow(['체육시설1부(동부)', { v: '65,147' }, { v: '일치(4건 소계)', status: true }])
+      + lcFinalRow(['서남부체육시설', { v: '70,852' }, { v: '일치(2건 소계)', status: true }])
+      + lcFinalRow(['화성국민체육센터', { v: '92,970' }, { v: '일치(3건 소계)', status: true }])
+      + lcFinalRow(['동탄어울림센터', { v: '78,369' }, { v: '일치(2건 소계)', status: true }])
+      + lcFinalRow(['반월체육센터', { v: '88,177' }, { v: '일치(2건 소계)', status: true }])
+      + lcFinalRow(['향남복합문화센터TF', { v: '0' }, { v: '미편성', status: true }])
+      + lcFinalRow(['제부도 관광편의시설', { v: '62,889' }, { v: '일치(2건 소계)', status: true }])
+      + lcFinalRow(['전곡항 마리나', { v: '37,789' }, { v: '불일치 1건 포함(3건 중)', status: true }])
+      + lcFinalRow(['오토캠핑장', { v: '49,285' }, { v: '일치(3건 소계)', status: true }])
+      + lcFinalRow(['캠핑장', { v: '38,391' }, { v: '일치(3건 소계)', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">전곡항 마리나 &ldquo;일반직, 청원경찰(7명)&rdquo; 항목만 계산값 34,480천원인데 요구액 32,110천원으로 -2,370천원 차이. 향남복합문화센터TF는 산출식조차 없이 요구액 0원.</p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>평가급 및 성과금 등(별도 목, 수동 검증) — 정정: 2건이 아니라 사업 12개 목, 합계 736,941천원(7.4억원).</b> 경영평가급+자체평가급 이중 구조. 대부분 일치, 2건 미편성, 2건 소액 불일치.</p>'
+    + lcFinalTable([{ t: '사업(부서)' }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['화성체력인증센터(거점체력_국비)', { v: '0' }, { v: '미편성(2건)', status: true }])
+      + lcFinalRow(['경기타운부', { v: '129,215' }, { v: '일치(3건 소계)', status: true }])
+      + lcFinalRow(['체육시설1부(동부)', { v: '84,345' }, { v: '일치(6건 소계)', status: true }])
+      + lcFinalRow(['서남부체육시설', { v: '79,932' }, { v: '일치(3건 소계)', status: true }])
+      + lcFinalRow(['화성국민체육센터', { v: '102,688' }, { v: '불일치 1건 포함(3건 중)', status: true }])
+      + lcFinalRow(['동탄어울림센터', { v: '69,820' }, { v: '일치(3건 소계)', status: true }])
+      + lcFinalRow(['반월체육센터', { v: '76,423' }, { v: '일치(5건 소계)', status: true }])
+      + lcFinalRow(['향남복합문화센터TF', { v: '0' }, { v: '미편성(2건)', status: true }])
+      + lcFinalRow(['제부도 관광편의시설', { v: '55,844' }, { v: '일치(3건 소계)', status: true }])
+      + lcFinalRow(['전곡항 마리나', { v: '35,227' }, { v: '일치(5건 소계)', status: true }])
+      + lcFinalRow(['오토캠핑장', { v: '55,760' }, { v: '불일치 1건 포함(3건 중)', status: true }])
+      + lcFinalRow(['캠핑장', { v: '47,687' }, { v: '일치(3건 소계)', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">화성국민체육센터 &ldquo;업무직(체력100 포함)&rdquo; 계산값 44,560천원 vs 요구액 44,656천원(-96) · 오토캠핑장 &ldquo;업무직 경영평가급&rdquo; 계산값 36,714천원 vs 요구액 36,712천원(+2, 무시 가능) · 거점체력·향남복합문화센터TF는 두 사업 모두 퇴직급여·평가급이 통째로 미편성.</p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>4대보험</b> · 국민연금 4.5%로 여러 사업에 일관 적용, 요구액과 전부 일치. 2025년까지의 법정 사업주부담률과 같은 값이나, <span style="color:var(--danger);font-weight:700;">2026년 4.75%, 2027년 5.0%로 법정 인상이 이미 시작</span>되어 갱신이 필요합니다.</p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>확인필요 30건, 합계 899,124천원(9.0억원)</b> — 산출식 없이 합계액만 기재돼 원자료 대조가 필요합니다.</p>'
+    + lcFinalTable([{ t: '항목명' }, { t: '건수' }, { t: '합계(천원)' }],
+      lcFinalRow(['초과근무수당(시간외·휴일근무)', { v: '25건' }, { v: '899,124' }])
+      + lcFinalRow(['보수 · 무기계약근로자보수 · 기간제근로자등보수', { v: '3건' }, { v: '0(요구액 0원 자리표시)' }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>불일치 5건</b></p>'
+    + lcFinalTable([{ t: '항목' }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '차이(천원)' }, { t: '비고' }],
+      lcFinalRow(['기본연봉(수질관리원 3명)', { v: '112,161' }, { v: '112,164' }, { v: '-3' }, '반올림 오차, 무시 가능'])
+      + lcFinalRow(['기본연봉(전임강사 7명)', { v: '261,709' }, { v: '261,716' }, { v: '-7' }, '반올림 오차, 무시 가능'])
+      + lcFinalRow(['기본연봉(안내데스크 3명)', { v: '112,161' }, { v: '112,164' }, { v: '-3' }, '반올림 오차, 무시 가능'])
+      + lcFinalRow(['무기계약근로자보수', { v: '988,131' }, { v: '40,420' }, { v: '+947,711' }, { v: '파서 버그 추정', status: true }])
+      + lcFinalRow(['기간제근로자등보수', { v: '650,691' }, { v: '26,411' }, { v: '+624,280' }, { v: '파서 버그 추정', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">아래 2건은 원자료 산출식이 &ldquo;기본급 + (법정)수당 + 연차수당&rdquo;처럼 여러 줄에 항목별 소계가 섞인 복합 서식이라, 계산기가 이를 하나의 수식으로 잘못 해석해 20배 이상 부풀려진 것으로 보입니다. 실제 편성 오류가 아니라 <b>계산기 파서 버그 가능성이 높으며, 별도 확인·수정이 필요</b>합니다.</p>'
   );
+  }
   out += '</div>';
+  }
 
   // ===== 공통 검토사항 =====
   out += '<div class="summary-box" style="border-left:4px solid var(--danger);">'
@@ -7920,11 +8155,19 @@ function lcFinalSection() {
     + '<ol style="margin:0;padding-left:20px;color:var(--text-muted);line-height:1.9;">'
     + '<li><b style="color:var(--text);">산출식 없는 인건비성 보수 항목, 3개 기관 합계 약 255억원</b> — FC 출연금 &ldquo;선수단 연봉&rdquo; 100억원(확인필요 10건 합계 104.6억원) · HSCF 위탁금 확인필요 275건 139.7억원 · 도시공사 위탁금 초과근무수당 등 확인필요 30건 9.0억원. 대사 필터가 산출식 없는 항목을 조용히 빠뜨리던 버그와, 1,000행 초과 데이터가 잘려나가던 버그를 함께 수정하면서 새로 드러남. 금액 자체가 틀렸다는 뜻은 아니고, 지금까지 한 번도 자동 검증된 적 없다는 뜻 — 원자료 재대조가 최우선.</li>'
     + '<li><b style="color:var(--text);">도시공사 위탁금 불일치 2건은 계산기 파서 버그로 추정</b> — 여러 줄짜리 복합 산식(기본급+법정수당+연차수당 각각 표기)을 하나의 수식으로 잘못 해석해 실제 요구액의 20배 이상으로 계산됨(예: 요구액 40,420천원 → 계산값 988,131천원). 편성 오류가 아니라 계산기 버그일 가능성이 높아 별도 수정 필요.</li>'
-    + '<li><b style="color:var(--text);">HSCF 출연금 퇴직급여충당금 5.6억원 미편성</b> — 4개 기관 중 &ldquo;산식은 있는데 요구액 0원&rdquo;으로 확정 지을 수 있는 유일한 사례. 같은 재단 위탁금 사업 5건은 동일 산식으로 전부 정상 편성돼 대비가 뚜렷함.</li>'
+    + '<li><b style="color:var(--text);">퇴직급여·평가급 전면 재조사 — 4개 기관 전부 있었음, 미편성만 6곳</b> — 이전에 &ldquo;인재육성재단·FC는 항목 자체가 없다&rdquo;고 보고했던 건 목(統計目) 단위로 전수 검색을 하지 않고 일부 표본만 본 데서 온 오류였습니다. 실제로는 6개 기관·재원 전부에 퇴직급여·평가급 목이 있고, 합계는 퇴직급여 약 <b>33.2억원</b>(HSCF 출연금 5.6억+위탁금 13.4억, 인재육성재단 출연금 2.1억+위탁금 4.3억, FC 0.8억, 도시공사 7.0억) · 평가급 약 <b>13.4억원</b>(인재육성재단 5.9억, FC 0.1억, 도시공사 7.4억 — HSCF는 목 레벨에 별도로 6억원이 잡혀 있으나 세부 계산 근거와 정합성이 맞지 않아 이 합계에서 제외)입니다. 그중 미편성(요구액 0원, 산출식 없음)만 6곳 — HSCF 출연금 퇴직급여 1건, HSCF 위탁금 퇴직급여 2건, 도시공사 퇴직급여 1건 · 평가급 2건.</li>'
     + '<li><b style="color:var(--text);">4대보험 요율 최신화</b> — 국민연금 사업주부담률은 2025년 4.5% → 2026년 4.75% → 2027년 5.0%로 법정 인상 중. HSCF 계산기 기본값(6.75%)은 출처 불명, 도시공사 실제자료(4.5%)는 인상 전 구요율. 건강보험(2026년 3.595%)·장기요양(2026년 13.14%)도 함께 갱신 필요.</li>'
     + '<li><b style="color:var(--text);">결원율 지침 기준(5%) 초과 — FC·도시공사</b> — FC 15.8%, 도시공사 13.2%로 대폭 초과. 채용 절차 진행 등 지침상 예외 사유 해당 여부 확인 필요. 문화관광재단(5.4%) 근소 초과, 인재육성재단(3.5%)만 기준 이내.</li>'
-    + '<li><b style="color:var(--text);">퇴직급여·평가급 산식이 기관마다 상이</b> — HSCF는 기준액÷12×103.8% 충당금 방식, 인재육성재단·도시공사는 1/12(=8.33%) 표준 방식. 인재육성재단·FC 출연금은 일반직 퇴직급여 산식 자체가 원자료에 없어 별도 확인 필요.</li>'
+    + '<li><b style="color:var(--text);">퇴직급여 산식이 기관·사업마다 상이</b> — HSCF는 대부분 기준액÷12×103.8% 충당금 방식이지만 도서관 사업 1건만 1/12(8.33%) 표준 방식을 씀. 인재육성재단·도시공사·FC는 전부 1/12(8.33%) 표준 방식. 같은 재단 안에서도 사업별로 산식이 섞여 있다는 점을 유의해야 합니다.</li>'
     + '</ol></div>';
+
+  // ===== 고급: 원자료 조회 (구 "기준값 작업" 탭) =====
+  out += '<div class="lc-accordion' + (f.rawOpen ? ' open' : '') + '" style="margin-top:20px;">'
+    + '<button type="button" class="lc-accordion-head" onclick="lcFinalToggleRaw()">'
+    + '<span><span class="lc-acc-arrow">▸</span>고급: 원자료 조회(개별 항목 실시간 대사)</span><span class="lc-acc-sub">기관·재원·부서·사업별로 걸러 하나하나 대조 — 위 요약은 전부 이 화면에서 나왔습니다</span>'
+    + '</button>'
+    + '<div class="lc-accordion-body">' + lcBasisSection() + '</div>'
+    + '</div>';
 
   return out;
 }
@@ -8157,8 +8400,6 @@ function renderLaborCalc() {
     + '<label class="option" for="lc-opt-eval">평가급</label>'
     + '<input ' + (LC.view === 'pension' ? 'checked' : '') + ' id="lc-opt-pension" name="lc-options" type="radio" onchange="lcSetView(\'pension\')" />'
     + '<label class="option" for="lc-opt-pension">연금</label>'
-    + '<input ' + (LC.view === 'basis' ? 'checked' : '') + ' id="lc-opt-basis" name="lc-options" type="radio" onchange="lcSetView(\'basis\')" />'
-    + '<label class="option" for="lc-opt-basis">기준값 작업</label>'
     + '<input ' + (LC.view === 'final' ? 'checked' : '') + ' id="lc-opt-final" name="lc-options" type="radio" onchange="lcSetView(\'final\')" />'
     + '<label class="option" for="lc-opt-final">기준값 (최종)</label>'
     + '<span class="background"></span>'
@@ -8184,7 +8425,6 @@ function renderLaborCalc() {
   var viewHtml = LC.view === 'retire' ? section06
     : LC.view === 'eval' ? section07
     : LC.view === 'pension' ? section05
-    : LC.view === 'basis' ? lcBasisSection()
     : LC.view === 'final' ? lcFinalSection()
     : laborHtml;
   var topRow = '<div class="lc-top-row">' + toggleHtml + (LC.view === 'labor' ? raiseHtml : '') + '</div>';
