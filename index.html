@@ -7262,14 +7262,12 @@ var LC = {
   ],
   // 107 퇴직급여 — DB상 2026년 편성액(amt26)은 0원, 산식 텍스트만 남아있는 상태(문화예술과·출연금 기준). 참고용 자동계산.
   retirement: { base: 6460798000, rate: 103.8 },
-  // 218 평가급 — 2026년 목 합계는 600,000천원(DB) 편성돼 있으나 직급별 세부 산출근거는 비어있음. 인원은 LC.grades와 동일 직급 재사용, 단가·등급률은 0부터 입력.
+  // 218 평가급 — 2026년 목 합계는 600,000천원(DB) 편성. 기준값(최종) 탭 전수 대조로 확인된 세부 산출근거 2건(가급 기관장·기관 평가급)만 실제 산식이 존재 —
+  // 나머지 384,990천원(600,000 - 215,010)은 원본 예산요구서에 세부 산출내역이 없어 이 계산기 범위 밖(기준값(최종) 탭의 정합성 문제 참고).
   evalPay: {
-    grades: [
-      { id: 'ceo', name: '대표이사', count: 1, unit: 0, gradePct: 0 },
-      { id: 'g3', name: '3급', count: 14, unit: 0, gradePct: 0 },
-      { id: 'g4', name: '4급', count: 9, unit: 0, gradePct: 0 },
-      { id: 'g5', name: '5급', count: 19, unit: 0, gradePct: 0 },
-      { id: 'g6', name: '6급', count: 28, unit: 0, gradePct: 0 }
+    items: [
+      { id: 'ceo', name: '가급 기관장 평가급', unit: 7900000, count: 1, pct: 190 },
+      { id: 'org', name: '가급 기관 평가급', unit: 200000000, count: 1, pct: 100 }
     ]
   }
 };
@@ -7355,8 +7353,8 @@ function lcRetirementTotal() {
   var rt = LC.retirement;
   return (rt.base / 12) * (rt.rate / 100);
 }
-function lcEvalItemAmt(g) { return g.unit * g.count * (g.gradePct / 100); }
-function lcEvalTotal() { return LC.evalPay.grades.reduce(function (s, g) { return s + lcEvalItemAmt(g); }, 0); }
+function lcEvalItemAmt(item) { return item.unit * item.count * (item.pct / 100); }
+function lcEvalTotal() { return LC.evalPay.items.reduce(function (s, item) { return s + lcEvalItemAmt(item); }, 0); }
 
 // path 예: "grades.0.count", "merit.2.count", "other03.count", "raise"
 function lcGet(path) {
@@ -7842,7 +7840,7 @@ function lcFinalSection() {
   var f = LC.final;
   var fundOk = function (fund) { return !f.fundType || f.fundType === fund; };
   var out = '<div class="summary-box" style="border-left:4px solid var(--accent);background:var(--surface-2, var(--bg-hover));">'
-    + '<h3>인건비 기준값 (최종) <span style="font-size:12.5px;font-weight:600;color:var(--text-soft);">— 2026년 예산요구서 · 기준값 작업 전수 대조 결과</span></h3>'
+    + '<h3>인건비 기준값 <span style="font-size:12.5px;font-weight:600;color:var(--text-soft);">— 2026년 예산요구서 · 기준값 작업 전수 대조 결과</span></h3>'
     + '<p style="color:var(--text-muted);margin:0 0 4px;">기관마다 실제 보유한 재원(출연금/위탁금)만 수록했습니다. 화성FC는 위탁금이, 화성시도시공사는 출연금이 없어 각각 한쪽만 표시합니다.</p>'
     + '<p style="color:var(--text-muted);margin:0;">2026-08-23 대사 로직 2차 수정: ① &ldquo;보수/수당&rdquo; 문자열 매칭 대신 예산과목 트리에서 <b>목(統計目)=&ldquo;인건비&rdquo;의 자손</b>인지로 판정하도록 변경(수영장 타일 보수공사 같은 비인건비 오탐 제거) ② Supabase 쿼리에 페이지네이션이 없어 1,000행 초과분이 조용히 잘려나가던 버그 수정(HSCF 위탁금 실제 4,182행 중 1,000행만 조회되고 있었음). 아래 수치는 두 수정을 모두 반영한, 전체 데이터 기준 최신값입니다. 퇴직급여·평가급은 별도 목(統計目)에 속해 이 자동 집계 범위 밖이라 계속 수동 검증 값으로 표기합니다.</p>'
     + '</div>';
@@ -8374,20 +8372,20 @@ function renderLaborCalc() {
     + '<tr><td>가산율(%)</td><td>' + lcNumInput('retirement.rate', 70) + '%</td><td class="lc-formula"></td></tr>'
     + '</tbody></table></div>';
 
-  // ---- 218 평가급 — DB 목 합계 600,000천원(2026)/769,573천원(2025)만 있고 직급별 산출근거 없음. 단가·등급률 0부터 입력하는 빈 틀. ----
+  // ---- 218 평가급 — 기준값(최종) 탭 전수 대조로 확인된 실제 산출근거 2건(가급 기관장·기관 평가급) 반영. ----
   var evalTotal = lcEvalTotal();
-  var evalRows = LC.evalPay.grades.map(function (g, gi) {
-    var amt = lcEvalItemAmt(g);
-    return '<tr><td>' + g.name + '</td>'
-      + '<td>' + lcNumInput('evalPay.grades.' + gi + '.unit', 90) + '원</td>'
-      + '<td>' + g.count + '</td>'
-      + '<td>' + lcNumInput('evalPay.grades.' + gi + '.gradePct', 55) + '%</td>'
-      + '<td class="lc-formula">단가×인원×등급률</td>'
+  var evalRows = LC.evalPay.items.map(function (item, ii) {
+    var amt = lcEvalItemAmt(item);
+    return '<tr><td>' + item.name + '</td>'
+      + '<td>' + lcNumInput('evalPay.items.' + ii + '.unit', 100) + '원</td>'
+      + '<td>' + lcNumInput('evalPay.items.' + ii + '.count', 55) + '</td>'
+      + '<td>' + lcNumInput('evalPay.items.' + ii + '.pct', 55) + '%</td>'
+      + '<td class="lc-formula">단가×인원×적용률</td>'
       + '<td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
   }).join('');
   var section07 = '<div class="lc-section" style="border-left-color:#C2699A"><h3>218 평가급</h3>'
-    + '<p class="lc-hint">DB상 2026년 목(218) 합계는 600,000천원 편성되어 있으나(2025년 769,573천원), 직급별 세부 산출근거는 비어있어 단가·등급률을 0부터 입력하는 빈 틀입니다. 인원수는 인건비 탭의 직급별 인원과 동일하게 연동됩니다.</p>'
-    + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th>등급률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+    + '<p class="lc-hint">DB상 2026년 목(218) 합계는 600,000천원 편성되어 있으나(2025년 769,573천원), 기준값(최종) 탭 전수 대조로 산출근거가 확인된 항목은 아래 2건(가급 기관장·기관 평가급, 계산값 합계 ' + fmtWon(lcRound(evalTotal)) + '천원)뿐입니다. 나머지 ' + fmtWon(lcRound(600000000 - evalTotal)) + '천원은 원본 예산요구서에 세부 산출내역이 없어 이 계산기 범위 밖입니다 — 기준값(최종) 탭의 정합성 문제 참고.</p>'
+    + '<table class="lc-table"><thead><tr><th>항목</th><th>단가(원)</th><th>인원/식</th><th>적용률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
     + lcSubtotalRow('합계', evalTotal, 5) + evalRows
     + '</tbody></table></div>';
 
@@ -8401,7 +8399,7 @@ function renderLaborCalc() {
     + '<input ' + (LC.view === 'pension' ? 'checked' : '') + ' id="lc-opt-pension" name="lc-options" type="radio" onchange="lcSetView(\'pension\')" />'
     + '<label class="option" for="lc-opt-pension">연금</label>'
     + '<input ' + (LC.view === 'final' ? 'checked' : '') + ' id="lc-opt-final" name="lc-options" type="radio" onchange="lcSetView(\'final\')" />'
-    + '<label class="option" for="lc-opt-final">기준값 (최종)</label>'
+    + '<label class="option" for="lc-opt-final">기준값</label>'
     + '<span class="background"></span>'
     + '</div>';
 
