@@ -428,7 +428,7 @@ table.summary.ov2-rev-total-table { table-layout: fixed; }
 table.summary.ov2-rev-total-table th, table.summary.ov2-rev-total-table td { text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 6px; padding-right: 6px; letter-spacing: .01em; }
 table.summary.ov2-rev-total-table th:first-child, table.summary.ov2-rev-total-table td:first-child { text-align: left; width: 22%; white-space: nowrap; font-size: 13.5px; }
 table.summary.ov2-rev-total-table th:nth-child(2), table.summary.ov2-rev-total-table td:nth-child(2),
-table.summary.ov2-rev-total-table th:nth-child(3), table.summary.ov2-rev-total-table td:nth-child(3) { width: 23%; }
+table.summary.ov2-rev-total-table th:nth-child(3), table.summary.ov2-rev-total-table td:nth-child(3) { width: 23%; text-align: right; padding-right: 14px; }
 table.summary.ov2-rev-total-table th:last-child, table.summary.ov2-rev-total-table td:last-child { width: 32%; padding-right: 10px; }
 table.summary.ov2-rev-total-table td.diff { white-space: nowrap; font-size: 13px; }
 tr.ov2-rev-group-row td { background: var(--bg-hover); color: var(--navy); font-weight: 800; font-size: 13px; letter-spacing: .01em; padding-top: 4px !important; padding-bottom: 4px !important; border-bottom: 1.5px solid var(--border-strong); }
@@ -2164,9 +2164,7 @@ td.lc-warn-cell { position: relative; }
       <div id="summary-slot"></div>
       <div id="dept-biz-breakdown" style="display:none;"></div>
 
-      <div class="section-title-row">
-        <h2 class="section-heading section-heading-lg" id="cards-title">부서별 예산</h2>
-      </div>
+      <h2 class="section-heading section-heading-lg" id="cards-title" style="display:none;"></h2>
       <div class="business-section">
         <div class="round-tabs-row" id="round-tabs-row">
           <div class="radio-input" id="round-tabs">
@@ -3086,6 +3084,44 @@ function buildIncomeProportionBar(rows, total26) {
     + '</div>';
 }
 
+function buildPersonRankBar(rows) {
+  var total = rows.reduce(function (a, r) { return a + (r.current || 0); }, 0);
+  var actualPcts = rows.map(function (r) { return total ? (r.current / total * 100) : 0; });
+  var MIN_VISUAL_PCT = 3;
+  var pcts = actualPcts.map(function (p) { return p > 0 ? Math.max(p, MIN_VISUAL_PCT) : 0; });
+  var visualSum = pcts.reduce(function (a, b) { return a + b; }, 0);
+  if (visualSum > 100) {
+    var overBudget = visualSum - 100;
+    var flexIdx = [];
+    var flexSum = 0;
+    pcts.forEach(function (p, i) { if (p > MIN_VISUAL_PCT) { flexIdx.push(i); flexSum += p; } });
+    if (flexSum > 0) {
+      flexIdx.forEach(function (i) { pcts[i] -= overBudget * (pcts[i] / flexSum); });
+    }
+  }
+  var LABEL_MIN_PCT = 8;
+  var valTxt = function (r) { return (r.capacity != null) ? (r.capacity + '(' + r.current + ')') : (r.current + '명'); };
+  var labelsHtml = rows.map(function (r, i) {
+    var actualPct = actualPcts[i];
+    if (actualPct <= 0) return '';
+    var tt = escapeHtml(r.label) + ' ' + valTxt(r) + ' ' + actualPct.toFixed(1) + '%';
+    if (actualPct < LABEL_MIN_PCT) return '<div class="ov2-propbar-label" style="flex-basis:' + pcts[i] + '%;" title="' + tt + '"></div>';
+    return '<div class="ov2-propbar-label" style="flex-basis:' + pcts[i] + '%;" title="' + tt + '">'
+      + '<span class="name">' + escapeHtml(r.label) + '</span>'
+      + '<span class="pct">' + actualPct.toFixed(1) + '%</span>'
+      + '</div>';
+  }).join('');
+  var segsHtml = rows.map(function (r, i) {
+    var actualPct = actualPcts[i];
+    if (actualPct <= 0) return '';
+    return '<div class="ov2-propbar-seg" style="flex-basis:' + pcts[i] + '%;background:' + donutGradientCss(i) + ';" title="' + escapeHtml(r.label) + ' ' + valTxt(r) + '(' + actualPct.toFixed(1) + '%)"></div>';
+  }).join('');
+  return '<div class="ov2-propbar">'
+    + '<div class="ov2-propbar-labels">' + labelsHtml + '</div>'
+    + '<div class="ov2-propbar-track">' + segsHtml + '</div>'
+    + '</div>';
+}
+
 function renderFcRevenueSummary(cardsByName) {
   var rows = [
     { label: '출연금', y26: (cardsByName['출연금'] && cardsByName['출연금'].amt) || 0, y25: (cardsByName['출연금'] && cardsByName['출연금'].amt25) || 0 },
@@ -3837,26 +3873,19 @@ function renderOv2Overview(instKey) {
     return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null);
   }).join('');
 
-  var hoverMap = {};
-  d.personnelGroups.forEach(function (g) {
-    if (g.hoverOnly && g.hoverTarget) {
-      var rowsHtml = g.rows.map(function (r) {
-        var v = (r.capacity != null) ? (r.capacity + '(' + r.current + ')') : String(r.current);
-        return '<div class="ov2-tt-chip"><span class="ov2-tt-chip-label">' + escapeHtml(r.label) + '</span><span class="ov2-tt-chip-val">' + v + '</span></div>';
-      }).join('');
-      hoverMap[g.hoverTarget] = { html: '<div class="ov2-tt-title">' + escapeHtml(g.title) + '</div><div class="ov2-tt-chips">' + rowsHtml + '</div>' + (g.note ? '<div class="ov2-tt-note">' + escapeHtml(g.note) + '</div>' : ''), direction: g.hoverDirection || 'up' };
-    }
-  });
-  var visibleGroups = d.personnelGroups.filter(function (g) { return !g.hoverOnly; });
-  var groupsHtml = visibleGroups.map(function (g) {
-    return '<div class="summary-box"><h3>' + escapeHtml(g.title) + '</h3>' + ov2PersonnelBarList(g.rows, hoverMap)
-      + (g.note ? '<p class="ov2-pbar-note">' + escapeHtml(g.note) + '</p>' : '') + '</div>';
-  }).join('');
+  // "정원 내 인력" 그룹(임원/일반직/무기계약직 등 세부 인원)은 위 4개 카드(정원/현원/충원율/정원외인력)와
+  // 내용이 중복돼서 더 이상 별도로 노출하지 않고, 실질적으로 더 중요한 "직급별 현황"(hoverOnly 그룹)만
+  // 비중 막대 하나로 항상 보이게 바꿨다.
+  var rankGroup = d.personnelGroups.filter(function (g) { return g.hoverOnly; })[0];
+  var rankHtml = rankGroup
+    ? '<div class="summary-box"><h3>' + escapeHtml(rankGroup.title) + '</h3>' + buildPersonRankBar(rankGroup.rows)
+      + (rankGroup.note ? '<p class="ov2-pbar-note">' + escapeHtml(rankGroup.note) + '</p>' : '') + '</div>'
+    : '';
 
   var orgHtml = '<div class="section-title-row"><h2 class="section-heading section-heading-lg">정현원 현황</h2></div>'
     + '<div class="ov2-two-col ov2-personnel-row">'
       + '<div><div class="settle-kpi-grid ov2-kpi-2col">' + cardsHtml + '</div></div>'
-      + '<div>' + groupsHtml + '</div>'
+      + '<div>' + rankHtml + '</div>'
     + '</div>';
   var gradeHtml = '';
 
@@ -6807,7 +6836,7 @@ var DISABLED_SPORTS_COUNCIL_DATA = {
     // 시보조금(기금포함) = 시보조금 + 체육진흥기금
     { label: '시보조금', y26: 1378706, y25: 1240857 },
     { label: '위탁금', y26: 1790304, y25: 0 },
-    { label: '국도비보조금', y26: 339990, y25: 363222 },
+    { label: '국도비보조금', y26: 344890, y25: 363222 },
     { label: '이사회비', y26: 28702, y25: 16500 }
   ],
   revenueItems: [
@@ -6815,7 +6844,7 @@ var DISABLED_SPORTS_COUNCIL_DATA = {
     { label: '시보조금', y26: 1308706, y25: 1180857 },
     { label: '체육진흥기금', y26: 70000, y25: 60000 },
     { label: '장애인생활체육지도자 배치', sub: '국/도/시', y26: 287790, y25: 281022 },
-    { label: '국도비 보조금', y26: 52200, y25: 82200 },
+    { label: '국도비 보조금', y26: 57100, y25: 82200 },
     { label: '이사회비', y26: 28702, y25: 16500 }
   ],
   // 구글드라이브 "2026년 장애인체육회 수입 내역 및 지출 계획.pdf" 2쪽(2026년 국·도·시 보조금 지출 계획) 기준.
@@ -6833,7 +6862,8 @@ var DISABLED_SPORTS_COUNCIL_DATA = {
       { label: '장애인생활체육지도자 배치', y26: 287790, y25: 281022 }
     ] },
     { label: '국·도 기금 지원', y26: 57100, y25: 82200, items: [
-      { label: '생활체육프로그램', y26: 57100, y25: 82200 }
+      { label: '생활체육프로그램', y26: 47100, y25: 42200 },
+      { label: '장애인생활체육대회 개최지원', y26: 10000, y25: 40000 }
     ] },
     { label: '체육진흥기금', y26: 70000, y25: 60000, items: [
       { label: '체육진흥관리비', y26: 70000, y25: 60000 }
@@ -6954,22 +6984,9 @@ function showPlaceholderInstOverview(name) {
     var expDetailTotal25 = d.expenseDetail.reduce(function (a, p) { return a + p.y25; }, 0);
     var expDetailTotalHtml = '<tr class="total"><td>총 계</td><td>' + fmtWon(expDetailTotal26) + '</td><td>' + fmtWon(expDetailTotal25) + '</td>' + diffCellHtml(expDetailTotal25, expDetailTotal26) + '</tr>';
     var expTableHead = '<thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead>';
-    // 옆 수입총괄 표(총계 1행 + 항목 8행 = 9행) 길이만큼만 기본 노출하고, 그 이후는 "더보기"로 - 사업 중간을 자르지 않고 완결 단위로 끊는다.
-    // 단, 표 전체 행 수가 짧으면(예: 장애인체육회) 굳이 나눌 필요가 없으니 통째로 다 보여준다.
-    var targetVisibleRows = d.revenueItems.length;
-    var totalExpRows = expProgramBlocks.reduce(function (a, blk) { return a + blk.rows; }, 0);
-    var visibleHtml = '', hiddenHtml = '', visibleRowCount = 0, hiddenCount = 0, splitDone = false;
-    var skipSplit = totalExpRows <= 12;
-    expProgramBlocks.forEach(function (blk) {
-      if (skipSplit || (!splitDone && visibleRowCount < targetVisibleRows)) {
-        visibleHtml += blk.html;
-        visibleRowCount += blk.rows;
-      } else {
-        splitDone = true;
-        hiddenHtml += blk.html;
-        hiddenCount++;
-      }
-    });
+    // "더보기"로 나누지 않고 지출총괄 항목을 통째로 다 보여준다.
+    var visibleHtml = expProgramBlocks.map(function (blk) { return blk.html; }).join('');
+    var hiddenHtml = '', hiddenCount = 0;
     // 표를 둘로 쪼개지 않고 하나의 table 안에 tbody 2개(기본 노출 + 더보기)를 두어, 펼쳐도 헤더가 중간에 다시 나오지 않고 한 표로 이어지게 한다.
     var expenseHtml = '<div class="summary-box"><p class="ov2-unit-note" style="margin:0 2px 8px;">(단위: 천원)</p>'
       + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table ov2-inst-sports">' + expTableHead
