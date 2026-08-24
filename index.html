@@ -139,7 +139,7 @@ table.summary td.diff.down { color: var(--accent); }
 .summary-box-body { flex: 0 1 auto; display: flex; flex-direction: column; justify-content: flex-start; }
 .summary-box-body.donut-row { flex-direction: row; align-items: center; justify-content: center; gap: 22px; }
 .summary-box-body.donut-row .donut-legend { width: auto; flex: 1 1 auto; max-width: 200px; margin-top: 0; }
-.summary-grid .summary-box .table-scroll { width: 100%; overflow-x: auto; }
+.summary-box .table-scroll { width: 100%; overflow-x: auto; }
 /* 결산 화면 */
 .settle-title-row { padding-bottom: 16px; border-bottom: 2px solid var(--border-strong); margin-bottom: 22px !important; }
 .settle-col-label { text-align: left !important; padding-left: 4px !important; }
@@ -152,6 +152,8 @@ table.summary td.diff.down { color: var(--accent); }
 .settle-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
 .settle-kpi-grid.ov2-kpi-2col { grid-template-columns: repeat(2, 1fr); gap: 18px; }
 .ov2-personnel-row .settle-kpi-grid.ov2-kpi-2col { height: 100%; grid-template-rows: repeat(2, 1fr); margin-bottom: 0; }
+.ov2-personnel-row .settle-kpi-grid.ov2-kpi-2col.ov2-kpi-2col-compact { grid-template-rows: none; height: auto; }
+.ov2-personnel-row .settle-kpi-grid.ov2-kpi-2col.ov2-kpi-2col-compact .settle-kpi-card { height: auto; }
 .ov2-personnel-row .settle-kpi-grid.ov2-kpi-2col .settle-kpi-card { height: 100%; padding: 16px 18px; }
 .ov2-personnel-row .settle-kpi-grid.ov2-kpi-2col .icon-badge,
 .ov2-personnel-row .settle-kpi-grid.ov2-kpi-2col .icon-badge svg,
@@ -165,7 +167,8 @@ table.summary td.diff.down { color: var(--accent); }
 .settle-kpi-card .kpi-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .settle-kpi-card .label { font-size: 13.5px; font-weight: 700; color: var(--text-muted); white-space: nowrap; line-height: 1.3; }
 .settle-kpi-card .value { font-size: 20px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; line-height: 1.25; }
-.settle-kpi-card .sub { font-size: 11px; color: var(--text-soft); margin-top: 1px; }
+.settle-kpi-card .sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.ov2-personnel-row .settle-kpi-card .sub { font-size: 13px; font-weight: 700; color: var(--text); }
 .settle-kpi-card .icon-badge { flex: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
 .settle-kpi-card .icon-badge svg { width: 36px; height: 36px; }
 .settle-kpi-card .icon-badge img { width: 36px; height: 36px; }
@@ -288,9 +291,12 @@ table.fc-summary td .dot {
 .ov2-org-shortage .ico { flex: none; line-height: 1; }
 .ov2-section-sub { font-size: 18px; color: var(--text-muted); font-weight: 700; margin-left: 4px; }
 .ov2-outside-detail { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; font-weight: 300; }
-.ov2-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 18px; align-items: stretch; }
+.ov2-two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; margin-bottom: 18px; align-items: stretch; }
+.ov2-two-col > div, .ov2-two-col > .summary-box { min-width: 0; }
 .ov2-two-col .summary-box { margin-bottom: 0; height: 100%; box-sizing: border-box; }
-.ov2-two-col.ov2-inst-hscf, .ov2-two-col.ov2-inst-corp, .ov2-two-col.ov2-inst-talent, .ov2-two-col.ov2-inst-fc { grid-template-columns: 0.8fr 1.2fr; }
+.ov2-two-col.ov2-inst-hscf, .ov2-two-col.ov2-inst-corp, .ov2-two-col.ov2-inst-talent, .ov2-two-col.ov2-inst-fc { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.ov2-two-col.ov2-personnel-row { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
+.ov2-two-col.ov2-personnel-row-corp { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
 @media (max-width: 980px) { .ov2-two-col { grid-template-columns: 1fr; } }
 
 .summary-box h3:has(+ .ov2-pbar-list) { margin-bottom: 4px; }
@@ -410,27 +416,30 @@ table.summary.ov2-bc-table th:first-child, table.summary.ov2-bc-table td:first-c
 .ov2-bc-hdiff.down { color: var(--accent); }
 table.summary tr.ov2-eb-section td { font-weight: 800; background: var(--accent-soft); color: var(--accent-dark); }
 table.summary tr.ov2-eb-row td:first-child { padding-left: 22px; color: var(--text-muted); font-weight: 400; }
-table.summary tr.ov2-eb-row td { font-size: 13.5px; padding-top: 2px; padding-bottom: 2px; line-height: 1.15; }
-table.summary.ov2-expense-table { table-layout: fixed; }
-table.summary.ov2-expense-table th:first-child, table.summary.ov2-expense-table td:first-child { text-align: left; width: 19%; word-break: break-all; white-space: normal; padding-right: 2px; font-size: 13.5px; }
-table.summary.ov2-expense-table.ov2-inst-corp th:first-child, table.summary.ov2-expense-table.ov2-inst-corp td:first-child { width: 33%; }
-table.summary.ov2-expense-table.ov2-inst-corp tr.ov2-eb-row td:first-child { font-size: 11.5px; white-space: nowrap; padding-left: 18px; }
-table.summary.ov2-expense-table.ov2-inst-corp th, table.summary.ov2-expense-table.ov2-inst-corp td { font-size: 12.5px; padding-left: 4px; padding-right: 4px; }
-.ov2-two-col.ov2-inst-sports { grid-template-columns: 0.75fr 1.25fr; }
+table.summary tr.ov2-eb-row td { padding-top: 2px; padding-bottom: 2px; line-height: 1.15; }
+table.summary.ov2-expense-table { table-layout: auto; }
+table.summary.ov2-expense-table th:first-child, table.summary.ov2-expense-table td:first-child { text-align: left; width: 140px; white-space: normal; word-break: break-all; padding-right: 2px; }
+table.summary.ov2-expense-table.ov2-inst-corp th:first-child, table.summary.ov2-expense-table.ov2-inst-corp td:first-child { width: 220px; white-space: normal; word-break: break-all; }
+table.summary.ov2-expense-table.ov2-inst-corp tr.ov2-eb-row td:first-child { padding-left: 18px; }
+table.summary.ov2-expense-table.ov2-inst-corp th, table.summary.ov2-expense-table.ov2-inst-corp td { padding-left: 4px; padding-right: 4px; }
+.ov2-two-col.ov2-inst-sports { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 table.summary.ov2-inst-sports th:first-child, table.summary.ov2-inst-sports td:first-child { width: 46%; text-align: left; }
 table.summary.ov2-inst-sports th:not(:first-child), table.summary.ov2-inst-sports td:not(:first-child) { text-align: right; padding-right: 16px; }
 table.summary.ov2-rev-total-table.ov2-inst-sports th:last-child, table.summary.ov2-rev-total-table.ov2-inst-sports td:last-child { width: auto; padding-right: 16px; }
 .ov2-eb-footnote { font-size: 14.5px; font-weight: 700; color: var(--text-muted); margin: 10px 2px 0; }
-table.summary.ov2-income-table th { font-size: 16px; }
-table.summary.ov2-income-table td { font-size: 14.5px; }
+table.summary.ov2-income-table th { font-size: 18px; }
+table.summary.ov2-income-table td { font-size: 16.5px; }
 table.summary.ov2-income-table th, table.summary.ov2-income-table td { padding-top: 5px; padding-bottom: 5px; }
-table.summary.ov2-rev-total-table { table-layout: fixed; }
-table.summary.ov2-rev-total-table th, table.summary.ov2-rev-total-table td { text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 6px; padding-right: 6px; letter-spacing: .01em; }
-table.summary.ov2-rev-total-table th:first-child, table.summary.ov2-rev-total-table td:first-child { text-align: left; width: 22%; white-space: nowrap; font-size: 13.5px; }
+table.summary.ov2-rev-total-table { table-layout: auto; }
+table.summary.ov2-rev-total-table th, table.summary.ov2-rev-total-table td { text-align: center; padding-top: 5px; padding-bottom: 5px; padding-left: 4px; padding-right: 4px; letter-spacing: .01em; }
+table.summary.ov2-rev-total-table th:first-child, table.summary.ov2-rev-total-table td:first-child { text-align: left; max-width: 104px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 table.summary.ov2-rev-total-table th:nth-child(2), table.summary.ov2-rev-total-table td:nth-child(2),
-table.summary.ov2-rev-total-table th:nth-child(3), table.summary.ov2-rev-total-table td:nth-child(3) { width: 23%; text-align: right; padding-right: 14px; }
-table.summary.ov2-rev-total-table th:last-child, table.summary.ov2-rev-total-table td:last-child { width: 32%; padding-right: 10px; }
-table.summary.ov2-rev-total-table td.diff { white-space: nowrap; font-size: 13px; }
+table.summary.ov2-rev-total-table th:nth-child(3), table.summary.ov2-rev-total-table td:nth-child(3) { text-align: right; padding-right: 4px; white-space: nowrap; }
+table.summary.ov2-rev-total-table th:last-child, table.summary.ov2-rev-total-table td:last-child { text-align: right; padding-right: 6px; }
+table.summary.ov2-rev-total-table td.diff { white-space: normal; word-break: keep-all; }
+/* 수입총괄/지출총괄 - 같은 줄 안에서 열마다 폰트 크기가 제각각이던 것을 통일 (헤더+데이터, 모든 열 동일) */
+table.summary.ov2-rev-total-table th, table.summary.ov2-rev-total-table td,
+table.summary.ov2-expense-table th, table.summary.ov2-expense-table td { font-size: 14px !important; }
 tr.ov2-rev-group-row td { background: var(--bg-hover); color: var(--navy); font-weight: 800; font-size: 13px; letter-spacing: .01em; padding-top: 4px !important; padding-bottom: 4px !important; border-bottom: 1.5px solid var(--border-strong); }
 tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .ov2-rev-detail-sub { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border-strong); }
@@ -444,8 +453,6 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .ov2-rev-sub-label { font-size: 11.5px; color: var(--text-soft); font-weight: 400; }
 .ov2-rev-sub-inline { white-space: nowrap; }
 .ov2-rev-footnote { font-size: 11.5px; color: var(--text-soft); margin: 6px 2px 0; }
-table.summary.ov2-rev-total-table.ov2-inst-corp th, table.summary.ov2-rev-total-table.ov2-inst-corp td { padding-left: 2px; padding-right: 14px; }
-table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov2-rev-total-table.ov2-inst-corp td:first-child { width: 20%; padding-right: 6px; }
 .ov2-unit-note { font-size: 12px; font-weight: 400; color: var(--text-soft); text-align: right; margin: 0 2px 4px; }
 .ov2-subtable-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin: 18px 2px 8px; }
 
@@ -3087,7 +3094,9 @@ function buildIncomeProportionBar(rows, total26) {
 function buildPersonRankBar(rows) {
   var total = rows.reduce(function (a, r) { return a + (r.current || 0); }, 0);
   var actualPcts = rows.map(function (r) { return total ? (r.current / total * 100) : 0; });
-  var MIN_VISUAL_PCT = 3;
+  // 실제 비중대로면 가급·나급처럼 인원이 적은 구간은 너무 좁아 라벨이 안 들어가므로,
+  // 정확한 비중 대신 라벨이 들어갈 만큼 폭을 넉넉하게 보정한다(정확한 값은 hover 툴팁으로 확인).
+  var MIN_VISUAL_PCT = 12;
   var pcts = actualPcts.map(function (p) { return p > 0 ? Math.max(p, MIN_VISUAL_PCT) : 0; });
   var visualSum = pcts.reduce(function (a, b) { return a + b; }, 0);
   if (visualSum > 100) {
@@ -3099,16 +3108,22 @@ function buildPersonRankBar(rows) {
       flexIdx.forEach(function (i) { pcts[i] -= overBudget * (pcts[i] / flexSum); });
     }
   }
-  var LABEL_MIN_PCT = 8;
   var valTxt = function (r) { return (r.capacity != null) ? (r.capacity + '(' + r.current + ')') : (r.current + '명'); };
+  // "전문계약직(가급)"처럼 긴 이름은 좁은 구간에서 잘리므로, 괄호가 있으면 괄호 안쪽만 짧게 보여주고
+  // 전체 이름은 title 툴팁으로 확인하게 한다.
+  var shortLabel = function (label) {
+    var m = /^(.*)\(([^)]+)\)$/.exec(label);
+    return m ? m[2] : label;
+  };
   var labelsHtml = rows.map(function (r, i) {
     var actualPct = actualPcts[i];
     if (actualPct <= 0) return '';
     var tt = escapeHtml(r.label) + ' ' + valTxt(r) + ' ' + actualPct.toFixed(1) + '%';
-    if (actualPct < LABEL_MIN_PCT) return '<div class="ov2-propbar-label" style="flex-basis:' + pcts[i] + '%;" title="' + tt + '"></div>';
+    // 구간이 좁아도(예: 6급 비중이 커서 가급·나급 폭이 작을 때) 라벨을 생략하지 않고 항상 표시한다.
+    // 폭이 부족하면 .name에 걸린 ellipsis로 축약되고, 정확한 값은 title 툴팁으로 확인 가능.
     return '<div class="ov2-propbar-label" style="flex-basis:' + pcts[i] + '%;" title="' + tt + '">'
-      + '<span class="name">' + escapeHtml(r.label) + '</span>'
-      + '<span class="pct">' + actualPct.toFixed(1) + '%</span>'
+      + '<span class="name">' + escapeHtml(shortLabel(r.label)) + '</span>'
+      + '<span class="pct">' + valTxt(r) + '</span>'
       + '</div>';
   }).join('');
   var segsHtml = rows.map(function (r, i) {
@@ -3869,8 +3884,33 @@ function renderOv2Overview(instKey) {
   document.getElementById('overview-summary-title').textContent = d.name + ' 총괄';
 
   // 1) 정현원 총괄 + 2) 정현원 현황 — 세로로 두 섹션을 쌓지 않고, 한 줄에 좌(총괄 카드)/우(현황) 2단으로 배치
+  // "정원 내 인력" 그룹(직종별 정원(현원))은 더 이상 별도 리스트로 안 보여주는 대신,
+  // "정원" 카드 아래에 직종별 정원(현원)을 한 줄로 압축해서 보여준다(정원외 인력은 별도 카드가 있어 제외).
+  // 카드 하단 정원/현원 세부내역 줄이 너무 길어 보이는 기관은 특정 직종 앞에서 줄바꿈한다.
+  var CAP_BREAK_BEFORE = { hscf: '무기계약직', talent: '공무직' };
+  var buildBreakdownLine = function (rows, field, breakBeforeLabel) {
+    var html = '';
+    rows.forEach(function (r, i) {
+      var sep = i === 0 ? '' : (breakBeforeLabel && r.label === breakBeforeLabel ? '<br>' : ' · ');
+      html += sep + escapeHtml(r.label) + ' ' + r[field];
+    });
+    return html;
+  };
+  var capGroup = d.personnelGroups.filter(function (g) { return !g.hoverOnly; })[0];
+  var capBreakdownHtml = '', curBreakdownHtml = '';
+  if (capGroup) {
+    var capRows = capGroup.rows.filter(function (r) { return !r.sectionLabel && r.capacity != null; });
+    if (capRows.length) {
+      var breakBefore = CAP_BREAK_BEFORE[instKey];
+      capBreakdownHtml = '<span class="ov2-outside-detail">' + buildBreakdownLine(capRows, 'capacity', breakBefore) + '</span>';
+      curBreakdownHtml = '<span class="ov2-outside-detail">' + buildBreakdownLine(capRows, 'current', breakBefore) + '</span>';
+    }
+  }
   var cardsHtml = d.org.cards.map(function (c) {
-    return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null);
+    var extra = c.extra || null;
+    if (c.label === '정원' && capBreakdownHtml) extra = capBreakdownHtml;
+    if (c.label === '현원' && curBreakdownHtml) extra = curBreakdownHtml;
+    return settleKpiCard(c.tone, c.iconKey, c.label, c.value, extra);
   }).join('');
 
   // "정원 내 인력" 그룹(임원/일반직/무기계약직 등 세부 인원)은 위 4개 카드(정원/현원/충원율/정원외인력)와
@@ -3883,7 +3923,7 @@ function renderOv2Overview(instKey) {
     : '';
 
   var orgHtml = '<div class="section-title-row"><h2 class="section-heading section-heading-lg">정현원 현황</h2></div>'
-    + '<div class="ov2-two-col ov2-personnel-row">'
+    + '<div class="ov2-two-col ov2-personnel-row ov2-personnel-row-' + instKey + '">'
       + '<div><div class="settle-kpi-grid ov2-kpi-2col">' + cardsHtml + '</div></div>'
       + '<div>' + rankHtml + '</div>'
     + '</div>';
@@ -3905,7 +3945,7 @@ function renderOv2Overview(instKey) {
     var labelHtml = REV_BOLD_LABELS.indexOf(r.label) !== -1
       ? '<span class="ov2-rev-marker">' + escapeHtml(r.label) + '</span>'
       : escapeHtml(r.label);
-    return '<tr><td>' + labelHtml + '</td><td>' + y26Html + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
+    return '<tr><td title="' + escapeHtml(r.label) + '">' + labelHtml + '</td><td>' + y26Html + '</td><td>' + fmtWon(r.y25) + '</td>' + diffCellHtml(r.y25, r.y26) + '</tr>';
   }).join('');
   var revTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(revTotal26) + '</td><td>' + fmtWon(revTotal25) + '</td>' + diffCellHtml(revTotal25, revTotal26) + '</tr>';
   var revDetailHtml = '';
@@ -3975,8 +4015,8 @@ function renderOv2Overview(instKey) {
   }
 
   var incomeBoxHtml = '<div class="summary-box">' + (d.hideIncomeTitle ? '' : '<h3>총 수입</h3>')
-        + buildIncomeProportionBar(d.revenueItems, revTotal26)
         + '<p class="ov2-unit-note">(단위: 천원)</p>'
+        + buildIncomeProportionBar(d.revenueItems, revTotal26)
         + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table ov2-inst-' + instKey + '"><thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>'
         + (revDetailHtml ? '<div class="ov2-rev-detail-sub"><h4>' + escapeHtml(d.revenueDetailTitle || '세부 내역') + '</h4>' + revDetailHtml + '</div>' : '')
       + '</div>';
@@ -6913,14 +6953,19 @@ function showPlaceholderInstOverview(name) {
     var cardsHtml = d.org.cards.map(function (c) {
       return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null);
     }).join('');
-    var groupsHtml = d.personnelGroups.map(function (g) {
-      return '<div class="summary-box"><h3>' + escapeHtml(g.title) + '</h3>' + ov2PersonnelBarList(g.rows, {})
-        + (g.note ? '<p class="ov2-pbar-note">' + escapeHtml(g.note) + '</p>' : '') + '</div>';
-    }).join('');
+    // 실제 기관(hscf/corp/talent/fc)과 동일하게 직급별 현황을 여러 줄 리스트 대신 비중 막대 하나로 표시한다.
+    var rankGroup = d.personnelGroups[0];
+    var rankHtml = rankGroup
+      ? '<div class="summary-box"><h3>' + escapeHtml(rankGroup.title) + '</h3>' + buildPersonRankBar(rankGroup.rows)
+        + (rankGroup.note ? '<p class="ov2-pbar-note">' + escapeHtml(rankGroup.note) + '</p>' : '') + '</div>'
+      : '';
+    // 카드가 2개뿐인 기관(장애인체육회)은 2x2 그리드가 강제하는 빈 둘째 줄만큼 이 행 전체가
+    // 불필요하게 길어져서 아래 "소관별 정현원"이 밑으로 밀려나므로, 카드 2개일 때는 빈 줄이 안 생기게 한다.
+    var kpiGridCls = 'settle-kpi-grid ov2-kpi-2col' + (d.org.cards.length <= 2 ? ' ov2-kpi-2col-compact' : '');
     var orgHtml = '<div class="section-title-row"><h2 class="section-heading section-heading-lg">정현원 현황</h2></div>'
       + '<div class="ov2-two-col ov2-personnel-row">'
-        + '<div><div class="settle-kpi-grid ov2-kpi-2col">' + cardsHtml + '</div></div>'
-        + '<div>' + groupsHtml + '</div>'
+        + '<div><div class="' + kpiGridCls + '">' + cardsHtml + '</div></div>'
+        + '<div>' + rankHtml + '</div>'
       + '</div>';
     var deptPersonHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">소관별 정현원</h2><span class="ov2-section-sub">' + escapeHtml(d.org.subtitle) + '</span></div>'
       + '<div class="summary-box">' + ov2PersonnelVBarList(d.byDept) + '</div>';
@@ -6961,8 +7006,7 @@ function showPlaceholderInstOverview(name) {
     }).join('');
     var revTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(revTotal26) + '</td><td>' + fmtWon(revTotal25) + '</td>' + diffCellHtml(revTotal25, revTotal26) + '</tr>';
     var revFootnoteHtml = revFootnotes.length ? '<p class="ov2-rev-footnote">* ' + revFootnotes.map(escapeHtml).join(' · ') + '</p>' : '';
-    var incomeHtml = '<div class="summary-box">' + buildIncomeProportionBar(d.revenueItems, revTotal26)
-      + '<p class="ov2-unit-note">(단위: 천원)</p>'
+    var incomeHtml = '<div class="summary-box">' + '<p class="ov2-unit-note">(단위: 천원)</p>' + buildIncomeProportionBar(d.revenueItems, revTotal26)
       + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table"><thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>' + revFootnoteHtml + '</div>';
 
     // 2026년 지출총괄 - 지출총괄표의 세부사업 54개 전부. 통계목 하나뿐인 사업은 "사업명 (통계목)" 한 줄로, 여러 개면 소계+세부 행으로.
@@ -6984,9 +7028,25 @@ function showPlaceholderInstOverview(name) {
     var expDetailTotal25 = d.expenseDetail.reduce(function (a, p) { return a + p.y25; }, 0);
     var expDetailTotalHtml = '<tr class="total"><td>총 계</td><td>' + fmtWon(expDetailTotal26) + '</td><td>' + fmtWon(expDetailTotal25) + '</td>' + diffCellHtml(expDetailTotal25, expDetailTotal26) + '</tr>';
     var expTableHead = '<thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead>';
-    // "더보기"로 나누지 않고 지출총괄 항목을 통째로 다 보여준다.
-    var visibleHtml = expProgramBlocks.map(function (blk) { return blk.html; }).join('');
-    var hiddenHtml = '', hiddenCount = 0;
+    // 화성시체육회는 지출총괄 항목이 많아(54개 세부사업) 더보기로 나누고, 장애인체육회는 항목이 적어 통째로 다 보여준다.
+    var visibleHtml, hiddenHtml = '', hiddenCount = 0;
+    if (d.name === '화성시체육회') {
+      var targetVisibleRows = d.revenueItems.length;
+      var visibleRowCount = 0, splitDone = false;
+      visibleHtml = '';
+      expProgramBlocks.forEach(function (blk) {
+        if (!splitDone && visibleRowCount < targetVisibleRows) {
+          visibleHtml += blk.html;
+          visibleRowCount += blk.rows;
+        } else {
+          splitDone = true;
+          hiddenHtml += blk.html;
+          hiddenCount++;
+        }
+      });
+    } else {
+      visibleHtml = expProgramBlocks.map(function (blk) { return blk.html; }).join('');
+    }
     // 표를 둘로 쪼개지 않고 하나의 table 안에 tbody 2개(기본 노출 + 더보기)를 두어, 펼쳐도 헤더가 중간에 다시 나오지 않고 한 표로 이어지게 한다.
     var expenseHtml = '<div class="summary-box"><p class="ov2-unit-note" style="margin:0 2px 8px;">(단위: 천원)</p>'
       + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table ov2-inst-sports">' + expTableHead
