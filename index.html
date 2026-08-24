@@ -454,13 +454,13 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .ov2-dept-card:hover { transform: translateY(3px); }
 .ov2-dept-card .dept-name { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-weight: 700; font-size: 16px; line-height: 1.3; color: var(--text); margin: 0 0 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ov2-dept-card .dept-row { display: flex; align-items: baseline; gap: 6px; margin-top: 0; line-height: 1.3; }
-.ov2-dept-card .dept-val { font-size: 15px; color: var(--text-soft); font-weight: 800; margin: 0; font-variant-numeric: tabular-nums; }
-.ov2-dept-card .dept-diff { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ov2-dept-card .dept-val { font-size: 18px; color: var(--text); font-weight: 800; margin: 0; font-variant-numeric: tabular-nums; }
+.ov2-dept-card .dept-diff { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .ov2-dept-card .dept-diff.up { color: var(--danger); }
 .ov2-dept-card .dept-diff.down { color: var(--accent); }
-.ov2-dept-card .dept-diff.zero { color: var(--text-soft); }
-.ov2-dept-card .dept-diff.na { color: var(--text-soft); }
-.ov2-dept-card .dept-badge { position: absolute; top: 8px; right: 10px; font-size: 11px; font-weight: 800; color: #5B6472; background: var(--bg-hover); padding: 3px 8px; border-radius: 20px; line-height: 1.2; white-space: nowrap; }
+.ov2-dept-card .dept-diff.zero { color: var(--text-muted); }
+.ov2-dept-card .dept-diff.na { color: var(--text-muted); }
+.ov2-dept-card .dept-badge { position: absolute; top: 8px; right: 10px; font-size: 12.5px; font-weight: 800; color: #fff; background: var(--accent); padding: 3px 9px; border-radius: 20px; line-height: 1.3; white-space: nowrap; }
 .ov2-dept-card .dept-subteams {
   max-height: 0; opacity: 0; margin-top: 0; padding-top: 0; overflow: hidden;
   border-top: 1px dashed transparent;
@@ -727,7 +727,6 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
   background: #fff; border: 1.5px solid var(--navy); border-radius: 12px;
   box-shadow: 0 10px 28px rgba(16,23,42,.16), 0 1px 3px rgba(16,23,42,.08);
   padding: 9px 14px; white-space: nowrap;
-  max-height: calc(100vh - 40px); overflow-y: auto;
 }
 /* "더보기" 버튼이 있는 위탁금 표 변형만 살짝 위로 — 더보기 없는 단순 스트립형은 그대로 둔다 */
 .dept-stat-yearly-panel:has(.dyt-more-btn) { top: -26px; }
@@ -744,7 +743,8 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
 .dyt-row.dyt-head .dyt-cell { font-size: 11px; font-weight: 700; color: var(--text-soft); text-align: center; }
 .dyt-cell { font-size: 13.5px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap; }
 .dyt-cell.no-data { color: var(--text-soft); font-weight: 500; }
-.dyt-cell.dyt-name-col { text-align: center; font-weight: 800; color: var(--accent-dark); font-size: 12.5px; }
+.dyt-cell.dyt-name-col { text-align: left; font-weight: 800; color: var(--accent-dark); font-size: 12.5px; white-space: normal; word-break: keep-all; line-height: 1.3; }
+.dyt-row.dyt-head .dyt-cell.dyt-name-col { text-align: left; }
 
 /* 위탁금도 이제 출연금과 같은 플로팅 팝업(dept-yearly-table)을 쓴다. 사업(부기명)이 많은 부서는 헤더+합계 행만
    기본으로 보여준다 - 합계도 표와 똑같은 dyt-row 그리드라 세부 행을 펼쳐도 열이 그대로 맞는다. */
@@ -757,7 +757,7 @@ table.summary.ov2-rev-total-table.ov2-inst-corp th:first-child, table.summary.ov
   border: none; border-radius: 7px; cursor: pointer;
 }
 .dyt-more-btn:hover { background: var(--accent); color: #fff; }
-.dept-yearly-table.expanded { max-height: 55vh; overflow-y: auto; }
+.dept-yearly-table.expanded { max-height: none; overflow-y: visible; }
 
 /* "부서 편성액" - 민간사업보조처럼 사업이 많은 항목을 하단 "사업별 예산"과 같은 카드 톤(business-section)으로,
    통계목(민간경상사업보조/민간행사사업보조) 기준 표 2개를 나란히 보여준다. */
@@ -965,7 +965,6 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   background:
     radial-gradient(120% 140% at 12% 0%, rgba(52,87,213,.20), rgba(52,87,213,0) 60%),
     linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0));
-  border-bottom: 1px solid var(--sidebar-border);
   cursor: pointer;
 }
 .sidebar .brand-row { display: flex; align-items: center; gap: 11px; }
@@ -2642,9 +2641,14 @@ function renderDeptTabs() {
         }).join('');
         // 항목이 많으면(문화예술과/체육진흥과 등) 기본값은 헤더 + 합계 행만 보여준다. 합계도 표와 똑같은
         // dyt-row 그리드를 그대로 써서, 나중에 세부 행이 펼쳐져도 열이 어긋나지 않고 그대로 맞는다.
-        // 출연금은 원래부터 항상 표 전체를 그대로 보여줬다(카드 수도 원체 적음) - 더보기 접기는 위탁금(사업 수가 많은 경우)에만 적용한다.
-        var needsMore = state.fund === '위탁금' && enactedCards.length > 1;
-        if (needsMore) {
+        // 더보기 접기는 위탁금(사업 수가 많은 경우)에만 적용한다 - 카드가 2개뿐이면 접었다 펴는 게 오히려 번거로우니, 3개 이상일 때만 더보기로 접는다.
+        var needsMore = state.fund === '위탁금' && enactedCards.length > 2;
+        // 부기명이 2개 이상이면(출연금 포함) 합계 행을 같이 보여준다.
+        // 단, hscf 관광진흥과 위탁금(뱃놀이축제/관광진흥)은 예외로 합계를 표시하지 않는다.
+        var showTotal = enactedCards.length > 1
+          && !(nav.instKey === 'hscf' && state.dept === '관광진흥과' && state.fund === '위탁금');
+        var totalRowHtml = '';
+        if (showTotal) {
           var totalY25 = 0, totalBase = 0, totalSupp1 = 0;
           enactedCards.forEach(function (c) {
             if (/^\s*ㅇ/.test(c.name)) return;
@@ -2652,16 +2656,18 @@ function renderDeptTabs() {
             totalBase += c.rounds.base || 0;
             totalSupp1 += c.rounds.supp1 || 0;
           });
-          var totalRowHtml = '<div class="dyt-row dyt-total"><span class="dyt-cell dyt-name-col">합계</span>'
+          totalRowHtml = '<div class="dyt-row dyt-total"><span class="dyt-cell dyt-name-col">합계</span>'
             + [totalY25, totalBase, totalSupp1, 0, 0].map(function (amt) {
               return '<span class="dyt-cell' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</span>';
             }).join('')
             + '</div>';
+        }
+        if (needsMore) {
           yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + totalRowHtml + '</div>'
             + '<button type="button" class="dyt-more-btn" onclick="toggleDeptYearlyTableMore(this)">더보기 ▾</button>'
             + '<div class="dept-yearly-table" style="display:none;">' + bodyHtml + '</div>';
         } else {
-          yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + bodyHtml + '</div>';
+          yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + bodyHtml + totalRowHtml + '</div>';
         }
       } else {
         // 2026년(본예산~3회추경)은 편성액을 직접 입력해둔 값만 보여준다 - 요구액 트리 합계로 대체(fallback) 표시하지 않는다
@@ -6797,33 +6803,43 @@ var DISABLED_SPORTS_COUNCIL_DATA = {
   ],
   // 구글드라이브 "2026년 장애인체육회 수입 내역 및 지출 계획.pdf" 1쪽(2026년 국·도·시 보조금 수입 내역) 기준.
   // 회계별(화성시보조금/화성시위탁금/생활체육지도자배치/국도지원프로그램/체육진흥기금) 소계 5개 합이 총계(3,509,000천원/3,405,876천원)와 정확히 일치함을 검증함.
-  budgetCompare: [],
+  budgetCompare: [
+    // 시보조금(기금포함) = 시보조금 + 체육진흥기금
+    { label: '시보조금', y26: 1378706, y25: 1240857 },
+    { label: '위탁금', y26: 1790304, y25: 0 },
+    { label: '국도비보조금', y26: 339990, y25: 363222 },
+    { label: '이사회비', y26: 28702, y25: 16500 }
+  ],
   revenueItems: [
-    { label: '위탁금', y26: 1790304, y25: 1669595 },
-    { label: '시보조금', y26: 1308706, y25: 1288453 },
+    { label: '위탁금', y26: 1790304, y25: 0 },
+    { label: '시보조금', y26: 1308706, y25: 1180857 },
+    { label: '체육진흥기금', y26: 70000, y25: 60000 },
     { label: '장애인생활체육지도자 배치', sub: '국/도/시', y26: 287790, y25: 281022 },
-    { label: '체육진흥기금', y26: 70000, y25: 68900 },
-    { label: '국도비 보조금', y26: 52200, y25: 97906 }
+    { label: '국도비 보조금', y26: 52200, y25: 82200 },
+    { label: '이사회비', y26: 28702, y25: 16500 }
   ],
   // 구글드라이브 "2026년 장애인체육회 수입 내역 및 지출 계획.pdf" 2쪽(2026년 국·도·시 보조금 지출 계획) 기준.
   // 장/관/항/목 구조 중 장(재원구분)·관(사업명) 단위까지만 남기고, 항·목(세부 통계목) 단계는 제외.
-  // 2025년 지출 계획은 원문에 없어 0으로 비워둠(증감액은 2026년 금액과 동일하게, 증감률은 0.0%로 표시됨).
-  // 5개 장 합이 총계(3,513,900천원)와 정확히 일치함을 검증함.
+  // 2025년 지출 계획은 원문에 없어, 수입총괄(revenueItems)의 동일/대응 재원 2025년 금액을 그대로 채워 넣음.
+  // "국·도 기금 지원"은 수입총괄의 "국도비 보조금" 값을 대응시킴(항목명은 다르나 수입총괄에 대응 항목이 이것뿐임).
   expenseDetail: [
-    { label: '시보조금', y26: 1308706, y25: 0, items: [
-      { label: '일반사업보조금', y26: 1308706, y25: 0 }
+    { label: '시보조금', y26: 1308706, y25: 1180857, items: [
+      { label: '일반사업보조금', y26: 1308706, y25: 1180857 }
     ] },
     { label: '시위탁금', y26: 1790304, y25: 0, items: [
       { label: '화성 반다비체육센터 운영', y26: 1790304, y25: 0 }
     ] },
-    { label: '장애인생활체육지도자 배치', y26: 287790, y25: 0, items: [
-      { label: '장애인생활체육지도자 배치', y26: 287790, y25: 0 }
+    { label: '장애인생활체육지도자 배치', y26: 287790, y25: 281022, items: [
+      { label: '장애인생활체육지도자 배치', y26: 287790, y25: 281022 }
     ] },
-    { label: '국·도 기금 지원', y26: 57100, y25: 0, items: [
-      { label: '생활체육프로그램', y26: 57100, y25: 0 }
+    { label: '국·도 기금 지원', y26: 57100, y25: 82200, items: [
+      { label: '생활체육프로그램', y26: 57100, y25: 82200 }
     ] },
-    { label: '체육진흥기금', y26: 70000, y25: 0, items: [
-      { label: '체육진흥관리비', y26: 70000, y25: 0 }
+    { label: '체육진흥기금', y26: 70000, y25: 60000, items: [
+      { label: '체육진흥관리비', y26: 70000, y25: 60000 }
+    ] },
+    { label: '이사회비', y26: 28702, y25: 16500, items: [
+      { label: '이사회비', y26: 28702, y25: 16500 }
     ] }
   ]
 };
@@ -7127,7 +7143,7 @@ function renderSidebarNav() {
         return '<div class="side-item fund-item' + (isActive ? ' active' : '') + '" onclick="event.stopPropagation(); showPlaceholderInst(\'' + name + '\')">' + escapeHtml(name) + '</div>';
       }).join('');
       html += '<div class="side-item inst-header' + (sportsHeaderActive ? ' active' : '') + '" onclick="toggleSportsCouncilHeader()">'
-        + '<span class="side-item-label"><span class="side-icon" style="background:#E6F6EC">' + sidebarInstIcon('corp') + '</span><span>화성시체육회</span></span>'
+        + '<span class="side-item-label"><span class="side-icon" style="background:#E6F6EC">' + sidebarInstIcon('corp') + '</span><span style="color:#1B3A8C">화성시체육회</span></span>'
         + '<span class="caret' + (sportsExpanded ? ' open' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span></div>'
         + '<div class="side-sub' + (sportsExpanded ? '' : ' collapsed') + '">' + sportsSubHtml + '</div>';
       // 화성시장애인체육회 - 화성시체육회 바로 아래에 형제 항목으로 추가(별도 법인, 실제 연동 데이터 없음).
@@ -7142,7 +7158,7 @@ function renderSidebarNav() {
         return '<div class="side-item fund-item' + (isActive ? ' active' : '') + '" onclick="event.stopPropagation(); showPlaceholderInst(\'' + name + '\')">' + escapeHtml(displayLabel) + '</div>';
       }).join('');
       html += '<div class="side-item inst-header' + (disabledSportsHeaderActive ? ' active' : '') + '" onclick="toggleDisabledSportsCouncilHeader()">'
-        + '<span class="side-item-label"><span class="side-icon" style="background:#E6F6EC">' + sidebarInstIcon('corp') + '</span><span>화성시장애인체육회</span></span>'
+        + '<span class="side-item-label"><span class="side-icon" style="background:#E6F6EC">' + sidebarInstIcon('corp') + '</span><span style="color:#1B3A8C">화성시장애인체육회</span></span>'
         + '<span class="caret' + (disabledSportsExpanded ? ' open' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span></div>'
         + '<div class="side-sub' + (disabledSportsExpanded ? '' : ' collapsed') + '">' + disabledSportsSubHtml + '</div>';
     }
@@ -8260,22 +8276,25 @@ function renderLaborCalc() {
       + '</div>';
   };
   var section01 = '<div class="lc-section cat-general" style="border-left-color:#E1E7F9"><h3>01 보수 <span class="lc-cat-tag" style="background:#E1E7F9;color:#22348E">일반직·임원</span></h3>'
-    + '<div class="lc-split">'
-    + '<div class="lc-split-narrow"><h3 style="margin-top:0;font-size:14px;">기본급</h3>'
-    + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th>기본급(천원)</th></tr></thead>'
-    + '<tbody>' + lcSubtotalRow('합계', gradesBaseSubtotal, 4) + gradeBaseRows + '</tbody></table></div>'
-    + '<div class="lc-split-wide"><h3 style="margin-top:0;font-size:14px;">직급별 수당 <span class="lc-hint" style="margin:0;font-weight:400;">(구분의 수당명에 커서를 올리면 산출식이 표시됩니다. 임원은 시간외·야간·대우수당 지급대상 제외)</span></h3>'
-    + '<table class="lc-table"><thead><tr><th>구분</th>'
-    + '<th title="단가×인상률×인원×2회×60%">명절휴가비</th>'
-    + '<th title="정액×인원×개월">직급보조비</th>'
-    + '<th title="통상임금×8/209×10일×인원">연차수당</th>'
-    + '<th title="통상임금×1.5/209×30시간×인원×개월×70%">초과근무수당</th>'
-    + '<th title="통상임금×0.5/209×8시간×인원×개월×70%">야간근무수당</th>'
-    + '<th title="단가×인상률×4.1%×대상인원×개월">대우수당</th>'
-    + '<th>수당합계(천원)</th></tr></thead>'
-    + '<tbody>' + lcSubtotalRow('합계', gradesAllowSubtotal, 7) + gradeAllowRows + '</tbody></table>'
-    + '</div>'
-    + '</div>'
+    + lcAcc('기본급 및 직급별 수당',
+        gradesSubtotal,
+        '<div class="lc-split">'
+        + '<div class="lc-split-narrow"><h3 style="margin-top:0;font-size:14px;">기본급</h3>'
+        + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th>기본급(천원)</th></tr></thead>'
+        + '<tbody>' + lcSubtotalRow('합계', gradesBaseSubtotal, 4) + gradeBaseRows + '</tbody></table></div>'
+        + '<div class="lc-split-wide"><h3 style="margin-top:0;font-size:14px;">직급별 수당 <span class="lc-hint" style="margin:0;font-weight:400;">(구분의 수당명에 커서를 올리면 산출식이 표시됩니다. 임원은 시간외·야간·대우수당 지급대상 제외)</span></h3>'
+        + '<table class="lc-table"><thead><tr><th>구분</th>'
+        + '<th title="단가×인상률×인원×2회×60%">명절휴가비</th>'
+        + '<th title="정액×인원×개월">직급보조비</th>'
+        + '<th title="통상임금×8/209×10일×인원">연차수당</th>'
+        + '<th title="통상임금×1.5/209×30시간×인원×개월×70%">초과근무수당</th>'
+        + '<th title="통상임금×0.5/209×8시간×인원×개월×70%">야간근무수당</th>'
+        + '<th title="단가×인상률×4.1%×대상인원×개월">대우수당</th>'
+        + '<th>수당합계(천원)</th></tr></thead>'
+        + '<tbody>' + lcSubtotalRow('합계', gradesAllowSubtotal, 7) + gradeAllowRows + '</tbody></table>'
+        + '</div>'
+        + '</div>',
+        '#E1E7F9', '#22348E')
     + '<h3 style="margin-top:18px;">수당 (근속·가족 등 기준) <span class="lc-cat-tag" style="background:var(--bg-hover);color:var(--text-muted);">「지방공무원 수당 등에 관한 규정」 카테고리별</span></h3>'
     + lcAcc('상여수당 <span class="lc-acc-sub">(정근수당·정근수당가산금)</span>', bonusTotal,
         '<div class="lc-pair">'
