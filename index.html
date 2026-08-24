@@ -2378,6 +2378,22 @@ function buildTeamTrees(rows) {
     node.children.forEach(sortRec);
   }
   roots.forEach(sortRec);
+  // 정책/단위/세부 같은 상위 묶음 행은 원본 예산서에 자체 합계 숫자가 안 적혀있어 DB에 amt26=0으로
+  // 들어있는 경우가 많다(실제 금액은 그 밑 "목"에 입력됨). 자식이 있는 행은 자기 값이 0/미입력일 때만
+  // 자식들의 합으로 채워서, 화면에 보이는 상위 합계가 항상 하위 항목 합계와 일치하게 한다.
+  // 자식이 아예 없는 최말단 항목(진짜로 편성 안 해서 0원인 경우)은 건드리지 않는다.
+  function rollupAmt(node) {
+    if (!node.children.length) return;
+    var sum26 = 0, sum25 = 0, has25 = false;
+    node.children.forEach(function (c) {
+      rollupAmt(c);
+      sum26 += Number(c.amt26) || 0;
+      if (c.amt25 != null) { sum25 += Number(c.amt25) || 0; has25 = true; }
+    });
+    if (!node.amt26) node.amt26 = sum26;
+    if (!node.amt25 && has25) node.amt25 = sum25;
+  }
+  roots.forEach(rollupAmt);
   // id 기준으로 키를 만든다 (이름은 기관마다 겹치거나 표시용으로 바뀔 수 있어 매칭에 쓰지 않음)
   var trees = {};
   roots.forEach(function (n) { trees[String(n.id)] = n; });
@@ -2650,9 +2666,10 @@ function renderDeptTabs() {
         // 더보기 접기는 위탁금(사업 수가 많은 경우)에만 적용한다 - 카드가 2개뿐이면 접었다 펴는 게 오히려 번거로우니, 3개 이상일 때만 더보기로 접는다.
         var needsMore = state.fund === '위탁금' && enactedCards.length > 2;
         // 부기명이 2개 이상이면(출연금 포함) 합계 행을 같이 보여준다.
-        // 단, hscf 관광진흥과 위탁금(뱃놀이축제/관광진흥)은 예외로 합계를 표시하지 않는다.
+        // 단, hscf 관광진흥과 위탁금(뱃놀이축제/관광진흥)과 fc 체육진흥과 출연금은 예외로 합계를 표시하지 않는다.
         var showTotal = enactedCards.length > 1
-          && !(nav.instKey === 'hscf' && state.dept === '관광진흥과' && state.fund === '위탁금');
+          && !(nav.instKey === 'hscf' && state.dept === '관광진흥과' && state.fund === '위탁금')
+          && !(nav.instKey === 'fc' && state.dept === '체육진흥과' && state.fund === '출연금');
         var totalRowHtml = '';
         if (showTotal) {
           var totalY25 = 0, totalBase = 0, totalSupp1 = 0;
@@ -4217,7 +4234,14 @@ function renderCards() {
   el.onscroll = function () { updateTabScrollButtons(); alignHeadcountBadge(); };
   updateTabScrollButtons();
   var selectedBtn = el.querySelector('.org-tab.selected');
-  if (selectedBtn) selectedBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  if (selectedBtn) {
+    selectedBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    // 정현원 뱃지 위치는 이 시점의(스크롤 시작 직전) scrollLeft를 기준으로 한 번 계산되는데,
+    // 탭이 화면 밖에 있어 스크롤이 필요한 경우 smooth 스크롤 애니메이션이 끝나기 전이라 scrollLeft가
+    // 아직 갱신 안 된 상태다. onscroll 이벤트로도 보정되지만, 혹시 못 잡는 경우를 대비해
+    // 스크롤 애니메이션이 끝났을 시점에 한 번 더 강제로 재정렬한다.
+    setTimeout(alignHeadcountBadge, 400);
+  }
 }
 function scrollTabs(dir) {
   var el = document.getElementById('card-grid');
@@ -4240,7 +4264,15 @@ function deleteLine() { /* 읽기 전용 */ }
 // 4개 들여쓰기 칸(정책/단위/세부/목·세목·항목) + 산출기초 + 2026 + 2025 + 비교증감 + 증감률
 var LEVEL_BASE_DEPTH = { '팀': 0, '정책': 0, '단위': 1, '세부': 2, '목': 3, '세목': 4 };
 var LEAF_BULLETS = { 5: '○ ', 6: '- ', 7: '· ', 8: '‣ ' };
-function bulletForDepth(d) { return LEAF_BULLETS[d] || LEAF_BULLETS[8]; }
+// "목" 바로 밑에 "세목" 없이 바로 최말단 항목이 오는 경우(depth 4)가 있는데, LEAF_BULLETS에 4가 없어서
+// LEAF_BULLETS[8]인 '‣'(삼각형 불릿)로 잘못 대체됐다. 이게 접기 화살표(▸)와 모양이 비슷해서 헷갈렸던 것 —
+// depth 5 미만은 전부 depth 5와 같은 '○'를 쓰도록 고친다.
+function bulletForDepth(d) { return LEAF_BULLETS[Math.max(d, 5)] || LEAF_BULLETS[8]; }
+// 원본 데이터의 항목명 자체에 이미 "- "·"· " 같은 기호가 붙어있는 경우가 있어(기관마다 표기가 제각각),
+// 트리 렌더링용 기호(bulletForDepth)를 앞에 또 붙이면 "○ - 3급"처럼 기호가 중복된다. 그 원본 선행 기호를 지운다.
+function stripLeadingMarker(name) {
+  return String(name || '').replace(/^[-‣○•·ㆍ〮▸]+\s*/, '');
+}
 
 function fmtDiff(amt26, amt25) {
   if (amt25 == null) amt25 = 0;
@@ -4386,15 +4418,18 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible) {
     : node.level === '단위' ? '[단위] ' + node.name
     : node.level === '세부' ? '[세부] ' + node.name
     : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
-    : bulletForDepth(depth) + node.name);
+    : bulletForDepth(depth) + stripLeadingMarker(node.name));
   var cls = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목') ? node.level : 'leaf';
   var mokAttr = node._mokTag ? (' data-mok="' + escapeHtml(node._mokTag) + '"') : '';
   var amt25Cell = node.amt25 != null && node.amt25 !== 0 ? fmtWon(node.amt25) : (node.amt25 === 0 ? '-' : '');
   var hasChildren = node.children && node.children.length;
-  var expanded = hasChildren ? isExpandedPath(nodePath, node.level) : false;
-  var arrowHtml = hasChildren
+  // \uC811\uAE30/\uD3BC\uCE58\uAE30\uB294 \uC815\uCC45\uC0AC\uC5C5 \uB2E8\uC704\uC5D0\uC11C\uB9CC \uC4F4\uB2E4 - \uB2E8\uC704/\uC138\uBD80/\uBAA9/\uC138\uBAA9\uAE4C\uC9C0 \uC804\uBD80 \uC811\uD614\uB2E4 \uD3B4\uC84C\uB2E4 \uD558\uBA74
+  // \uD074\uB9AD\uC774 \uB108\uBB34 \uB9CE\uC774 \uD544\uC694\uD574\uC11C, \uC815\uCC45 \uBC11\uC73C\uB85C\uB294 \uD56D\uC0C1 \uD3BC\uCE5C \uCC44\uB85C \uACE0\uC815\uD558\uACE0 \uD654\uC0B4\uD45C \uC790\uCCB4\uB97C \uC5C6\uC574\uB2E4.
+  var canToggle = node.level === '\uC815\uCC45' && hasChildren;
+  var expanded = canToggle ? isExpandedPath(nodePath, node.level) : true;
+  var arrowHtml = canToggle
     ? '<span class="tgl" onclick="toggleNode(event,\'' + nodePath.replace(/'/g, "\\'") + '\',\'' + node.level + '\')">' + (expanded ? '\u25BE' : '\u25B8') + '</span>'
-    : '<span class="tgl" style="visibility:hidden">\u25B8</span>';
+    : '';
   var rowVisible = parentVisible;
   var hiddenCls = rowVisible ? '' : ' row-hidden-collapse';
   var searchText = (node.name || '') + ' ' + (node.calc || '');
@@ -4845,12 +4880,20 @@ function renderTeamTreesCombined(trees, totalLabel) {
   }
   var groupsHtml = trees.map(function (tree) {
     var mokList = collectMokList(tree);
-    mokList.forEach(function (m, i) { tagMok(m, instId + '_' + tree.name + '_m' + i); });
+    // 같은 편성목(코드+이름)이 여러 단위·세부사업 밑에 따로 나타나는 경우가 많아, 예전에는 나타난 횟수만큼
+    // 체크박스가 중복으로 나열됐다. 실제 예산서에 있는 편성목 종류만(코드+이름 기준으로 중복 제거) 나열하고,
+    // 같은 편성목의 모든 occurrence는 태그를 공유시켜 체크박스 하나로 전부 같이 필터링되게 한다.
+    var dedup = {}; var order = [];
+    mokList.forEach(function (m, i) {
+      var key = (m.code || '') + '|' + m.name;
+      if (!dedup[key]) { dedup[key] = { code: m.code, name: m.name, tag: instId + '_' + tree.name + '_m' + i }; order.push(key); }
+      tagMok(m, dedup[key].tag);
+    });
     renderTreeRows(tree, rows, 0, '', true);
-    var mokItemsHtml = mokList.map(function (m, i) {
-      var tag = instId + '_' + tree.name + '_m' + i;
-      return '<label class="mok-filter-item" style="padding-left:16px"><input type="checkbox" checked data-mok-tag="' + tag + '" onchange="applyMokFilter(\'' + instId + '\')"> '
-        + (m.code ? escapeHtml(m.code) + ' ' : '') + escapeHtml(m.name) + '</label>';
+    var mokItemsHtml = order.map(function (key) {
+      var e = dedup[key];
+      return '<label class="mok-filter-item" style="padding-left:16px"><input type="checkbox" checked data-mok-tag="' + e.tag + '" onchange="applyMokFilter(\'' + instId + '\')"> '
+        + (e.code ? escapeHtml(e.code) + ' ' : '') + escapeHtml(e.name) + '</label>';
     }).join('');
     return '<div style="font-weight:600; font-size:15px; padding:4px 2px;">' + escapeHtml(tree.name) + '</div>' + mokItemsHtml;
   }).join('');
@@ -6613,7 +6656,7 @@ function sportsBizNodeLabel(node) {
   if (node.level === '단위') return '[단위] ' + node.name;
   if (node.level === '세부') return '[세부] ' + node.name;
   if (node.level === '목' || node.level === '세목') return (node.code ? node.code + ' ' : '') + node.name;
-  return '○ ' + node.name; // 부기명(목/세목 아래 최하위 항목)
+  return '○ ' + stripLeadingMarker(node.name); // 부기명(목/세목 아래 최하위 항목)
 }
 // 화성시체육회 사업카드 메모 - 실제 business_cards 행이 없어(Supabase 미연동) 로컬(localStorage)에만 저장.
 function sportsBizNoteKey(idx) { return 'sports_biz_note_' + idx; }
@@ -7933,24 +7976,9 @@ function lcFinalFilterBar() {
 function lcFinalSection() {
   var f = LC.final;
   var fundOk = function (fund) { return !f.fundType || f.fundType === fund; };
-  var out = '<div class="summary-box" style="border-left:4px solid var(--accent);background:var(--surface-2, var(--bg-hover));">'
-    + '<h3>인건비 기준값 <span style="font-size:12.5px;font-weight:600;color:var(--text-soft);">— 2026년 예산요구서 · 기준값 작업 전수 대조 결과</span></h3>'
-    + '<p style="color:var(--text-muted);margin:0 0 4px;">기관마다 실제 보유한 재원(출연금/위탁금)만 수록했습니다. 화성FC는 위탁금이, 화성시도시공사는 출연금이 없어 각각 한쪽만 표시합니다.</p>'
-    + '<p style="color:var(--text-muted);margin:0;">2026-08-23 대사 로직 2차 수정: ① &ldquo;보수/수당&rdquo; 문자열 매칭 대신 예산과목 트리에서 <b>목(統計目)=&ldquo;인건비&rdquo;의 자손</b>인지로 판정하도록 변경(수영장 타일 보수공사 같은 비인건비 오탐 제거) ② Supabase 쿼리에 페이지네이션이 없어 1,000행 초과분이 조용히 잘려나가던 버그 수정(HSCF 위탁금 실제 4,182행 중 1,000행만 조회되고 있었음). 아래 수치는 두 수정을 모두 반영한, 전체 데이터 기준 최신값입니다. 퇴직급여·평가급은 별도 목(統計目)에 속해 이 자동 집계 범위 밖이라 계속 수동 검증 값으로 표기합니다.</p>'
-    + '</div>';
+  var out = '';
 
   out += lcFinalFilterBar();
-
-  out += '<div class="summary-box" style="border-left:4px solid var(--danger);">'
-    + '<h3>퇴직급여 미편성 조직 — 4건 (기관 필터와 무관하게 항상 표시)</h3>'
-    + '<p style="color:var(--text-muted);margin:0 0 10px;">목(統計目)=퇴직급여 노드 중 산출식이 있거나(계산 가능) 요구액이 0원인 항목만 추린 목록입니다. 계산 가능한데 요구액이 0원이면 &ldquo;미편성 확정&rdquo;, 산출식 자체가 없이 요구액도 0원이면 &ldquo;산출근거 없음&rdquo;으로 구분했습니다.</p>'
-    + lcFinalTable([{ t: '기관' }, { t: '재원' }, { t: '사업(부서)' }, { t: '계산상 예상액(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
-      lcFinalRow(['화성시문화관광재단', '출연금', '기관 전체(목304 인건비 전체)', { v: '558,859', formula: true }, { v: '0' }, { v: '미편성 확정', status: true }])
-      + lcFinalRow(['화성시문화관광재단', '위탁금', '화성예술의전당 인건비(세목①)', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }])
-      + lcFinalRow(['화성시문화관광재단', '위탁금', '화성열린문화예술공간(라크몽)', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }])
-      + lcFinalRow(['화성시도시공사', '위탁금', '향남복합문화센터TF', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }]))
-    + '<p style="color:var(--text-muted);margin:10px 0 0;">인재육성재단·FC·인재육성재단 위탁금·도시공사의 나머지 사업들은 전부 요구액이 잡혀 있어 이 목록에서 제외됨(인재육성재단 출연금 208,509천원은 요구액은 있으나 산출식이 없는 &ldquo;확인필요&rdquo; 케이스라 이 표에는 넣지 않았습니다 — 각 기관 상세 표에서 확인 가능).</p>'
-    + '</div>';
 
   // ===== 1. 화성시문화관광재단 =====
   if (f.instKey === 'hscf') {
@@ -8010,7 +8038,22 @@ function lcFinalSection() {
       + lcFinalRow(['무기계약직', { v: '2,563,020 / 2,770,300 / 2,221,590 / 2,307,870 / 2,264,730' }, { v: '59' }, { v: '8건' }])
       + lcFinalRow(['기간제', { v: '2,156,880 / 12,090 / 11,730' }, { v: '72' }, { v: '5건' }]))
     + '<p class="lc-hint" style="margin-top:10px;">사업·팀 단위로 흩어져 있어 자료건수가 많습니다(전체 <b>784건</b> — 일치 507 · 불일치 2 · 확인필요 275). 정근수당가산금·초과근무수당(시간외·휴일)·수당류가 팀마다 개별 신고돼 예술의전당운영지원팀·예술의전당무대기술팀 등 팀명이 붙은 수당명이 다수입니다.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>확인필요 275건, 합계 13,969,209천원(139.7억원)</b> — 산출식 없이 합계액만 기재된 진짜 인건비 항목(목:인건비 자손으로 확인됨). 원본 세목 명세를 사업·팀별로 직접 대조해야 합니다. 상위 12개 항목(합계 11,208,075천원, 전체의 80%):</p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b> — 아래는 일치(산식 정상) 507건 중 표준 수당명으로 확인된 항목만 종류별로 묶은 것입니다. 출연금과 달리 47개 사업·팀에 흩어져 있어 급수·팀마다 실제 지급액(호봉 등)이 다르므로, 단가는 확인된 범위로 표시합니다.</p>'
+    + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
+      lcFinalRow(['가족수당', { v: '20,000 ~ 120,000' }, '배우자·부양가족(자녀/직계존속), 관계·인원별 차등 (16건)'])
+      + lcFinalRow(['기술자격수당', { v: '10,000 ~ 60,000' }, '자격·직급별 차등 (16건)'])
+      + lcFinalRow(['정액급식비', { v: '140,000 / 50,000' }, '일반직 등 / 일부 사업 별도단가 (26건)'])
+      + lcFinalRow(['직급보조비', { v: '185,000 / 180,000 / 175,000' }, '3급 / 4급 / 5·6급 (4건)'])
+      + lcFinalRow(['직급보조비(갑종·을종, 명칭 확인필요)', { v: '50,000 / 40,000' }, '위탁금 일부 사업 전용 (2건)'])
+      + lcFinalRow(['정근수당가산금', { v: '30,000 ~ 130,000' }, '5년미만 ~ 25년이상, 6구간 (6건)'])
+      + lcFinalRow(['특정업무수행경비', { v: '80,000' }, '- (2건)'])
+      + lcFinalRow(['업무대행수당', { v: '200,000' }, '6월 (2건)'])
+      + lcFinalRow(['교통보조비', { v: '50,000' }, '위탁금 전용, 출연금엔 없음 (9건)'])
+      + lcFinalRow(['전산직수당', { v: '50,000' }, '위탁금 전용, 1건'])
+      + lcFinalRow(['생활임금보전수당', { v: '73,550 ~ 369,930' }, '최저임금 보전, 사업·시기별 차등 (15건)'])
+      + lcFinalRow(['정근수당 · 명절휴가비 · 대우수당', { v: '복합 산식', formula: true }, '기준액×105.55%×적용률 — 예: 정근수당 4,416,700×105.55%×50%×12명×2회, 명절휴가비 4,416,700×105.55%×12명×2월×60%, 대우수당 4,472,000×105.55%×4.1%×10명×12월'])
+      + lcFinalRow(['연차수당 · 초과근무수당 · 야간근무수당', { v: '복합 산식', formula: true }, '(단가×배율/209×시간또는일)×인원×개월×가산율% — 예: 연차 (6,569,550×8/209×10일)×1명, 초과 (2,526,810×1.5/209×20시간)×47명×12월×10%, 야간 (2,601,000×0.5/209×8시간)×5명×12월×80%']))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>확인필요 275건, 합계 13,969,209천원(139.7억원)</b> — 산출식 없이 합계액만 기재된 진짜 인건비 항목(목:인건비 자손으로 확인됨). 위 "주요 수당" 표는 이 275건이 아니라 산식이 있는 507건 쪽에서 정리한 것으로, 서로 별개입니다. 원본 세목 명세를 사업·팀별로 직접 대조해야 합니다. 상위 12개 항목(합계 11,208,075천원, 전체의 80%):</p>'
     + lcFinalTable([{ t: '항목명' }, { t: '건수' }, { t: '합계(천원)' }],
       lcFinalRow(['보수(일반명)', { v: '6건' }, { v: '4,425,525' }])
       + lcFinalRow(['무기계약근로자 보수', { v: '5건' }, { v: '1,944,483' }])
@@ -8252,6 +8295,17 @@ function lcFinalSection() {
     + '<li><b style="color:var(--text);">결원율 지침 기준(5%) 초과 — FC·도시공사</b> — FC 15.8%, 도시공사 13.2%로 대폭 초과. 채용 절차 진행 등 지침상 예외 사유 해당 여부 확인 필요. 문화관광재단(5.4%) 근소 초과, 인재육성재단(3.5%)만 기준 이내.</li>'
     + '<li><b style="color:var(--text);">퇴직급여 산식이 기관·사업마다 상이</b> — HSCF는 대부분 기준액÷12×103.8% 충당금 방식이지만 도서관 사업 1건만 1/12(8.33%) 표준 방식을 씀. 인재육성재단·도시공사·FC는 전부 1/12(8.33%) 표준 방식. 같은 재단 안에서도 사업별로 산식이 섞여 있다는 점을 유의해야 합니다.</li>'
     + '</ol></div>';
+
+  out += '<div class="summary-box" style="border-left:4px solid var(--danger);">'
+    + '<h3>퇴직급여 미편성 조직 — 4건 (기관 필터와 무관하게 항상 표시)</h3>'
+    + '<p style="color:var(--text-muted);margin:0 0 10px;">목(統計目)=퇴직급여 노드 중 산출식이 있거나(계산 가능) 요구액이 0원인 항목만 추린 목록입니다. 계산 가능한데 요구액이 0원이면 &ldquo;미편성 확정&rdquo;, 산출식 자체가 없이 요구액도 0원이면 &ldquo;산출근거 없음&rdquo;으로 구분했습니다.</p>'
+    + lcFinalTable([{ t: '기관' }, { t: '재원' }, { t: '사업(부서)' }, { t: '계산상 예상액(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
+      lcFinalRow(['화성시문화관광재단', '출연금', '기관 전체(목304 인건비 전체)', { v: '558,859', formula: true }, { v: '0' }, { v: '미편성 확정', status: true }])
+      + lcFinalRow(['화성시문화관광재단', '위탁금', '화성예술의전당 인건비(세목①)', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }])
+      + lcFinalRow(['화성시문화관광재단', '위탁금', '화성열린문화예술공간(라크몽)', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }])
+      + lcFinalRow(['화성시도시공사', '위탁금', '향남복합문화센터TF', { v: '산출식 없음' }, { v: '0' }, { v: '산출근거 없음', status: true }]))
+    + '<p style="color:var(--text-muted);margin:10px 0 0;">인재육성재단·FC·인재육성재단 위탁금·도시공사의 나머지 사업들은 전부 요구액이 잡혀 있어 이 목록에서 제외됨(인재육성재단 출연금 208,509천원은 요구액은 있으나 산출식이 없는 &ldquo;확인필요&rdquo; 케이스라 이 표에는 넣지 않았습니다 — 각 기관 상세 표에서 확인 가능).</p>'
+    + '</div>';
 
   // ===== 고급: 원자료 조회 (구 "기준값 작업" 탭) =====
   out += '<div class="lc-accordion' + (f.rawOpen ? ' open' : '') + '" style="margin-top:20px;">'
