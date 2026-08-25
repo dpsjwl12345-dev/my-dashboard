@@ -4267,7 +4267,13 @@ var LEAF_BULLETS = { 5: '○ ', 6: '- ', 7: '· ', 8: '‣ ' };
 // "목" 바로 밑에 "세목" 없이 바로 최말단 항목이 오는 경우(depth 4)가 있는데, LEAF_BULLETS에 4가 없어서
 // LEAF_BULLETS[8]인 '‣'(삼각형 불릿)로 잘못 대체됐다. 이게 접기 화살표(▸)와 모양이 비슷해서 헷갈렸던 것 —
 // depth 5 미만은 전부 depth 5와 같은 '○'를 쓰도록 고친다.
-function bulletForDepth(d) { return LEAF_BULLETS[Math.max(d, 5)] || LEAF_BULLETS[8]; }
+//
+// 위 규칙(depth를 5 이상으로 그냥 올림)만 쓰면, "사측 사회보험부담금(부기명)" 밑에 "국민연금" 등이
+// 한 단계 더 들어간 경우처럼 부기명 아래에 또 부기명이 오는 구조에서, 목 바로 밑이라 부모가 depth 4로
+// 올림돼 결국 자식과 똑같이 depth 5가 되어 버려 부모·자식이 같은 '○'로 찍히는 문제가 있었다.
+// 그래서 "명명된 트리 레벨(정책~세목) 이후 부기명이 몇 겹 중첩됐는지"를 별도로 세어(leafDepth),
+// 그 중첩 횟수로 불릿을 고른다 — 세목이 있든 없든, 부기명 1단계는 항상 '○', 그 밑 중첩은 '-'로 내려간다.
+function bulletForLeafDepth(n) { return LEAF_BULLETS[4 + n] || LEAF_BULLETS[8]; }
 // 원본 데이터의 항목명 자체에 이미 "- "·"· " 같은 기호가 붙어있는 경우가 있어(기관마다 표기가 제각각),
 // 트리 렌더링용 기호(bulletForDepth)를 앞에 또 붙이면 "○ - 3급"처럼 기호가 중복된다. 그 원본 선행 기호를 지운다.
 function stripLeadingMarker(name) {
@@ -4409,16 +4415,18 @@ function checkCalcMismatch(node) {
 }
 
 var budgetItemIndex = {};
-function renderTreeRows(node, out, parentDepth, parentPath, parentVisible) {
+function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, parentLeafDepth) {
   budgetItemIndex[node.id] = node;
-  var depth = LEVEL_BASE_DEPTH.hasOwnProperty(node.level) ? LEVEL_BASE_DEPTH[node.level] : (parentDepth + 1);
+  var isNamedLevel = LEVEL_BASE_DEPTH.hasOwnProperty(node.level);
+  var depth = isNamedLevel ? LEVEL_BASE_DEPTH[node.level] : (parentDepth + 1);
+  var leafDepth = isNamedLevel ? 0 : (parentLeafDepth || 0) + 1;
   var nodePath = (parentPath ? parentPath + '>' : '') + node.level + ':' + node.name;
   var label = (node.level === '팀' ? node.name
     : node.level === '정책' ? '[정책] ' + node.name
     : node.level === '단위' ? '[단위] ' + node.name
     : node.level === '세부' ? '[세부] ' + node.name
     : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
-    : bulletForDepth(depth) + stripLeadingMarker(node.name));
+    : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name));
   var cls = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목') ? node.level : 'leaf';
   var mokAttr = node._mokTag ? (' data-mok="' + escapeHtml(node._mokTag) + '"') : '';
   var amt25Cell = node.amt25 != null && node.amt25 !== 0 ? fmtWon(node.amt25) : (node.amt25 === 0 ? '-' : '');
@@ -4459,7 +4467,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible) {
     + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
     + '<td class="num pct">' + fmtPct(node.amt26, node.amt25) + '</td>'
     + '</tr>');
-  if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded); });
+  if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded, leafDepth); });
 }
 
 // 산출기초 불일치 항목만 보기 토글
@@ -7929,6 +7937,9 @@ function lcFinalRow(cells) {
     return '<td>' + c + '</td>';
   }).join('') + '</tr>';
 }
+function lcFinalGroupRow(label, colspan) {
+  return '<tr><th colspan="' + colspan + '" style="text-align:left;background:var(--surface-2);border-top:2px solid var(--border-strong);padding:6px 8px;">' + escapeHtml(label) + '</th></tr>';
+}
 function lcFinalFundBlock(title, tag, counts, bodyHtml) {
   return '<div style="margin:18px 0 30px;">'
     + '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">'
@@ -7988,14 +7999,18 @@ function lcFinalSection() {
   if (fundOk('출연금')) {
   out += lcFinalFundBlock('출연금', '기관 운영 요구서 전체 통합', [83, 0, 5],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }, { t: '적용률' }],
-      lcFinalRow(['대표이사', { v: '95,793,000 / 8,360,200' }, { v: '2' }, '103.5%'])
+      lcFinalGroupRow('일반직', 4)
+      + lcFinalRow(['대표이사', { v: '95,793,000 / 8,360,200' }, { v: '2' }, '103.5%'])
       + lcFinalRow(['2급', { v: '—' }, { v: '—' }, '자료 없음'])
       + lcFinalRow(['3급', { v: '4,775,000 / 5,839,600 등' }, { v: '84' }, '103.5% · 60%(명절) · 70%(초과) · 4.1%(가산)'])
       + lcFinalRow(['4급', { v: '3,745,000 / 4,953,000 / 3,912,400 등' }, { v: '56' }, '103.5% · 60% · 70%'])
       + lcFinalRow(['5급', { v: '3,231,000 / 3,922,000 등' }, { v: '112' }, '103.5% · 60% · 70%'])
       + lcFinalRow(['6급', { v: '2,435,000 / 2,989,000 / 2,635,000 / 2,335,000' }, { v: '170' }, '103.5% · 60% · 70%'])
+      + lcFinalGroupRow('기타직', 4)
       + lcFinalRow(['기타직(통합평균)', { v: '76,234,600' }, { v: '4' }, '103.5%'])
+      + lcFinalGroupRow('무기계약직', 4)
       + lcFinalRow(['무기계약직', { v: '2,563,020' }, { v: '9' }, '—'])
+      + lcFinalGroupRow('기간제', 4)
       + lcFinalRow(['기간제', { v: '2,156,880' }, { v: '4' }, '—']))
     + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
     + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
@@ -8028,14 +8043,18 @@ function lcFinalSection() {
   if (fundOk('위탁금')) {
   out += lcFinalFundBlock('위탁금', '사업·본부별 통합(목:인건비 자손 전체)', [507, 2, 275],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }, { t: '자료건수' }],
-      lcFinalRow(['일반직 2급', { v: '—' }, { v: '—' }, '자료 없음'])
+      lcFinalGroupRow('일반직', 4)
+      + lcFinalRow(['일반직 2급', { v: '—' }, { v: '—' }, '자료 없음'])
       + lcFinalRow(['일반직 3급', { v: '4,775,000 / 4,660,600 / 4,918,250 등' }, { v: '86' }, { v: '44건' }])
       + lcFinalRow(['일반직 4급', { v: '4,067,900 / 3,635,000 / 3,702,000 등' }, { v: '139' }, { v: '43건' }])
       + lcFinalRow(['일반직 5급', { v: '3,665,600 / 2,931,000 / 3,327,000 등' }, { v: '225' }, { v: '39건' }])
       + lcFinalRow(['일반직 6급', { v: '2,685,950 / 2,335,000 / 2,967,000 등' }, { v: '296' }, { v: '44건' }])
       + lcFinalRow(['일반직(급수 미표기, 사업별 개별단가)', { v: '2,156,880 / 2,690,300 / 4,136,050 등 29종' }, { v: '517' }, { v: '59건' }])
+      + lcFinalGroupRow('기타직', 4)
       + lcFinalRow(['기타직(통합평균)', { v: '76,234,600' }, { v: '1' }, { v: '1건' }])
+      + lcFinalGroupRow('무기계약직', 4)
       + lcFinalRow(['무기계약직', { v: '2,563,020 / 2,770,300 / 2,221,590 / 2,307,870 / 2,264,730' }, { v: '59' }, { v: '8건' }])
+      + lcFinalGroupRow('기간제', 4)
       + lcFinalRow(['기간제', { v: '2,156,880 / 12,090 / 11,730' }, { v: '72' }, { v: '5건' }]))
     + '<p class="lc-hint" style="margin-top:10px;">사업·팀 단위로 흩어져 있어 자료건수가 많습니다(전체 <b>784건</b> — 일치 507 · 불일치 2 · 확인필요 275). 정근수당가산금·초과근무수당(시간외·휴일)·수당류가 팀마다 개별 신고돼 예술의전당운영지원팀·예술의전당무대기술팀 등 팀명이 붙은 수당명이 다수입니다.</p>'
     + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b> — 아래는 일치(산식 정상) 507건 중 표준 수당명으로 확인된 항목만 종류별로 묶은 것입니다. 출연금과 달리 47개 사업·팀에 흩어져 있어 급수·팀마다 실제 지급액(호봉 등)이 다르므로, 단가는 확인된 범위로 표시합니다.</p>'
@@ -8098,14 +8117,18 @@ function lcFinalSection() {
   if (fundOk('출연금')) {
   out += lcFinalFundBlock('출연금', '기관 운영 요구서 전체 통합', [112, 0, 0],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
-      lcFinalRow(['대표이사', { v: '8,676,400 / 8,136,400' }, { v: '2' }])
+      lcFinalGroupRow('일반직', 3)
+      + lcFinalRow(['대표이사', { v: '8,676,400 / 8,136,400' }, { v: '2' }])
       + lcFinalRow(['2급', { v: '—' }, '자료 없음'])
       + lcFinalRow(['3급', { v: '3,586,810 / 4,897,470 / 3,848,900 / 3,732,280' }, { v: '69' }])
       + lcFinalRow(['4급', { v: '4,168,660 / 3,219,200' }, { v: '40' }])
       + lcFinalRow(['5급', { v: '3,174,560 / 2,434,400' }, { v: '68' }])
       + lcFinalRow(['6급', { v: '2,688,400 / 2,068,300' }, { v: '48' }])
+      + lcFinalGroupRow('기타직', 3)
       + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
+      + lcFinalGroupRow('무기계약직', 3)
       + lcFinalRow(['무기계약직', { v: '—' }, '자료 없음'])
+      + lcFinalGroupRow('기간제', 3)
       + lcFinalRow(['기간제', { v: '—' }, '자료 없음']))
     + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
     + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
@@ -8135,13 +8158,17 @@ function lcFinalSection() {
   if (fundOk('위탁금')) {
   out += lcFinalFundBlock('위탁금', '도서관 운영 등 사업별', [139, 0, 0],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
-      lcFinalRow(['일반직 2급', { v: '—' }, '자료 없음'])
+      lcFinalGroupRow('일반직', 3)
+      + lcFinalRow(['일반직 2급', { v: '—' }, '자료 없음'])
       + lcFinalRow(['일반직 3급', { v: '3,895,800 / 5,195,450 / 4,090,900 등 9종' }, { v: '113' }])
       + lcFinalRow(['일반직 4급', { v: '4,152,560 / 3,219,200 / 3,952,310 등' }, { v: '49' }])
       + lcFinalRow(['일반직 5급', { v: '3,499,650 / 2,717,900 / 3,810,780 등' }, { v: '109' }])
       + lcFinalRow(['일반직 6급', { v: '2,735,510 / 2,104,000 / 2,756,550 등' }, { v: '132' }])
+      + lcFinalGroupRow('기타직', 3)
       + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
+      + lcFinalGroupRow('무기계약직', 3)
       + lcFinalRow(['무기계약직', { v: '—' }, '기본급 항목 없음(수당 표 참조)'])
+      + lcFinalGroupRow('기간제', 3)
       + lcFinalRow(['기간제', { v: '—' }, '기본급 항목 없음(수당 표 참조)']))
     + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
     + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
@@ -8175,14 +8202,18 @@ function lcFinalSection() {
   if (fundOk('출연금')) {
   out += lcFinalFundBlock('출연금', '위탁금 재원 없음 · 유일한 재원', [92, 0, 10],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
-      lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300' }, { v: '2' }])
+      lcFinalGroupRow('일반직', 3)
+      + lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300' }, { v: '2' }])
       + lcFinalRow(['2급(사무국장, 5급상당)', { v: '6,735,000' }, { v: '2' }])
       + lcFinalRow(['3급', { v: '4,733,000 / 3,859,000' }, { v: '24' }])
       + lcFinalRow(['4급', { v: '3,790,000 / 2,997,000' }, { v: '16' }])
       + lcFinalRow(['5급', { v: '3,335,000 / 2,574,000' }, { v: '32' }])
       + lcFinalRow(['6급', { v: '2,708,000 / 2,087,000' }, { v: '56' }])
+      + lcFinalGroupRow('기타직', 3)
       + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
+      + lcFinalGroupRow('무기계약직', 3)
       + lcFinalRow(['무기계약직', { v: '—' }, '자료 없음'])
+      + lcFinalGroupRow('기간제', 3)
       + lcFinalRow(['기간제', { v: '—' }, '자료 없음']))
     + '<p class="lc-hint" style="margin-top:10px;"><b>축구단 직군 개별 단가</b>(&ldquo;기본급&rdquo; 목 안에 42건 혼재)</p>'
     + lcFinalTable([{ t: '직군' }, { t: '단가(원)' }, { t: '단위' }],
@@ -8226,15 +8257,19 @@ function lcFinalSection() {
     + '<h3>④ 화성시도시공사 <span class="lc-cat-tag" style="background:var(--dept-temp-bg);color:var(--dept-temp);">정원 907 · 현원 787 · 결원율 13.2%(기준 대폭 초과)</span></h3>';
 
   if (fundOk('위탁금')) {
-  out += lcFinalFundBlock('위탁금', '출연금 재원 없음 · 유일한 재원', [115, 5, 30],
+  out += lcFinalFundBlock('위탁금', '출연금 재원 없음 · 유일한 재원', [115, 3, 30],
     lcFinalTable([{ t: '구분' }, { t: '단가(원/년)' }, { t: '요구인원' }],
-      lcFinalRow(['2급', { v: '84,991,284 / 84,992,000' }, { v: '2' }])
+      lcFinalGroupRow('일반직', 3)
+      + lcFinalRow(['2급', { v: '84,991,284 / 84,992,000' }, { v: '2' }])
       + lcFinalRow(['3급', { v: '66,213,828 / 66,514,284 / 66,514,668 등' }, { v: '10' }])
       + lcFinalRow(['4급', { v: '57,233,368 / 54,189,906 / 54,411,710 등' }, { v: '20' }])
       + lcFinalRow(['5급', { v: '45,712,584 / 45,531,114 등' }, { v: '17' }])
       + lcFinalRow(['6급', { v: '40,102,665 / 38,063,782 등' }, { v: '10' }])
+      + lcFinalGroupRow('기타직', 3)
       + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
+      + lcFinalGroupRow('무기계약직', 3)
       + lcFinalRow(['무기계약직', { v: '37,387,739 / 37,226,844 / 41,172,107 등 7종' }, { v: '70' }])
+      + lcFinalGroupRow('기간제', 3)
       + lcFinalRow(['기간제', { v: '2,526,810(월) / 30,321,720(년) / 27,112,130(년)' }, { v: '13' }]))
     + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(별도 목, 수동 검증) — 정정: 2건이 아니라 사업 12개 목, 합계 702,048천원(7.0억원).</b> 전부 DB형 퇴직연금 1/12(=8.33%) 방식. 대부분 일치, 1건 미편성, 1건 소액 불일치.</p>'
     + lcFinalTable([{ t: '사업(부서)' }, { t: '요구액(천원)' }, { t: '상태' }],
@@ -8271,14 +8306,12 @@ function lcFinalSection() {
     + lcFinalTable([{ t: '항목명' }, { t: '건수' }, { t: '합계(천원)' }],
       lcFinalRow(['초과근무수당(시간외·휴일근무)', { v: '25건' }, { v: '899,124' }])
       + lcFinalRow(['보수 · 무기계약근로자보수 · 기간제근로자등보수', { v: '3건' }, { v: '0(요구액 0원 자리표시)' }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>불일치 5건</b></p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>불일치 3건</b></p>'
     + lcFinalTable([{ t: '항목' }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '차이(천원)' }, { t: '비고' }],
       lcFinalRow(['기본연봉(수질관리원 3명)', { v: '112,161' }, { v: '112,164' }, { v: '-3' }, '반올림 오차, 무시 가능'])
       + lcFinalRow(['기본연봉(전임강사 7명)', { v: '261,709' }, { v: '261,716' }, { v: '-7' }, '반올림 오차, 무시 가능'])
-      + lcFinalRow(['기본연봉(안내데스크 3명)', { v: '112,161' }, { v: '112,164' }, { v: '-3' }, '반올림 오차, 무시 가능'])
-      + lcFinalRow(['무기계약근로자보수', { v: '988,131' }, { v: '40,420' }, { v: '+947,711' }, { v: '파서 버그 추정', status: true }])
-      + lcFinalRow(['기간제근로자등보수', { v: '650,691' }, { v: '26,411' }, { v: '+624,280' }, { v: '파서 버그 추정', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">아래 2건은 원자료 산출식이 &ldquo;기본급 + (법정)수당 + 연차수당&rdquo;처럼 여러 줄에 항목별 소계가 섞인 복합 서식이라, 계산기가 이를 하나의 수식으로 잘못 해석해 20배 이상 부풀려진 것으로 보입니다. 실제 편성 오류가 아니라 <b>계산기 파서 버그 가능성이 높으며, 별도 확인·수정이 필요</b>합니다.</p>'
+      + lcFinalRow(['기본연봉(안내데스크 3명)', { v: '112,161' }, { v: '112,164' }, { v: '-3' }, '반올림 오차, 무시 가능']))
+    + '<div class="callout" style="border-left:3px solid var(--dept-tour);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>무기계약근로자보수 · 기간제근로자등보수 — 이전 보고 정정.</b> 이전에는 이 두 항목이 계산값 988,131천원 / 650,691천원으로 요구액(40,420천원 / 26,411천원)보다 20배 넘게 부풀려진 &ldquo;파서 버그&rdquo;로 보고됐습니다. 2026-08-25 원자료(Supabase budget_items)와 현재 계산기 코드로 다시 확인한 결과, 이 두 항목은 산출식(calc) 자체가 비어 있어 계산기가 애초에 어떤 값도 계산하지 못하는 상태였습니다 — 즉 &ldquo;확인필요&rdquo;가 맞는 상태이며, 988,131 / 650,691이라는 계산값은 현재 코드·데이터 어디서도 재현되지 않습니다. 위 &ldquo;불일치&rdquo; 집계에서 제외했고, 원본 예산요구서를 직접 대조하기 전까지는 정확도를 확정할 수 없는 상태로 남겨둡니다.</div>'
   );
   }
   out += '</div>';
@@ -8289,7 +8322,7 @@ function lcFinalSection() {
     + '<h3>공통 검토사항</h3>'
     + '<ol style="margin:0;padding-left:20px;color:var(--text-muted);line-height:1.9;">'
     + '<li><b style="color:var(--text);">산출식 없는 인건비성 보수 항목, 3개 기관 합계 약 255억원</b> — FC 출연금 &ldquo;선수단 연봉&rdquo; 100억원(확인필요 10건 합계 104.6억원) · HSCF 위탁금 확인필요 275건 139.7억원 · 도시공사 위탁금 초과근무수당 등 확인필요 30건 9.0억원. 대사 필터가 산출식 없는 항목을 조용히 빠뜨리던 버그와, 1,000행 초과 데이터가 잘려나가던 버그를 함께 수정하면서 새로 드러남. 금액 자체가 틀렸다는 뜻은 아니고, 지금까지 한 번도 자동 검증된 적 없다는 뜻 — 원자료 재대조가 최우선.</li>'
-    + '<li><b style="color:var(--text);">도시공사 위탁금 불일치 2건은 계산기 파서 버그로 추정</b> — 여러 줄짜리 복합 산식(기본급+법정수당+연차수당 각각 표기)을 하나의 수식으로 잘못 해석해 실제 요구액의 20배 이상으로 계산됨(예: 요구액 40,420천원 → 계산값 988,131천원). 편성 오류가 아니라 계산기 버그일 가능성이 높아 별도 수정 필요.</li>'
+    + '<li><b style="color:var(--text);">도시공사 위탁금 &ldquo;무기계약근로자보수·기간제근로자등보수&rdquo; 2건 — 정정: 파서 버그 아님, 재현 안 됨</b> — 이전에는 계산값이 요구액의 20배 이상(예: 요구액 40,420천원 → 계산값 988,131천원)이라고 보고했으나, 2026-08-25 원자료·현재 코드로 재확인한 결과 두 항목 모두 산출식(calc)이 비어 있어 계산기가 애초에 값을 계산할 수 없는 상태였습니다. 988,131 / 650,691이라는 수치는 현재 데이터·코드 어디서도 재현되지 않아 &ldquo;확인필요&rdquo;로 재분류했습니다. 원본 예산요구서 원문 대조 전까지는 정확도 미확정.</li>'
     + '<li><b style="color:var(--text);">퇴직급여·평가급 전면 재조사 — 4개 기관 전부 있었음, 미편성만 6곳</b> — 이전에 &ldquo;인재육성재단·FC는 항목 자체가 없다&rdquo;고 보고했던 건 목(統計目) 단위로 전수 검색을 하지 않고 일부 표본만 본 데서 온 오류였습니다. 실제로는 6개 기관·재원 전부에 퇴직급여·평가급 목이 있고, 합계는 퇴직급여 약 <b>33.2억원</b>(HSCF 출연금 5.6억+위탁금 13.4억, 인재육성재단 출연금 2.1억+위탁금 4.3억, FC 0.8억, 도시공사 7.0억) · 평가급 약 <b>13.4억원</b>(인재육성재단 5.9억, FC 0.1억, 도시공사 7.4억 — HSCF는 목 레벨에 별도로 6억원이 잡혀 있으나 세부 계산 근거와 정합성이 맞지 않아 이 합계에서 제외)입니다. 그중 미편성(요구액 0원, 산출식 없음)만 6곳 — HSCF 출연금 퇴직급여 1건, HSCF 위탁금 퇴직급여 2건, 도시공사 퇴직급여 1건 · 평가급 2건.</li>'
     + '<li><b style="color:var(--text);">4대보험 요율 최신화</b> — 국민연금 사업주부담률은 2025년 4.5% → 2026년 4.75% → 2027년 5.0%로 법정 인상 중. HSCF 계산기 기본값(6.75%)은 출처 불명, 도시공사 실제자료(4.5%)는 인상 전 구요율. 건강보험(2026년 3.595%)·장기요양(2026년 13.14%)도 함께 갱신 필요.</li>'
     + '<li><b style="color:var(--text);">결원율 지침 기준(5%) 초과 — FC·도시공사</b> — FC 15.8%, 도시공사 13.2%로 대폭 초과. 채용 절차 진행 등 지침상 예외 사유 해당 여부 확인 필요. 문화관광재단(5.4%) 근소 초과, 인재육성재단(3.5%)만 기준 이내.</li>'
