@@ -950,10 +950,10 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .labor-box.animated-button {
   position: relative;
   display: flex; align-items: center; justify-content: center; gap: 4px;
-  width: auto; align-self: center; flex-shrink: 0;
-  padding: 10px 28px;
+  width: 210px; align-self: center; flex-shrink: 0;
+  padding: 14px 0;
   border: none;
-  font-size: 13px; font-weight: 600;
+  font-size: 16px; font-weight: 600;
   background-color: transparent;
   border-radius: 100px;
   color: var(--lime);
@@ -963,7 +963,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   transition: all .6s cubic-bezier(.23,1,.32,1);
 }
 .labor-box.animated-button svg {
-  position: absolute; width: 16px; fill: var(--lime); z-index: 9;
+  position: absolute; width: 19px; fill: var(--lime); z-index: 9;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.5));
   transition: all .8s cubic-bezier(.23,1,.32,1);
 }
@@ -978,13 +978,13 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   position: relative; z-index: 1; transform: translateX(-10px);
   transition: all .8s cubic-bezier(.23,1,.32,1);
 }
-.labor-box.animated-button:hover { color: var(--text); text-shadow: none; border-radius: 12px; }
-.labor-box.animated-button:hover .arr-1 { right: -25%; }
-.labor-box.animated-button:hover .arr-2 { left: 14px; }
-.labor-box.animated-button:hover .text { transform: translateX(10px); }
-.labor-box.animated-button:hover svg { fill: var(--text); filter: none; }
+.labor-box.animated-button:hover, .labor-box.animated-button:focus, .labor-box.animated-button.is-active { color: var(--text); text-shadow: none; border-radius: 12px; outline: none; }
+.labor-box.animated-button:hover .arr-1, .labor-box.animated-button:focus .arr-1, .labor-box.animated-button.is-active .arr-1 { right: -25%; }
+.labor-box.animated-button:hover .arr-2, .labor-box.animated-button:focus .arr-2, .labor-box.animated-button.is-active .arr-2 { left: 14px; }
+.labor-box.animated-button:hover .text, .labor-box.animated-button:focus .text, .labor-box.animated-button.is-active .text { transform: translateX(10px); }
+.labor-box.animated-button:hover svg, .labor-box.animated-button:focus svg, .labor-box.animated-button.is-active svg { fill: var(--text); filter: none; }
 .labor-box.animated-button:active { scale: .95; }
-.labor-box.animated-button:hover .circle { width: 320px; height: 320px; opacity: 1; }
+.labor-box.animated-button:hover .circle, .labor-box.animated-button:focus .circle, .labor-box.animated-button.is-active .circle { width: 340px; height: 340px; opacity: 1; }
 
 /* 로고 / 브랜드 헤더 — 사이드바 상단에 풀블리드로 걸치는 히어로 캡 */
 .sidebar .brand {
@@ -7380,6 +7380,8 @@ function renderSidebarNav() {
 function switchPanel(panelId) {
   document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
   document.getElementById(panelId).classList.add('active');
+  var laborBoxEl = document.getElementById('labor-box');
+  if (laborBoxEl) laborBoxEl.classList.toggle('is-active', panelId === 'panel-laborcalc');
   if (panelId !== 'panel-dashboard') {
     var main = document.querySelector('.main');
     var hero = document.querySelector('.landing-hero');
