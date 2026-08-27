@@ -955,36 +955,36 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   border: none;
   font-size: 16px; font-weight: 600;
   background-color: transparent;
-  border-radius: 100px;
-  color: var(--lime);
-  text-shadow: 0 1px 3px rgba(0,0,0,.55), 0 0 8px rgba(0,0,0,.35);
+  border-radius: 12px;
+  color: var(--text);
+  text-shadow: none;
   cursor: pointer;
   overflow: hidden;
   transition: all .6s cubic-bezier(.23,1,.32,1);
 }
 .labor-box.animated-button svg {
-  position: absolute; width: 19px; fill: var(--lime); z-index: 9;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.5));
+  position: absolute; width: 19px; fill: var(--text); z-index: 9;
+  filter: none;
   transition: all .8s cubic-bezier(.23,1,.32,1);
 }
-.labor-box.animated-button .arr-1 { right: 14px; }
-.labor-box.animated-button .arr-2 { left: -25%; }
+.labor-box.animated-button .arr-1 { right: -25%; }
+.labor-box.animated-button .arr-2 { left: 14px; }
 .labor-box.animated-button .circle {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 14px; height: 14px; background-color: var(--lime); border-radius: 50%;
-  opacity: 0; transition: all .8s cubic-bezier(.23,1,.32,1);
+  width: 340px; height: 340px; background-color: var(--lime); border-radius: 50%;
+  opacity: 1; transition: all .8s cubic-bezier(.23,1,.32,1);
 }
 .labor-box.animated-button .text {
-  position: relative; z-index: 1; transform: translateX(-10px);
+  position: relative; z-index: 1; transform: translateX(10px);
   transition: all .8s cubic-bezier(.23,1,.32,1);
 }
-.labor-box.animated-button:hover, .labor-box.animated-button:focus, .labor-box.animated-button.is-active { color: var(--text); text-shadow: none; border-radius: 12px; outline: none; }
-.labor-box.animated-button:hover .arr-1, .labor-box.animated-button:focus .arr-1, .labor-box.animated-button.is-active .arr-1 { right: -25%; }
-.labor-box.animated-button:hover .arr-2, .labor-box.animated-button:focus .arr-2, .labor-box.animated-button.is-active .arr-2 { left: 14px; }
-.labor-box.animated-button:hover .text, .labor-box.animated-button:focus .text, .labor-box.animated-button.is-active .text { transform: translateX(10px); }
-.labor-box.animated-button:hover svg, .labor-box.animated-button:focus svg, .labor-box.animated-button.is-active svg { fill: var(--text); filter: none; }
+.labor-box.animated-button:hover, .labor-box.animated-button:focus, .labor-box.animated-button.is-active { color: var(--lime); text-shadow: 0 1px 3px rgba(0,0,0,.55), 0 0 8px rgba(0,0,0,.35); border-radius: 100px; outline: none; }
+.labor-box.animated-button:hover .arr-1, .labor-box.animated-button:focus .arr-1, .labor-box.animated-button.is-active .arr-1 { right: 14px; }
+.labor-box.animated-button:hover .arr-2, .labor-box.animated-button:focus .arr-2, .labor-box.animated-button.is-active .arr-2 { left: -25%; }
+.labor-box.animated-button:hover .text, .labor-box.animated-button:focus .text, .labor-box.animated-button.is-active .text { transform: translateX(-10px); }
+.labor-box.animated-button:hover svg, .labor-box.animated-button:focus svg, .labor-box.animated-button.is-active svg { fill: var(--lime); filter: drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
 .labor-box.animated-button:active { scale: .95; }
-.labor-box.animated-button:hover .circle, .labor-box.animated-button:focus .circle, .labor-box.animated-button.is-active .circle { width: 340px; height: 340px; opacity: 1; }
+.labor-box.animated-button:hover .circle, .labor-box.animated-button:focus .circle, .labor-box.animated-button.is-active .circle { width: 14px; height: 14px; opacity: 0; }
 
 /* 로고 / 브랜드 헤더 — 사이드바 상단에 풀블리드로 걸치는 히어로 캡 */
 .sidebar .brand {
@@ -1950,10 +1950,10 @@ table.lc-table-5col th:nth-child(4), table.lc-table-5col td:nth-child(4) { width
 table.lc-table-5col th:nth-child(5), table.lc-table-5col td:nth-child(5) { width: 15%; }
 .lc-pair table.lc-table { min-width: 0; }
 @media (max-width: 900px) { .lc-pair { grid-template-columns: 1fr; } }
-.lc-split { display: flex; align-items: flex-start; gap: 8px; }
-.lc-split-narrow { flex: 0 0 auto; }
-.lc-split-narrow table.lc-table { width: auto; min-width: 0; }
-.lc-split-wide { flex: 1 1 auto; min-width: 0; }
+.lc-split { display: flex; align-items: flex-start; gap: 8px; flex-direction: column; }
+.lc-split-narrow { flex: 0 0 auto; width: 100%; }
+.lc-split-narrow table.lc-table { width: 100%; min-width: 0; }
+.lc-split-wide { flex: 1 1 auto; min-width: 0; width: 100%; }
 .lc-split-wide table.lc-table tbody tr:not(.lc-subtotal) { height: 43px; }
 @media (max-width: 900px) { .lc-split { flex-direction: column; } .lc-split-narrow table.lc-table { width: 100%; } }
 .lc-accordion { border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 8px; overflow: hidden; }
@@ -1970,6 +1970,13 @@ table.lc-table-5col th:nth-child(5), table.lc-table-5col td:nth-child(5) { width
 .lc-accordion-body { display: none; padding: 14px 16px; }
 .lc-accordion.open .lc-accordion-body { display: block; }
 table.lc-table input { width: 64px; padding: 4px 6px; border: 1px solid var(--border-strong); border-radius: 5px; text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+table.lc-table input.lc-result-box { width: 100%; min-width: 84px; font-weight: 700; background: var(--bg-hover); cursor: default; }
+.lc-detail-toggle { margin: 8px 0 0; }
+.lc-detail-toggle summary { cursor: pointer; font-size: 13px; color: var(--text-muted); font-weight: 600; padding: 2px 0; list-style: none; }
+.lc-detail-toggle summary::-webkit-details-marker { display: none; }
+.lc-detail-toggle summary::before { content: '▸ '; }
+.lc-detail-toggle[open] summary::before { content: '▾ '; }
+.lc-detail-toggle table.lc-table { margin-top: 6px; }
 table.lc-table td.lc-formula { text-align: left; color: var(--text-soft); white-space: normal; max-width: 220px; padding-left: 28px; }
 table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
 .lc-grandtotal { display: flex; justify-content: space-between; align-items: baseline; background: var(--navy); color: #fff; border-radius: var(--r-lg); padding: 18px 22px; margin-top: 4px; }
@@ -1997,12 +2004,13 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
   align-items: center;
   justify-content: space-around;
   height: 50px;
-  width: 460px;
+  width: 500px;
   margin-bottom: 20px;
 }
 .filter-switch input { display: none; }
 .filter-switch label {
   flex: 1;
+
   text-align: center;
   cursor: pointer;
   border-radius: 10px;
@@ -2018,6 +2026,7 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
   box-shadow: inset 3px 3px 6px #D3D9EC, inset -3px -3px 6px #ffffff;
   color: var(--text-muted);
 }
+label[for="lc-opt-retire"] { flex: 1.4; }
 #lc-opt-labor:checked + label[for="lc-opt-labor"] { background-color: #3457D5; box-shadow: none; color: #fff; font-weight: 700; }
 #lc-opt-retire:checked + label[for="lc-opt-retire"] { background-color: #3D4560; box-shadow: none; color: #fff; font-weight: 700; }
 #lc-opt-eval:checked + label[for="lc-opt-eval"] { background-color: #C2699A; box-shadow: none; color: #fff; font-weight: 700; }
@@ -7400,6 +7409,11 @@ var LC = {
   final: { instKey: 'hscf', fundType: '', rawOpen: false }, // 기준값 (최종) 탭 상단 고정 필터: instKey(기관) | fundType(''=전체, '출연금'|'위탁금') | rawOpen(원자료 아코디언 열림 상태 — 리렌더 후에도 유지하려고 DOM classList 대신 여기서 추적)
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
+  quota: '', // 전년도 말 정원(일반직 및 무기계약직) — 인상률처럼 실제 확정되면 입력해 계산에 반영하는 모수. 빈칸이 기본값.
+  treatmentPct: 4.1, // 대우공무원수당 요율(%) — 기존 lcGradeAmts 하드코딩 0.041을 편집 가능한 모수로 전환
+  holidayPct: 60, // 명절휴가비 요율(%) — 기존 lcGradeAmts 하드코딩 0.6을 편집 가능한 모수로 전환
+  mgmtAllow: { unit: 0, count: 0, months: 12 }, // 관리업무수당 — 기관 확정 단가 미반영 상태(0), 확정되면 단가만 입력
+  techAllow: { unit: 0, count: 0, months: 12 }, // 기술수당 — 기관 확정 단가 미반영 상태(0), 확정되면 단가만 입력
   // 대우수당(treatmentCount)은 실제 데이터상 기본급 인원과 다른 별도 인원 기준으로 산정됨(직급 내 일부 대상자만 해당) — 2026년 실측치 그대로 반영.
   // months: 근무개월수(중도 입퇴사·승진 시 12에서 조정) — 기본급/초과근무/야간근무/대우수당에 공통 적용
   grades: [
@@ -7450,21 +7464,22 @@ var LC = {
   // 가급은 HSCF 실제 예산서 확인값. 나~마급은 「공무원보수규정」 별표(전문임기제공무원 연봉등급 기준표) 법정 하한액(마급은 상한액, 하한 없음) 적용 — 실제 기관 확정액과 다를 수 있음.
   other02: {
     grades: [
-      { id: 'ga', name: '가급', count: 4, baseRate: 76234600, months: 12 },
-      { id: 'na', name: '나급', count: 2, baseRate: 57708000, months: 12, statutory: true },
-      { id: 'da', name: '다급', count: 0, baseRate: 50272000, months: 12, statutory: true },
-      { id: 'ra', name: '라급', count: 0, baseRate: 44296000, months: 12, statutory: true },
-      { id: 'ma', name: '마급', count: 0, baseRate: 54678000, months: 12, statutory: true }
+      { id: 'ga', name: '가급', note: '일반직 1~2급 상당', count: 4, baseRate: 76234600, months: 12 },
+      { id: 'na', name: '나급', note: '3급 상당', count: 2, baseRate: 57708000, months: 12, statutory: true },
+      { id: 'da', name: '다급', note: '4급 상당', count: 0, baseRate: 50272000, months: 12, statutory: true },
+      { id: 'ra', name: '라급', note: '5급 상당', count: 0, baseRate: 44296000, months: 12, statutory: true },
+      { id: 'ma', name: '마급', note: '6급 상당', count: 0, baseRate: 54678000, months: 12, statutory: true }
     ],
     familySpouseUnit: 100000, familySpouseCount: 4, familySpouseMonths: 12,
     familyChildUnit: 50000, familyChildCount: 2, familyChildMonths: 12,
-    annualLeaveRate: 6569550, annualLeaveCount: 4
+    annualLeaveRate: 6569550, annualLeaveCount: 4,
+    mealUnit: 140000, mealCount: 6, mealMonths: 12
   },
-  other03: { count: 9, baseRate: 2563020, months: 12, mealUnit: 140000, holidayUnit: 550000, familyUnit: [
+  other03: { count: 9, baseRate: 2563020, months: 12, mealUnit: 140000, holidayUnit: 550000, welfarePointUnit: 500000, familyUnit: [
       { label: '배우자', unit: 40000, count: 5, months: 12 }, { label: '부양가족', unit: 20000, count: 3, months: 12 },
       { label: '첫째자녀', unit: 50000, count: 1, months: 12 }, { label: '둘째자녀', unit: 80000, count: 2, months: 12 }, { label: '셋째자녀', unit: 120000, count: 1, months: 12 }
     ], livingWageUnit: 81890, ordinaryRate: 2601000, annualLeaveCount: 13, otCount: 9, otMonths: 10 },
-  other04: { count: 3, baseRate: 2156880, months: 12, mealUnit: 50000, transportUnit: 50000, livingWageUnit: 369930, ordinaryRate: 2626810 },
+  other04: { count: 3, baseRate: 2156880, months: 12, mealUnit: 50000, transportUnit: 50000, livingWageUnit: 369930, ordinaryRate: 2626810, fairnessPct: 8.5 },
   // 304 연금부담금등 (4대보험 사업자부담분) — 목이 101(인건비)이 아닌 304로 별도이며, 지침상 총인건비 인상률 산정에서 제외되는 항목.
   pensionBase: 6460798000,
   pension: [
@@ -7496,15 +7511,20 @@ function lcGradeAmts(g) {
   var r = lcRaiseMul();
   var monthFactor = g.annual ? (g.months / 12) : g.months;
   var base = g.baseRate * r * g.count * monthFactor;
-  var holiday = g.holidayRate != null ? g.holidayRate * r * g.count * 2 * 0.6 : 0;
+  var holiday = g.holidayRate != null ? g.holidayRate * r * g.count * 2 * (LC.holidayPct / 100) : 0;
   var gradeAllow = g.gradeAllowance != null ? g.gradeAllowance * g.count * g.months : 0;
   var annualLeave = g.ordinaryRate != null ? (g.ordinaryRate * 8 / 209 * 10) * g.count : 0;
   var overtime = g.hasOvertime ? (g.ordinaryRate * 1.5 / 209 * 30) * g.count * g.months * 0.7 : 0;
   var nightwork = g.hasOvertime ? (g.ordinaryRate * 0.5 / 209 * 8) * g.count * g.months * 0.7 : 0;
-  var treatment = g.treatmentRate != null ? g.treatmentRate * r * 0.041 * g.treatmentCount * g.months : 0;
+  var treatment = g.treatmentRate != null ? g.treatmentRate * r * (LC.treatmentPct / 100) * g.treatmentCount * g.months : 0;
   return { base: base, holiday: holiday, gradeAllow: gradeAllow, annualLeave: annualLeave, overtime: overtime, nightwork: nightwork, treatment: treatment,
     total: base + holiday + gradeAllow + annualLeave + overtime + nightwork + treatment };
 }
+function lcTreatmentTotal() { return LC.grades.reduce(function (s, g) { return s + lcGradeAmts(g).treatment; }, 0); }
+function lcHolidayTotal() { return LC.grades.reduce(function (s, g) { return s + lcGradeAmts(g).holiday; }, 0); }
+function lcGradeAllowTotal() { return LC.grades.reduce(function (s, g) { return s + lcGradeAmts(g).gradeAllow; }, 0); }
+function lcMgmtAllowTotal() { return LC.mgmtAllow.unit * LC.mgmtAllow.count * LC.mgmtAllow.months; }
+function lcTechAllowTotal() { return LC.techAllow.unit * LC.techAllow.count * LC.techAllow.months; }
 function lcMeritTotal() {
   var r = lcRaiseMul();
   return LC.merit.reduce(function (s, m) { return s + m.rate * r * m.count * 2 * (m.pct / 100); }, 0);
@@ -7539,12 +7559,13 @@ function lc03Total() {
   var base = o.baseRate * o.count * o.months;
   var meal = o.mealUnit * o.count * o.months;
   var holiday = o.holidayUnit * o.count * 2;
+  var welfare = o.welfarePointUnit * o.count;
   var family = o.familyUnit.reduce(function (s, x) { return s + x.unit * x.count * x.months; }, 0);
   var living = o.livingWageUnit * o.count * o.months;
   var leave = (o.ordinaryRate * 8 / 209 * 10) * o.annualLeaveCount;
   var ot = (o.ordinaryRate * 1.5 / 209 * 30) * o.otCount * o.otMonths * 0.7;
   var night = (o.ordinaryRate * 0.5 / 209 * 8) * o.otCount * o.otMonths * 0.7;
-  return base + meal + holiday + family + living + leave + ot + night;
+  return base + meal + holiday + welfare + family + living + leave + ot + night;
 }
 function lc04Total() {
   var o = LC.other04;
@@ -7581,7 +7602,7 @@ function lcSet(path, value) {
   var parts = path.split('.');
   var obj = LC;
   for (var i = 0; i < parts.length - 1; i++) { obj = obj[parts[i]]; }
-  var num = parseFloat(value);
+  var num = parseFloat(String(value).replace(/,/g, ''));
   obj[parts[parts.length - 1]] = isNaN(num) ? 0 : num;
   renderLaborCalc();
 }
@@ -7598,10 +7619,11 @@ function lcStep(path, delta) {
   var cur = Number(lcGet(path)) || 0;
   lcSet(path, cur + delta);
 }
-function lcNumInput(path, width) {
+function lcNumInput(path, width, blankIfZero) {
   var val = lcGet(path);
+  var displayVal = (blankIfZero && !val) ? '' : fmtWon(val);
   return '<span class="lc-numstep">'
-    + '<input type="number" value="' + val + '" style="width:' + (width || 64) + 'px" onchange="lcSet(\'' + path + '\',this.value)">'
+    + '<input type="text" inputmode="decimal" value="' + displayVal + '" style="width:' + (width || 64) + 'px" onchange="lcSet(\'' + path + '\',this.value)">'
     + '<span class="lc-step-col">'
     + '<button type="button" class="lc-step-btn" tabindex="-1" onclick="lcStep(\'' + path + '\',1)">▲</button>'
     + '<button type="button" class="lc-step-btn" tabindex="-1" onclick="lcStep(\'' + path + '\',-1)">▼</button>'
@@ -7610,8 +7632,11 @@ function lcNumInput(path, width) {
 function lcMiniTotal(label, amt) {
   return '<div class="lc-mini-total"><span>' + label + '</span><b>' + fmtWon(lcRound(amt)) + '천원</b></div>';
 }
+function lcResultBox(text) {
+  return '<input type="text" class="lc-result-box" value="' + text + '" readonly tabindex="-1">';
+}
 function lcSubtotalRow(label, amt, colspan) {
-  return '<tr class="lc-subtotal"><td colspan="' + colspan + '">' + label + '</td><td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
+  return '<tr class="lc-subtotal"><td colspan="' + colspan + '">' + label + '</td><td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
 }
 
 function lcBasisSelect(path, value) {
@@ -8425,19 +8450,24 @@ function renderLaborCalc() {
   if (!el) return;
   var r = lcRaiseMul();
 
-  var raiseHtml = '<div class="lc-raise-row">2027년 총인건비 인상률(%) '
+  var raiseHtml = '<div class="lc-raise-row" style="flex-direction:column;align-items:flex-start;gap:6px;">'
+    + '<div>▸ 2027년 총인건비 인상률(%) '
     + '<input type="number" step="0.1" value="' + LC.raise + '" onchange="lcSet(\'raise\',this.value)"> '
-    + '&nbsp;(2026년 인상률 임시 적용)</div>';
+    + '&nbsp;(행안부 상한 한도 내에서 지방자치단체의 장이 최종 인상률 확정 통보)</div>'
+    + '<div>▸ 전년도 말 정원 (일반직 및 무기계약직) '
+    + '<input type="number" step="1" value="' + (LC.quota || '') + '" onchange="lcSet(\'quota\',this.value)" placeholder="정원"> '
+    + '명 기준 편성</div>'
+    + '</div>';
 
   // ---- 01 보수: 직급별 표 — 기본급(박스1)과 수당(박스2)으로 분리 ----
   var gradeBaseRows = LC.grades.map(function (g, gi) {
     var a = lcGradeAmts(g);
     return '<tr>'
-      + '<td>' + g.name + (g.estimated ? ' <span class="lc-warn" title="2026년 정원표엔 있으나 현원 0명(공석)이라 실제 예산서엔 산출식이 없음 — 3·4급 단가 격차 비율로 추정한 값. 실제 채용 시 반드시 검증 필요.">(추정단가)</span>' : '') + '</td>'
+      + '<td>' + g.name + '</td>'
       + '<td>' + fmtWon(g.baseRate) + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.months', 60) + '</td>'
-      + '<td class="lc-col-base" title="단가' + fmtWon(g.baseRate) + '원×인상률×인원' + g.count + '명×' + (g.annual ? '(개월÷12)' : '개월') + g.months + '"><b>' + fmtWon(lcRound(a.base)) + '</b></td>'
+      + '<td class="lc-col-base" title="단가' + fmtWon(g.baseRate) + '원×인상률×인원' + g.count + '명×' + (g.annual ? '(개월÷12)' : '개월') + g.months + '">' + lcResultBox(fmtWon(lcRound(a.base))) + '</td>'
       + '</tr>';
   }).join('');
   // 구분(직급) | 명절휴가비 | 직급보조비 | 연차수당 | 초과근무수당 | 야간근무수당 | 대우수당 | 수당합계 — 산출식은 헤더(구분의 수당명) 호버 툴팁으로 표시
@@ -8452,7 +8482,7 @@ function renderLaborCalc() {
       + '<td class="lc-col-allow">' + (g.hasOvertime ? fmtWon(lcRound(a.overtime)) : '-') + '</td>'
       + '<td class="lc-col-allow">' + (g.hasOvertime ? fmtWon(lcRound(a.nightwork)) : '-') + '</td>'
       + '<td>' + (g.treatmentRate != null ? fmtWon(lcRound(a.treatment)) : '-') + '</td>'
-      + '<td><b>' + fmtWon(lcRound(allowSum)) + '</b></td>'
+      + '<td>' + lcResultBox(fmtWon(lcRound(allowSum))) + '</td>'
       + '</tr>';
   }).join('');
   var gradesSubtotal = LC.grades.reduce(function (s, g) { return s + lcGradeAmts(g).total; }, 0);
@@ -8465,7 +8495,7 @@ function renderLaborCalc() {
       + '<td>' + fmtWon(m.rate) + '</td>'
       + '<td>' + lcNumInput('merit.' + i + '.count', 50) + '</td>'
       + '<td class="lc-formula">단가×인상률×인원×2월×' + m.pct + '%</td>'
-      + '<td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
+      + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var meritBonusRows = LC.meritBonus.map(function (m, i) {
     var amt = m.unit * m.count * m.months;
@@ -8474,7 +8504,7 @@ function renderLaborCalc() {
       + '<td>' + lcNumInput('meritBonus.' + i + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('meritBonus.' + i + '.months', 60) + '</td>'
       + '<td class="lc-formula">단가×인원×개월</td>'
-      + '<td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
+      + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var familyRows = LC.family.map(function (f, i) {
     var amt = f.unit * f.count * f.months;
@@ -8483,7 +8513,7 @@ function renderLaborCalc() {
       + '<td>' + lcNumInput('family.' + i + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('family.' + i + '.months', 60) + '</td>'
       + '<td class="lc-formula">단가×인원×개월</td>'
-      + '<td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
+      + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var specialRows = LC.special.map(function (sp, i) {
     var amt = sp.unit * sp.count * sp.months;
@@ -8492,15 +8522,13 @@ function renderLaborCalc() {
       + '<td>' + lcNumInput('special.' + i + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('special.' + i + '.months', 60) + '</td>'
       + '<td class="lc-formula">단가×인원×개월</td>'
-      + '<td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
+      + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
 
   var lc01 = lc01Total();
   // 「지방공무원 수당 등에 관한 규정」 6개 법정 카테고리 기준 아코디언 — 화면 공간 절약을 위해 기본은 접힘, 헤더에 카테고리명+소계만 노출
-  var bonusTotal = lcMeritTotal() + lcMeritBonusTotal();
   var familyTotalAmt = lcFamilyTotal();
   var specialTotalAmt = lcSpecialTotal();
-  var reimburseTotal = lcMealTotal() + lcProxyTotal() + lcDispatchTotal();
   var lcAcc = function (title, amt, bodyHtml, bg, fg) {
     return '<div class="lc-accordion">'
       + '<button type="button" class="lc-accordion-head" style="background:' + bg + ';color:' + fg + '" onclick="this.parentElement.classList.toggle(\'open\')">'
@@ -8509,14 +8537,60 @@ function renderLaborCalc() {
       + '<div class="lc-accordion-body">' + bodyHtml + '</div>'
       + '</div>';
   };
-  var section01 = '<div class="lc-section cat-general" style="border-left-color:#E1E7F9"><h3>01 보수 <span class="lc-cat-tag" style="background:#E1E7F9;color:#22348E">일반직·임원</span></h3>'
-    + lcAcc('기본급 및 직급별 수당',
+  var section01 = '<div class="lc-section cat-general" style="border-left-color:var(--border-strong)"><h3>01 일반직 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">전년도 말 정원을 기준으로 편성하되, 현원이 정원보다 적은 경우 실제 근무 중인 현원을 기준으로 우선 편성 (정규직 1-6급 체계)</span></h3>'
+    + lcAcc('기본급 <span class="lc-acc-sub">(호봉별 봉급액/기본연봉액)</span>',
         gradesSubtotal,
-        '<div class="lc-split">'
-        + '<div class="lc-split-narrow"><h3 style="margin-top:0;font-size:14px;">기본급</h3>'
+        '<div class="lc-split-narrow">'
         + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th>기본급(천원)</th></tr></thead>'
-        + '<tbody>' + lcSubtotalRow('합계', gradesBaseSubtotal, 4) + gradeBaseRows + '</tbody></table></div>'
-        + '<div class="lc-split-wide"><h3 style="margin-top:0;font-size:14px;">직급별 수당 <span class="lc-hint" style="margin:0;font-weight:400;">(구분의 수당명에 커서를 올리면 산출식이 표시됩니다. 임원은 시간외·야간·대우수당 지급대상 제외)</span></h3>'
+        + '<tbody>' + lcSubtotalRow('합계', gradesBaseSubtotal, 4) + gradeBaseRows + '</tbody></table></div>',
+        'var(--bg-hover)', 'var(--text)')
+    + lcAcc('수당 <span class="lc-acc-sub">(16종)</span>', lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal() + lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal() + familyTotalAmt + lcProxyTotal(),
+        lcAcc('① 기본급 연동형 수당', lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal(),
+            '<table class="lc-table"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            + '<tr><td>대우공무원수당</td><td>' + lcNumInput('treatmentPct', 55) + '%</td><td colspan="2" style="color:var(--text-muted);font-size:12.5px;">직급별 상이(기본급 탭 참고)</td><td class="lc-formula">단가×인상률×요율×대상인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcTreatmentTotal()))) + '</td></tr>'
+            + '<tr><td>명절휴가비</td><td>' + lcNumInput('holidayPct', 55) + '%</td><td colspan="2" style="color:var(--text-muted);font-size:12.5px;">직급별 상이(기본급 탭 참고)</td><td class="lc-formula">단가×인상률×인원×2회×요율(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcHolidayTotal()))) + '</td></tr>'
+            + '<tr><td>관리업무수당</td><td>' + lcNumInput('mgmtAllow.unit', 80, true) + '원</td><td>' + lcNumInput('mgmtAllow.count', 50, true) + '</td><td>' + lcNumInput('mgmtAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcMgmtAllowTotal() ? fmtWon(lcRound(lcMgmtAllowTotal())) : '') + '</td></tr>'
+            + '<tr><td>정근수당</td><td colspan="3" style="color:var(--text-muted);font-size:12.5px;">근속연수 구간별 상이</td><td class="lc-formula">단가×인상률×인원×2회×구간별요율(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritTotal()))) + '</td></tr>'
+            + '</tbody></table>'
+            + '<details class="lc-detail-toggle"><summary>정근수당 근속연수 구간별 상세</summary>'
+            + '<table class="lc-table"><thead><tr><th>구간</th><th>평균단가(원)</th><th>인원(명)</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritTotal(), 4) + meritRows + '</tbody></table>'
+            + '</details>',
+            'var(--bg-hover)', 'var(--text)')
+        + lcAcc('② 직급형 수당', lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal(),
+            '<table class="lc-table"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            + '<tr><td>직급보조비</td><td colspan="3" style="color:var(--text-muted);font-size:12.5px;">직급별 고시 단가(직급별 상이, 기본급 탭 참고)</td><td class="lc-formula">고시단가×인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcGradeAllowTotal()))) + '</td></tr>'
+            + '<tr><td>기술수당</td><td>' + lcNumInput('techAllow.unit', 80, true) + '원</td><td>' + lcNumInput('techAllow.count', 50, true) + '</td><td>' + lcNumInput('techAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcTechAllowTotal() ? fmtWon(lcRound(lcTechAllowTotal())) : '') + '</td></tr>'
+            + '<tr><td>정근수당가산금</td><td colspan="3" style="color:var(--text-muted);font-size:12.5px;">근속연수 구간별 상이</td><td class="lc-formula">단가×인원×개월(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritBonusTotal()))) + '</td></tr>'
+            + '</tbody></table>'
+            + '<details class="lc-detail-toggle"><summary>정근수당가산금 근속연수 구간별 상세</summary>'
+            + '<table class="lc-table"><thead><tr><th>구간</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritBonusTotal(), 5) + meritBonusRows + '</tbody></table>'
+            + '</details>',
+            'var(--bg-hover)', 'var(--text)')
+        + lcAcc('③ 실적형 수당', 0,
+            '<table class="lc-table"><thead><tr><th>수당명</th><th class="lc-th-formula">산정 기준</th></tr></thead><tbody>'
+            + '<tr><td>시간외·야간·휴일근무수당</td><td class="lc-formula">시간당 통상임금 × 1.5 할증 × 개인별 월 초과근무 예측 시간<br><span class="lc-hint" style="margin:4px 0 0;">통제: 직책수행경비를 받는 부서장 이상 관리자는 산출 대상에서 제외</span></td></tr>'
+            + '<tr><td>연가보상비</td><td class="lc-formula">일 통상임금 × 연가보상 예측 일수<br><span class="lc-hint" style="margin:4px 0 0;">연가보상비 산정 시 별도의 임의 할증률 적용 불가</span></td></tr>'
+            + '</tbody></table>',
+            'var(--bg-hover)', 'var(--text)')
+        + lcAcc('④ 정책형 수당', familyTotalAmt + lcProxyTotal(),
+            '<table class="lc-table"><thead><tr><th>구분</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('가족수당', familyTotalAmt, 5) + familyRows + '</tbody></table>'
+            + '<h3 style="margin-top:14px;font-size:14px;">대행업무수당 <span class="lc-acc-sub">(업무대행수당)</span></h3>'
+            + '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            + '<tr><td>업무대행수당</td><td>' + fmtWon(LC.proxy.unit) + '</td><td>' + lcNumInput('proxy.count', 50) + '</td><td>' + lcNumInput('proxy.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcProxyTotal()))) + '</td></tr>'
+            + '</tbody></table>',
+            'var(--bg-hover)', 'var(--text)'),
+        'var(--bg-hover)', 'var(--text)')
+    + '<h3 style="margin-top:18px;">수당 (근속·가족 등 기준) <span class="lc-cat-tag" style="background:var(--bg-hover);color:var(--text-muted);">「지방공무원 수당 등에 관한 규정」 카테고리별</span></h3>'
+    + lcAcc('특수근무수당 <span class="lc-acc-sub">(기술자격수당·특정업무수행경비)</span>', specialTotalAmt,
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', specialTotalAmt, 5) + specialRows + '</tbody></table>', 'var(--bg-hover)', 'var(--text)')
+    + lcAcc('실비변상 등 <span class="lc-acc-sub">(정액급식비·파견수당)</span>', lcMealTotal() + lcDispatchTotal(),
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + lcSubtotalRow('합계', lcMealTotal() + lcDispatchTotal(), 5)
+        + '<tr><td>정액급식비</td><td>' + fmtWon(LC.meal.unit) + '</td><td>' + lcNumInput('meal.count', 50) + '</td><td>' + lcNumInput('meal.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcMealTotal()))) + '</td></tr>'
+        + '<tr><td>파견수당</td><td>' + fmtWon(LC.dispatch.unit) + '</td><td>' + lcNumInput('dispatch.count', 50) + '</td><td>' + lcNumInput('dispatch.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcDispatchTotal()))) + '</td></tr>'
+        + '</tbody></table>', 'var(--bg-hover)', 'var(--text)')
+    + lcAcc('직급별 수당 <span class="lc-acc-sub">(구분의 수당명에 커서를 올리면 산출식이 표시됩니다)</span>', gradesAllowSubtotal,
+        '<p class="lc-hint">임원은 시간외·야간·대우수당 지급대상 제외</p>'
         + '<table class="lc-table"><thead><tr><th>구분</th>'
         + '<th title="단가×인상률×인원×2회×60%">명절휴가비</th>'
         + '<th title="정액×인원×개월">직급보조비</th>'
@@ -8525,79 +8599,109 @@ function renderLaborCalc() {
         + '<th title="통상임금×0.5/209×8시간×인원×개월×70%">야간근무수당</th>'
         + '<th title="단가×인상률×4.1%×대상인원×개월">대우수당</th>'
         + '<th>수당합계(천원)</th></tr></thead>'
-        + '<tbody>' + lcSubtotalRow('합계', gradesAllowSubtotal, 7) + gradeAllowRows + '</tbody></table>'
-        + '</div>'
-        + '</div>',
-        '#E1E7F9', '#22348E')
-    + '<h3 style="margin-top:18px;">수당 (근속·가족 등 기준) <span class="lc-cat-tag" style="background:var(--bg-hover);color:var(--text-muted);">「지방공무원 수당 등에 관한 규정」 카테고리별</span></h3>'
-    + lcAcc('상여수당 <span class="lc-acc-sub">(정근수당·정근수당가산금)</span>', bonusTotal,
-        '<div class="lc-pair">'
-        + '<div><h3 style="margin-top:0;font-size:14px;">정근수당 (근속연수 구간별)</h3>'
-        + '<table class="lc-table"><thead><tr><th>구간</th><th>평균단가(원)</th><th>인원(명)</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritTotal(), 4) + meritRows + '</tbody></table></div>'
-        + '<div><h3 style="margin-top:0;font-size:14px;">정근수당 가산금</h3>'
-        + '<table class="lc-table"><thead><tr><th>구간</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritBonusTotal(), 5) + meritBonusRows + '</tbody></table></div>'
-        + '</div>', '#E4E7F5', '#4A5578')
-    + lcAcc('가계보전수당 <span class="lc-acc-sub">(가족수당)</span>', familyTotalAmt,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', familyTotalAmt, 5) + familyRows + '</tbody></table>', '#E1EEE8', '#3D7A63')
-    + lcAcc('특수근무수당 <span class="lc-acc-sub">(기술자격수당·특정업무수행경비)</span>', specialTotalAmt,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', specialTotalAmt, 5) + specialRows + '</tbody></table>', '#F0E4EA', '#8B5A72')
-    + lcAcc('실비변상 등 <span class="lc-acc-sub">(정액급식비·업무대행수당·파견수당)</span>', reimburseTotal,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + lcSubtotalRow('합계', reimburseTotal, 5)
-        + '<tr><td>정액급식비</td><td>' + fmtWon(LC.meal.unit) + '</td><td>' + lcNumInput('meal.count', 50) + '</td><td>' + lcNumInput('meal.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td><b>' + fmtWon(lcRound(lcMealTotal())) + '</b></td></tr>'
-        + '<tr><td>업무대행수당</td><td>' + fmtWon(LC.proxy.unit) + '</td><td>' + lcNumInput('proxy.count', 50) + '</td><td>' + lcNumInput('proxy.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td><b>' + fmtWon(lcRound(lcProxyTotal())) + '</b></td></tr>'
-        + '<tr><td>파견수당</td><td>' + fmtWon(LC.dispatch.unit) + '</td><td>' + lcNumInput('dispatch.count', 50) + '</td><td>' + lcNumInput('dispatch.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td><b>' + fmtWon(lcRound(lcDispatchTotal())) + '</b></td></tr>'
-        + '</tbody></table>', '#F2EBE0', '#8A6D45')
+        + '<tbody>' + lcSubtotalRow('합계', gradesAllowSubtotal, 7) + gradeAllowRows + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
     + '</div>';
 
   // ---- 02/03/04 ----
   var lc02 = lc02Total(), lc03 = lc03Total(), lc04 = lc04Total();
   var other02GradeRows = LC.other02.grades.map(function (g, gi) {
     var amt = lc02GradeAmt(g);
-    return '<tr><td>' + g.name + (g.statutory ? ' <span class="lc-warn" title="공무원보수규정 별표(전문임기제공무원 연봉등급 기준표) 법정 하한액(마급은 상한액) 적용 — 기관 자체 확정액과 다를 수 있음">(법정기준액)</span>' : '') + '</td>'
+    return '<tr><td>' + g.name + (g.note ? ' <span class="lc-hint" style="margin:0;font-weight:400;display:inline;">(' + g.note + ')</span>' : '') + '</td>'
       + '<td>' + lcNumInput('other02.grades.' + gi + '.baseRate', 100) + '원</td>'
       + '<td>' + lcNumInput('other02.grades.' + gi + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('other02.grades.' + gi + '.months', 60) + '</td>'
       + '<td class="lc-formula">' + (g.statutory ? '단가×인원×(개월÷12)' : '단가×인상률×인원×(개월÷12)') + '</td>'
-      + '<td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
+      + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
-  var section02 = '<div class="lc-section cat-other" style="border-left-color:#DBF5EC"><h3>02 기타직 보수 <span class="lc-cat-tag" style="background:#DBF5EC;color:#0E9E6B">전문계약직</span></h3>'
-    + '<p class="lc-hint">가급은 예산서 실확인값, 나~마급은 「공무원보수규정」 별표(전문임기제공무원 연봉등급 기준표) 법정 하한액을 기본값으로 넣었습니다(마급은 하한 없음이라 상한액 적용). 기관 자체 확정액을 알고 계시면 직접 입력해 덮어쓰세요.</p>'
-    + '<table class="lc-table"><thead><tr><th>등급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-    + lcSubtotalRow('합계', lc02GradesTotal(), 5) + other02GradeRows
-    + '</tbody></table>'
-    + '<h3 style="margin-top:18px;">가족수당 · 연차수당</h3>'
-    + '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-    + '<tr><td>가족수당(배우자)</td><td>' + fmtWon(LC.other02.familySpouseUnit) + '</td><td>' + lcNumInput('other02.familySpouseCount', 50) + '</td><td>' + lcNumInput('other02.familySpouseMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(LC.other02.familySpouseUnit * LC.other02.familySpouseCount * LC.other02.familySpouseMonths)) + '</td></tr>'
-    + '<tr><td>가족수당(자녀)</td><td>' + fmtWon(LC.other02.familyChildUnit) + '</td><td>' + lcNumInput('other02.familyChildCount', 50) + '</td><td>' + lcNumInput('other02.familyChildMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(LC.other02.familyChildUnit * LC.other02.familyChildCount * LC.other02.familyChildMonths)) + '</td></tr>'
-    + '<tr><td>연차수당</td><td>' + fmtWon(LC.other02.annualLeaveRate) + '</td><td>' + lcNumInput('other02.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">(단가×8/209×10일)×인원</td><td>' + fmtWon(lcRound((LC.other02.annualLeaveRate * 8 / 209 * 10) * LC.other02.annualLeaveCount)) + '</td></tr>'
-    + '</tbody></table></div>';
+  var o2FamilySpouseAmt = LC.other02.familySpouseUnit * LC.other02.familySpouseCount * LC.other02.familySpouseMonths;
+  var o2FamilyChildAmt = LC.other02.familyChildUnit * LC.other02.familyChildCount * LC.other02.familyChildMonths;
+  var o2AnnualLeaveAmt = (LC.other02.annualLeaveRate * 8 / 209 * 10) * LC.other02.annualLeaveCount;
+  var o2MealAmt = LC.other02.mealUnit * LC.other02.mealCount * LC.other02.mealMonths;
+  var o2AllowanceTotal = o2FamilySpouseAmt + o2FamilyChildAmt + o2AnnualLeaveAmt + o2MealAmt;
+  var section02 = '<div class="lc-section cat-other" style="border-left-color:var(--border-strong)"><h3>02 기타직 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">정원 범위 내 계약직 및 전문 임기제 직원(가~마급 체계)의 계약 보수</span></h3>'
+    + lcAcc('계약 연봉액', lc02GradesTotal(),
+        '<table class="lc-table"><thead><tr><th>등급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + lcSubtotalRow('합계', lc02GradesTotal(), 5) + other02GradeRows
+        + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
+    + lcAcc('수당', o2AllowanceTotal,
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + lcSubtotalRow('합계', o2AllowanceTotal, 5)
+        + '<tr><td>가족수당(배우자)</td><td>' + fmtWon(LC.other02.familySpouseUnit) + '</td><td>' + lcNumInput('other02.familySpouseCount', 50) + '</td><td>' + lcNumInput('other02.familySpouseMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilySpouseAmt))) + '</td></tr>'
+        + '<tr><td>가족수당(자녀)</td><td>' + fmtWon(LC.other02.familyChildUnit) + '</td><td>' + lcNumInput('other02.familyChildCount', 50) + '</td><td>' + lcNumInput('other02.familyChildMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilyChildAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td>' + fmtWon(LC.other02.annualLeaveRate) + '</td><td>' + lcNumInput('other02.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">(단가×8/209×10일)×인원</td><td>' + lcResultBox(fmtWon(lcRound(o2AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>정액급식비</td><td>' + fmtWon(LC.other02.mealUnit) + '</td><td>' + lcNumInput('other02.mealCount', 50) + '</td><td>' + lcNumInput('other02.mealMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2MealAmt))) + '</td></tr>'
+        + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
+    + '</div>';
 
   var o3 = LC.other03;
-  var section03 = '<div class="lc-section cat-permanent" style="border-left-color:#F8E0EB"><h3>03 무기계약근로자 보수 <span class="lc-cat-tag" style="background:#F8E0EB;color:#C4568D">공무직</span></h3>'
-    + '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-    + lcSubtotalRow('합계', lc03, 5)
-    + '<tr><td>기본급</td><td>' + fmtWon(o3.baseRate) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(o3.baseRate * o3.count * o3.months)) + '</td></tr>'
-    + '<tr><td>정액급식비</td><td>' + fmtWon(o3.mealUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(o3.mealUnit * o3.count * o3.months)) + '</td></tr>'
-    + '<tr><td>명절휴가비</td><td>' + fmtWon(o3.holidayUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>2회(설날, 추석)</td><td class="lc-formula">단가×인원×2회(설날, 추석)</td><td>' + fmtWon(lcRound(o3.holidayUnit * o3.count * 2)) + '</td></tr>'
-    + o3.familyUnit.map(function (f, i) { return '<tr><td>가족수당(' + f.label + ')</td><td>' + fmtWon(f.unit) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.count', 50) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(f.unit * f.count * f.months)) + '</td></tr>'; }).join('')
-    + '<tr><td>생활임금보전수당</td><td>' + fmtWon(o3.livingWageUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(o3.livingWageUnit * o3.count * o3.months)) + '</td></tr>'
-    + '<tr><td>연차수당</td><td>' + fmtWon(o3.ordinaryRate) + '</td><td>' + lcNumInput('other03.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">(단가×8/209×10일)×인원</td><td>' + fmtWon(lcRound((o3.ordinaryRate * 8 / 209 * 10) * o3.annualLeaveCount)) + '</td></tr>'
-    + '<tr><td>초과근무수당</td><td>' + fmtWon(o3.ordinaryRate) + '</td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">(단가×1.5/209×30h)×인원×개월×70%</td><td>' + fmtWon(lcRound((o3.ordinaryRate * 1.5 / 209 * 30) * o3.otCount * o3.otMonths * 0.7)) + '</td></tr>'
-    + '<tr><td>야간근무수당</td><td>' + fmtWon(o3.ordinaryRate) + '</td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">(단가×0.5/209×8h)×인원×개월×70%</td><td>' + fmtWon(lcRound((o3.ordinaryRate * 0.5 / 209 * 8) * o3.otCount * o3.otMonths * 0.7)) + '</td></tr>'
-    + '</tbody></table></div>';
+  var o3BaseAmt = o3.baseRate * o3.count * o3.months;
+  var o3MealAmt = o3.mealUnit * o3.count * o3.months;
+  var o3HolidayAmt = o3.holidayUnit * o3.count * 2;
+  var o3WelfarePointAmt = o3.welfarePointUnit * o3.count;
+  var o3AnnualLeaveAmt = (o3.ordinaryRate * 8 / 209 * 10) * o3.annualLeaveCount;
+  var o3OvertimeAmt = (o3.ordinaryRate * 1.5 / 209 * 30) * o3.otCount * o3.otMonths * 0.7;
+  var o3NightworkAmt = (o3.ordinaryRate * 0.5 / 209 * 8) * o3.otCount * o3.otMonths * 0.7;
+  var o3LivingWageAmt = o3.livingWageUnit * o3.count * o3.months;
+  var o3FamilyTotal = o3.familyUnit.reduce(function (s, f) { return s + f.unit * f.count * f.months; }, 0);
+  var o3BenefitTotal = o3MealAmt + o3HolidayAmt + o3WelfarePointAmt;
+  var o3AllowanceTotal = o3FamilyTotal + o3LivingWageAmt + o3AnnualLeaveAmt + o3OvertimeAmt + o3NightworkAmt;
+  var section03 = '<div class="lc-section cat-permanent" style="border-left-color:var(--border-strong)"><h3>03 무기계약근로자 보수</h3>'
+    + lcAcc('기본급 <span class="lc-acc-sub">(공무직 관리 규정 및 호봉·급여 테이블에 따라 매월 고정적으로 지급하는 기본급)</span>', o3BaseAmt,
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + '<tr><td>기본급</td><td>' + fmtWon(o3.baseRate) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3BaseAmt))) + '</td></tr>'
+        + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
+    + lcAcc('법정필수 처우개선비 <span class="lc-acc-sub">(의무 반영 항목, 현원×3,280,000원)</span>', o3BenefitTotal,
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + lcSubtotalRow('합계', o3BenefitTotal, 5)
+        + '<tr><td>정액급식비</td><td>' + fmtWon(o3.mealUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3MealAmt))) + '</td></tr>'
+        + '<tr><td>명절상여금</td><td>' + fmtWon(o3.holidayUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>2회(설날, 추석)</td><td class="lc-formula">단가×인원×2회(설날, 추석)</td><td>' + lcResultBox(fmtWon(lcRound(o3HolidayAmt))) + '</td></tr>'
+        + '<tr><td>복지포인트</td><td>' + fmtWon(o3.welfarePointUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>연 1회</td><td class="lc-formula">연간 정액×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3WelfarePointAmt))) + '</td></tr>'
+        + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
+    + lcAcc('수당', o3AllowanceTotal,
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + lcSubtotalRow('합계', o3AllowanceTotal, 5)
+        + o3.familyUnit.map(function (f, i) { return '<tr><td>가족수당(' + f.label + ')</td><td>' + fmtWon(f.unit) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.count', 50) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(f.unit * f.count * f.months))) + '</td></tr>'; }).join('')
+        + '<tr><td>생활임금보전수당</td><td>' + fmtWon(o3.livingWageUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3LivingWageAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td>' + fmtWon(o3.ordinaryRate) + '</td><td>' + lcNumInput('other03.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">(단가×8/209×10일)×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>초과근무수당</td><td>' + fmtWon(o3.ordinaryRate) + '</td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">(단가×1.5/209×30h)×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3OvertimeAmt))) + '</td></tr>'
+        + '<tr><td>야간근무수당</td><td>' + fmtWon(o3.ordinaryRate) + '</td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">(단가×0.5/209×8h)×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3NightworkAmt))) + '</td></tr>'
+        + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
+    + '</div>';
 
   var o4 = LC.other04;
-  var section04 = '<div class="lc-section cat-temp" style="border-left-color:#FEF0DA"><h3>04 기간제근로자등 보수 <span class="lc-cat-tag" style="background:#FEF0DA;color:#B5790A">육아휴직대체 등</span></h3>'
-    + '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-    + lcSubtotalRow('합계', lc04, 5)
-    + '<tr><td>기본급</td><td>' + fmtWon(o4.baseRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(o4.baseRate * o4.count * o4.months)) + '</td></tr>'
-    + '<tr><td>정액급식비</td><td>' + fmtWon(o4.mealUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(o4.mealUnit * o4.count * o4.months)) + '</td></tr>'
-    + '<tr><td>교통보조비</td><td>' + fmtWon(o4.transportUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(o4.transportUnit * o4.count * o4.months)) + '</td></tr>'
-    + '<tr><td>생활임금보전수당</td><td>' + fmtWon(o4.livingWageUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + fmtWon(lcRound(o4.livingWageUnit * o4.count * o4.months)) + '</td></tr>'
-    + '<tr><td>연차수당</td><td>' + fmtWon(o4.ordinaryRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>-</td><td class="lc-formula">(단가×8/209×10일)×인원</td><td>' + fmtWon(lcRound((o4.ordinaryRate * 8 / 209 * 10) * o4.count)) + '</td></tr>'
-    + '<tr><td>초과근무수당</td><td>' + fmtWon(o4.ordinaryRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">(단가×1.5/209×30h)×인원×개월×70%</td><td>' + fmtWon(lcRound((o4.ordinaryRate * 1.5 / 209 * 30) * o4.count * o4.months * 0.7)) + '</td></tr>'
-    + '</tbody></table></div>';
+  var o4BaseAmt = o4.baseRate * o4.count * o4.months;
+  var o4MealAmt = o4.mealUnit * o4.count * o4.months;
+  var o4TransportAmt = o4.transportUnit * o4.count * o4.months;
+  var o4LivingWageAmt = o4.livingWageUnit * o4.count * o4.months;
+  var o4AnnualLeaveAmt = (o4.ordinaryRate * 8 / 209 * 10) * o4.count;
+  var o4OvertimeAmt = (o4.ordinaryRate * 1.5 / 209 * 30) * o4.count * o4.months * 0.7;
+  var o4FairnessAmt = o4.baseRate * (o4.fairnessPct / 100) * o4.count;
+  var o4AllowanceTotal = o4FairnessAmt + o4MealAmt + o4TransportAmt + o4LivingWageAmt + o4AnnualLeaveAmt + o4OvertimeAmt;
+  var section04 = '<div class="lc-section cat-temp" style="border-left-color:var(--border-strong)"><h3>04 기간제근로자등 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">정원 외 단기 근로자, 아르바이트생 등의 보수 단가</span></h3>'
+    + lcAcc('기본급 <span class="lc-acc-sub">(적정임금(생활임금) 기준 적용, 최저임금의 118%)</span>', o4BaseAmt,
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + '<tr><td>기본급</td><td>' + fmtWon(o4.baseRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4BaseAmt))) + '</td></tr>'
+        + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
+    + lcAcc('수당', o4AllowanceTotal,
+        '<p class="lc-hint">공정수당 신설: 고용불안 보전을 위해 계약 만료 시점에 일시급으로 환수·지급하는 <b>공정수당(월 기본급의 약 8.5% ~ 10% 수준)</b>을 의무 계상</p>'
+        + '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + lcSubtotalRow('합계', o4AllowanceTotal, 5)
+        + '<tr><td style="color:var(--danger);font-weight:700;">공정수당 (신설)</td><td>' + fmtWon(o4.baseRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.fairnessPct', 55) + '%</td><td class="lc-formula">기본급×요율×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4FairnessAmt))) + '</td></tr>'
+        + '<tr><td>정액급식비</td><td>' + fmtWon(o4.mealUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4MealAmt))) + '</td></tr>'
+        + '<tr><td>교통보조비</td><td>' + fmtWon(o4.transportUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4TransportAmt))) + '</td></tr>'
+        + '<tr><td>생활임금보전수당</td><td>' + fmtWon(o4.livingWageUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4LivingWageAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td>' + fmtWon(o4.ordinaryRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>-</td><td class="lc-formula">(단가×8/209×10일)×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>초과근무수당</td><td>' + fmtWon(o4.ordinaryRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">(단가×1.5/209×30h)×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o4OvertimeAmt))) + '</td></tr>'
+        + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
+    + '</div>';
 
   // ---- 304 연금부담금등 (4대보험 사업자부담분) — 101 인건비와 별도 목. 지침상 총인건비 인상률 산정 제외 항목. ----
   var pensionTotal = lcPensionTotal();
@@ -8607,7 +8711,7 @@ function renderLaborCalc() {
     var pctInput = (p.label === '노인장기요양보험')
       ? lcNumInput('pension.' + i + '.ltcRateOfHealth', 55) + '%'
       : lcNumInput('pension.' + i + '.pct', 55) + '%';
-    return '<tr><td>' + p.label + '</td><td>' + pctInput + '</td><td class="lc-formula">' + formulaTxt + '</td><td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
+    return '<tr><td>' + p.label + '</td><td>' + pctInput + '</td><td class="lc-formula">' + formulaTxt + '</td><td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var section05 = '<div class="lc-section" style="border-left-color:#F6AD55"><h3>304 연금부담금등 (4대보험 사업자부담분)</h3>'
     + '<div class="lc-raise-row" style="margin-bottom:12px;">보험료 산정 기준액(원) ' + lcNumInput('pensionBase', 130) + '&nbsp;(2026년 실데이터 기본값 — 실제로는 보수총액 등 기관 산정기준에 따라 매년 갱신)</div>'
@@ -8621,7 +8725,7 @@ function renderLaborCalc() {
     + '<p class="lc-hint">⚠ DB 원본 목(107) 2026년 편성액은 0원입니다. 아래는 남아있는 산출식(기준액÷12개월×가산율)을 그대로 재현한 참고용 자동계산이며, 실제 예산 반영액과 다를 수 있습니다. (2025년 실적: 423,827천원)</p>'
     + '<table class="lc-table"><thead><tr><th>구분</th><th>값</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
     + lcSubtotalRow('합계', retirementTotal, 3)
-    + '<tr><td>기준액(원)</td><td>' + lcNumInput('retirement.base', 130) + '</td><td class="lc-formula">기준액÷12월×가산율</td><td rowspan="2"><b>' + fmtWon(lcRound(retirementTotal)) + '</b></td></tr>'
+    + '<tr><td>기준액(원)</td><td>' + lcNumInput('retirement.base', 130) + '</td><td class="lc-formula">기준액÷12월×가산율</td><td rowspan="2">' + lcResultBox(fmtWon(lcRound(retirementTotal))) + '</td></tr>'
     + '<tr><td>가산율(%)</td><td>' + lcNumInput('retirement.rate', 70) + '%</td><td class="lc-formula"></td></tr>'
     + '</tbody></table></div>';
 
@@ -8634,7 +8738,7 @@ function renderLaborCalc() {
       + '<td>' + lcNumInput('evalPay.items.' + ii + '.count', 55) + '</td>'
       + '<td>' + lcNumInput('evalPay.items.' + ii + '.pct', 55) + '%</td>'
       + '<td class="lc-formula">단가×인원×적용률</td>'
-      + '<td><b>' + fmtWon(lcRound(amt)) + '</b></td></tr>';
+      + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var section07 = '<div class="lc-section" style="border-left-color:#C2699A"><h3>218 평가급</h3>'
     + '<p class="lc-hint">DB상 2026년 목(218) 합계는 600,000천원 편성되어 있으나(2025년 769,573천원), 기준값(최종) 탭 전수 대조로 산출근거가 확인된 항목은 아래 2건(가급 기관장·기관 평가급, 계산값 합계 ' + fmtWon(lcRound(evalTotal)) + '천원)뿐입니다. 나머지 ' + fmtWon(lcRound(600000000 - evalTotal)) + '천원은 원본 예산요구서에 세부 산출내역이 없어 이 계산기 범위 밖입니다 — 기준값(최종) 탭의 정합성 문제 참고.</p>'
@@ -8644,13 +8748,13 @@ function renderLaborCalc() {
 
   var toggleHtml = '<div id="firstFilter" class="filter-switch">'
     + '<input ' + (LC.view === 'labor' ? 'checked' : '') + ' id="lc-opt-labor" name="lc-options" type="radio" onchange="lcSetView(\'labor\')" />'
-    + '<label class="option" for="lc-opt-labor">인건비</label>'
+    + '<label class="option" for="lc-opt-labor">101 보수</label>'
     + '<input ' + (LC.view === 'retire' ? 'checked' : '') + ' id="lc-opt-retire" name="lc-options" type="radio" onchange="lcSetView(\'retire\')" />'
-    + '<label class="option" for="lc-opt-retire">퇴직급여</label>'
+    + '<label class="option" for="lc-opt-retire">107 퇴직급여</label>'
     + '<input ' + (LC.view === 'eval' ? 'checked' : '') + ' id="lc-opt-eval" name="lc-options" type="radio" onchange="lcSetView(\'eval\')" />'
-    + '<label class="option" for="lc-opt-eval">평가급</label>'
+    + '<label class="option" for="lc-opt-eval">109 평가급</label>'
     + '<input ' + (LC.view === 'pension' ? 'checked' : '') + ' id="lc-opt-pension" name="lc-options" type="radio" onchange="lcSetView(\'pension\')" />'
-    + '<label class="option" for="lc-opt-pension">연금</label>'
+    + '<label class="option" for="lc-opt-pension">304 연금</label>'
     + '<input ' + (LC.view === 'final' ? 'checked' : '') + ' id="lc-opt-final" name="lc-options" type="radio" onchange="lcSetView(\'final\')" />'
     + '<label class="option" for="lc-opt-final">기준값</label>'
     + '<span class="background"></span>'
@@ -8658,10 +8762,10 @@ function renderLaborCalc() {
 
   // 서브탭별 고유색(rgb 성분) — 선택 캡슐과 아래 박스 좌측선(파스텔)에 동일하게 매칭
   var laborSubTabs = [
-    { key: 'pay', label: '1 일반직', rgb: '225,231,249' },
-    { key: 'other02', label: '2 기타직', rgb: '219,245,236' },
-    { key: 'other03', label: '3 무기계약직', rgb: '248,224,235' },
-    { key: 'other04', label: '4 기간제', rgb: '254,240,218' }
+    { key: 'pay', label: '01 일반직', rgb: '225,231,249' },
+    { key: 'other02', label: '02 기타직', rgb: '169,178,198' },
+    { key: 'other03', label: '03 무기계약직', rgb: '169,178,198' },
+    { key: 'other04', label: '04 기간제', rgb: '169,178,198' }
   ];
   var laborSubColor = {};
   laborSubTabs.forEach(function (t) { laborSubColor[t.key] = t.rgb; });
