@@ -1187,6 +1187,27 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .sidebar .fund-radio.dept-radio { padding-left: 24px; }
 .sidebar .fund-radio.dept-radio label { font-size: 15.5px; padding: 5px 10px; }
 
+/* ---- 사이드바 아이콘 전용(축소) 모드: 메인 화면에서만 좁혀지고, 기관/메뉴 진입 시 원래 폭으로 펼쳐짐 ---- */
+.app.is-landing .sidebar-stack { width: 76px !important; }
+.app.is-landing .sidebar { padding: 20px 10px; }
+.app.is-landing .sidebar .brand { padding: 18px 6px 14px; margin: -20px -10px 14px; }
+.app.is-landing .sidebar .brand-row { justify-content: center; }
+.app.is-landing .sidebar .brand-word,
+.app.is-landing .sidebar .brand-subtitle { display: none; }
+.app.is-landing .sidebar .cat-badge { justify-content: center; }
+.app.is-landing .sidebar .cat-text { display: none; }
+.app.is-landing .sidebar .side-item { justify-content: center; padding: 9px 6px; }
+.app.is-landing .sidebar .side-item-label { justify-content: center; gap: 0; }
+.app.is-landing .sidebar .side-item-label > span:not(.side-icon) { display: none; }
+.app.is-landing .sidebar .caret,
+.app.is-landing .sidebar .settle-data-dots,
+.app.is-landing .sidebar .side-sub { display: none; }
+.app.is-landing .labor-box.animated-button { width: 34px !important; padding: 0 !important; height: 34px !important; }
+.app.is-landing .labor-box.animated-button .text,
+.app.is-landing .labor-box.animated-button .circle,
+.app.is-landing .labor-box.animated-button .arr-1 { display: none; }
+.app.is-landing .labor-box.animated-button .arr-2 { position: static; }
+
 .main {
   flex: 1; min-width: 0; padding: 28px 32px 48px; overflow-x: hidden;
   background: var(--bg-card); border-radius: var(--r-lg); box-shadow: var(--shadow-md);
@@ -1222,76 +1243,68 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   text-align: center;
 }
 .landing-hero {
-  background: oklch(0.98 0.01 255);
+  background: var(--navy);
 }
 .landing-hero > * { position: relative; z-index: 1; }
-.landing-hero-wash {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: oklch(0.97 0.005 255);
-}
-.landing-hero-blobs {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  filter: blur(34px) saturate(1.15);
-  opacity: .9;
-}
-.landing-hero-blob {
-  position: absolute;
-  left: var(--lh-x);
-  top: var(--lh-y);
-  width: var(--lh-s);
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  background: oklch(0.78 0.14 var(--lh-h));
-  mix-blend-mode: normal;
-  opacity: .55;
-  animation: landing-blob-morph var(--lh-t) ease-in-out infinite, landing-blob-turn calc(var(--lh-t) * 2.3) linear infinite;
-}
-@keyframes landing-blob-morph {
-  0% { border-radius: 62% 38% 46% 54% / 58% 42% 58% 42%; scale: 1; }
-  34% { border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%; scale: 1.18; }
-  67% { border-radius: 45% 55% 37% 63% / 63% 57% 43% 37%; scale: 0.86; }
-  100% { border-radius: 62% 38% 46% 54% / 58% 42% 58% 42%; scale: 1; }
-}
-@keyframes landing-blob-turn { to { rotate: 360deg; } }
-@media (prefers-reduced-motion: reduce) {
-  .landing-hero-blob { animation: none; }
-}
 .landing-eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
 .landing-title {
   font-family: 'GmarketSans', 'Pretendard', sans-serif;
-  font-size: 48px; font-weight: 700; letter-spacing: -0.01em; color: var(--text);
+  font-size: 56px; font-weight: 700; letter-spacing: -0.01em; color: #fff;
   margin: 0 0 10px; line-height: 1.3; white-space: nowrap;
-  position: relative; top: 28px;
+  position: relative; top: 90px;
 }
-.landing-title .l1 { display: inline; }
+.landing-title .l1, .landing-title .l2 { display: inline-block; opacity: 0; }
+.landing-title .l1 { animation: landing-title-in-left .7s cubic-bezier(.22,1,.36,1) .1s forwards; }
+.landing-title .l1 { margin-right: 0.35em; }
 .landing-title .l1::after { content: " "; }
 .landing-title .l2 {
-  display: inline;
-  color: var(--accent);
+  background-image: linear-gradient(90deg, #3457D5, #5B84FF, #7B9EFF, #5B84FF, #3457D5);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: landing-title-in-right .7s cubic-bezier(.22,1,.36,1) .25s forwards, hscf-colourful 6s linear infinite;
+}
+@keyframes hscf-colourful {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+@keyframes landing-title-in-left { from { opacity: 0; transform: translateX(-36px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes landing-title-in-right { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .landing-title .l1, .landing-title .l2 { animation: none; opacity: 1; }
 }
 .landing-subtitle-en {
   font-family: 'GmarketSans', 'Pretendard', sans-serif;
-  font-size: 16px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--text-soft); margin: 0 0 48px;
-  position: relative; top: 28px;
+  font-size: 14px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+  color: #fff; margin: 0 0 48px;
+  position: relative; top: 90px;
 }
-.landing-grid { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 28px; max-width: 100%; margin: 20px auto 0; background: transparent; padding: 10px 16px; }
+.landing-grid { display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 28px; max-width: 100%; margin: auto auto 0; background: transparent; padding: 10px 16px; }
+.landing-grid .landing-card {
+  opacity: 0; transform: translateY(28px);
+  animation: landing-card-rise .55s cubic-bezier(.22,1,.36,1) forwards,
+             landing-card-float 3.2s ease-in-out infinite;
+}
+.landing-grid .landing-card:nth-child(1) { animation-delay: .5s, 1.05s; }
+.landing-grid .landing-card:nth-child(2) { animation-delay: .58s, 1.13s; animation-duration: .55s, 3.4s; }
+.landing-grid .landing-card:nth-child(3) { animation-delay: .66s, 1.21s; animation-duration: .55s, 3.6s; }
+.landing-grid .landing-card:nth-child(4) { animation-delay: .74s, 1.29s; animation-duration: .55s, 3.3s; }
+.landing-grid .landing-card:nth-child(5) { animation-delay: .82s, 1.37s; animation-duration: .55s, 3.5s; }
+.landing-grid .landing-card:nth-child(6) { animation-delay: .90s, 1.45s; animation-duration: .55s, 3.7s; }
+@keyframes landing-card-rise { to { opacity: 1; transform: translateY(0); } }
+@keyframes landing-card-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) {
+  .landing-grid .landing-card { animation: none; opacity: 1; transform: none; }
+}
 
 /* 4개 기관 버튼 밑 중앙 - "예산재정과"는 고정 텍스트, "문화복지팀"은 그라데이션 글자+배경이 옆에서 펼쳐지듯 나타나고
    깜빡이는 커서가 따라붙는 효과 - 주신 TextLoop(motion/react) 컴포넌트 동작을 vanilla로 옮김(회전 항목이 1개라 나타나는 것까지만) */
-.landing-subjects-row { display: flex; justify-content: center; align-items: center; margin: 48px auto 0; }
+.landing-subjects-row { display: flex; justify-content: center; align-items: center; margin: 110px auto 0; }
 .text-loop-widget {
   display: flex; flex-direction: row; align-items: center;
   font-family: 'Isamanru', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   font-size: 28px; font-weight: 400; letter-spacing: -0.5px;
 }
-.tl-static { margin-right: 12px; color: var(--navy); white-space: nowrap; }
+.tl-static { margin-right: 12px; color: #fff; white-space: nowrap; }
 .tl-rotate-wrap {
   position: relative; display: inline-flex; align-items: center; overflow: hidden; white-space: nowrap;
   max-width: 0; opacity: 0; animation: tl-grow 2s ease forwards; animation-delay: 0.6s;
@@ -1370,7 +1383,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .landing-settle-btn#landing-settle-btn .icon-btn { color: var(--navy); }
 .landing-card {
   position: relative;
-  width: clamp(64px, 7vw, 78px); height: clamp(64px, 7vw, 78px);
+  width: clamp(76px, 8vw, 96px); height: clamp(76px, 8vw, 96px);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
@@ -2097,25 +2110,14 @@ td.lc-warn-cell { position: relative; }
 
     <section class="panel" id="panel-dashboard">
       <div class="landing-hero">
-        <div class="landing-hero-wash" aria-hidden="true"></div>
-        <div class="landing-hero-blobs" aria-hidden="true">
-          <span class="landing-hero-blob" style="--lh-t:7s;--lh-x:14%;--lh-y:18%;--lh-s:46vmin;--lh-h:255;background:oklch(0.92 0.015 255);opacity:.7"></span>
-          <span class="landing-hero-blob" style="--lh-t:9s;--lh-x:68%;--lh-y:20%;--lh-s:38vmin;--lh-h:118;background:oklch(0.93 0.06 118);opacity:.55"></span>
-          <span class="landing-hero-blob" style="--lh-t:8s;--lh-x:88%;--lh-y:85%;--lh-s:44vmin;--lh-h:258;background:oklch(0.35 0.07 258);opacity:.5"></span>
-        </div>
         <h1 class="landing-title"><span class="l1">화성시 공공기관</span><span class="l2">예산통합 대시보드</span></h1>
         <p class="landing-subtitle-en">Integrated Budget Dashboard</p>
-        <div class="landing-grid" id="landing-grid"></div>
         <div class="landing-subjects-row">
           <div class="text-loop-widget">
             <span class="tl-static">예산재정과</span>
-            <span class="tl-rotate-wrap">
-              <span class="tl-rotate-bg"></span>
-              <span class="tl-rotate-text">문화복지팀</span>
-            </span>
-            <span class="tl-cursor"></span>
           </div>
         </div>
+        <div class="landing-grid" id="landing-grid"></div>
       </div>
     </section>
 
@@ -7334,7 +7336,7 @@ function renderSidebarNav() {
       subItems += renderDeptRadioGroup(inst.key, WTG_DEPTS[inst.key]);
     }
     var expanded = isInstExpanded(inst.key);
-    var html = '<div class="side-item inst-header' + (isOverviewActive ? ' active' : '') + '" onclick="toggleInst(\'' + inst.key + '\')">'
+    var html = '<div class="side-item inst-header' + (isOverviewActive ? ' active' : '') + '" title="' + escapeHtml(inst.name) + '" onclick="toggleInst(\'' + inst.key + '\')">'
       + '<span class="side-item-label"><span class="side-icon">' + sidebarInstIcon(inst.key) + '</span><span>' + inst.name + '</span></span>'
       + '<span class="caret' + (expanded ? ' open' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span></div>'
       + '<div class="side-sub' + (expanded ? '' : ' collapsed') + '">' + subItems + '</div>';
@@ -7347,7 +7349,7 @@ function renderSidebarNav() {
         var isActive = nav.view === 'placeholder' && nav.placeholderName === name;
         return '<div class="side-item fund-item' + (isActive ? ' active' : '') + '" onclick="event.stopPropagation(); showPlaceholderInst(\'' + name + '\')">' + escapeHtml(name) + '</div>';
       }).join('');
-      html += '<div class="side-item inst-header' + (sportsHeaderActive ? ' active' : '') + '" onclick="toggleSportsCouncilHeader()">'
+      html += '<div class="side-item inst-header' + (sportsHeaderActive ? ' active' : '') + '" title="화성시체육회" onclick="toggleSportsCouncilHeader()">'
         + '<span class="side-item-label"><span class="side-icon" style="background:rgba(104,121,168,.18);color:#8EA1CC">' + sidebarInstIcon('sports') + '</span><span style="color:#8EA1CC">화성시체육회</span></span>'
         + '<span class="caret' + (sportsExpanded ? ' open' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span></div>'
         + '<div class="side-sub' + (sportsExpanded ? '' : ' collapsed') + '">' + sportsSubHtml + '</div>';
@@ -7362,7 +7364,7 @@ function renderSidebarNav() {
         var displayLabel = SPORTS_SUB_LABEL_OVERRIDE[name] || name;
         return '<div class="side-item fund-item' + (isActive ? ' active' : '') + '" onclick="event.stopPropagation(); showPlaceholderInst(\'' + name + '\')">' + escapeHtml(displayLabel) + '</div>';
       }).join('');
-      html += '<div class="side-item inst-header' + (disabledSportsHeaderActive ? ' active' : '') + '" onclick="toggleDisabledSportsCouncilHeader()">'
+      html += '<div class="side-item inst-header' + (disabledSportsHeaderActive ? ' active' : '') + '" title="화성시장애인체육회" onclick="toggleDisabledSportsCouncilHeader()">'
         + '<span class="side-item-label"><span class="side-icon" style="background:rgba(104,121,168,.18);color:#8EA1CC">' + sidebarInstIcon('sports') + '</span><span style="color:#8EA1CC">화성시장애인체육회</span></span>'
         + '<span class="caret' + (disabledSportsExpanded ? ' open' : '') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></span></div>'
         + '<div class="side-sub' + (disabledSportsExpanded ? '' : ' collapsed') + '">' + disabledSportsSubHtml + '</div>';
@@ -7381,7 +7383,7 @@ function renderSidebarNav() {
       dotsHtml += '<span class="settle-data-dot"></span>';
     }
     if (dotsHtml) dotsHtml = '<span class="settle-data-dots" title="결산 데이터 ' + yearCount + '개 연도 연동됨">' + dotsHtml + '</span>';
-    return '<div class="side-item' + (isActive ? ' active' : '') + '" onclick="selectSettlement(\'' + inst.key + '\')">'
+    return '<div class="side-item' + (isActive ? ' active' : '') + '" title="' + escapeHtml(inst.name) + '" onclick="selectSettlement(\'' + inst.key + '\')">'
       + '<span class="side-item-label"><span class="side-icon">' + sidebarInstIcon(inst.key) + '</span><span>' + inst.name + '</span>' + dotsHtml + '</span></div>';
   }).join('');
 }
@@ -7389,8 +7391,15 @@ function renderSidebarNav() {
 function switchPanel(panelId) {
   document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
   document.getElementById(panelId).classList.add('active');
+  var appEl = document.querySelector('.app');
+  if (appEl) appEl.classList.toggle('is-landing', panelId === 'panel-dashboard');
   var laborBoxEl = document.getElementById('labor-box');
-  if (laborBoxEl) laborBoxEl.classList.toggle('is-active', panelId === 'panel-laborcalc');
+  if (laborBoxEl) {
+    laborBoxEl.classList.toggle('is-active', panelId === 'panel-laborcalc');
+    var isLanding = panelId === 'panel-dashboard';
+    laborBoxEl.style.setProperty('width', isLanding ? '34px' : '', 'important');
+    laborBoxEl.style.setProperty('padding', isLanding ? '0' : '', 'important');
+  }
   if (panelId !== 'panel-dashboard') {
     var main = document.querySelector('.main');
     var hero = document.querySelector('.landing-hero');
