@@ -271,6 +271,39 @@ table.summary td.diff.down { color: #4A5578; }
 .section-heading-lg::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 11px; height: 11px; border-radius: 3px; background: var(--lime); }
 .section-title-row { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; }
 .section-title-row .section-heading-lg { margin: 0; }
+/* 제목(버튼)을 누르면 표가 카드 흐름 밖으로 떠서(팝오버) 위에 겹쳐 보인다 - 아래 콘텐츠를 밀어내지 않는다.
+   주의: backdrop-filter를 .dyt-card(팝오버의 부모)에 두면 position:fixed 패널의 containing block이
+   뷰포트가 아니라 이 카드가 되어버려 위치 계산이 다 틀어진다 - 그래서 블러는 header에만 건다. */
+.dyt-card {
+  position: relative; margin-left: auto; max-width: 480px;
+  border: 1px solid rgba(255,255,255,.4); border-radius: 12px;
+  background: rgba(243,245,250,.72);
+}
+#dept-biz-breakdown .dyt-card { margin-bottom: 20px; }
+.dyt-card-header {
+  padding: 10px 18px; display: flex; justify-content: flex-end; border-radius: 12px; overflow: hidden;
+  background: rgba(243,245,250,.72);
+  backdrop-filter: blur(16px) saturate(1.3); -webkit-backdrop-filter: blur(16px) saturate(1.3);
+}
+.dyt-card-title { margin: 0; font-size: 16px; font-weight: 800; color: var(--primary-color, var(--text)); text-align: right; white-space: nowrap; }
+.dyt-card .dept-stat-yearly-panel {
+  position: fixed; z-index: 9999;
+  width: max-content; max-width: min(480px, 90vw);
+  background: rgba(243,245,250,.82);
+  backdrop-filter: blur(16px) saturate(1.3); -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(255,255,255,.4); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.14);
+  padding: 12px 18px 14px;
+}
+.detail-toggle-btn {
+  padding: 0; margin: 0; border: none; background: none; cursor: pointer;
+  --primary-color: var(--text); --hovered-color: var(--lime);
+  display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.detail-toggle-btn .detail-toggle-arrow {
+  color: var(--primary-color); width: 20px; transition: transform .3s, color .2s;
+  transform: rotate(180deg);
+}
+.detail-toggle-btn:hover .detail-toggle-arrow, .detail-toggle-btn.is-open .detail-toggle-arrow { color: var(--hovered-color); }
 #summary-title::before, #cards-title::before { display: none; }
 #summary-title, #cards-title { padding-left: 0; }
 #panel-inst-overview .section-heading-lg,
@@ -288,7 +321,7 @@ table.summary td.diff.down { color: #4A5578; }
   background: var(--accent-soft); border-radius: 999px; padding: 4px 13px; flex-shrink: 0;
 }
 .section-title-row .btn-sm { margin-left: auto; }
-.download-menu-wrap { margin-left: auto; margin-right: 24px; position: relative; }
+.download-menu-wrap { position: relative; }
 .button {
   display: inline-flex; align-items: center; gap: 10px; cursor: pointer; border: none;
   background: #e8e8e8; color: var(--accent-dark);
@@ -302,11 +335,11 @@ table.summary td.diff.down { color: #4A5578; }
 .button:hover .button__icon { transform: translateY(3px); }
 .button:active .button__icon { transform: translateY(5px); }
 .download-menu {
-  position: absolute; top: calc(100% + 8px); right: 0; z-index: 20; min-width: 168px;
-  background: #fff; border-radius: 12px; box-shadow: 0 10px 28px rgba(16,23,42,.2), 0 1px 3px rgba(16,23,42,.08);
-  overflow: hidden; padding: 6px;
+  position: absolute; bottom: calc(100% + 6px); top: auto; right: 0; left: auto; z-index: 20; min-width: 108px;
+  background: #fff; border-radius: 9px; box-shadow: 0 8px 20px rgba(16,23,42,.18), 0 1px 3px rgba(16,23,42,.08);
+  overflow: hidden; padding: 4px;
 }
-.download-menu-item { display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; white-space: nowrap; transition: background .12s; }
+.download-menu-item { display: flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 6px; font-size: 12.5px; font-weight: 600; color: var(--text); cursor: pointer; white-space: nowrap; transition: background .12s; }
 .download-menu-item:hover { background: var(--bg-hover); }
 .dl-icon { font-size: 14px; }
 table.fc-summary th { font-size: 13.5px; text-transform: none; letter-spacing: 0; }
@@ -622,7 +655,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 }
 
 /* 회차 탭(본예산~3회추경) - 부서/사업 탭 줄 바로 위, 첫 번째 탭 자리에 고정. Upload/Download는 같은 줄 오른쪽 끝 */
-.round-tabs-row { display: none; align-items: center; margin: 0 0 10px; }
+.round-tabs-row { display: none; align-items: center; margin: -20px 0 10px; }
 
 /* 연도 선택 - 회차탭(본예산~3회추경)과 같은 네이비 바 안 첫 세그먼트. 회차탭 라벨과 구분되도록 글자색/배경을 다르게 줌 */
 .year-select-wrap { position: relative; flex-shrink: 0; }
@@ -645,25 +678,25 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .year-select-item.selected { color: var(--accent); font-weight: 800; }
 .year-select-divider { width: 1px; align-self: stretch; margin: 6px 2px; background: rgba(255,255,255,.18); flex-shrink: 0; }
 
-/* Upload/Download 아이콘+텍스트 필 - 옆 본예산 바(회차 탭)와 세로 높이(44px) 통일, 호버 시 확대+파란색 강조 */
-.io-btn-group {
-  display: flex; align-items: center; flex-shrink: 0; height: 44px; margin-left: auto; margin-right: 24px;
-  border: 1px solid var(--border); border-radius: 14px;
-  background: #fff; box-shadow: var(--shadow-sm); overflow: visible;
+/* Upload/Download 버튼 - 저장 아이콘(플로피디스크) + UP/DOWN 텍스트, 호버 시 라인이 접히는 애니메이션 */
+.io-btn-group { display: flex; align-items: center; gap: 8px; flex-shrink: 0; height: 44px; margin-left: 16px; }
+.io-btn-group .download-menu-wrap { position: relative; flex-shrink: 0; display: flex; align-items: center; }
+.action_has {
+  --sz: 1rem;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: 38px; width: 38px; padding: 0;
+  border-radius: 0.55rem;
+  border: none;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(16,19,28,.22), 0 1.5px 3px rgba(16,19,28,.14), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 1px rgba(16,19,28,.06);
+  color: var(--navy-fill);
+  font-size: 13px; font-weight: 700; font-family: inherit; white-space: nowrap;
+  transition: box-shadow .2s ease, color .2s ease, transform .2s ease;
 }
-.io-btn:first-child { border-radius: 14px 0 0 14px; }
-.io-btn-group .download-menu-wrap:last-child .io-btn { border-radius: 0 14px 14px 0; }
-.io-btn {
-  display: flex; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0;
-  height: 100%; padding: 0 16px; border: none; background: transparent; cursor: pointer;
-  color: var(--text-muted); font-size: 14px; font-weight: 700; font-family: inherit; white-space: nowrap;
-  transition: color .2s ease, background-color .2s ease;
-}
-.io-btn svg { width: 18px; height: 18px; flex-shrink: 0; transition: transform .2s ease; }
-.io-btn:hover { color: var(--accent); background: var(--bg-hover); }
-.io-btn:hover svg { transform: scale(1.15); }
-.io-btn-divider { width: 1px; align-self: stretch; margin: 8px 0; background: var(--border); flex-shrink: 0; }
-.io-btn-group .download-menu-wrap { margin: 0; height: 100%; position: relative; flex-shrink: 0; }
+.action_has:hover { color: var(--lime-dark); box-shadow: 0 4px 10px rgba(16,19,28,.18), 0 1px 3px rgba(16,19,28,.1), inset 0 1px 0 rgba(255,255,255,.9); transform: translateY(-1px); }
+.action_has:active { box-shadow: 0 1px 2px rgba(16,19,28,.12), inset 0 1px 3px rgba(16,19,28,.12); transform: translateY(0); }
+.action_has svg { overflow: visible; height: calc(var(--sz) * 1.3); width: calc(var(--sz) * 1.3); flex-shrink: 0; }
 
 /* 회차 탭 (본예산/추경) - 뼈대만, 스크롤 없이 한 줄 고정 */
 /* 회차 탭 (본예산/추경) - Uiverse 글라이더(glider) radio-input 스타일, 4개 옵션 기준 */
@@ -712,12 +745,11 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
   overflow: visible;
   padding: 0;
   zoom: 0.72;
-  background-color: #ffffff;
-  box-shadow:
-    -3px -3px 8px rgba(255,255,255,.7),
-    5px 5px 12px rgba(163,177,198,.35),
-    inset -3px -3px 8px rgba(255,255,255,.7),
-    inset 5px 5px 12px rgba(163,177,198,.25);
+  background-color: var(--sidebar-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--sidebar-border);
+  box-shadow: 0 12px 32px rgba(0,0,0,.34), 0 2px 8px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.08);
   min-width: 280px;
   border-radius: 16px;
   display: flex; flex-direction: column; gap: 0;
@@ -733,7 +765,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 }
 .dept-stat-content {
   position: relative; z-index: 2;
-  background: rgba(255,255,255,.62);
+  background: rgba(255,255,255,.06);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-radius: 12px;
@@ -752,26 +784,26 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
   color: #fff; font-size: 15px; font-weight: 800; line-height: 1; text-align: center;
 }
 .dept-stat-title-text {
-  margin: 0; color: var(--text); font-size: 23px; font-weight: 700; flex: 1; min-width: 0;
+  margin: 0; color: #fff; font-size: 23px; font-weight: 700; flex: 1; min-width: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
-.dept-stat-percent { margin: 0 0 0 0.3rem; color: var(--danger); font-weight: 800; font-size: 22px; display: flex; align-items: center; gap: 2px; white-space: nowrap; flex-shrink: 0; line-height: 1; }
+.dept-stat-percent { margin: 0 0 0 0.3rem; color: var(--lime); font-weight: 800; font-size: 22px; display: flex; align-items: center; gap: 2px; white-space: nowrap; flex-shrink: 0; line-height: 1; }
 .dept-stat-percent svg { width: 1.2rem; height: 1.2rem; flex-shrink: 0; }
-.dept-stat-percent.down { color: var(--accent); }
+.dept-stat-percent.down { color: var(--lime); }
 .dept-stat-percent.down svg { transform: rotate(180deg); }
 .dept-stat-data { display: flex; flex-direction: column; justify-content: flex-start; margin-top: 0.05rem; margin-left: 0; }
 .dept-stat-amt-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .dept-stat-value {
-  margin-top: 0; margin-bottom: 0.2rem; color: var(--text); font-size: 23px; line-height: 1.2; font-weight: 700; text-align: right; flex: 1;
+  margin-top: 0; margin-bottom: 0.2rem; color: #fff; font-size: 23px; line-height: 1.2; font-weight: 700; text-align: right; flex: 1;
   font-family: 'GmarketSans', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 .dept-stat-range {
-  position: relative; background-color: transparent;
+  position: relative; background-color: rgba(255,255,255,.15);
   box-shadow: none;
   width: 60%; margin-left: auto; height: 4px; border-radius: 2px;
 }
-.dept-stat-fill { position: absolute; top: 0; left: 0; background-color: var(--accent); width: 0%; height: 100%; border-radius: 2px; }
+.dept-stat-fill { position: absolute; top: 0; left: 0; background-color: var(--lime); width: 0%; height: 100%; border-radius: 2px; }
 /* "체육진흥과 편성액"과 동일한 패턴: 제목 + 접힌 표 + 더보기 버튼. */
 .dept-stat-yearly-panel {
   display: none; width: fit-content; max-width: 100%; overflow-x: auto;
@@ -784,21 +816,19 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .dept-yearly-item .dy-label { font-size: 11.5px; font-weight: 700; color: var(--text-soft); white-space: nowrap; }
 .dept-yearly-item .dy-amt { font-size: 13.5px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .dept-yearly-item.no-data .dy-amt { color: var(--text-soft); font-weight: 500; }
-/* 사업(카드)별로 나눠 편성하는 부서용 - 회차 라벨(2026/1회/2회/3회)을 헤더 한 번만 쓰고, 그 아래 사업명별로 행을 쌓는 표 형태 */
-.dept-yearly-table { display: flex; flex-direction: column; gap: 4px; }
-.dyt-row { display: grid; grid-template-columns: minmax(90px, auto) repeat(5, minmax(70px, 1fr)); align-items: center; gap: 10px; }
-.dyt-row.dyt-head { padding-bottom: 5px; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
-.dyt-row.dyt-head .dyt-cell { font-size: 11px; font-weight: 700; color: var(--text-soft); text-align: center; }
-.dyt-cell { font-size: 13.5px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap; }
-.dyt-cell.no-data { color: var(--text-soft); font-weight: 500; }
-.dyt-cell.dyt-name-col { text-align: left; font-weight: 800; color: var(--accent-dark); font-size: 12.5px; white-space: normal; word-break: keep-all; line-height: 1.3; }
-.dyt-row.dyt-head .dyt-cell.dyt-name-col { text-align: left; }
-
-/* 위탁금도 이제 출연금과 같은 플로팅 팝업(dept-yearly-table)을 쓴다. 사업(부기명)이 많은 부서는 헤더+합계 행만
-   기본으로 보여준다 - 합계도 표와 똑같은 dyt-row 그리드라 세부 행을 펼쳐도 열이 그대로 맞는다. */
-.dyt-row.child .dyt-cell.dyt-name-col { font-weight: 600; color: var(--text-muted); padding-left: 14px; }
-.dyt-row.dyt-total .dyt-cell { font-weight: 800; color: var(--accent-dark); }
-.dyt-row.dyt-total { padding-top: 3px; border-top: 1px solid var(--border); }
+/* 사업(카드)별로 나눠 편성하는 부서용 - 카드형 표(shadcn Table08 스타일): 부기명·2025·2026예산 */
+.dept-yearly-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.dept-yearly-table th, .dept-yearly-table td { padding: 4px 6px; text-align: left; white-space: nowrap; line-height: 1.2; }
+.dept-yearly-table th:first-child, .dept-yearly-table td:first-child { padding-left: 0; }
+.dept-yearly-table th:last-child, .dept-yearly-table td:last-child { padding-right: 0; }
+.dept-yearly-table thead th { font-size: 12px; font-weight: 700; color: var(--text-soft); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.dept-yearly-table td.dyt-num, .dept-yearly-table th.dyt-num { text-align: right; font-variant-numeric: tabular-nums; }
+.dept-yearly-table td.dyt-num.no-data { color: var(--text-soft); font-weight: 500; }
+.dept-yearly-table tbody tr { border-bottom: 1px solid var(--border); }
+.dept-yearly-table tbody tr:last-child { border-bottom: none; }
+.dept-yearly-table td.dyt-name-col { font-weight: 700; color: var(--accent-dark); font-size: 13.5px; white-space: normal; word-break: keep-all; line-height: 1.2; }
+.dept-yearly-table tr.child td.dyt-name-col { font-weight: 600; color: var(--text-muted); padding-left: 22px; }
+.dept-yearly-table tr.dyt-total td { font-weight: 800; color: var(--accent-dark); border-top: none; border-bottom: 2px solid var(--border); }
 .dyt-more-btn {
   display: block; width: 100%; margin-top: 6px; padding: 4px 0; text-align: center;
   font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft);
@@ -806,22 +836,8 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 }
 .dyt-more-btn:hover { background: var(--accent); color: #fff; }
 
-/* "부서 편성액" - 민간사업보조처럼 사업이 많은 항목을 하단 "사업별 예산"과 같은 카드 톤(business-section)으로,
-   통계목(민간경상사업보조/민간행사사업보조) 기준 표 2개를 나란히 보여준다. */
-.dept-biz-breakdown-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 22px; }
-@media (max-width: 980px) { .dept-biz-breakdown-wrap { grid-template-columns: 1fr; } }
-.dept-biz-box { background: var(--bg-hover); border-radius: var(--r-lg); padding: 16px 18px 18px; }
-.dept-biz-box h3 { margin: 0 0 12px; font-size: 17px; font-weight: 800; color: var(--accent-dark); }
-.dept-biz-box h3 .dept-biz-count { font-size: 13px; font-weight: 600; color: var(--text-soft); margin-left: 4px; }
-table.summary.dept-biz-table { background: #fff; }
-table.summary.dept-biz-table th:first-child, table.summary.dept-biz-table td:first-child { text-align: left; color: var(--text); font-variant-numeric: normal; white-space: normal; }
-table.summary.dept-biz-table td.no-data { color: var(--text-soft); }
-table.summary.dept-biz-table tr.dept-biz-total-row td { background: var(--bg-hover); font-weight: 800; color: var(--accent-dark); }
-.dept-biz-more-btn {
-  display: inline-block; margin-top: 4px; padding: 6px 16px; font-size: 12.5px; font-weight: 700; color: var(--accent);
-  background: var(--accent-soft); border: none; border-radius: 8px; cursor: pointer;
-}
-.dept-biz-more-btn:hover { background: var(--accent); color: #fff; }
+.dyt-filter-row { margin: 0 0 8px; }
+.dyt-filter-select { font-size: 12.5px; font-weight: 600; color: var(--navy); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; background: var(--bg); }
 
 .dept-select { position: relative; }
 
@@ -863,7 +879,11 @@ table.summary.dept-biz-table tr.dept-biz-total-row td { background: var(--bg-hov
 .team-block { margin-bottom: 24px; }
 .team-block h3 { font-size: 17px; font-weight: 700; margin: 0 0 10px; }
 .tree-scroll { overflow-x: auto; border-radius: var(--r-lg); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 26px rgba(0,0,0,.28); background: var(--hero-dark); }
-table.tree { border-collapse: collapse; font-size: 15.5px; table-layout: fixed; width: 100%; background: var(--hero-dark); color: rgba(255,255,255,.9); }
+table.tree {
+  border-collapse: collapse; font-size: 15.5px; table-layout: fixed; width: 100%;
+  background: var(--sidebar-bg); color: rgba(255,255,255,.9);
+  backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
 table.tree th { position: relative; padding: 10px 8px; text-align: center; font-weight: 800; font-size: 17px; letter-spacing: .02em; color: #fff; background: rgba(255,255,255,.06); border-bottom: 1.5px solid rgba(255,255,255,.2); border-right: 1px solid rgba(255,255,255,.08); }
 table.tree td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,.08); border-right: 1px solid rgba(255,255,255,.08); vertical-align: middle; word-break: break-word; color: rgba(255,255,255,.85); }
 table.tree tr:last-child td { border-bottom: none; }
@@ -2256,80 +2276,82 @@ td.lc-warn-cell { position: relative; }
         <div class="dept-tabs" id="dept-tabs" style="display:none;"></div>
       </div>
 
-      <div id="dept-yearly-breakdown" style="display:none;">
-        <div class="section-title-row"><h2 class="section-heading section-heading-lg" id="dept-yearly-breakdown-title"></h2>
-          <button type="button" class="dept-biz-more-btn" onclick="toggleDeptYearlyBreakdown(this)">더보기 ▾</button>
-        </div>
-        <div class="dept-stat-yearly-panel" id="dept-stat-yearly-panel" style="display:none;"></div>
-      </div>
-
       <div class="section-title-row">
         <h2 class="section-heading section-heading-lg" id="summary-title"></h2>
       </div>
       <div id="summary-slot"></div>
       <div id="dept-biz-breakdown" style="display:none;"></div>
 
-      <h2 class="section-heading section-heading-lg" id="cards-title" style="display:none;"></h2>
-      <div class="business-section">
-        <div class="round-tabs-row" id="round-tabs-row">
-          <div class="radio-input" id="round-tabs">
-            <div class="year-select-wrap" id="year-select-wrap">
-              <button type="button" class="year-select-btn" id="year-select-btn" onclick="toggleYearMenu(event)">
-                <span id="year-select-label">2026년</span>
-                <svg class="year-select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </button>
-              <div class="year-select-menu" id="year-select-menu" style="display:none">
-                <div class="year-select-item" data-year="2025" onclick="selectYear(2025)">2025년</div>
-                <div class="year-select-item selected" data-year="2026" onclick="selectYear(2026)">2026년</div>
-                <div class="year-select-item" data-year="2027" onclick="selectYear(2027)">2027년</div>
-                <div class="year-select-item" data-year="2028" onclick="selectYear(2028)">2028년</div>
-              </div>
+      <div class="round-tabs-row" id="round-tabs-row">
+        <div class="radio-input" id="round-tabs">
+          <div class="year-select-wrap" id="year-select-wrap">
+            <button type="button" class="year-select-btn" id="year-select-btn" onclick="toggleYearMenu(event)">
+              <span id="year-select-label">2026년</span>
+              <svg class="year-select-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="year-select-menu" id="year-select-menu" style="display:none">
+              <div class="year-select-item" data-year="2025" onclick="selectYear(2025)">2025년</div>
+              <div class="year-select-item selected" data-year="2026" onclick="selectYear(2026)">2026년</div>
+              <div class="year-select-item" data-year="2027" onclick="selectYear(2027)">2027년</div>
+              <div class="year-select-item" data-year="2028" onclick="selectYear(2028)">2028년</div>
             </div>
-            <span class="year-select-divider"></span>
-            <label>
-              <input type="radio" id="round-base" name="round-radio" value="base" onchange="onRoundChange(this)">
-              <span>본예산</span>
-            </label>
-            <label>
-              <input type="radio" id="round-supp1" name="round-radio" value="supp1" onchange="onRoundChange(this)">
-              <span>1추</span>
-            </label>
-            <label>
-              <input type="radio" id="round-supp2" name="round-radio" value="supp2" onchange="onRoundChange(this)">
-              <span>2추</span>
-            </label>
-            <label>
-              <input type="radio" id="round-supp3" name="round-radio" value="supp3" onchange="onRoundChange(this)">
-              <span>3추</span>
-            </label>
           </div>
-          <div class="io-btn-group">
-            <button type="button" class="io-btn" id="upload-btn" onclick="document.getElementById('upload-file-input').click()" title="Upload" aria-label="Upload">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <span class="year-select-divider"></span>
+          <label>
+            <input type="radio" id="round-base" name="round-radio" value="base" onchange="onRoundChange(this)">
+            <span>본예산</span>
+          </label>
+          <label>
+            <input type="radio" id="round-supp1" name="round-radio" value="supp1" onchange="onRoundChange(this)">
+            <span>1추</span>
+          </label>
+          <label>
+            <input type="radio" id="round-supp2" name="round-radio" value="supp2" onchange="onRoundChange(this)">
+            <span>2추</span>
+          </label>
+          <label>
+            <input type="radio" id="round-supp3" name="round-radio" value="supp3" onchange="onRoundChange(this)">
+            <span>3추</span>
+          </label>
+        </div>
+        <div class="io-btn-group">
+          <button type="button" class="action_has" id="upload-btn" onclick="document.getElementById('upload-file-input').click()" title="Upload" aria-label="Upload">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linejoin="round" stroke-linecap="round">
+              <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+              <path d="M7 9l5 -5l5 5"></path>
+              <path d="M12 4l0 12"></path>
+            </svg>
+          </button>
+          <input type="file" id="upload-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleBudgetUploadFile(event)">
+          <div class="download-menu-wrap">
+            <button type="button" class="action_has" id="export-btn" onclick="toggleDownloadMenu(event)" title="Download" aria-label="Download">
+              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linejoin="round" stroke-linecap="round">
                 <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-                <path d="M7 9l5 -5l5 5"></path>
+                <path d="M7 11l5 5l5 -5"></path>
                 <path d="M12 4l0 12"></path>
               </svg>
-              <span>Upload</span>
             </button>
-            <input type="file" id="upload-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleBudgetUploadFile(event)">
-            <span class="io-btn-divider"></span>
-            <div class="download-menu-wrap">
-              <button type="button" class="io-btn" id="export-btn" onclick="toggleDownloadMenu(event)" title="Download" aria-label="Download">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-                  <path d="M7 11l5 5l5 -5"></path>
-                  <path d="M12 4l0 12"></path>
-                </svg>
-                <span>Download</span>
-              </button>
-              <div class="download-menu" id="download-menu" style="display:none">
-                <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xls)</div>
-                <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
-              </div>
+            <div class="download-menu" id="download-menu" style="display:none">
+              <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xls)</div>
+              <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
             </div>
           </div>
         </div>
+        <div id="dept-yearly-breakdown" class="dyt-card" style="display:none;">
+          <div class="dyt-card-header">
+            <button type="button" class="detail-toggle-btn" onclick="toggleDeptYearlyBreakdown(this)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="detail-toggle-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+              <p class="dyt-card-title"></p>
+            </button>
+          </div>
+          <div class="dept-stat-yearly-panel" id="dept-stat-yearly-panel" style="display:none;"></div>
+        </div>
+      </div>
+
+      <h2 class="section-heading section-heading-lg" id="cards-title" style="display:none;"></h2>
+      <div class="business-section">
         <div class="card-grid" id="card-grid"></div>
         <div class="tab-headcount-badge-row" id="tab-headcount-badge-row">
           <div class="tab-headcount-badge" id="tab-headcount-badge"></div>
@@ -2707,7 +2729,6 @@ function renderDeptTabs() {
     // 위탁금은 본예산/추경 회차 구조 자체가 안 맞는 편성 방식이라, 이 기능 전체를 숨긴다.
     var yearlyBreakdownEl = document.getElementById('dept-yearly-breakdown');
     var yearlyPanelEl = document.getElementById('dept-stat-yearly-panel');
-    var yearlyMoreBtn = yearlyBreakdownEl ? yearlyBreakdownEl.querySelector('.dept-biz-more-btn') : null;
     var wtgCardsForIcon = state.fund === '위탁금' ? getDeptEnactedCards(state.dept, state.fund) : null;
     var wtgHasCards = !!(wtgCardsForIcon && wtgCardsForIcon.length);
     // 위탁금인데 사업(부기명) 분리가 없는 부서(예: 관광진흥과 - 뱃놀이축제 하나뿐)는 부서 전체 값 하나만 있는 것이므로,
@@ -2717,16 +2738,13 @@ function renderDeptTabs() {
         || getDeptEnactedAmount(state.dept, state.fund, 'supp2') || getDeptEnactedAmount(state.dept, state.fund, 'supp3'))
       : null;
     var hasWtgData = wtgHasCards || !!wtgFlatAmount;
-    // "체육진흥과 편성액"과 동일하게: 기본은 접힌 상태, 제목+더보기 버튼으로 펼친다.
+    // 예산표까지 포함한 박스 하나로 항상 펼쳐서 보여준다.
     if (state.fund !== '출연금' && !hasWtgData) {
       if (yearlyBreakdownEl) yearlyBreakdownEl.style.display = 'none';
       if (yearlyPanelEl) yearlyPanelEl.innerHTML = '';
     } else {
       if (yearlyBreakdownEl) yearlyBreakdownEl.style.display = '';
-      if (yearlyPanelEl) yearlyPanelEl.style.display = 'none';
-      if (yearlyMoreBtn) yearlyMoreBtn.textContent = '더보기 ▾';
-      var yearlyTitleEl = document.getElementById('dept-yearly-breakdown-title');
-      if (yearlyTitleEl) yearlyTitleEl.textContent = state.fund + ' 편성현황';
+      setDetailToggleLabel(yearlyBreakdownEl, state.fund + ' 편성현황');
     }
     if (yearlyPanelEl && (state.fund === '출연금' || hasWtgData)) {
       var buildStripHtml = function (items) {
@@ -2741,41 +2759,37 @@ function renderDeptTabs() {
 
       var enactedCards = getDeptEnactedCards(state.dept, state.fund);
       if (enactedCards && enactedCards.length) {
-        var roundCols = [{ key: 'y25', label: '2025' }, { key: 'base', label: '2026' }, { key: 'supp1', label: '1추' }, { key: 'supp2', label: '2추' }, { key: 'supp3', label: '3추' }];
-        var headHtml = '<div class="dyt-row dyt-head"><span class="dyt-cell dyt-name-col">부기명</span>'
-          + roundCols.map(function (c) { return '<span class="dyt-cell">' + c.label + '</span>'; }).join('')
-          + '</div>';
+        var headHtml = '<thead><tr><th>부기명</th><th class="dyt-num">2025예산</th><th class="dyt-num">2026예산</th></tr></thead>';
         var bodyHtml = enactedCards.map(function (card) {
           var isChild = /^\s*ㅇ/.test(card.name);
           var displayName = isChild ? card.name.replace(/^\s+/, '') : card.name;
-          return '<div class="dyt-row' + (isChild ? ' child' : '') + '"><span class="dyt-cell dyt-name-col">' + escapeHtml(displayName) + '</span>'
-            + roundCols.map(function (c) {
-              var amt = card.rounds[c.key] || 0;
-              return '<span class="dyt-cell' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</span>';
-            }).join('')
-            + '</div>';
+          var y25 = card.rounds.y25 || 0, y26 = card.rounds.base || 0;
+          return '<tr class="' + (isChild ? 'child' : '') + '">'
+            + '<td class="dyt-name-col">' + escapeHtml(displayName) + '</td>'
+            + '<td class="dyt-num' + (y25 > 0 ? '' : ' no-data') + '">' + (y25 > 0 ? fmtWon(Math.round(y25 / 1000)) : '-') + '</td>'
+            + '<td class="dyt-num' + (y26 > 0 ? '' : ' no-data') + '">' + (y26 > 0 ? fmtWon(Math.round(y26 / 1000)) : '-') + '</td>'
+            + '</tr>';
         }).join('');
-        // 부기명이 2개 이상이면(출연금 포함) 합계 행을 같이 보여준다.
+        // 부기명이 2개 이상이면(출연금 포함) 합계 행을 표 맨 위에 같이 보여준다.
         // 단, hscf 관광진흥과 위탁금(뱃놀이축제/관광진흥)과 fc 체육진흥과 출연금은 예외로 합계를 표시하지 않는다.
         var showTotal = enactedCards.length > 1
           && !(nav.instKey === 'hscf' && state.dept === '관광진흥과' && state.fund === '위탁금')
           && !(nav.instKey === 'fc' && state.dept === '체육진흥과' && state.fund === '출연금');
         var totalRowHtml = '';
         if (showTotal) {
-          var totalY25 = 0, totalBase = 0, totalSupp1 = 0;
+          var totalY25 = 0, totalBase = 0;
           enactedCards.forEach(function (c) {
             if (/^\s*ㅇ/.test(c.name)) return;
             totalY25 += c.rounds.y25 || 0;
             totalBase += c.rounds.base || 0;
-            totalSupp1 += c.rounds.supp1 || 0;
           });
-          totalRowHtml = '<div class="dyt-row dyt-total"><span class="dyt-cell dyt-name-col">합계</span>'
-            + [totalY25, totalBase, totalSupp1, 0, 0].map(function (amt) {
-              return '<span class="dyt-cell' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</span>';
+          totalRowHtml = '<tr class="dyt-total"><td class="dyt-name-col">합계</td>'
+            + [totalY25, totalBase].map(function (amt) {
+              return '<td class="dyt-num' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</td>';
             }).join('')
-            + '</div>';
+            + '</tr>';
         }
-        yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + headHtml + bodyHtml + totalRowHtml + '</div>';
+        yearlyPanelEl.innerHTML = '<table class="dept-yearly-table">' + headHtml + '<tbody>' + totalRowHtml + bodyHtml + '</tbody></table>';
       } else {
         // 2026년(본예산~3회추경)은 편성액을 직접 입력해둔 값만 보여준다 - 요구액 트리 합계로 대체(fallback) 표시하지 않는다
         // (요구액 ≠ 편성액이라 잘못된 숫자를 보여줄 수 있음). 2025년은 이미 마감된 과거 연도라 그 구분이 없으므로 기존 집계값을 그대로 쓴다.
@@ -2803,21 +2817,65 @@ function toggleDeptMenu(e) {
   e.stopPropagation();
   document.getElementById('dept-select-menu').classList.toggle('open');
 }
-// "연도별 편성 현황" - "체육진흥과 편성액"과 동일하게 기본은 접혀 있고 더보기 버튼으로 펼친다.
+// 예산표까지 포함해 하나의 박스에 항상 펼쳐진 채로 보여준다(아코디언 아님) - 제목 텍스트만 채워주면 된다.
+function setDetailToggleLabel(cardEl, text) {
+  if (!cardEl) return;
+  var titleEl = cardEl.querySelector('.dyt-card-title');
+  if (titleEl) titleEl.textContent = text;
+  // 부서/기금유형이 바뀌면 패널이 항상 접힌 채로 다시 그려지므로, 이전 상태로 남아있던 화살표 회전도 초기화한다.
+  var btn = cardEl.querySelector('.detail-toggle-btn');
+  if (btn) btn.classList.remove('is-open');
+  var arrow = cardEl.querySelector('.detail-toggle-arrow');
+  if (arrow) arrow.style.transform = 'rotate(180deg)';
+  var panel = cardEl.querySelector('.dept-stat-yearly-panel');
+  if (panel) panel.style.display = 'none';
+  dytStopFollowScroll(cardEl);
+}
+// position:fixed 패널이 버튼을 계속 따라다니도록 스크롤/리사이즈마다 위치를 다시 계산한다.
+// (.main이 overflow-x:hidden이라 absolute를 쓰면 패널이 잘리는 문제가 있어 fixed를 쓰는데, fixed는 스크롤해도
+// 저절로 안 움직이므로 직접 따라가게 만들어야 한다.)
+function dytFollowScroll(card, panel) {
+  var reposition = function () {
+    var r = card.getBoundingClientRect();
+    panel.style.top = (r.bottom + 6) + 'px';
+    panel.style.right = (window.innerWidth - r.right) + 'px';
+    panel.style.left = 'auto';
+  };
+  reposition();
+  panel._dytReposition = reposition;
+  window.addEventListener('scroll', reposition, true);
+  window.addEventListener('resize', reposition);
+}
+function dytStopFollowScroll(card) {
+  var panel = card ? card.querySelector('.dept-stat-yearly-panel') : null;
+  if (!panel || !panel._dytReposition) return;
+  window.removeEventListener('scroll', panel._dytReposition, true);
+  window.removeEventListener('resize', panel._dytReposition);
+  panel._dytReposition = null;
+}
+// "연도별 편성 현황" - 기본은 접혀 있고 버튼(제목)을 누르면 펼친다. 표는 카드 흐름 밖으로 빼서 아래 콘텐츠를 밀어내지 않고 그 위에 뜨는 팝오버로 보여준다.
 function toggleDeptYearlyBreakdown(btnEl) {
-  var panel = btnEl.closest('.section-title-row').nextElementSibling;
+  var card = btnEl.closest('.dyt-card');
+  var panel = card ? card.querySelector('.dept-stat-yearly-panel') : null;
   if (!panel) return;
   var willExpand = panel.style.display === 'none';
+  if (willExpand) {
+    dytFollowScroll(card, panel);
+  } else {
+    dytStopFollowScroll(card);
+  }
   panel.style.display = willExpand ? 'block' : 'none';
-  btnEl.textContent = willExpand ? '접기 ▴' : '더보기 ▾';
+  btnEl.classList.toggle('is-open', willExpand);
+  var arrow = btnEl.querySelector('.detail-toggle-arrow');
+  if (arrow) arrow.style.transform = willExpand ? 'rotate(90deg)' : 'rotate(180deg)';
 }
-// "체육진흥과 편성액"(민간사업보조 42개 사업 2단 표) - 기본은 접혀 있고 더보기 버튼으로 펼친다.
-function toggleDeptBizBreakdown(btnEl) {
-  var wrap = btnEl.previousElementSibling;
-  if (!wrap) return;
-  var willExpand = wrap.style.display === 'none';
-  wrap.style.display = willExpand ? '' : 'none';
-  btnEl.textContent = willExpand ? '접기 ▴' : '더보기 ▾';
+// 민간사업보조/장애인사업보조 편성액 카드 - 통계목(민간경상사업보조/민간행사사업보조) 드롭다운으로 표를 전환한다.
+function switchBizGroupTable(selectEl) {
+  var panel = selectEl.closest('.dept-stat-yearly-panel');
+  if (!panel) return;
+  panel.querySelectorAll('.dyt-biz-group').forEach(function (g, i) {
+    g.style.display = (String(i) === selectEl.value) ? 'block' : 'none';
+  });
 }
 // 화성시체육회 지출총괄 같은 긴 표에서 총계 아래 "더보기" 버튼으로 세부 행을 펼치고 접는다.
 // targetId가 있으면 표 안의 <tbody>(같은 table을 그대로 이어서 보여주기 위함)를, 없으면 버튼 바로 다음 형제 요소를 토글한다.
@@ -5532,31 +5590,35 @@ function showPlaceholderInst(name) {
     // 단, "민간사업보조"는 사업이 49개나 돼서 세부내역 팝업 없이 우상단 카드에 최종 총편성액만 보여준다(요청사항).
     var yearlyBreakdownEl = document.getElementById('dept-yearly-breakdown');
     var yearlyPanelEl = document.getElementById('dept-stat-yearly-panel');
-    var yearlyMoreBtn = yearlyBreakdownEl ? yearlyBreakdownEl.querySelector('.dept-biz-more-btn') : null;
-    // "민간사업보조"(화성시체육회)/"장애인사업보조"(화성시장애인체육회) 둘 다 사업이 많아서 이 표 대신 "체육진흥과 편성액" 표를 쓴다.
+    // "민간사업보조"(화성시체육회)/"장애인사업보조"(화성시장애인체육회) 둘 다 사업이 많아서 이 표 대신 "민간사업보조 편성액" 표를 쓴다.
+    // 화면에 보이는 이름은 사이드바와 동일하게 SPORTS_SUB_LABEL_OVERRIDE로 통일한다(예: 장애인위탁금 -> 민간위탁금).
+    var sportsDisplayLabel = SPORTS_SUB_LABEL_OVERRIDE[name] || name;
     var showsBizBreakdown = (name === '민간사업보조' || name === '장애인사업보조');
     var showYearlyDetail = !showsBizBreakdown;
     if (yearlyBreakdownEl) yearlyBreakdownEl.style.display = showYearlyDetail ? '' : 'none';
     if (!showYearlyDetail) {
       if (yearlyPanelEl) yearlyPanelEl.innerHTML = '';
     } else {
-      if (yearlyPanelEl) yearlyPanelEl.style.display = 'none';
-      if (yearlyMoreBtn) yearlyMoreBtn.textContent = '더보기 ▾';
-      var yearlyTitleEl = document.getElementById('dept-yearly-breakdown-title');
-      if (yearlyTitleEl) yearlyTitleEl.textContent = name + ' 편성현황';
-      var roundCols = [{ key: 'y25', label: '2025' }, { key: 'base', label: '2026' }, { key: 'supp1', label: '1추' }, { key: 'supp2', label: '2추' }, { key: 'supp3', label: '3추' }];
-      var yearlyHeadHtml = '<div class="dyt-row dyt-head"><span class="dyt-cell dyt-name-col">부기명</span>'
-        + roundCols.map(function (c) { return '<span class="dyt-cell">' + c.label + '</span>'; }).join('')
-        + '</div>';
+      setDetailToggleLabel(yearlyBreakdownEl, sportsDisplayLabel + ' 편성현황');
+      var yearlyHeadHtml = '<thead><tr><th>부기명</th><th class="dyt-num">2025예산</th><th class="dyt-num">2026예산</th></tr></thead>';
       var yearlyBodyHtml = deptEnactedCards.map(function (card) {
-        return '<div class="dyt-row"><span class="dyt-cell dyt-name-col">' + escapeHtml(card.name) + '</span>'
-          + roundCols.map(function (c) {
-            var amt = card.rounds[c.key] || 0;
-            return '<span class="dyt-cell' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</span>';
-          }).join('')
-          + '</div>';
+        var y25 = card.rounds.y25 || 0, y26 = card.rounds.base || 0;
+        return '<tr>'
+          + '<td class="dyt-name-col">' + escapeHtml(card.name) + '</td>'
+          + '<td class="dyt-num' + (y25 > 0 ? '' : ' no-data') + '">' + (y25 > 0 ? fmtWon(Math.round(y25 / 1000)) : '-') + '</td>'
+          + '<td class="dyt-num' + (y26 > 0 ? '' : ' no-data') + '">' + (y26 > 0 ? fmtWon(Math.round(y26 / 1000)) : '-') + '</td>'
+          + '</tr>';
       }).join('');
-      if (yearlyPanelEl) yearlyPanelEl.innerHTML = '<div class="dept-yearly-table">' + yearlyHeadHtml + yearlyBodyHtml + '</div>';
+      var yearlyTotalHtml = '';
+      if (deptEnactedCards.length > 1) {
+        var yearlyTotalY25 = deptEnactedCards.reduce(function (s, c) { return s + (c.rounds.y25 || 0); }, 0);
+        var yearlyTotalY26 = deptEnactedCards.reduce(function (s, c) { return s + (c.rounds.base || 0); }, 0);
+        yearlyTotalHtml = '<tr class="dyt-total"><td class="dyt-name-col">합계</td>'
+          + [yearlyTotalY25, yearlyTotalY26].map(function (amt) {
+            return '<td class="dyt-num' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</td>';
+          }).join('') + '</tr>';
+      }
+      if (yearlyPanelEl) yearlyPanelEl.innerHTML = '<table class="dept-yearly-table">' + yearlyHeadHtml + '<tbody>' + yearlyTotalHtml + yearlyBodyHtml + '</tbody></table>';
     }
 
     // "민간사업보조"는 49개 사업을 통계목(민간경상사업보조/민간행사사업보조)별로 나눠 "사업별 예산" 위에 별도 표로 보여준다(요청사항).
@@ -5564,29 +5626,42 @@ function showPlaceholderInst(name) {
     if (bizBreakdownEl) {
       if (showsBizBreakdown && deptEnactedCards.length) {
         var bizGroups = ['민간경상사업보조', '민간행사사업보조'];
-        var bizBoxesHtml = bizGroups.map(function (g) {
+        var bizGroupTables = bizGroups.map(function (g) {
           var rows = deptEnactedCards.filter(function (c) { return c.group === g; });
-          if (!rows.length) return '';
+          if (!rows.length) return null;
           var groupTotal26 = rows.reduce(function (s, c) { return s + (c.rounds.base || 0); }, 0);
           var groupTotal25 = rows.reduce(function (s, c) { return s + (c.rounds.y25 || 0); }, 0);
-          var groupTotalSupp1 = rows.reduce(function (s, c) { return s + (c.rounds.supp1 || 0); }, 0);
-          var totalRowHtml = '<tr class="dept-biz-total-row"><td>합계</td><td>' + fmtWon(Math.round(groupTotal25 / 1000)) + '</td><td>' + fmtWon(Math.round(groupTotal26 / 1000)) + '</td>'
-            + '<td' + (groupTotalSupp1 > 0 ? '' : ' class="no-data"') + '>' + (groupTotalSupp1 > 0 ? fmtWon(Math.round(groupTotalSupp1 / 1000)) : '-') + '</td></tr>';
+          var totalRowHtml = '<tr class="dyt-total"><td class="dyt-name-col">합계</td>'
+            + [groupTotal25, groupTotal26].map(function (amt) {
+              return '<td class="dyt-num' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</td>';
+            }).join('') + '</tr>';
           var bodyRowsHtml = rows.map(function (c) {
-            var y25 = c.rounds.y25 || 0, y26 = c.rounds.base || 0, supp1 = c.rounds.supp1 || 0;
-            return '<tr><td>' + escapeHtml(c.name) + '</td>'
-              + '<td' + (y25 > 0 ? '' : ' class="no-data"') + '>' + (y25 > 0 ? fmtWon(Math.round(y25 / 1000)) : '-') + '</td>'
-              + '<td' + (y26 > 0 ? '' : ' class="no-data"') + '>' + (y26 > 0 ? fmtWon(Math.round(y26 / 1000)) : '-') + '</td>'
-              + '<td' + (supp1 > 0 ? '' : ' class="no-data"') + '>' + (supp1 > 0 ? fmtWon(Math.round(supp1 / 1000)) : '-') + '</td></tr>';
+            var y25 = c.rounds.y25 || 0, y26 = c.rounds.base || 0;
+            return '<tr><td class="dyt-name-col">' + escapeHtml(c.name) + '</td>'
+              + '<td class="dyt-num' + (y25 > 0 ? '' : ' no-data') + '">' + (y25 > 0 ? fmtWon(Math.round(y25 / 1000)) : '-') + '</td>'
+              + '<td class="dyt-num' + (y26 > 0 ? '' : ' no-data') + '">' + (y26 > 0 ? fmtWon(Math.round(y26 / 1000)) : '-') + '</td></tr>';
           }).join('');
-          return '<div class="dept-biz-box"><h3>' + escapeHtml(g) + '<span class="dept-biz-count">(' + rows.length + '개 사업)</span></h3>'
-            + '<table class="summary dept-biz-table"><thead><tr><th>사업명</th><th>2025</th><th>2026 본예산</th><th>1차 추경</th></tr></thead>'
-            + '<tbody>' + totalRowHtml + bodyRowsHtml + '</tbody>'
-            + '</table></div>';
+          return {
+            group: g, count: rows.length,
+            html: '<table class="dept-yearly-table"><thead><tr><th>부기명</th><th class="dyt-num">2025예산</th><th class="dyt-num">2026예산</th></tr></thead>'
+              + '<tbody>' + totalRowHtml + bodyRowsHtml + '</tbody></table>'
+          };
+        }).filter(Boolean);
+        var bizGroupLabelShort = { '민간경상사업보조': '민경보', '민간행사사업보조': '민행보' };
+        var bizFilterHtml = bizGroupTables.length > 1
+          ? '<div class="dyt-filter-row"><select class="dyt-filter-select" onchange="switchBizGroupTable(this)">'
+            + bizGroupTables.map(function (t, i) { return '<option value="' + i + '">' + escapeHtml(bizGroupLabelShort[t.group] || t.group) + ' (' + t.count + '개 사업)</option>'; }).join('')
+            + '</select></div>'
+          : '';
+        var bizTablesHtml = bizGroupTables.map(function (t, i) {
+          return '<div class="dyt-biz-group" style="display:' + (i === 0 ? 'block' : 'none') + ';">' + t.html + '</div>';
         }).join('');
-        bizBreakdownEl.innerHTML = '<div class="section-title-row"><h2 class="section-heading section-heading-lg">체육진흥과 편성액</h2></div>'
-          + '<div class="dept-biz-breakdown-wrap" style="display:none;">' + bizBoxesHtml + '</div>'
-          + '<button type="button" class="dept-biz-more-btn" onclick="toggleDeptBizBreakdown(this)">더보기 ▾</button>';
+        bizBreakdownEl.innerHTML = '<div class="dyt-card">'
+          + '<div class="dyt-card-header"><button type="button" class="detail-toggle-btn" onclick="toggleDeptYearlyBreakdown(this)">'
+          + '<svg xmlns="http://www.w3.org/2000/svg" class="detail-toggle-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>'
+          + '<p class="dyt-card-title">' + escapeHtml(sportsDisplayLabel) + ' 편성액</p></button></div>'
+          + '<div class="dept-stat-yearly-panel" style="display:none;">' + bizFilterHtml + bizTablesHtml + '</div>'
+          + '</div>';
         bizBreakdownEl.style.display = '';
       } else {
         bizBreakdownEl.innerHTML = '';
@@ -5631,9 +5706,9 @@ function showPlaceholderInst(name) {
   if (bizList && bizList.length) {
     document.getElementById('cards-title').textContent = '사업별 예산';
     sportsBizState.list = bizList;
-    sportsBizState.selected = 0;
-    renderSportsBizCards(bizList, 0);
-    renderSportsBizDetail(0);
+    sportsBizState.selected = null;
+    renderSportsBizCards(bizList, null);
+    if (detailEl) detailEl.innerHTML = '<div class="empty-state">사업을 선택해주세요.</div>';
   } else {
     document.getElementById('cards-title').textContent = '부서별 예산';
     if (cardGrid) { cardGrid.className = ''; cardGrid.innerHTML = '<div class="empty-state">등록된 사업이 없습니다. 자료를 주시면 반영하겠습니다.</div>'; }
@@ -6753,6 +6828,11 @@ function renderSportsBizCards(list, selectedIdx) {
 function renderSportsBizDetail(idx) {
   var detailEl = document.getElementById('detail');
   if (!detailEl) return;
+  // 처음 들어왔을 때는 사업이 아직 선택 안 된 상태(idx가 null)일 수 있다 - 이때는 아무것도 펼치지 않는다.
+  if (idx == null || !sportsBizState.list || !sportsBizState.list[idx]) {
+    detailEl.innerHTML = '<div class="empty-state">사업을 선택해주세요.</div>';
+    return;
+  }
   var biz = sportsBizState.list[idx];
   detailEl.innerHTML = sportsBizDetailHtml(biz);
   applyTreeColWidths();
@@ -7453,7 +7533,7 @@ function switchPanel(panelId) {
   document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
   document.getElementById(panelId).classList.add('active');
   var appEl = document.querySelector('.app');
-  if (appEl) appEl.classList.toggle('is-landing', panelId === 'panel-dashboard');
+  if (appEl) appEl.classList.add('is-landing'); // 사이드바는 항상 접힌(아이콘) 폭으로 유지 — 어느 화면으로 이동해도 유지, 마우스오버 시에만 펼침
   var laborBoxEl = document.getElementById('labor-box');
   if (laborBoxEl) {
     laborBoxEl.classList.toggle('is-active', panelId === 'panel-laborcalc');
@@ -8749,18 +8829,21 @@ function renderLaborCalc() {
   var o4AnnualLeaveAmt = (o4.ordinaryRate * 8 / 209 * 10) * o4.count;
   var o4OvertimeAmt = (o4.ordinaryRate * 1.5 / 209 * 30) * o4.count * o4.months * 0.7;
   var o4FairnessAmt = o4.baseRate * (o4.fairnessPct / 100) * o4.count;
-  var o4AllowanceTotal = o4FairnessAmt + o4MealAmt + o4TransportAmt + o4LivingWageAmt + o4AnnualLeaveAmt + o4OvertimeAmt;
+  var o4AllowanceTotal = o4MealAmt + o4TransportAmt + o4LivingWageAmt + o4AnnualLeaveAmt + o4OvertimeAmt;
   var section04 = '<div class="lc-section cat-temp" style="border-left-color:var(--border-strong)"><h3>04 기간제근로자등 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">정원 외 단기 근로자, 아르바이트생 등의 보수 단가</span></h3>'
     + lcAcc('기본급 <span class="lc-acc-sub">(적정임금(생활임금) 기준 적용, 최저임금의 118%)</span>', o4BaseAmt,
         '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + '<tr><td>기본급</td><td>' + fmtWon(o4.baseRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4BaseAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
-    + lcAcc('수당', o4AllowanceTotal,
-        '<p class="lc-hint">공정수당 신설: 고용불안 보전을 위해 계약 만료 시점에 일시급으로 환수·지급하는 <b>공정수당(월 기본급의 약 8.5% ~ 10% 수준)</b>을 의무 계상</p>'
-        + '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + lcSubtotalRow('합계', o4AllowanceTotal, 5)
+    + lcAcc('공정수당 (신설) <span class="lc-acc-sub">(고용불안 보전을 위해 계약 만료 시점에 일시급으로 환수·지급, 월 기본급의 약 8.5%~10% 수준을 의무 계상)</span>', o4FairnessAmt,
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>적용률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + '<tr><td style="color:var(--danger);font-weight:700;">공정수당 (신설)</td><td>' + fmtWon(o4.baseRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.fairnessPct', 55) + '%</td><td class="lc-formula">기본급×요율×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4FairnessAmt))) + '</td></tr>'
+        + '</tbody></table>',
+        'var(--bg-hover)', 'var(--text)')
+    + lcAcc('수당', o4AllowanceTotal,
+        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + lcSubtotalRow('합계', o4AllowanceTotal, 5)
         + '<tr><td>정액급식비</td><td>' + fmtWon(o4.mealUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4MealAmt))) + '</td></tr>'
         + '<tr><td>교통보조비</td><td>' + fmtWon(o4.transportUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4TransportAmt))) + '</td></tr>'
         + '<tr><td>생활임금보전수당</td><td>' + fmtWon(o4.livingWageUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4LivingWageAmt))) + '</td></tr>'
