@@ -931,6 +931,16 @@ table.um-preview { width: 100%; border-collapse: collapse; font-size: 13px; }
 table.um-preview th { background: var(--accent-soft); color: var(--accent-dark); text-align: left; padding: 7px 9px; white-space: nowrap; position: sticky; top: 0; }
 table.um-preview td { padding: 6px 9px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
 .um-notice { background: var(--accent-soft); color: var(--accent-dark); border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 14px; line-height: 1.5; }
+.ut-ctx { background: var(--bg-hover); border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 10px; line-height: 1.6; }
+.ut-ctx-warn { background: rgba(214,69,90,.1); color: var(--danger); }
+.ut-ctx-warn-text { margin-top: 4px; font-weight: 700; }
+.ut-tree { border: 1px solid var(--border); border-radius: 10px; padding: 8px 4px; font-size: 13.5px; }
+.ut-row { display: flex; align-items: baseline; gap: 8px; padding: 3px 8px; border-bottom: 1px solid #f3f3f3; }
+.ut-row:last-child { border-bottom: none; }
+.ut-label { font-weight: 600; flex-shrink: 0; }
+.ut-calc { color: var(--text-muted); font-size: 12.5px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ut-amt { margin-left: auto; flex-shrink: 0; font-variant-numeric: tabular-nums; font-weight: 700; }
+.ut-amt25 { color: var(--text-muted); font-weight: 400; }
 table.tree td.num.basis { text-align: left !important; white-space: pre-line !important; overflow-wrap: break-word; word-break: break-word; }
 tr.lvl-팀 td { font-weight: 700; font-size: 16px; border-top: 1px solid rgba(255,255,255,.15); color: #fff; }
 tr.lvl-팀 td:first-child { color: var(--lime); }
@@ -1551,14 +1561,31 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .th-filter-label { cursor: pointer; user-select: none; }
 .filter-caret { font-size: 14px; }
 .mok-filter-popover {
-  position: relative; z-index: 20; background: var(--bg-card); border: 1px solid var(--border-strong);
-  border-radius: var(--r); box-shadow: var(--shadow-md); padding: 8px; margin-bottom: 8px; max-width: 320px;
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; z-index: 30;
+  background: var(--bg-card); border: 1px solid var(--border-strong);
+  border-radius: var(--r); box-shadow: var(--shadow-md); padding: 8px; width: 280px; max-width: 80vw;
+  text-align: left; font-weight: 400; font-size: 14px; color: var(--text); white-space: normal;
 }
 .mok-filter-actions { display: flex; gap: 6px; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
 .mok-filter-actions .mok-filter-confirm { margin-left: auto; background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
-.mok-filter-actions button { border: 1px solid var(--border-strong); background: var(--bg-card); border-radius: var(--r); padding: 4px 10px; font-size: 15px; cursor: pointer; }
+.mok-filter-actions button { border: 1px solid var(--border-strong); background: var(--bg-card); border-radius: var(--r); padding: 4px 10px; font-size: 14px; cursor: pointer; }
 .mok-filter-item { display: block; font-size: 16px; padding: 3px 2px; cursor: pointer; }
 .mok-filter-item input { margin-right: 6px; }
+.mokf-acc { border-radius: 10px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 4px 14px rgba(16,19,28,.1); }
+.mokf-acc-trigger {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 10px 14px; text-align: left; font-weight: 700; font-size: 14px; color: #fff;
+  background: var(--accent); border: none; border-radius: 10px;
+  cursor: pointer; transition: background .2s ease, border-radius .2s ease;
+}
+.mokf-acc.open .mokf-acc-trigger { border-radius: 10px 10px 0 0; }
+.mokf-acc-trigger:hover { background: var(--accent-dark); }
+.mokf-acc-chevron { width: 16px; height: 16px; flex-shrink: 0; transition: transform .3s ease; }
+.mokf-acc.open .mokf-acc-chevron { transform: rotate(180deg); }
+.mokf-acc-body-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+.mokf-acc.open .mokf-acc-body-wrap { grid-template-rows: 1fr; }
+.mokf-acc-body { overflow: hidden; }
+.mokf-acc-body-inner { padding: 8px 14px 10px; background: linear-gradient(to bottom right, #f9fafb, #f3f4f6); border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px; }
 
 .business-section {
   background: var(--bg-hover); border-radius: var(--r-lg); padding: 20px 22px 24px; margin-top: 0;
@@ -1631,7 +1658,8 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 }
 .tree-search-btn:hover { background: var(--accent-dark); }
 .tree-search-btn svg { width: 14px; height: 14px; }
-table.tree tr.search-match { background: #FFF6D6 !important; }
+table.tree tr.search-match { background: rgba(198,241,53,.22) !important; }
+table.tree tr.search-match td { color: #fff !important; }
 table.tree tr.search-dim { display: none; }
 table.tree tr.calc-mismatch td.basis { background: rgba(214,69,90,.22); }
 .mismatch-flag { color: var(--danger); margin-left: 5px; font-size: 13px; cursor: help; }
@@ -2007,12 +2035,6 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   background-color: transparent; color: var(--text-muted);
   transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.lc-subtoggle label::after {
-  content: ""; position: absolute; bottom: -32px; left: 50%;
-  width: 8px; height: 8px; border-radius: 50%; background-color: rgb(var(--tc, 10,60,255));
-  transform: translateX(-50%); transform-origin: 0 0; scale: 0; opacity: 0; z-index: -1;
-  transition: all 0.48s 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-}
 .lc-subtoggle label::before {
   content: ""; position: absolute; top: -20px; left: 50%;
   width: 100%; height: 40px; border-radius: 12px; background-color: rgb(var(--tc, 10,60,255));
@@ -2021,10 +2043,6 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 }
 .lc-subtoggle label:hover { border-color: rgb(var(--tc, 10,60,255)); color: rgb(var(--tc, 10,60,255)); }
 .lc-subtoggle input:checked + label { border-color: transparent; color: var(--navy); scale: 1.06; }
-.lc-subtoggle input:checked + label::after {
-  bottom: -16px; opacity: 1; scale: 1;
-  box-shadow: 0rem 6px 13px rgba(var(--tc, 10,60,255),.1), 0rem 24px 24px rgba(var(--tc, 10,60,255),.09), 0rem 55px 33px rgba(var(--tc, 10,60,255),.05), 0rem 97px 39px rgba(var(--tc, 10,60,255),.01), 0rem 152px 43px rgba(var(--tc, 10,60,255),0);
-}
 .lc-subtoggle input:checked + label::before {
   top: 50%; opacity: 1; scale: 1;
   box-shadow: 0rem 6px 13px rgba(var(--tc, 10,60,255),.1), 0rem 24px 24px rgba(var(--tc, 10,60,255),.09), 0rem 55px 33px rgba(var(--tc, 10,60,255),.05), 0rem 97px 39px rgba(var(--tc, 10,60,255),.01), 0rem 152px 43px rgba(var(--tc, 10,60,255),0);
@@ -2041,6 +2059,13 @@ table.lc-table-5col th:nth-child(2), table.lc-table-5col td:nth-child(2) { width
 table.lc-table-5col th:nth-child(3), table.lc-table-5col td:nth-child(3) { width: 16%; }
 table.lc-table-5col th:nth-child(4), table.lc-table-5col td:nth-child(4) { width: 33%; }
 table.lc-table-5col th:nth-child(5), table.lc-table-5col td:nth-child(5) { width: 15%; }
+table.lc-table-6col { table-layout: fixed; }
+table.lc-table-6col th:nth-child(1), table.lc-table-6col td:nth-child(1) { width: 20%; }
+table.lc-table-6col th:nth-child(2), table.lc-table-6col td:nth-child(2) { width: 15%; }
+table.lc-table-6col th:nth-child(3), table.lc-table-6col td:nth-child(3) { width: 10%; }
+table.lc-table-6col th:nth-child(4), table.lc-table-6col td:nth-child(4) { width: 10%; }
+table.lc-table-6col th:nth-child(5), table.lc-table-6col td:nth-child(5) { width: 30%; }
+table.lc-table-6col th:nth-child(6), table.lc-table-6col td:nth-child(6) { width: 15%; }
 .lc-pair table.lc-table { min-width: 0; }
 @media (max-width: 900px) { .lc-pair { grid-template-columns: 1fr; } }
 .lc-split { display: flex; align-items: flex-start; gap: 8px; flex-direction: column; }
@@ -4549,19 +4574,34 @@ function setupTreeColResize() {
   });
 }
 
-function collectMokList(tree) {
+function collectByLevel(tree, level) {
   var list = [];
   function walk(node) {
-    if (node.level === '목') list.push(node);
+    if (node.level === level) list.push(node);
     (node.children || []).forEach(walk);
   }
   (tree.children || []).forEach(walk);
   return list;
 }
-function tagMok(node, tag) {
-  node._mokTag = tag;
-  (node.children || []).forEach(function (c) { tagMok(c, tag); });
+function collectMokList(tree) { return collectByLevel(tree, '목'); }
+function collectDetailList(tree) { return collectByLevel(tree, '세부'); }
+function tagSubtree(node, tag, field) {
+  node[field] = tag;
+  (node.children || []).forEach(function (c) { tagSubtree(c, tag, field); });
 }
+function tagMok(node, tag) { tagSubtree(node, tag, '_mokTag'); }
+function tagDetail(node, tag) { tagSubtree(node, tag, '_detailTag'); }
+// 자기 자신에게 태그가 없는 상위 행에도 하위에 어떤 태그들이 있는지 기록해둔다 -
+// 필터 적용 시 이 목록이 전부 체크 해제된 상위 행만 같이 숨기기 위해 필요하다(들여쓰기 좌표로는 팀/정책이 같은 깊이라 구분이 안 됨).
+function computeSubtreeTags(node, ownField, subtreeField) {
+  if (node[ownField]) { node[subtreeField] = [node[ownField]]; return node[subtreeField]; }
+  var set = {};
+  (node.children || []).forEach(function (c) { computeSubtreeTags(c, ownField, subtreeField).forEach(function (t) { set[t] = true; }); });
+  node[subtreeField] = Object.keys(set);
+  return node[subtreeField];
+}
+function computeSubtreeMokTags(node) { return computeSubtreeTags(node, '_mokTag', '_mokTagsSubtree'); }
+function computeSubtreeDetailTags(node) { return computeSubtreeTags(node, '_detailTag', '_detailTagsSubtree'); }
 
 var userToggles = {};
 function defaultExpanded(level) { return true; }
@@ -4623,7 +4663,10 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
     : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name));
   var cls = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목') ? node.level : 'leaf';
-  var mokAttr = node._mokTag ? (' data-mok="' + escapeHtml(node._mokTag) + '"') : '';
+  var mokAttr = node._mokTag ? (' data-mok="' + escapeHtml(node._mokTag) + '"')
+    : (node._mokTagsSubtree && node._mokTagsSubtree.length ? (' data-mok-tags="' + escapeHtml(node._mokTagsSubtree.join(',')) + '"') : '');
+  var detailAttr = node._detailTag ? (' data-detail="' + escapeHtml(node._detailTag) + '"')
+    : (node._detailTagsSubtree && node._detailTagsSubtree.length ? (' data-detail-tags="' + escapeHtml(node._detailTagsSubtree.join(',')) + '"') : '');
   var amt25Cell = node.amt25 != null && node.amt25 !== 0 ? fmtWon(node.amt25) : (node.amt25 === 0 ? '-' : '');
   var hasChildren = node.children && node.children.length;
   // \uC811\uAE30/\uD3BC\uCE58\uAE30\uB294 \uC815\uCC45\uC0AC\uC5C5 \uB2E8\uC704\uC5D0\uC11C\uB9CC \uC4F4\uB2E4 - \uB2E8\uC704/\uC138\uBD80/\uBAA9/\uC138\uBAA9\uAE4C\uC9C0 \uC804\uBD80 \uC811\uD614\uB2E4 \uD3B4\uC84C\uB2E4 \uD558\uBA74
@@ -4654,7 +4697,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     + '</svg></label>';
   // 편성목(목) 이후부터는(세목·leaf) 들여쓰기를 더 늘리지 않고 그 자리에서 맞춘다 - 코드/불릿 표시로 이미 구분되니까
   var indentDepth = Math.min(depth, LEVEL_BASE_DEPTH['목']);
-  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + '" data-id="' + node.id + '"' + mokAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
+  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
     + '<td style="padding-left:' + (8 + indentDepth * 14) + 'px">' + arrowHtml + ' ' + escapeHtml(label) + mismatchIcon + '</td>'
     + '<td class="num basis" contenteditable="true" spellcheck="false" data-field="calc">' + escapeHtml(stripCalcEquals(node.calc)) + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
@@ -4732,7 +4775,11 @@ function handleBudgetUploadFile(e) {
       var sheetName = wb.SheetNames[0];
       var ws = wb.Sheets[sheetName];
       var rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-      openUploadPreviewModal(file.name, sheetName, rows);
+      if (isTemplateHeader(rows[0])) {
+        openTemplateUploadPreview(file.name, sheetName, rows);
+      } else {
+        openUploadPreviewModal(file.name, sheetName, rows);
+      }
     } catch (err) {
       alert('엑셀 파일을 읽는 중 오류가 발생했습니다: ' + err.message);
     }
@@ -4775,6 +4822,181 @@ function openUploadPreviewModal(fileName, sheetName, rows) {
 function closeUploadPreviewModal() {
   var el = document.getElementById('upload-modal-root');
   if (el) el.remove();
+}
+
+// "예산서_업로드_양식.xlsx" 고정 서식 - 이 헤더와 일치하면 정책→단위→세부사업→목→세목→부기명 트리로 매핑해서 실제 저장까지 지원한다.
+// 마지막 열("이전 대비 비교" 예산액)은 회차마다 라벨이 달라진다 - 본예산 업로드면 "2025예산액", 1추 업로드면 "2026년 본예산",
+// 2추면 "2026년 1추", 3추면 "2026년 2추" 식으로 자유롭게 바꿔 써도 되므로 텍스트를 강제하지 않고 열 개수만 확인한다.
+var TEMPLATE_HEADERS = ['정책', '단위', '세부사업', '목코드', '목명', '세목코드', '세목명', '부기명(항목명)', '산출기초', '2026예산액(천원)'];
+function isTemplateHeader(headerRow) {
+  if (!headerRow || headerRow.length < TEMPLATE_HEADERS.length + 1) return false;
+  return TEMPLATE_HEADERS.every(function (h, i) { return String(headerRow[i] || '').trim() === h; });
+}
+function parseTemplateAmt(v) {
+  var n = Number(String(v == null ? '' : v).replace(/[^0-9.-]/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+// 템플릿 행들(정책~2025예산액 11열)을 정책→단위→세부사업→목→세목→leaf 중첩 트리로 묶는다.
+// 같은 정책/단위/세부사업/목/세목 값을 가진 행은 같은 부모 노드를 공유한다(순서 무관, 이름 기준 매칭).
+function buildTemplateTree(dataRows) {
+  var policies = []; var policyMap = {};
+  dataRows.forEach(function (r) {
+    var policy = String(r[0] || '').trim();
+    var unit = String(r[1] || '').trim();
+    var detail = String(r[2] || '').trim();
+    var mokCode = String(r[3] || '').trim();
+    var mokName = String(r[4] || '').trim();
+    var semokCode = String(r[5] || '').trim();
+    var semokName = String(r[6] || '').trim();
+    var leafName = String(r[7] || '').trim();
+    var calc = String(r[8] || '').trim();
+    var amt26 = parseTemplateAmt(r[9]);
+    var amt25 = parseTemplateAmt(r[10]);
+    if (!policy && !unit && !detail && !mokName && !semokName && !leafName) return; // 빈 행 스킵
+
+    var pKey = policy;
+    var pNode = policyMap[pKey];
+    if (!pNode) { pNode = { level: '정책', name: policy, children: [], _map: {} }; policyMap[pKey] = pNode; policies.push(pNode); }
+
+    var uKey = unit;
+    var uNode = pNode._map[uKey];
+    if (!uNode) { uNode = { level: '단위', name: unit, children: [], _map: {} }; pNode._map[uKey] = uNode; pNode.children.push(uNode); }
+
+    var dKey = detail;
+    var dNode = uNode._map[dKey];
+    if (!dNode) { dNode = { level: '세부', name: detail, children: [], _map: {} }; uNode._map[dKey] = dNode; uNode.children.push(dNode); }
+
+    var mKey = mokCode + '|' + mokName;
+    var mNode = dNode._map[mKey];
+    if (!mNode) { mNode = { level: '목', code: mokCode || null, name: mokName, children: [], _map: {} }; dNode._map[mKey] = mNode; dNode.children.push(mNode); }
+
+    var sKey = semokCode + '|' + semokName;
+    var sNode = mNode._map[sKey];
+    if (!sNode) { sNode = { level: '세목', code: semokCode || null, name: semokName, children: [], _map: {} }; mNode._map[sKey] = sNode; mNode.children.push(sNode); }
+
+    sNode.children.push({ level: 'leaf', name: leafName, calc: calc || null, amt26: amt26, amt25: amt25, children: [] });
+  });
+  return policies;
+}
+// 상위 노드(정책/단위/세부/목/세목)의 예산액을 하위 leaf 합계로 채운다(위쪽 노드는 직접 입력값이 없으므로).
+function rollupTemplateTree(node) {
+  if (!node.children || !node.children.length) return { amt26: node.amt26 || 0, amt25: node.amt25 || 0 };
+  var sum26 = 0, sum25 = 0;
+  node.children.forEach(function (c) { var r = rollupTemplateTree(c); sum26 += r.amt26; sum25 += r.amt25; });
+  node.amt26 = sum26; node.amt25 = sum25;
+  return { amt26: sum26, amt25: sum25 };
+}
+function templateTreeToPreviewHtml(nodes, depth, prevLabel) {
+  return nodes.map(function (n) {
+    var label = (n.level === 'leaf') ? n.name : '[' + n.level + '] ' + (n.code ? n.code + ' ' : '') + n.name;
+    var calcHtml = n.calc ? '<span class="ut-calc">' + escapeHtml(n.calc) + '</span>' : '';
+    return '<div class="ut-row" style="padding-left:' + (depth * 18) + 'px">'
+      + '<span class="ut-label">' + escapeHtml(label) + '</span>' + calcHtml
+      + '<span class="ut-amt">' + fmtWon(n.amt26) + '천원<span class="ut-amt25"> (' + escapeHtml(prevLabel) + ': ' + fmtWon(n.amt25) + '천원)</span></span>'
+      + '</div>'
+      + (n.children && n.children.length ? templateTreeToPreviewHtml(n.children, depth + 1, prevLabel) : '');
+  }).join('');
+}
+// 현재 화면에서 선택돼 있는 기관/재원/부서/사업카드/회차를 업로드 저장 대상 컨텍스트로 그대로 쓴다.
+function resolveUploadContext() {
+  var inst = INSTITUTIONS.filter(function (i) { return i.key === nav.instKey; })[0];
+  var biz = getBusiness(state.selectedId);
+  return {
+    institution: inst || null,
+    fundType: state.fund || null,
+    dept: state.dept || null,
+    businessCard: biz ? biz.name : null,
+    businessId: biz ? biz.id : null,
+    round: state.selectedRound || 'base'
+  };
+}
+var _templateUploadTree = null;
+function openTemplateUploadPreview(fileName, sheetName, rows) {
+  closeUploadPreviewModal();
+  var dataRows = rows.slice(1);
+  var policies = buildTemplateTree(dataRows);
+  var ctx = resolveUploadContext();
+  // 이 앱은 사업카드(팀)의 최상위 행이 항상 level="팀"이어야 하고(card_teams.team_root_budget_item_id가 이 id를 가리킴),
+  // 화면은 card_teams 연결이 있어야만 트리를 찾아서 그린다 - 그래서 정책들을 팀 노드 하나로 감싸서 저장한다.
+  var tree = [{ level: '팀', name: ctx.businessCard || (ctx.institution ? ctx.institution.name : '업로드'), children: policies }];
+  tree.forEach(rollupTemplateTree);
+  _templateUploadTree = tree;
+  var prevLabel = String(rows[0][10] || '이전').trim();
+
+  var ctxOk = !!(ctx.institution && ctx.fundType && ctx.round && ctx.businessId);
+  var ctxHtml = '<div class="ut-ctx' + (ctxOk ? '' : ' ut-ctx-warn') + '">'
+    + '<b>저장 대상</b> · 기관: ' + escapeHtml(ctx.institution ? ctx.institution.name : '(선택 안 됨)')
+    + ' · 재원: ' + escapeHtml(ctx.fundType || '(선택 안 됨)')
+    + ' · 부서: ' + escapeHtml(ctx.dept || '-')
+    + ' · 사업카드: ' + escapeHtml(ctx.businessCard || '(선택 안 됨)')
+    + ' · 회차: ' + escapeHtml(ROUND_LABELS[ctx.round] || ctx.round)
+    + (ctxOk ? '' : '<div class="ut-ctx-warn-text">⚠ 기관/재원/사업카드가 확인되지 않아 저장할 수 없습니다. 먼저 화면에서 업로드할 기관·재원·사업카드를 선택한 뒤 다시 업로드해주세요.</div>')
+    + '</div>';
+
+  var totalLeaf = 0;
+  (function count(nodes) { nodes.forEach(function (n) { if (n.level === 'leaf') totalLeaf++; else count(n.children); }); })(policies);
+
+  var html = '<div class="upload-modal-overlay" id="upload-modal-overlay" onclick="if(event.target===this) closeUploadPreviewModal()">'
+    + '<div class="upload-modal">'
+    + '<div class="upload-modal-head"><div><h3>업로드 미리보기 (양식 인식됨)</h3><div class="um-sub">' + escapeHtml(fileName) + ' · 시트 "' + escapeHtml(sheetName) + '" · 항목 ' + totalLeaf + '건</div></div>'
+    + '<button type="button" class="upload-modal-close" onclick="closeUploadPreviewModal()">✕</button></div>'
+    + '<div class="upload-modal-body">'
+    + ctxHtml
+    + '<div class="um-notice">정책→단위→세부사업→목→세목→항목 구조로 자동 인식했습니다. 상위 항목의 예산액은 하위 항목 합계로 자동 계산됩니다.</div>'
+    + '<div class="ut-tree">' + templateTreeToPreviewHtml(tree, 0, prevLabel) + '</div>'
+    + '</div>'
+    + '<div class="upload-modal-foot"><button type="button" class="um-btn cancel" onclick="closeUploadPreviewModal()">닫기</button>'
+    + '<button type="button" class="um-btn confirm" id="template-upload-confirm-btn"' + (ctxOk ? ' onclick="confirmTemplateUploadSave()"' : ' disabled title="기관/재원을 먼저 선택해주세요"') + '>확인 후 반영</button></div>'
+    + '</div></div>';
+
+  var wrap = document.createElement('div');
+  wrap.id = 'upload-modal-root';
+  wrap.innerHTML = html;
+  document.body.appendChild(wrap);
+}
+// budget_items.id는 GENERATED ALWAYS IDENTITY라 값을 직접 넣으면 오류가 난다 - insert 후 자동 생성된 id를 돌려받아 자식의
+// parent_id로 쓴다. sort_order는 default가 없는 일반 컬럼이라 형제 순서(0,1,2..)를 직접 넣어준다.
+async function insertTemplateNode(node, parentId, ctx, sortOrder) {
+  var row = {
+    institution_id: ctx.institution.id, fund_type: ctx.fundType, dept: ctx.dept || null, business_card: ctx.businessCard || null,
+    parent_id: parentId, level: node.level, code: node.code || null, name: node.name,
+    amt26: node.amt26 || 0, amt25: node.amt25 || 0, calc: node.calc || null, sort_order: sortOrder, round: ctx.round, edited: true
+  };
+  var { data, error } = await db.from('budget_items').insert(row).select('id').single();
+  if (error) throw error;
+  for (var i = 0; i < (node.children || []).length; i++) {
+    await insertTemplateNode(node.children[i], data.id, ctx, i);
+  }
+  return data.id;
+}
+async function confirmTemplateUploadSave() {
+  var btn = document.getElementById('template-upload-confirm-btn');
+  if (!_templateUploadTree || !_templateUploadTree.length) { alert('저장할 항목이 없습니다.'); return; }
+  var ctx = resolveUploadContext();
+  if (!ctx.institution || !ctx.fundType || !ctx.businessId) { alert('기관/재원/사업카드가 확인되지 않아 저장할 수 없습니다.'); return; }
+  btn.disabled = true; btn.textContent = '저장 중...';
+  try {
+    var teamRootId = null;
+    for (var i = 0; i < _templateUploadTree.length; i++) {
+      var rootId = await insertTemplateNode(_templateUploadTree[i], null, ctx, i);
+      if (i === 0) teamRootId = rootId;
+    }
+    // 화면은 budget_items 트리만으로는 안 그려주고, card_teams에 "이 회차·이 사업카드는 이 루트 id를 봐라"는
+    // 연결이 있어야 찾아서 그린다 - 그 연결이 없어서 저장은 됐는데 화면엔 안 뜨던 문제(2026-08-28)가 있었다.
+    var { count } = await db.from('card_teams').select('id', { count: 'exact', head: true }).eq('card_id', ctx.businessId).eq('round', ctx.round);
+    var { error: teamErr } = await db.from('card_teams').insert({
+      card_id: ctx.businessId, team_name: '', capacity: null, current: null,
+      team_root_budget_item_id: teamRootId, sort_order: count || 0, round: ctx.round
+    });
+    if (teamErr) throw teamErr;
+    delete instDataCache[ctx.institution.key];
+    delete roundDataCache[ctx.institution.id + '|' + ctx.businessId + '|' + ctx.round];
+    alert('저장 완료했습니다. 최신 데이터를 반영하기 위해 화면을 새로고침합니다.');
+    location.reload();
+  } catch (err) {
+    alert('저장 중 오류가 발생했습니다: ' + err.message);
+    btn.disabled = false; btn.textContent = '확인 후 반영';
+  }
 }
 
 // 현재 선택된 카드의 예산 트리를 [헤더, ...행] 2차원 배열로 수집 (엑셀/PDF/CSV 공통)
@@ -5081,41 +5303,52 @@ function renderTeamTreesCombined(trees, totalLabel) {
       + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
       + '</tr>';
   }
-  var groupsHtml = trees.map(function (tree) {
-    var mokList = collectMokList(tree);
-    // 같은 편성목(코드+이름)이 여러 단위·세부사업 밑에 따로 나타나는 경우가 많아, 예전에는 나타난 횟수만큼
-    // 체크박스가 중복으로 나열됐다. 실제 예산서에 있는 편성목 종류만(코드+이름 기준으로 중복 제거) 나열하고,
-    // 같은 편성목의 모든 occurrence는 태그를 공유시켜 체크박스 하나로 전부 같이 필터링되게 한다.
-    var dedup = {}; var order = [];
-    mokList.forEach(function (m, i) {
+  // 같은 편성목/세부사업(이름 기준)이 트리 여러 개(팀 여러 개)에 걸쳐 나타나도, 팀별로 따로 묶지 않고
+  // 전체를 합쳐 "세부사업"/"통계목" 두 목록으로만 보여준다 - 체크박스 하나로 해당 이름 전체가 같이 필터링된다.
+  var mokDedup = {}; var mokOrder = [];
+  var detailDedup = {}; var detailOrder = [];
+  trees.forEach(function (tree, ti) {
+    collectMokList(tree).forEach(function (m, i) {
       var key = (m.code || '') + '|' + m.name;
-      if (!dedup[key]) { dedup[key] = { code: m.code, name: m.name, tag: instId + '_' + tree.name + '_m' + i }; order.push(key); }
-      tagMok(m, dedup[key].tag);
+      if (!mokDedup[key]) { mokDedup[key] = { code: m.code, name: m.name, tag: instId + '_m' + ti + '_' + i }; mokOrder.push(key); }
+      tagMok(m, mokDedup[key].tag);
     });
+    collectDetailList(tree).forEach(function (d, i) {
+      var key = d.name;
+      if (!detailDedup[key]) { detailDedup[key] = { name: d.name, tag: instId + '_d' + ti + '_' + i }; detailOrder.push(key); }
+      tagDetail(d, detailDedup[key].tag);
+    });
+    computeSubtreeMokTags(tree);
+    computeSubtreeDetailTags(tree);
     renderTreeRows(tree, rows, 0, '', true);
-    var mokItemsHtml = order.map(function (key) {
-      var e = dedup[key];
-      return '<label class="mok-filter-item" style="padding-left:16px"><input type="checkbox" checked data-mok-tag="' + e.tag + '" onchange="applyMokFilter(\'' + instId + '\')"> '
-        + (e.code ? escapeHtml(e.code) + ' ' : '') + escapeHtml(e.name) + '</label>';
-    }).join('');
-    return '<div style="font-weight:600; font-size:15px; padding:4px 2px;">' + escapeHtml(tree.name) + '</div>' + mokItemsHtml;
+  });
+  var mokItemsHtml = mokOrder.map(function (key) {
+    var e = mokDedup[key];
+    return '<label class="mok-filter-item" style="padding-left:16px"><input type="checkbox" checked data-mok-tag="' + e.tag + '" onchange="applyMokFilter(\'' + instId + '\')"> '
+      + (e.code ? escapeHtml(e.code) + ' ' : '') + escapeHtml(e.name) + '</label>';
   }).join('');
+  var detailItemsHtml = detailOrder.map(function (key) {
+    var e = detailDedup[key];
+    return '<label class="mok-filter-item" style="padding-left:16px"><input type="checkbox" checked data-detail-tag="' + e.tag + '" onchange="applyMokFilter(\'' + instId + '\')"> '
+      + escapeHtml(e.name) + '</label>';
+  }).join('');
+  var groupsHtml = mokFilterAccordion('세부사업', detailItemsHtml) + mokFilterAccordion('통계목', mokItemsHtml);
 
   var treeColLabels = getTreeColLabels();
   var colgroup = '<colgroup>' + treeColLabels.map(function (_, i) { return '<col class="tcol-' + i + '">'; }).join('') + '</colgroup>';
-  var headCells = treeColLabels.map(function (label, i) {
-    var handle = i < treeColLabels.length - 1 ? '<span class="col-resize-handle" data-resize="' + i + '"></span>' : '';
-    if (i === 0) {
-      return '<th><span class="th-filter-label" onclick="toggleMokFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret">▾</i></span>' + handle + '</th>';
-    }
-    return '<th>' + label + handle + '</th>';
-  }).join('');
-
   var popover = '<div id="mokpop-' + instId + '" class="mok-filter-popover" style="display:none">'
     + '<div class="mok-filter-actions"><button onclick="setAllMokFilter(\'' + instId + '\', true)">전체선택</button><button onclick="setAllMokFilter(\'' + instId + '\', false)">전체해제</button><button class="mok-filter-confirm" onclick="closeMokFilter(\'' + instId + '\')">확인</button></div>'
     + groupsHtml + '</div>';
 
-  return '<div class="team-block">' + popover
+  var headCells = treeColLabels.map(function (label, i) {
+    var handle = i < treeColLabels.length - 1 ? '<span class="col-resize-handle" data-resize="' + i + '"></span>' : '';
+    if (i === 0) {
+      return '<th><span class="th-filter-label" onclick="toggleMokFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret">▾</i></span>' + popover + handle + '</th>';
+    }
+    return '<th>' + label + handle + '</th>';
+  }).join('');
+
+  return '<div class="team-block">'
     + '<div class="tree-scroll"><div class="tree-container" id="treecontainer-' + instId + '">'
     + '<table class="tree">' + colgroup
     + '<thead><tr>' + headCells + '</tr></thead>'
@@ -5124,6 +5357,16 @@ function renderTeamTreesCombined(trees, totalLabel) {
 }
 function renderTeamTree(tree) {
   return renderTeamTreesCombined([tree]);
+}
+function mokFilterAccordion(title, itemsHtml) {
+  if (!itemsHtml) return '';
+  return '<div class="mokf-acc">'
+    + '<button type="button" class="mokf-acc-trigger" onclick="this.closest(\'.mokf-acc\').classList.toggle(\'open\')">'
+    + '<span>' + escapeHtml(title) + '</span>'
+    + '<svg class="mokf-acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'
+    + '</button>'
+    + '<div class="mokf-acc-body-wrap"><div class="mokf-acc-body"><div class="mokf-acc-body-inner">' + itemsHtml + '</div></div></div>'
+    + '</div>';
 }
 function toggleMokFilter(instId, e) {
   e.stopPropagation();
@@ -5148,17 +5391,31 @@ function setAllMokFilter(instId, checked) {
   pop.querySelectorAll('input[type=checkbox]').forEach(function (cb) { cb.checked = checked; });
   applyMokFilter(instId);
 }
+// 통계목·세부사업 두 필터목을 동시에 적용한다 - 행이 보이려면 두 필터를 각각 통과해야 한다(AND).
+// 태그가 직접 없는 상위 행(팀/정책/단위 등)은 하위 전체의 태그 목록 중 하나라도 체크된 게 남아 있으면 통과시킨다.
+function mokRowPasses(row, ownAttr, tagsAttr, unchecked) {
+  var own = row.getAttribute(ownAttr);
+  if (own) return unchecked.indexOf(own) === -1;
+  var tagsStr = row.getAttribute(tagsAttr);
+  if (!tagsStr) return true;
+  return tagsStr.split(',').some(function (t) { return unchecked.indexOf(t) === -1; });
+}
 function applyMokFilter(instId) {
   var pop = document.getElementById('mokpop-' + instId);
   var container = document.getElementById('treecontainer-' + instId);
   if (!pop || !container) return;
-  var unchecked = [];
+  var uncheckedMok = [];
   pop.querySelectorAll('input[data-mok-tag]').forEach(function (cb) {
-    if (!cb.checked) unchecked.push(cb.getAttribute('data-mok-tag'));
+    if (!cb.checked) uncheckedMok.push(cb.getAttribute('data-mok-tag'));
+  });
+  var uncheckedDetail = [];
+  pop.querySelectorAll('input[data-detail-tag]').forEach(function (cb) {
+    if (!cb.checked) uncheckedDetail.push(cb.getAttribute('data-detail-tag'));
   });
   container.querySelectorAll('tbody tr').forEach(function (row) {
-    var tag = row.getAttribute('data-mok');
-    row.classList.toggle('mok-hidden', !!(tag && unchecked.indexOf(tag) !== -1));
+    var ok = mokRowPasses(row, 'data-mok', 'data-mok-tags', uncheckedMok)
+      && mokRowPasses(row, 'data-detail', 'data-detail-tags', uncheckedDetail);
+    row.classList.toggle('mok-hidden', !ok);
   });
 }
 
@@ -8693,7 +8950,7 @@ function renderLaborCalc() {
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당 <span class="lc-acc-sub">(16종)</span>', lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal() + lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal() + familyTotalAmt + lcProxyTotal(),
         lcAcc('① 기본급 연동형 수당', lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal(),
-            '<table class="lc-table"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
             + '<tr><td>대우공무원수당</td><td>' + lcNumInput('treatmentPct', 55) + '%</td><td colspan="2" style="color:var(--text-muted);font-size:12.5px;">직급별 상이(기본급 탭 참고)</td><td class="lc-formula">단가×인상률×요율×대상인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcTreatmentTotal()))) + '</td></tr>'
             + '<tr><td>명절휴가비</td><td>' + lcNumInput('holidayPct', 55) + '%</td><td colspan="2" style="color:var(--text-muted);font-size:12.5px;">직급별 상이(기본급 탭 참고)</td><td class="lc-formula">단가×인상률×인원×2회×요율(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcHolidayTotal()))) + '</td></tr>'
             + '<tr><td>관리업무수당</td><td>' + lcNumInput('mgmtAllow.unit', 80, true) + '원</td><td>' + lcNumInput('mgmtAllow.count', 50, true) + '</td><td>' + lcNumInput('mgmtAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcMgmtAllowTotal() ? fmtWon(lcRound(lcMgmtAllowTotal())) : '') + '</td></tr>'
@@ -8704,13 +8961,13 @@ function renderLaborCalc() {
             + '</details>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('② 직급형 수당', lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal(),
-            '<table class="lc-table"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
             + '<tr><td>직급보조비</td><td colspan="3" style="color:var(--text-muted);font-size:12.5px;">직급별 고시 단가(직급별 상이, 기본급 탭 참고)</td><td class="lc-formula">고시단가×인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcGradeAllowTotal()))) + '</td></tr>'
             + '<tr><td>기술수당</td><td>' + lcNumInput('techAllow.unit', 80, true) + '원</td><td>' + lcNumInput('techAllow.count', 50, true) + '</td><td>' + lcNumInput('techAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcTechAllowTotal() ? fmtWon(lcRound(lcTechAllowTotal())) : '') + '</td></tr>'
             + '<tr><td>정근수당가산금</td><td colspan="3" style="color:var(--text-muted);font-size:12.5px;">근속연수 구간별 상이</td><td class="lc-formula">단가×인원×개월(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritBonusTotal()))) + '</td></tr>'
             + '</tbody></table>'
             + '<details class="lc-detail-toggle"><summary>정근수당가산금 근속연수 구간별 상세</summary>'
-            + '<table class="lc-table"><thead><tr><th>구간</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritBonusTotal(), 5) + meritBonusRows + '</tbody></table>'
+            + '<table class="lc-table lc-table-6col"><thead><tr><th>구간</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritBonusTotal(), 5) + meritBonusRows + '</tbody></table>'
             + '</details>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('③ 실적형 수당', 0,
@@ -8720,18 +8977,18 @@ function renderLaborCalc() {
             + '</tbody></table>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('④ 정책형 수당', familyTotalAmt + lcProxyTotal(),
-            '<table class="lc-table"><thead><tr><th>구분</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('가족수당', familyTotalAmt, 5) + familyRows + '</tbody></table>'
+            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('가족수당', familyTotalAmt, 5) + familyRows + '</tbody></table>'
             + '<h3 style="margin-top:14px;font-size:14px;">대행업무수당 <span class="lc-acc-sub">(업무대행수당)</span></h3>'
-            + '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            + '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
             + '<tr><td>업무대행수당</td><td>' + fmtWon(LC.proxy.unit) + '</td><td>' + lcNumInput('proxy.count', 50) + '</td><td>' + lcNumInput('proxy.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcProxyTotal()))) + '</td></tr>'
             + '</tbody></table>',
             'var(--bg-hover)', 'var(--text)'),
         'var(--bg-hover)', 'var(--text)')
     + '<h3 style="margin-top:18px;">수당 (근속·가족 등 기준) <span class="lc-cat-tag" style="background:var(--bg-hover);color:var(--text-muted);">「지방공무원 수당 등에 관한 규정」 카테고리별</span></h3>'
     + lcAcc('특수근무수당 <span class="lc-acc-sub">(기술자격수당·특정업무수행경비)</span>', specialTotalAmt,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', specialTotalAmt, 5) + specialRows + '</tbody></table>', 'var(--bg-hover)', 'var(--text)')
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', specialTotalAmt, 5) + specialRows + '</tbody></table>', 'var(--bg-hover)', 'var(--text)')
     + lcAcc('실비변상 등 <span class="lc-acc-sub">(정액급식비·파견수당)</span>', lcMealTotal() + lcDispatchTotal(),
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', lcMealTotal() + lcDispatchTotal(), 5)
         + '<tr><td>정액급식비</td><td>' + fmtWon(LC.meal.unit) + '</td><td>' + lcNumInput('meal.count', 50) + '</td><td>' + lcNumInput('meal.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcMealTotal()))) + '</td></tr>'
         + '<tr><td>파견수당</td><td>' + fmtWon(LC.dispatch.unit) + '</td><td>' + lcNumInput('dispatch.count', 50) + '</td><td>' + lcNumInput('dispatch.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcDispatchTotal()))) + '</td></tr>'
@@ -8768,12 +9025,12 @@ function renderLaborCalc() {
   var o2AllowanceTotal = o2FamilySpouseAmt + o2FamilyChildAmt + o2AnnualLeaveAmt + o2MealAmt;
   var section02 = '<div class="lc-section cat-other" style="border-left-color:var(--border-strong)"><h3>02 기타직 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">정원 범위 내 계약직 및 전문 임기제 직원(가~마급 체계)의 계약 보수</span></h3>'
     + lcAcc('계약 연봉액', lc02GradesTotal(),
-        '<table class="lc-table"><thead><tr><th>등급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>등급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', lc02GradesTotal(), 5) + other02GradeRows
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당', o2AllowanceTotal,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o2AllowanceTotal, 5)
         + '<tr><td>가족수당(배우자)</td><td>' + fmtWon(LC.other02.familySpouseUnit) + '</td><td>' + lcNumInput('other02.familySpouseCount', 50) + '</td><td>' + lcNumInput('other02.familySpouseMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilySpouseAmt))) + '</td></tr>'
         + '<tr><td>가족수당(자녀)</td><td>' + fmtWon(LC.other02.familyChildUnit) + '</td><td>' + lcNumInput('other02.familyChildCount', 50) + '</td><td>' + lcNumInput('other02.familyChildMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilyChildAmt))) + '</td></tr>'
@@ -8797,20 +9054,20 @@ function renderLaborCalc() {
   var o3AllowanceTotal = o3FamilyTotal + o3LivingWageAmt + o3AnnualLeaveAmt + o3OvertimeAmt + o3NightworkAmt;
   var section03 = '<div class="lc-section cat-permanent" style="border-left-color:var(--border-strong)"><h3>03 무기계약근로자 보수</h3>'
     + lcAcc('기본급 <span class="lc-acc-sub">(공무직 관리 규정 및 호봉·급여 테이블에 따라 매월 고정적으로 지급하는 기본급)</span>', o3BaseAmt,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td>기본급</td><td>' + fmtWon(o3.baseRate) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3BaseAmt))) + '</td></tr>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + '<tr><td>기본급</td><td>' + lcNumInput('other03.baseRate', 90) + '원</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3BaseAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
-    + lcAcc('법정필수 처우개선비 <span class="lc-acc-sub">(의무 반영 항목, 현원×3,280,000원)</span>', o3BenefitTotal,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + lcSubtotalRow('합계', o3BenefitTotal, 5)
+    + lcAcc('<span style="color:var(--danger);">법정필수처우개선비(의무)</span>', o3BenefitTotal,
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + lcSubtotalRow('합계 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;">(현원×3,280,000원)</span>', o3BenefitTotal, 5)
         + '<tr><td>정액급식비</td><td>' + fmtWon(o3.mealUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3MealAmt))) + '</td></tr>'
         + '<tr><td>명절상여금</td><td>' + fmtWon(o3.holidayUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>2회(설날, 추석)</td><td class="lc-formula">단가×인원×2회(설날, 추석)</td><td>' + lcResultBox(fmtWon(lcRound(o3HolidayAmt))) + '</td></tr>'
         + '<tr><td>복지포인트</td><td>' + fmtWon(o3.welfarePointUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>연 1회</td><td class="lc-formula">연간 정액×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3WelfarePointAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당', o3AllowanceTotal,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o3AllowanceTotal, 5)
         + o3.familyUnit.map(function (f, i) { return '<tr><td>가족수당(' + f.label + ')</td><td>' + fmtWon(f.unit) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.count', 50) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(f.unit * f.count * f.months))) + '</td></tr>'; }).join('')
         + '<tr><td>생활임금보전수당</td><td>' + fmtWon(o3.livingWageUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3LivingWageAmt))) + '</td></tr>'
@@ -8830,19 +9087,19 @@ function renderLaborCalc() {
   var o4OvertimeAmt = (o4.ordinaryRate * 1.5 / 209 * 30) * o4.count * o4.months * 0.7;
   var o4FairnessAmt = o4.baseRate * (o4.fairnessPct / 100) * o4.count;
   var o4AllowanceTotal = o4MealAmt + o4TransportAmt + o4LivingWageAmt + o4AnnualLeaveAmt + o4OvertimeAmt;
-  var section04 = '<div class="lc-section cat-temp" style="border-left-color:var(--border-strong)"><h3>04 기간제근로자등 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">정원 외 단기 근로자, 아르바이트생 등의 보수 단가</span></h3>'
-    + lcAcc('기본급 <span class="lc-acc-sub">(적정임금(생활임금) 기준 적용, 최저임금의 118%)</span>', o4BaseAmt,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td>기본급</td><td>' + fmtWon(o4.baseRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4BaseAmt))) + '</td></tr>'
+  var section04 = '<div class="lc-section cat-temp" style="border-left-color:var(--border-strong)"><h3>04 기간제근로자등 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">정원 외의 계약직, 임시직, 출산대체직 등 비정규직 대상 보수, 상여금 및 법정수당 지급</span></h3>'
+    + lcAcc('기본급 <span class="lc-acc-sub">(생활임금 반영 (최저임금의 118%))</span>', o4BaseAmt,
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + '<tr><td>기본급</td><td>' + lcNumInput('other04.baseRate', 90) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4BaseAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
-    + lcAcc('공정수당 (신설) <span class="lc-acc-sub">(고용불안 보전을 위해 계약 만료 시점에 일시급으로 환수·지급, 월 기본급의 약 8.5%~10% 수준을 의무 계상)</span>', o4FairnessAmt,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>적용률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td style="color:var(--danger);font-weight:700;">공정수당 (신설)</td><td>' + fmtWon(o4.baseRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.fairnessPct', 55) + '%</td><td class="lc-formula">기본급×요율×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4FairnessAmt))) + '</td></tr>'
+    + lcAcc('<span style="color:var(--danger);">공정수당 (신설)</span> <span class="lc-acc-sub">(1년 미만 근무자에게 계약 만료시 일시 지급 (월 기본급의 약 8.5~10% 수준))</span>', o4FairnessAmt,
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>적용률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + '<tr><td style="color:var(--text);font-weight:700;">공정수당 (의무)</td><td>' + lcNumInput('other04.baseRate', 90) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.fairnessPct', 55) + '%</td><td class="lc-formula">기본급×요율×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4FairnessAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당', o4AllowanceTotal,
-        '<table class="lc-table"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o4AllowanceTotal, 5)
         + '<tr><td>정액급식비</td><td>' + fmtWon(o4.mealUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4MealAmt))) + '</td></tr>'
         + '<tr><td>교통보조비</td><td>' + fmtWon(o4.transportUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4TransportAmt))) + '</td></tr>'
