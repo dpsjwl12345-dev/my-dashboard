@@ -9172,8 +9172,8 @@ function lcFinalSection() {
   // ===== 4. 화성시도시공사 =====
   if (f.instKey === 'corp') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>인건비 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 0, 'bad') + lcFinalPill('확인필요', 10, 'warn') + '</summary>';
-  out += lcFinalFundBlock('보수(위탁금) — 화성종합경기타운', '', [0, 0, 10],
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>인건비 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 0, 'bad') + lcFinalPill('확인필요', 11, 'warn') + '</summary>';
+  out += lcFinalFundBlock('보수(위탁금) — 화성종합경기타운', '', [0, 0, 11],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직 보수', 4)
       + lcFinalRow(['2급', { v: '84,991,284×1명', formula: true }, { v: '84,992' }, { v: '확인필요', status: true }])
@@ -9187,13 +9187,14 @@ function lcFinalSection() {
       + lcFinalRow(['기본연봉', { v: '37,387,739×5명', formula: true }, { v: '186,939' }, { v: '확인필요', status: true }])
       + lcFinalRow(['기본연봉(사업운영)', { v: '36,947,700×10명', formula: true }, { v: '369,477' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('04 기간제 보수', 4)
-      + lcFinalRow(['기본급', { v: '2,526,810×2명×8개월', formula: true }, { v: '40,429' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">보수 소계 1,528,147천원 — 01 일반직 931,302 + 03 무기계약직 556,416 + 04 기간제 40,429. 산출식과 원자료 금액은 서로 맞지만, 이는 같은 원자료 안에서 자기 자신과 비교한 것일 뿐 — 단가 자체가 화성시도시공사 보수규정(직급별 연봉표)에 맞는 금액인지는 규정 문서 대조 전까지 확인필요.</p>'
+      + lcFinalRow(['기본급', { v: '2,526,810×2명×8개월', formula: true }, { v: '40,429' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['기본급(오토캠핑장, 참고)', { v: '2,526,810×1.5명×12개월', formula: true }, { v: '45,483' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">보수 소계 1,573,630천원(경기타운 1,528,147 + 오토캠핑장 기간제 45,483). 오토캠핑장은 기간제 인원이 1.5명(소수)으로 편성돼 있어 실제 근무 형태(예: 시간제 겸직) 확인이 필요합니다. 산출식과 원자료 금액은 서로 맞지만, 이는 같은 원자료 안에서 자기 자신과 비교한 것일 뿐 — 단가 자체가 화성시도시공사 보수규정(직급별 연봉표)에 맞는 금액인지는 규정 문서 대조 전까지 확인필요. 참고로 향남복합문화센터TF는 2026년 인건비·퇴직급여·평가급·연금이 전부 0원으로 편성돼(2025년엔 100,798천원 있었음) 비교 대상에서 제외했습니다.</p>'
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>수당 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 0, 'bad') + lcFinalPill('확인필요', 9, 'warn') + '</summary>';
-  out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [0, 0, 9],
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>수당 ' + lcFinalPill('일치', 3, 'good') + lcFinalPill('불일치', 0, 'bad') + lcFinalPill('확인필요', 16, 'warn') + '</summary>';
+  out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [3, 0, 16],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직', 4)
       + lcFinalRow(['연차수당', { v: '4,759,556÷209×8×10일×14명', formula: true }, { v: '25,506' }, { v: '확인필요', status: true }])
@@ -9206,45 +9207,88 @@ function lcFinalSection() {
       + lcFinalRow(['연차수당(사업운영)', { v: '3,287,420÷209×8×10일×10명', formula: true }, { v: '12,584' }, { v: '확인필요', status: true }])
       + lcFinalRow(['초과근무수당(사업운영)', { v: '산출식 없음', formula: true }, { v: '75,503' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('04 기간제', 4)
-      + lcFinalRow(['연차수당', { v: '12,090×2명×8시간×8일', formula: true }, { v: '1,547' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 296,916천원 — 01 일반직 183,907 + 03 무기계약직 111,462 + 04 기간제 1,547. 연차수당은 근로기준법 산정식(통상임금÷209×8시간×미사용일수)을 그대로 따르고 있으나 미사용일수 자체가 맞는지는 확인필요, 초과근무수당 4건은 산출식조차 없어 확인필요.</p>'
+      + lcFinalRow(['연차수당', { v: '12,090×2명×8시간×8일', formula: true }, { v: '1,547' }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('타 위탁부서 — 초과근무수당(참고)', 4)
+      + lcFinalRow(['체육시설1부', { v: '통상임금÷209×시간×12개월×1.5(직원별 상이)', formula: true }, { v: '151,000' }, { v: '일치', status: true }])
+      + lcFinalRow(['서남부체육시설', { v: '통상임금÷209×시간×12개월×1.5(직원별 상이)', formula: true }, { v: '136,872' }, { v: '일치', status: true }])
+      + lcFinalRow(['화성체력인증센터', { v: '통상임금÷209×시간×5개월×1.5(직원별 상이)', formula: true }, { v: '6,327' }, { v: '일치', status: true }])
+      + lcFinalRow(['오토캠핑장', { v: '기간제 1건만 산출식 있음, 나머지 없음', formula: true }, { v: '81,382' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['캠핑장', { v: '기간제 1건만 산출식 있음, 나머지 없음', formula: true }, { v: '38,696' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['화성국민체육센터', { v: '산출식 없음', formula: true }, { v: '162,828' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['동탄어울림센터', { v: '산출식 없음', formula: true }, { v: '101,415' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['반월체육센터', { v: '산출식 없음', formula: true }, { v: '165,959' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['전곡항 마리나', { v: '산출식 없음', formula: true }, { v: '110,840' }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('체육시설1부 — 피복비(참고, 신규 항목)', 4)
+      + lcFinalRow(['피복비', { v: '100,000×1명×2회', formula: true }, { v: '200' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 296,916천원(경기타운) — 01 일반직 183,907 + 03 무기계약직 111,462 + 04 기간제 1,547. 연차수당은 근로기준법 산정식(통상임금÷209×8시간×미사용일수)을 그대로 따르고 있으나 미사용일수 자체가 맞는지는 확인필요, 초과근무수당 4건은 산출식조차 없어 확인필요. <b>타 부서 대조 결과, 경기타운의 초과근무수당 산출식 누락은 특별한 게 아니라 화성국민체육센터·동탄어울림·반월·전곡항도 동일하게 산출식이 없습니다</b>(체육시설1부·서남부·화성체력인증센터 3곳만 산출식 있음). 체육시설1부에만 있는 피복비는 다른 부서에 없는 항목이라 지급 근거 확인이 필요합니다.</p>'
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>퇴직급여 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 0, 'bad') + lcFinalPill('확인필요', 4, 'warn') + '</summary>';
-  out += lcFinalFundBlock('퇴직급여(위탁금) — 화성종합경기타운', '', [0, 0, 4],
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>퇴직급여 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 1, 'bad') + lcFinalPill('확인필요', 4, 'warn') + '</summary>';
+  out += lcFinalFundBlock('퇴직급여(위탁금) — 화성종합경기타운', '', [0, 1, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['일반직', { v: '1,012,064,996÷12×1회', formula: true }, { v: '84,339' }, { v: '확인필요', status: true }])
       + lcFinalRow(['무기계약직', { v: '239,942,278÷12×1회', formula: true }, { v: '19,996' }, { v: '확인필요', status: true }])
       + lcFinalRow(['일반직(사업운영)', { v: '244,927,674÷12×1회', formula: true }, { v: '20,411' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['무기계약직(사업운영)', { v: '509,734,587÷12×1회', formula: true }, { v: '42,478' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">소계 167,224천원(인력운영경비 104,335 + 사업운영 62,889). 산정 방식(기준액÷12×1회)은 근로자퇴직급여보장법상 DB형 퇴직연금의 표준 월할 적립 방식과 일치하나, 기준액(연간 보수총액) 자체가 맞는지는 확인필요.</p>'
+      + lcFinalRow(['무기계약직(사업운영)', { v: '509,734,587÷12×1회', formula: true }, { v: '42,478' }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('전곡항 마리나(참고) — 계산값과 편성액 불일치', 4)
+      + lcFinalRow(['일반직·청원경찰(7명)', { v: '413,762,440÷12×1회 (계산값 34,480 vs 편성액 32,110)', formula: true }, { v: '32,110' }, { v: '불일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 167,224천원(인력운영경비 104,335 + 사업운영 62,889). 산정 방식(기준액÷12×1회)은 근로자퇴직급여보장법상 DB형 퇴직연금의 표준 월할 적립 방식과 일치하나, 기준액(연간 보수총액) 자체가 맞는지는 확인필요. 전곡항 마리나는 같은 방식인데도 산출식 계산값(34,480천원)과 실제 편성액(32,110천원)이 2,370천원 차이 나 불일치로 확인됐습니다.</p>'
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>평가급 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 0, 'bad') + lcFinalPill('확인필요', 6, 'warn') + '</summary>';
-  out += lcFinalFundBlock('평가급(위탁금) — 화성종합경기타운', '', [0, 0, 6],
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>평가급 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 4, 'bad') + lcFinalPill('확인필요', 10, 'warn') + '</summary>';
+  out += lcFinalFundBlock('평가급(위탁금) — 화성종합경기타운', '', [0, 4, 10],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['일반직 경영평가급', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200' }, { v: '확인필요', status: true }])
       + lcFinalRow(['일반직 자체평가급', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200' }, { v: '확인필요', status: true }])
       + lcFinalRow(['업무직 경영평가급', { v: '2,962,930×5명×100%', formula: true }, { v: '14,815' }, { v: '확인필요', status: true }])
       + lcFinalRow(['일반직 경영평가급(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107' }, { v: '확인필요', status: true }])
       + lcFinalRow(['일반직 자체평가급(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['무기계약직 경영평가급(사업운영)', { v: '2,962,930×10명×100%', formula: true }, { v: '29,630' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">소계 185,059천원(인력운영경비 129,215 + 사업운영 55,844). 지급률(100%)이 도시공사 자체 평가급 지급 규정에 맞는지 확인필요 — 지방공기업 예산편성기준상 개인성과급은 경영평가·자체평가 결과에 따라 등급별 차등 지급하는 게 원칙이라, 전 인원 일괄 100% 지급이 실제 평가 결과를 반영한 것인지 근거 확인이 필요합니다.</p>'
+      + lcFinalRow(['무기계약직 경영평가급(사업운영)', { v: '2,962,930×10명×100%', formula: true }, { v: '29,630' }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('타 위탁부서 — 지급률이 100%가 아닌 사례(참고)', 4)
+      + lcFinalRow(['오토캠핑장 일반직 경영평가급', { v: '3,809,560×2명×150%', formula: true }, { v: '11,429' }, { v: '불일치', status: true }])
+      + lcFinalRow(['오토캠핑장 일반직 자체평가급', { v: '3,809,560×2명×100%', formula: true }, { v: '7,619' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['오토캠핑장 업무직 경영평가급', { v: '3,059,527×8명×150%', formula: true }, { v: '36,712' }, { v: '불일치', status: true }])
+      + lcFinalRow(['캠핑장 일반직 경영평가급', { v: '3,987,776×3명×150%', formula: true }, { v: '17,945' }, { v: '불일치', status: true }])
+      + lcFinalRow(['캠핑장 일반직 자체평가급', { v: '3,987,776×3명×100%', formula: true }, { v: '11,964' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['캠핑장 업무직 경영평가급', { v: '2,962,930×4명×150%', formula: true }, { v: '17,778' }, { v: '불일치', status: true }])
+      + lcFinalRow(['반월체육센터 일반직평가급(5명)', { v: '연봉÷12개월×인원×200%', formula: true }, { v: '37,904' }, { v: '불일치', status: true }])
+      + lcFinalRow(['반월체육센터 무기계약직평가급(13명)', { v: '2,962,930×13명×100%', formula: true }, { v: '38,519' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 185,059천원(인력운영경비 129,215 + 사업운영 55,844). 지급률(100%)이 도시공사 자체 평가급 지급 규정에 맞는지 확인필요 — 지방공기업 예산편성기준상 개인성과급은 경영평가·자체평가 결과에 따라 등급별 차등 지급하는 게 원칙이라, 전 인원 일괄 100% 지급이 실제 평가 결과를 반영한 것인지 근거 확인이 필요합니다. <b>타 부서 대조 결과 지급률 자체가 통일돼 있지 않습니다</b> — 경기타운을 포함한 대부분은 100%인데 오토캠핑장·캠핑장은 경영평가급만 150%, 반월체육센터 일반직은 아예 다른 공식(연봉÷12개월×인원×200%)을 씁니다.</p>'
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>연금 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 1, 'bad') + lcFinalPill('확인필요', 5, 'warn') + '</summary>';
-  out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [0, 1, 5],
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>연금 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 2, 'bad') + lcFinalPill('확인필요', 22, 'warn') + '</summary>';
+  out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [0, 2, 22],
     lcFinalTable([{ t: '보험' }, { t: '요율' }, { t: '금액(천원)' }, { t: '상태' }],
       lcFinalRow(['국민연금', '4.5%', { v: '92,138' }, { v: '불일치', status: true }])
       + lcFinalRow(['건강보험', '3.545%', { v: '72,585' }, { v: '확인필요', status: true }])
       + lcFinalRow(['노인장기요양보험', '6.475%(건강보험료 기준)', { v: '4,703' }, { v: '확인필요', status: true }])
       + lcFinalRow(['고용보험(실업급여)', '0.9%', { v: '18,429' }, { v: '확인필요', status: true }])
       + lcFinalRow(['고용보험(고용안정부담금)', '0.65%', { v: '13,311' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['산재보험', '0.766%', { v: '15,165' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">소계 216,331천원(일반직·무기계약직·기간제, 인력운영경비+사업운영 전체 합산). <b>국민연금 불일치</b> — 요율 4.5%는 2025년까지의 법정 사업주부담률이고 2026년은 이미 4.75%로 인상돼 갱신이 필요합니다. 건강보험·장기요양·고용보험·산재보험 요율은 2026년 법정요율표 대조 전이라 확인필요.</p>'
+      + lcFinalRow(['산재보험', '0.766%', { v: '15,165' }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('타 위탁부서 — 산재보험료율(참고)', 4)
+      + lcFinalRow(['체육시설1부', '0.804%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['서남부체육시설', '0.766%(경기타운과 동일)', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['화성국민체육센터', '0.735%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['동탄어울림센터', '0.657%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['반월체육센터', '0.657%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['전곡항 마리나', '0.766%(경기타운과 동일)', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['오토캠핑장', '0.681%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['캠핑장', '0.681%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['화성체력인증센터', '0.697%/0.735% 혼용', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('타 위탁부서 — 노인장기요양보험료율(참고)', 4)
+      + lcFinalRow(['체육시설1부', '6.405%(일부 3.545% 오류)', { v: '—' }, { v: '불일치', status: true }])
+      + lcFinalRow(['서남부체육시설', '6.475%(경기타운과 동일)', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['화성국민체육센터', '6.475%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['동탄어울림센터', '6.475%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['반월체육센터', '6.475%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['전곡항 마리나', '6.475%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['오토캠핑장', '6.405%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['캠핑장', '6.405%', { v: '—' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['화성체력인증센터', '6.475%', { v: '—' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 216,331천원(일반직·무기계약직·기간제, 인력운영경비+사업운영 전체 합산). <b>국민연금 불일치</b> — 요율 4.5%는 2025년까지의 법정 사업주부담률이고 2026년은 이미 4.75%로 인상돼 갱신이 필요합니다. 건강보험·장기요양·고용보험·산재보험 요율은 2026년 법정요율표 대조 전이라 확인필요. <b>타 부서 대조 결과 산재보험료율(0.657%~0.804%)과 노인장기요양보험료율(6.405%/6.475%)이 부서마다 다릅니다</b> — 업종 분류나 시행 연도가 다른 요율을 섞어 쓰고 있을 가능성이 있어 확인이 필요하고, 체육시설1부는 같은 항목에 건강보험 요율(3.545%)을 잘못 쓴 것으로 보이는 명백한 오류가 있습니다.</p>'
   );
   out += '</details>';
 
