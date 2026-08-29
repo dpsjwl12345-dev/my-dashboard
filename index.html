@@ -9105,7 +9105,7 @@ function lcFinalSection() {
   out += '</details>';
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>수당</summary>';
-  out += lcFinalFundBlock('수당(출연금)', '', [19, 0, 1],
+  out += lcFinalFundBlock('수당(출연금)', '', [19, 0, 2],
     lcFinalTable([{ t: '세부' }, { t: '산식·기준', formula: true }, { t: '단가(원)' }, { t: '인원' }, { t: '상태' }],
       lcFinalGroupRow('초과근무수당(통상임금÷209×1.5×30시간×12월)', 5)
       + lcFinalRow(['3급(일반직)', { v: '단가÷209×1.5×30시간×12월', formula: true }, { v: '4,733,000' }, { v: '3명' }, { v: '일치', status: true }])
@@ -9133,8 +9133,10 @@ function lcFinalSection() {
       + lcFinalRow(['5년미만', { v: '정액×인원×12월', formula: true }, { v: '30,000' }, { v: '11명' }, { v: '일치', status: true }])
       + lcFinalRow(['5년이상 10년미만', { v: '정액×인원×12월', formula: true }, { v: '50,000' }, { v: '5명' }, { v: '일치', status: true }])
       + lcFinalGroupRow('파견공무원 근무수당(정액×인원×12월)', 5)
-      + lcFinalRow(['파견공무원', { v: '정액×인원×12월', formula: true }, { v: '400,000' }, { v: '1명' }, { v: '일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 266,705천원(초과근무수당 143,347 + 명절휴가비 52,502 + 가족수당 13,680 + 정액급식비 28,560 + 정근수당 16,856 + 정근수당가산금 6,960 + 파견공무원근무수당 4,800). 보수(750,895) + 수당(266,705) = 목101 인건비 합계 1,017,600천원, 원자료와 일치.</p>'
+      + lcFinalRow(['파견공무원', { v: '정액×인원×12월', formula: true }, { v: '400,000' }, { v: '1명' }, { v: '일치', status: true }])
+      + lcFinalGroupRow('(성인선수단) 승리수당', 5)
+      + lcFinalRow(['승리수당(10회)', { v: '산출식 없음', formula: true }, { v: '—' }, { v: '10회' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 428,705천원 — 사무국 266,705(초과근무수당 143,347 + 명절휴가비 52,502 + 가족수당 13,680 + 정액급식비 28,560 + 정근수당 16,856 + 정근수당가산금 6,960 + 파견공무원근무수당 4,800) + 성인선수단 승리수당 162,000(10회, 산출식 없어 확인필요).</p>'
   );
   out += '</details>';
 
