@@ -8480,7 +8480,7 @@ var LC_FINAL_INSTS = [
   { key: 'hscf', label: '① 화성시문화관광재단', funds: [] },
   { key: 'talent', label: '② 화성시인재육성재단', funds: [] },
   { key: 'fc', label: '③ 화성FC', funds: [] },
-  { key: 'corp', label: '④ 화성시도시공사', funds: ['위탁금'] }
+  { key: 'corp', label: '④ 화성시도시공사', funds: [] }
 ];
 function lcFinalSetInst(key) {
   LC.final.instKey = key;
@@ -9179,7 +9179,7 @@ function lcFinalSection() {
   out += '<div class="lc-section" style="border-left-color:var(--dept-temp)">';
 
   if (fundOk('위탁금')) {
-  out += lcFinalFundBlock('위탁금', '출연금 재원 없음 · 유일한 재원', [115, 3, 30],
+  out += lcFinalFundBlock('위탁금', '', [115, 3, 30],
     lcFinalTable([{ t: '구분' }, { t: '단가(원/년)' }, { t: '요구인원' }],
       lcFinalGroupRow('일반직', 3)
       + lcFinalRow(['2급', { v: '84,991,284 / 84,992,000' }, { v: '2' }])
