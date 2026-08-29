@@ -9068,60 +9068,76 @@ function lcFinalSection() {
   out += '</details>';
   }
 
-  // ===== 3. 화성FC =====
+  // ===== 3. 화성FC (사무국 인력운영비부터 순차 정리 — hscf/talent와 동일하게 카테고리별 <details>로 분리) =====
   if (f.instKey === 'fc') {
-  out += '<div class="lc-section" style="border-left-color:var(--dept-tour)">';
 
-  if (fundOk('출연금')) {
-  out += lcFinalFundBlock('출연금', '', [92, 0, 10],
-    lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
-      lcFinalGroupRow('일반직', 3)
-      + lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300' }, { v: '2' }])
-      + lcFinalRow(['2급(사무국장, 5급상당)', { v: '6,735,000' }, { v: '2' }])
-      + lcFinalRow(['3급', { v: '4,733,000 / 3,859,000' }, { v: '24' }])
-      + lcFinalRow(['4급', { v: '3,790,000 / 2,997,000' }, { v: '16' }])
-      + lcFinalRow(['5급', { v: '3,335,000 / 2,574,000' }, { v: '32' }])
-      + lcFinalRow(['6급', { v: '2,708,000 / 2,087,000' }, { v: '56' }])
-      + lcFinalGroupRow('기타직', 3)
-      + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
-      + lcFinalGroupRow('무기계약직', 3)
-      + lcFinalRow(['무기계약직', { v: '—' }, '자료 없음'])
-      + lcFinalGroupRow('기간제', 3)
-      + lcFinalRow(['기간제', { v: '—' }, '자료 없음']))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>축구단 직군 개별 단가</b>(&ldquo;기본급&rdquo; 목 안에 42건 혼재)</p>'
-    + lcFinalTable([{ t: '직군' }, { t: '단가(원)' }, { t: '단위' }],
-      lcFinalRow(['감독', { v: '200,000,000' }, '년'])
-      + lcFinalRow(['수석코치', { v: '6,125,000' }, '월'])
-      + lcFinalRow(['스카우터', { v: '5,833,333' }, '월'])
-      + lcFinalRow(['코치', { v: '4,375,000' }, '월'])
-      + lcFinalRow(['피지컬코치', { v: '5,950,000' }, '월'])
-      + lcFinalRow(['U-12·15·18 감독·코치', { v: '3,000,000 ~ 4,500,000' }, '월']))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
-    + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
-      lcFinalRow(['가족수당(배우자)', { v: '40,000' }, '—'])
-      + lcFinalRow(['정근수당가산금', { v: '30,000 / 50,000' }, '—'])
-      + lcFinalRow(['정액급식비', { v: '140,000' }, '—'])
-      + lcFinalRow(['파견공무원수당', { v: '400,000' }, '—']))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>일치 92건, 불일치 0건</b> — 산식이 있는 항목은 요구액과 전부 일치합니다.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여·평가급(별도 목, 수동 검증) — 정정: 둘 다 있습니다.</b></p>'
-    + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '요구액(천원)' }, { t: '상태' }],
-      lcFinalRow(['퇴직연금 부담금', { v: '1,004,390,000÷12개월', formula: true }, { v: '83,700' }, { v: '일치', status: true }])
-      + lcFinalRow(['퇴직연금(DB형) 운용수수료', { v: '187,381,000×0.65%', formula: true }, { v: '1,220' }, { v: '일치', status: true }])
-      + lcFinalRow(['직원(3급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,760' }, { v: '확인필요', status: true }])
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>인건비 — 사무국 인력운영비</summary>';
+  out += lcFinalFundBlock('사무국 인력운영비(출연금)', '', [25, 0, 2],
+    '<p class="lc-hint" style="margin-top:0;"><b>01 보수</b></p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('기본급(연봉제: 1·2급 / 봉급제: 3~6급)', 4)
+      + lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300×1.035×1명×12월', formula: true }, { v: '89,192', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['2급(사무국장, 5급상당)', { v: '6,735,000×1.035×1명×12월', formula: true }, { v: '83,649', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['3급', { v: '3,859,000×1.035×3명×12월', formula: true }, { v: '143,787', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '2,997,000×1.035×2명×12월', formula: true }, { v: '74,446', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '2,574,000×1.035×4명×12월', formula: true }, { v: '127,877', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,087,000×1.035×7명×12월', formula: true }, { v: '181,444', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('초과근무수당', 4)
+      + lcFinalRow(['3급', { v: '4,733,000÷209×1.5×30시간×3명×12월', formula: true }, { v: '36,687', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '3,790,000÷209×1.5×30시간×2명×12월', formula: true }, { v: '19,585', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '3,335,000÷209×1.5×30시간×4명×12월', formula: true }, { v: '34,467', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,708,000÷209×1.5×30시간×7명×12월', formula: true }, { v: '48,978', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('명절휴가비(×1.03×2회×60%, 연봉제 1·2급 제외)', 4)
+      + lcFinalRow(['3급', { v: '3,859,000×1.03×3명×2회×60%', formula: true }, { v: '14,310', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '2,997,000×1.03×2명×2회×60%', formula: true }, { v: '7,409', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '2,574,000×1.03×4명×2회×60%', formula: true }, { v: '12,726', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,087,000×1.03×7명×2회×60%', formula: true }, { v: '18,057', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('가족수당', 4)
+      + lcFinalRow(['배우자', { v: '40,000×11명×12월', formula: true }, { v: '5,280', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['자녀 첫째', { v: '50,000×6명×12월', formula: true }, { v: '3,600', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['자녀 둘째', { v: '80,000×5명×12월', formula: true }, { v: '4,800', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('정액급식비', 4)
+      + lcFinalRow(['전원(17명)', { v: '140,000×17명×12월', formula: true }, { v: '28,560', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('정근수당', 4)
+      + lcFinalRow(['3급', { v: '3,859,000×25%×3명×2월', formula: true }, { v: '5,789', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '2,997,000×25%×2명×2월', formula: true }, { v: '2,997', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '2,574,000×25%×4명×2월', formula: true }, { v: '5,148', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,087,000×10%×7명×2월', formula: true }, { v: '2,922', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('정근수당가산금', 4)
+      + lcFinalRow(['5년미만', { v: '30,000×11명×12월', formula: true }, { v: '3,960', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5년이상 10년미만', { v: '50,000×5명×12월', formula: true }, { v: '3,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('파견공무원 근무수당', 4)
+      + lcFinalRow(['파견공무원(1명)', { v: '400,000×1명×12월', formula: true }, { v: '4,800', formula: true }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">01 보수 소계 963,470천원(기본급 700,395 + 초과근무수당 139,717 + 명절휴가비 52,502 + 가족수당 13,680 + 정액급식비 28,560 + 정근수당 16,856 + 정근수당가산금 6,960 + 파견공무원근무수당 4,800) — 원자료 세목 합계와 정확히 일치.</p>'
+    + '<p class="lc-hint" style="margin-top:10px;"><b>04 기간제근로자등보수</b></p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)' }, { t: '상태' }],
+      lcFinalRow(['인턴 사원 보수(화성시 생활임금 적용)', { v: '산출식 없음', formula: true }, { v: '50,500' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['인턴 초과근무수당', { v: '산출식 없음', formula: true }, { v: '3,630' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">04 소계 54,130천원(인턴 2건) — 원자료에 총액만 있고 산출식이 없어 확인필요. 세목01(963,470) + 세목04(54,130) = 목101 인건비 합계 1,017,600천원, 원자료와 일치.</p>'
+  );
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>퇴직급여 — 사무국 인력운영비</summary>';
+  out += lcFinalFundBlock('퇴직급여(107목)', '', [2, 0, 0],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+      lcFinalRow(['퇴직연금 부담금', { v: '1,004,390,000÷12개월', formula: true }, { v: '83,700', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['퇴직연금(DB형) 운용수수료', { v: '187,381,000×0.65%', formula: true }, { v: '1,220', formula: true }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 84,920천원, 원자료와 일치.</p>'
+  );
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>평가급 — 사무국 인력운영비</summary>';
+  out += lcFinalFundBlock('평가급(109목)', '', [0, 0, 4],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)' }, { t: '상태' }],
+      lcFinalRow(['직원(3급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,760' }, { v: '확인필요', status: true }])
       + lcFinalRow(['직원(4급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,040' }, { v: '확인필요', status: true }])
       + lcFinalRow(['직원(5급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,880' }, { v: '확인필요', status: true }])
       + lcFinalRow(['직원(6급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '6,720' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">퇴직급여 84,920천원(0.85억)은 산식이 있고 전부 일치. 평가급 14,400천원(0.14억)은 요구액만 있고 산출식이 없어 단가 근거 확인 필요. (원자료에 동일 항목이 중복 저장되어 있어 2배로 보일 수 있음 — 실제 금액은 위 표 기준.)</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>확인필요 10건, 합계 10,461,060천원(104.6억원)</b> — 오탐 없이 순수 인건비만, 산출식 없이 총액만 기재돼 있어 원자료 대조가 필요합니다.</p>'
-    + lcFinalTable([{ t: '항목명' }, { t: '건수' }, { t: '합계(천원)' }],
-      lcFinalRow(['선수단 연봉(35명/옵션포함)', { v: '2건' }, { v: '10,000,000' }])
-      + lcFinalRow(['승리수당(10회)', { v: '2건' }, { v: '324,000' }])
-      + lcFinalRow(['인턴 사원 보수(화성시 생활임금 적용)', { v: '2건' }, { v: '101,000' }])
-      + lcFinalRow(['지도자 인건비', { v: '2건' }, { v: '28,800' }])
-      + lcFinalRow(['인턴 초과근무수당', { v: '2건' }, { v: '7,260' }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 14,400천원, 요구액만 있고 산출식이 없어 확인필요.</p>'
   );
-  }
-  out += '</div>';
+  out += '</details>';
+
+  out += '<p class="lc-hint" style="margin:4px 0 0;">사무국 인력운영비 전체 합계 1,116,920천원(인건비 1,017,600 + 퇴직급여 84,920 + 평가급 14,400). 화성FC의 나머지 항목(성인선수단·유스팀 운영, 홍보마케팅, 시민구단 지원 등)은 다음 단계에서 이어서 정리 예정.</p>';
   }
 
   // ===== 4. 화성시도시공사 =====
