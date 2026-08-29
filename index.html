@@ -1151,7 +1151,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 }
 .sidebar .side-item.active::before { opacity: 1; transform: scaleY(1); }
 .sidebar .side-item.active .side-icon { color: rgba(255,255,255,.9); background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
-.sidebar .side-item.inst-header { cursor: pointer; color: var(--sidebar-text); font-weight: 400; }
+.sidebar .side-item.inst-header { cursor: pointer; color: var(--sidebar-text); font-weight: 400; font-size: 15px; }
 .sidebar .side-item.inst-header:hover { background: var(--sidebar-hover-bg); }
 .sidebar .side-item.inst-header:hover .side-icon { background: rgba(255,255,255,.14); color: var(--sidebar-text); }
 .settle-data-dots { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; flex-shrink: 0; }
@@ -2054,32 +2054,23 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .lc-section.cat-temp { border-left-color: var(--dept-temp); }
 .lc-section.cat-temp .lc-cat-tag { background: var(--dept-temp-bg); color: var(--dept-temp); }
 .lc-section .lc-hint { font-size: 13.5px; color: var(--text-soft); margin: 0 0 12px; line-height: 1.6; }
-.lc-top-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+.lc-top-row { display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
 .lc-top-row .lc-raise-row { margin-bottom: 0; }
 .lc-top-row .filter-switch { margin-bottom: 0; }
-.lc-subtoggle { display: flex; gap: 8px; margin: 0 0 28px 8px; flex-wrap: wrap; padding-top: 4px; padding-left: 16px; border-left: 2px solid var(--border); }
+.lc-subtoggle { display: inline-flex; align-items: flex-end; gap: 26px; margin: 0 0 6px 20px; border-bottom: 1px solid var(--border); }
 .lc-subtoggle .tab-group { position: relative; }
 .lc-subtoggle .tab-group input { appearance: none; position: absolute; }
 .lc-subtoggle label {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: 10px 18px; line-height: 1.6;
-  border: 1px solid #cccccc; border-radius: 12px; cursor: pointer;
-  font-weight: 700; font-size: 14px; position: relative;
-  background-color: transparent; color: var(--text-muted);
-  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  padding: 9px 3px 14px; margin-bottom: -4px;
+  border: none; border-bottom: 4px solid transparent; cursor: pointer;
+  font-weight: 700; font-size: 15.5px; position: relative;
+  background-color: transparent; color: var(--navy-fill);
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
-.lc-subtoggle label::before {
-  content: ""; position: absolute; top: -20px; left: 50%;
-  width: 100%; height: 40px; border-radius: 12px; background-color: rgb(var(--tc, 10,60,255));
-  transform: translate(-50%, -50%); z-index: -1; opacity: 0; scale: 0; transform-origin: 0 0;
-  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.lc-subtoggle label:hover { border-color: rgb(var(--tc, 10,60,255)); color: rgb(var(--tc, 10,60,255)); }
-.lc-subtoggle input:checked + label { border-color: transparent; color: var(--navy); scale: 1.06; }
-.lc-subtoggle input:checked + label::before {
-  top: 50%; opacity: 1; scale: 1;
-  box-shadow: 0rem 6px 13px rgba(var(--tc, 10,60,255),.1), 0rem 24px 24px rgba(var(--tc, 10,60,255),.09), 0rem 55px 33px rgba(var(--tc, 10,60,255),.05), 0rem 97px 39px rgba(var(--tc, 10,60,255),.01), 0rem 152px 43px rgba(var(--tc, 10,60,255),0);
-}
+.lc-subtoggle label:hover { color: var(--navy); }
+.lc-subtoggle input:checked + label { color: var(--navy); border-bottom-color: var(--lime); font-weight: 700; }
+.lc-subtab-desc { margin: 0 0 14px 0; font-size: 15px; font-weight: 500; color: var(--navy-fill); }
 table.lc-table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 640px; }
 table.lc-table th, table.lc-table td { padding: 8px 9px; border-bottom: 1px solid var(--border); text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.lc-table th { color: var(--navy); font-weight: 800; font-size: 14.5px; background: var(--bg-hover); text-align: center; }
@@ -2146,43 +2137,65 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
 .lc-top-item.lc-top-grand .lc-top-amt span { color: rgba(255,255,255,.7); }
 @media (max-width: 900px) { .lc-top-summary { grid-template-columns: 1fr; } }
 .filter-switch {
-  background-color: var(--bg-hover);
-  border-radius: 15px;
-  box-shadow: 8px 8px 16px #D3D9EC, -8px -8px 16px #ffffff;
-  padding: 4px;
+  background-color: #000;
+  background-image: linear-gradient(180deg, #060606, #1c1c1c);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow:
+    inset 0 3px 6px rgba(0,0,0,.8),
+    inset 0 1px 2px rgba(0,0,0,.9),
+    inset 0 -1px 0 rgba(255,255,255,.07),
+    0 8px 18px rgba(0,0,0,.4),
+    0 1px 0 rgba(255,255,255,.05);
+  border-radius: 999px;
+  padding: 6px;
   position: relative;
   display: inline-flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-around;
+  gap: 4px;
   height: 50px;
   width: 500px;
   margin-bottom: 20px;
 }
 .filter-switch input { display: none; }
+.filter-switch .background {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 0;
+  border-radius: 999px;
+  background-image: linear-gradient(180deg, #ffffff, #ececec);
+  box-shadow: 0 2px 5px rgba(0,0,0,.35), 0 1px 1px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.8);
+  transition: transform .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1);
+  z-index: 0;
+  pointer-events: none;
+}
 .filter-switch label {
   flex: 1;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  line-height: 1.2;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 999px;
   position: relative;
-  overflow: hidden;
   z-index: 1;
-  transition: all 0.25s;
+  transition: color .25s;
   font-weight: 500;
   font-size: 16px;
   margin: 3px;
-  padding: 10px 4px;
+  padding: 0 4px;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  box-shadow: inset 3px 3px 6px #D3D9EC, inset -3px -3px 6px #ffffff;
-  color: var(--text-muted);
+  color: rgba(255,255,255,.6);
 }
 label[for="lc-opt-retire"] { flex: 1.4; }
-#lc-opt-labor:checked + label[for="lc-opt-labor"] { background-color: #3457D5; box-shadow: none; color: #fff; font-weight: 700; }
-#lc-opt-retire:checked + label[for="lc-opt-retire"] { background-color: #3D4560; box-shadow: none; color: #fff; font-weight: 700; }
-#lc-opt-eval:checked + label[for="lc-opt-eval"] { background-color: #C2699A; box-shadow: none; color: #fff; font-weight: 700; }
-#lc-opt-pension:checked + label[for="lc-opt-pension"] { background-color: #F6AD55; box-shadow: none; color: #fff; font-weight: 700; }
-#lc-opt-final:checked + label[for="lc-opt-final"] { background-color: var(--success); box-shadow: none; color: #fff; font-weight: 700; }
+#lc-opt-labor:checked + label[for="lc-opt-labor"],
+#lc-opt-retire:checked + label[for="lc-opt-retire"],
+#lc-opt-eval:checked + label[for="lc-opt-eval"],
+#lc-opt-pension:checked + label[for="lc-opt-pension"],
+#lc-opt-final:checked + label[for="lc-opt-final"] { color: #000; font-weight: 700; }
 .lc-mini-total { display: flex; justify-content: space-between; align-items: baseline; background: var(--bg-hover); border-radius: 8px; padding: 7px 12px; margin-bottom: 8px; font-size: 13px; color: var(--text-muted); font-weight: 600; }
 .lc-mini-total b { color: var(--text); font-size: 15px; font-variant-numeric: tabular-nums; }
 .lc-warn-box { background: var(--danger-soft); border: 1px solid rgba(214,69,90,.35); border-radius: var(--r-lg); padding: 14px 20px; margin-bottom: 16px; }
@@ -8046,6 +8059,41 @@ function lcSetView(view) {
   LC.view = view;
   renderLaborCalc();
 }
+var lcLastFilterView = null;
+function lcPositionFilterIndicator() {
+  var wrap = document.getElementById('firstFilter');
+  if (!wrap) return;
+  var bar = wrap.querySelector('.background');
+  var checkedInput = wrap.querySelector('input:checked');
+  if (!bar || !checkedInput) return;
+  var label = wrap.querySelector('label[for="' + checkedInput.id + '"]');
+  if (!label) return;
+  // 서브탭 클릭 등 메인탭과 무관한 리렌더에서는 매번 DOM이 새로 생기므로,
+  // transition을 켜둔 채로 위치를 잡으면 흰 캡슐이 0에서 다시 자라나는 것처럼 보여
+  // "보수 탭이 눌리는" 것처럼 깜빡였다. 실제로 메인탭이 바뀐 경우에만 애니메이션을 허용.
+  var changed = LC.view !== lcLastFilterView;
+  if (!changed) bar.style.transition = 'none';
+  bar.style.width = label.offsetWidth + 'px';
+  bar.style.transform = 'translateX(' + label.offsetLeft + 'px)';
+  if (!changed) { bar.offsetHeight; bar.style.transition = ''; }
+  lcLastFilterView = LC.view;
+}
+function lcPositionSubDesc() {
+  // 서브 설명은 고정 위치가 아니라, 현재 선택된 서브탭(01 일반직~04 기간제) 바로 아래로 따라가야 한다.
+  // 기준은 .lc-subtoggle 자신이 아니라 공통 부모(laborcalc-body) — subtoggle 자체의 들여쓰기(margin-left)까지 포함해서 맞춰야 하기 때문.
+  var desc = document.getElementById('lc-subtab-desc');
+  var toggle = document.querySelector('.lc-subtoggle');
+  var base = document.getElementById('laborcalc-body');
+  if (!desc || !toggle || !base) return;
+  var checkedLabel = toggle.querySelector('input:checked + label');
+  if (!checkedLabel) return;
+  desc.style.marginLeft = '0px';
+  var baseRect = base.getBoundingClientRect();
+  var labelRect = checkedLabel.getBoundingClientRect();
+  desc.style.marginLeft = (labelRect.left - baseRect.left) + 'px';
+}
+if (document.fonts && document.fonts.ready) { document.fonts.ready.then(lcPositionFilterIndicator); }
+window.addEventListener('resize', lcPositionFilterIndicator);
 function lcSetLaborSub(sub) {
   LC.laborSub = sub;
   renderLaborCalc();
@@ -9603,7 +9651,9 @@ function renderLaborCalc() {
       + '</div>';
   }).join('') + '</div>';
   var laborSectionMap = { pay: section01, other02: section02, other03: section03, other04: section04 };
-  var laborHtml = laborSubToggle + laborSectionMap[LC.laborSub];
+  var laborSubDesc = { pay: '정원 내 정규직 1-6급 체계', other02: '정원 범위 내 전문 임기제 직원(가~마급 체계)', other04: '정원 외의 계약직, 출산대체직 등 비정규직' };
+  var laborDescHtml = laborSubDesc[LC.laborSub] ? '<p id="lc-subtab-desc" class="lc-subtab-desc">' + laborSubDesc[LC.laborSub] + '</p>' : '';
+  var laborHtml = laborSubToggle + laborDescHtml + laborSectionMap[LC.laborSub];
   var viewHtml = LC.view === 'retire' ? section06
     : LC.view === 'eval' ? section07
     : LC.view === 'pension' ? section05
@@ -9611,6 +9661,8 @@ function renderLaborCalc() {
     : laborHtml;
   var topRow = '<div class="lc-top-row">' + toggleHtml + (LC.view === 'labor' ? raiseHtml : '') + '</div>';
   el.innerHTML = topRow + viewHtml;
+  requestAnimationFrame(lcPositionFilterIndicator);
+  requestAnimationFrame(lcPositionSubDesc);
 }
 
 function showLaborCalc() {
