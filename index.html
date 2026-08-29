@@ -8808,34 +8808,34 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>인건비</summary>';
   out += lcFinalFundBlock('보수', '', [0, 0, 22],
-    '<p class="lc-hint" style="margin-top:0;"><b>① 경영기획본부(출연금)<÷b><÷p>'
-    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
-      lcFinalRow(['대표이사', { v: '8,136,400×1명×12월', formula: true }, { v: '97,636,800', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['3급', { v: '3,848,900×2명×12월', formula: true }, { v: '92,373,600', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['4급', { v: '3,219,200×9명×12월', formula: true }, { v: '347,673,600', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['5급', { v: '2,434,400×7명×12월', formula: true }, { v: '204,489,600', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['6급', { v: '2,068,300×4명×12월', formula: true }, { v: '99,278,400', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['가급', { v: '6,223,180×1명×12월', formula: true }, { v: '74,678,160', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['나급', { v: '6,116,200×1명×12월', formula: true }, { v: '73,394,400', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['장애인 행정실무', { v: '12,536×104.5시간×1명×12월', formula: true }, { v: '15,720,144', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['행정실무사', { v: '12,536×209시간×1명×12월', formula: true }, { v: '31,440,288', formula: true }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>② 교육지원과(위탁금)<÷b><÷p>'
-    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
-      lcFinalRow(['3급', { v: '4,161,200×2명×12월', formula: true }, { v: '99,868,800', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['4급', { v: '3,027,300×2명×12월', formula: true }, { v: '72,655,200', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['5급', { v: '2,970,500×5명×12월', formula: true }, { v: '178,230,000', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['6급', { v: '2,104,000×3명×12월', formula: true }, { v: '75,744,000', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['라급', { v: '3,093,270×1명×12월', formula: true }, { v: '37,119,240', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['마급', { v: '2,403,010×9명×12월', formula: true }, { v: '259,525,080', formula: true }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>③ 도서관정책과(위탁금)<÷b><÷p>'
-    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
-      lcFinalRow(['3급', { v: '3,848,900×1명×12월', formula: true }, { v: '46,186,800', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['4급', { v: '3,027,300×4명×12월', formula: true }, { v: '145,310,400', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['5급', { v: '2,228,500×5명×12월', formula: true }, { v: '133,710,000', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['6급', { v: '2,068,300×10명×12월', formula: true }, { v: '248,196,000', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['도서관 실무(공무직) 1단계', { v: '2,221,590×12명×12월', formula: true }, { v: '319,908,960', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['도서관실무(초단시간) 등', { v: '12,090×59시간×10명×12월', formula: true }, { v: '85,597,200', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['장애인 도서관실무', { v: '12,090×104.5시간×2명×12월', formula: true }, { v: '30,321,720', formula: true }, { v: '확인필요', status: true }]))
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('01 일반직', 4)
+      + lcFinalRow(['대표이사(경영기획본부)', { v: '8,136,400×1명×12월', formula: true }, { v: '97,636,800', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['3급(경영기획본부)', { v: '3,848,900×2명×12월', formula: true }, { v: '92,373,600', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급(경영기획본부)', { v: '3,219,200×9명×12월', formula: true }, { v: '347,673,600', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급(경영기획본부)', { v: '2,434,400×7명×12월', formula: true }, { v: '204,489,600', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급(경영기획본부)', { v: '2,068,300×4명×12월', formula: true }, { v: '99,278,400', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['3급(교육지원과)', { v: '4,161,200×2명×12월', formula: true }, { v: '99,868,800', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급(교육지원과)', { v: '3,027,300×2명×12월', formula: true }, { v: '72,655,200', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급(교육지원과)', { v: '2,970,500×5명×12월', formula: true }, { v: '178,230,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급(교육지원과)', { v: '2,104,000×3명×12월', formula: true }, { v: '75,744,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['3급(도서관정책과)', { v: '3,848,900×1명×12월', formula: true }, { v: '46,186,800', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급(도서관정책과)', { v: '3,027,300×4명×12월', formula: true }, { v: '145,310,400', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급(도서관정책과)', { v: '2,228,500×5명×12월', formula: true }, { v: '133,710,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급(도서관정책과)', { v: '2,068,300×10명×12월', formula: true }, { v: '248,196,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('02 기타직', 4)
+      + lcFinalRow(['가급(경영기획본부)', { v: '6,223,180×1명×12월', formula: true }, { v: '74,678,160', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['나급(경영기획본부)', { v: '6,116,200×1명×12월', formula: true }, { v: '73,394,400', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['라급(교육지원과)', { v: '3,093,270×1명×12월', formula: true }, { v: '37,119,240', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['마급(교육지원과)', { v: '2,403,010×9명×12월', formula: true }, { v: '259,525,080', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('03 무기계약직', 4)
+      + lcFinalRow(['도서관 실무(공무직) 1단계(도서관정책과)', { v: '2,221,590×12명×12월', formula: true }, { v: '319,908,960', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('04 기간제', 4)
+      + lcFinalRow(['장애인 행정실무(경영기획본부)', { v: '12,536×104.5시간×1명×12월', formula: true }, { v: '15,720,144', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['행정실무사(경영기획본부)', { v: '12,536×209시간×1명×12월', formula: true }, { v: '31,440,288', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['도서관실무(초단시간) 등(도서관정책과)', { v: '12,090×59시간×10명×12월', formula: true }, { v: '85,597,200', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['장애인 도서관실무(도서관정책과)', { v: '12,090×104.5시간×2명×12월', formula: true }, { v: '30,321,720', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">부서별(①경영기획본부·②교육지원과·③도서관정책과) 나열 대신 01 일반직~04 기간제 고용구분 기준으로 재정렬 — 합계·상태는 기존과 동일(22건 전부 확인필요).</p>'
   );
   out += '</details>';
 
