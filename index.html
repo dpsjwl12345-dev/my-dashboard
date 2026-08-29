@@ -9071,7 +9071,7 @@ function lcFinalSection() {
   // ===== 3. 화성FC (사무국 인력운영비부터 순차 정리 — hscf/talent와 동일하게 카테고리별 <details>로 분리) =====
   if (f.instKey === 'fc') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>보수 — 사무국 인력운영비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>인건비 — 사무국 인력운영비</summary>';
   out += lcFinalFundBlock('보수(출연금)', '', [6, 0, 1],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직(연봉제: 1·2급 / 봉급제: 3~6급)', 4)
