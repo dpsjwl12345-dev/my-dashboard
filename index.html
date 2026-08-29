@@ -9178,107 +9178,107 @@ function lcFinalSection() {
   if (f.instKey === 'corp') {
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>인건비</summary>';
-  out += lcFinalFundBlock('보수(위탁금) — 화성종합경기타운', '', [10, 0, 0],
+  out += lcFinalFundBlock('보수(위탁금) — 화성종합경기타운', '', [0, 0, 10],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직 보수', 4)
-      + lcFinalRow(['2급', { v: '84,991,284×1명', formula: true }, { v: '84,992', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['3급', { v: '66,514,668×2명', formula: true }, { v: '133,030', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['4급', { v: '54,411,710×5명', formula: true }, { v: '272,059', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['5급', { v: '45,712,584×5명', formula: true }, { v: '228,563', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['6급', { v: '38,063,782×1명', formula: true }, { v: '38,064', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['3급(사업운영)', { v: '66,213,828×1명', formula: true }, { v: '66,214', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['4급(사업운영)', { v: '54,189,906×2명', formula: true }, { v: '108,380', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['2급', { v: '84,991,284×1명', formula: true }, { v: '84,992', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['3급', { v: '66,514,668×2명', formula: true }, { v: '133,030', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급', { v: '54,411,710×5명', formula: true }, { v: '272,059', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급', { v: '45,712,584×5명', formula: true }, { v: '228,563', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급', { v: '38,063,782×1명', formula: true }, { v: '38,064', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['3급(사업운영)', { v: '66,213,828×1명', formula: true }, { v: '66,214', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급(사업운영)', { v: '54,189,906×2명', formula: true }, { v: '108,380', formula: true }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('03 무기계약직 보수', 4)
-      + lcFinalRow(['기본연봉', { v: '37,387,739×5명', formula: true }, { v: '186,939', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['기본연봉(사업운영)', { v: '36,947,700×10명', formula: true }, { v: '369,477', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['기본연봉', { v: '37,387,739×5명', formula: true }, { v: '186,939', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['기본연봉(사업운영)', { v: '36,947,700×10명', formula: true }, { v: '369,477', formula: true }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('04 기간제 보수', 4)
-      + lcFinalRow(['기본급', { v: '2,526,810×2명×8개월', formula: true }, { v: '40,429', formula: true }, { v: '일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">보수 소계 1,528,147천원 — 01 일반직 931,302 + 03 무기계약직 556,416 + 04 기간제 40,429, 전부 원자료와 일치.</p>'
+      + lcFinalRow(['기본급', { v: '2,526,810×2명×8개월', formula: true }, { v: '40,429', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">보수 소계 1,528,147천원 — 01 일반직 931,302 + 03 무기계약직 556,416 + 04 기간제 40,429. 산출식과 원자료 금액은 서로 맞지만, 이는 같은 원자료 안에서 자기 자신과 비교한 것일 뿐 — 단가 자체가 화성시도시공사 보수규정(직급별 연봉표)에 맞는 금액인지는 규정 문서 대조 전까지 확인필요.</p>'
   );
   out += '</details>';
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>수당</summary>';
-  out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [5, 0, 4],
+  out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [0, 0, 9],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직', 4)
-      + lcFinalRow(['연차수당', { v: '4,759,556÷209×8×10일×14명', formula: true }, { v: '25,506', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['연차수당', { v: '4,759,556÷209×8×10일×14명', formula: true }, { v: '25,506', formula: true }, { v: '확인필요', status: true }])
       + lcFinalRow(['초과근무수당', { v: '산출식 없음', formula: true }, { v: '115,456' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['연차수당(사업운영)', { v: '5,122,881÷209×8×10일×3명', formula: true }, { v: '5,883', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['연차수당(사업운영)', { v: '5,122,881÷209×8×10일×3명', formula: true }, { v: '5,883', formula: true }, { v: '확인필요', status: true }])
       + lcFinalRow(['초과근무수당(사업운영)', { v: '산출식 없음', formula: true }, { v: '37,062' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('03 무기계약직', 4)
-      + lcFinalRow(['연차수당', { v: '3,300,828÷209×8×10일×5명', formula: true }, { v: '6,318', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['연차수당', { v: '3,300,828÷209×8×10일×5명', formula: true }, { v: '6,318', formula: true }, { v: '확인필요', status: true }])
       + lcFinalRow(['초과근무수당', { v: '산출식 없음', formula: true }, { v: '17,057' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['연차수당(사업운영)', { v: '3,287,420÷209×8×10일×10명', formula: true }, { v: '12,584', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['연차수당(사업운영)', { v: '3,287,420÷209×8×10일×10명', formula: true }, { v: '12,584', formula: true }, { v: '확인필요', status: true }])
       + lcFinalRow(['초과근무수당(사업운영)', { v: '산출식 없음', formula: true }, { v: '75,503' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('04 기간제', 4)
-      + lcFinalRow(['연차수당', { v: '12,090×2명×8시간×8일', formula: true }, { v: '1,547', formula: true }, { v: '일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 296,916천원 — 01 일반직 183,907 + 03 무기계약직 111,462 + 04 기간제 1,547. 보수(1,528,147) + 수당(296,916) = 인건비 합계 1,825,063천원, 원자료와 일치. 초과근무수당 4건만 총액만 있고 산출식이 없어 확인필요.</p>'
+      + lcFinalRow(['연차수당', { v: '12,090×2명×8시간×8일', formula: true }, { v: '1,547', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 296,916천원 — 01 일반직 183,907 + 03 무기계약직 111,462 + 04 기간제 1,547. 연차수당은 근로기준법 산정식(통상임금÷209×8시간×미사용일수)을 그대로 따르고 있으나 미사용일수 자체가 맞는지는 확인필요, 초과근무수당 4건은 산출식조차 없어 확인필요.</p>'
   );
   out += '</details>';
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>퇴직급여</summary>';
-  out += lcFinalFundBlock('퇴직급여(위탁금) — 화성종합경기타운', '', [4, 0, 0],
+  out += lcFinalFundBlock('퇴직급여(위탁금) — 화성종합경기타운', '', [0, 0, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
-      lcFinalRow(['일반직', { v: '1,012,064,996÷12×1회', formula: true }, { v: '84,339', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['무기계약직', { v: '239,942,278÷12×1회', formula: true }, { v: '19,996', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['일반직(사업운영)', { v: '244,927,674÷12×1회', formula: true }, { v: '20,411', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['무기계약직(사업운영)', { v: '509,734,587÷12×1회', formula: true }, { v: '42,478', formula: true }, { v: '일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">소계 167,224천원(인력운영경비 104,335 + 사업운영 62,889), 전부 원자료와 일치.</p>'
+      lcFinalRow(['일반직', { v: '1,012,064,996÷12×1회', formula: true }, { v: '84,339', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['무기계약직', { v: '239,942,278÷12×1회', formula: true }, { v: '19,996', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['일반직(사업운영)', { v: '244,927,674÷12×1회', formula: true }, { v: '20,411', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['무기계약직(사업운영)', { v: '509,734,587÷12×1회', formula: true }, { v: '42,478', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 167,224천원(인력운영경비 104,335 + 사업운영 62,889). 산정 방식(기준액÷12×1회)은 근로자퇴직급여보장법상 DB형 퇴직연금의 표준 월할 적립 방식과 일치하나, 기준액(연간 보수총액) 자체가 맞는지는 확인필요.</p>'
   );
   out += '</details>';
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>평가급</summary>';
-  out += lcFinalFundBlock('평가급(위탁금) — 화성종합경기타운', '', [6, 0, 0],
+  out += lcFinalFundBlock('평가급(위탁금) — 화성종합경기타운', '', [0, 0, 6],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
-      lcFinalRow(['일반직 경영평가급', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['일반직 자체평가급', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['업무직 경영평가급', { v: '2,962,930×5명×100%', formula: true }, { v: '14,815', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['일반직 경영평가급(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['일반직 자체평가급(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['무기계약직 경영평가급(사업운영)', { v: '2,962,930×10명×100%', formula: true }, { v: '29,630', formula: true }, { v: '일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">소계 185,059천원(인력운영경비 129,215 + 사업운영 55,844), 전부 원자료와 일치.</p>'
+      lcFinalRow(['일반직 경영평가급', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['일반직 자체평가급', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['업무직 경영평가급', { v: '2,962,930×5명×100%', formula: true }, { v: '14,815', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['일반직 경영평가급(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['일반직 자체평가급(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['무기계약직 경영평가급(사업운영)', { v: '2,962,930×10명×100%', formula: true }, { v: '29,630', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 185,059천원(인력운영경비 129,215 + 사업운영 55,844). 지급률(100%)이 도시공사 자체 평가급 지급 규정에 맞는지 확인필요 — 지방공기업 예산편성기준상 개인성과급은 경영평가·자체평가 결과에 따라 등급별 차등 지급하는 게 원칙이라, 전 인원 일괄 100% 지급이 실제 평가 결과를 반영한 것인지 근거 확인이 필요합니다.</p>'
   );
   out += '</details>';
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>연금</summary>';
-  out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [30, 0, 0],
+  out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [0, 5, 25],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직', 4)
-      + lcFinalRow(['국민연금부담금', { v: '1,022,252,162×4.5%', formula: true }, { v: '45,543', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '1,012,064,996×3.545%', formula: true }, { v: '35,878', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '35,877,704×6.475%', formula: true }, { v: '2,324', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '1,012,064,996×0.9%', formula: true }, { v: '9,109', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '1,012,064,996×0.65%', formula: true }, { v: '6,579', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['산재보험', { v: '1,012,064,996×0.766%', formula: true }, { v: '7,753', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['국민연금부담금', { v: '1,022,252,162×4.5%', formula: true }, { v: '45,543', formula: true }, { v: '불일치', status: true }])
+      + lcFinalRow(['국민건강보험', { v: '1,012,064,996×3.545%', formula: true }, { v: '35,878', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['노인장기요양보험', { v: '35,877,704×6.475%', formula: true }, { v: '2,324', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(실업급여)', { v: '1,012,064,996×0.9%', formula: true }, { v: '9,109', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(고용안정부담금)', { v: '1,012,064,996×0.65%', formula: true }, { v: '6,579', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['산재보험', { v: '1,012,064,996×0.766%', formula: true }, { v: '7,753', formula: true }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('일반직(사업운영)', 4)
-      + lcFinalRow(['국민연금보험', { v: '243,751,128×4.5%', formula: true }, { v: '10,969', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '243,751,128×3.545%', formula: true }, { v: '8,641', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '8,640,977×6.475%', formula: true }, { v: '560', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '243,751,128×0.9%', formula: true }, { v: '2,194', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '243,751,128×0.65%', formula: true }, { v: '1,585', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['산재보험', { v: '243,751,128×0.766%', formula: true }, { v: '1,699', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['국민연금보험', { v: '243,751,128×4.5%', formula: true }, { v: '10,969', formula: true }, { v: '불일치', status: true }])
+      + lcFinalRow(['국민건강보험', { v: '243,751,128×3.545%', formula: true }, { v: '8,641', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['노인장기요양보험', { v: '8,640,977×6.475%', formula: true }, { v: '560', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(실업급여)', { v: '243,751,128×0.9%', formula: true }, { v: '2,194', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(고용안정부담금)', { v: '243,751,128×0.65%', formula: true }, { v: '1,585', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['산재보험', { v: '243,751,128×0.766%', formula: true }, { v: '1,699', formula: true }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('무기계약직', 4)
-      + lcFinalRow(['국민연금부담금', { v: '239,942,278×4.5%', formula: true }, { v: '10,798', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '239,942,278×3.545%', formula: true }, { v: '8,506', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '8,505,954×6.475%', formula: true }, { v: '551', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '239,942,278×0.9%', formula: true }, { v: '2,160', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '239,942,278×0.65%', formula: true }, { v: '1,560', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['산재보험', { v: '239,942,278×0.766%', formula: true }, { v: '1,838', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['국민연금부담금', { v: '239,942,278×4.5%', formula: true }, { v: '10,798', formula: true }, { v: '불일치', status: true }])
+      + lcFinalRow(['국민건강보험', { v: '239,942,278×3.545%', formula: true }, { v: '8,506', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['노인장기요양보험', { v: '8,505,954×6.475%', formula: true }, { v: '551', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(실업급여)', { v: '239,942,278×0.9%', formula: true }, { v: '2,160', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(고용안정부담금)', { v: '239,942,278×0.65%', formula: true }, { v: '1,560', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['산재보험', { v: '239,942,278×0.766%', formula: true }, { v: '1,838', formula: true }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('무기계약직(사업운영)', 4)
-      + lcFinalRow(['국민연금보험', { v: '509,734,587×4.5%', formula: true }, { v: '22,939', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '509,734,587×3.545%', formula: true }, { v: '18,071', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '18,070,091×6.475%', formula: true }, { v: '1,171', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '509,734,587×0.9%', formula: true }, { v: '4,588', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '509,734,587×0.65%', formula: true }, { v: '3,314', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['산재보험', { v: '509,734,587×0.766%', formula: true }, { v: '3,553', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['국민연금보험', { v: '509,734,587×4.5%', formula: true }, { v: '22,939', formula: true }, { v: '불일치', status: true }])
+      + lcFinalRow(['국민건강보험', { v: '509,734,587×3.545%', formula: true }, { v: '18,071', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['노인장기요양보험', { v: '18,070,091×6.475%', formula: true }, { v: '1,171', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(실업급여)', { v: '509,734,587×0.9%', formula: true }, { v: '4,588', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(고용안정부담금)', { v: '509,734,587×0.65%', formula: true }, { v: '3,314', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['산재보험', { v: '509,734,587×0.766%', formula: true }, { v: '3,553', formula: true }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('기간제', 4)
-      + lcFinalRow(['국민연금부담금', { v: '41,976,000×4.5%', formula: true }, { v: '1,889', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '41,976,000×3.545%', formula: true }, { v: '1,489', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '1,488,049×6.475%', formula: true }, { v: '97', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '41,976,000×0.9%', formula: true }, { v: '378', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '41,976,000×0.65%', formula: true }, { v: '273', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['산재보험', { v: '41,976,000×0.766%', formula: true }, { v: '322', formula: true }, { v: '일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">소계 216,331천원(인력운영경비 137,047 + 사업운영 79,284), 전부 원자료와 일치. 국민연금 요율은 4.5%로 2025년까지의 법정 사업주부담률과 같으나, 2026년 4.75%·2027년 5.0%로 법정 인상이 이미 시작되어 갱신이 필요합니다.</p>'
+      + lcFinalRow(['국민연금부담금', { v: '41,976,000×4.5%', formula: true }, { v: '1,889', formula: true }, { v: '불일치', status: true }])
+      + lcFinalRow(['국민건강보험', { v: '41,976,000×3.545%', formula: true }, { v: '1,489', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['노인장기요양보험', { v: '1,488,049×6.475%', formula: true }, { v: '97', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(실업급여)', { v: '41,976,000×0.9%', formula: true }, { v: '378', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(고용안정부담금)', { v: '41,976,000×0.65%', formula: true }, { v: '273', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['산재보험', { v: '41,976,000×0.766%', formula: true }, { v: '322', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 216,331천원(인력운영경비 137,047 + 사업운영 79,284). <b>국민연금 5건 전부 불일치</b> — 요율 4.5%는 2025년까지의 법정 사업주부담률이고, 2026년은 이미 4.75%로 법정 인상돼 2026년도 예산에는 갱신이 반영됐어야 합니다. 건강보험·장기요양·고용보험·산재보험 요율은 2026년 법정요율표를 아직 대조하지 못해 확인필요로 남겨둡니다.</p>'
   );
   out += '</details>';
 
