@@ -9193,34 +9193,22 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>수당 ' + lcFinalPill('일치', 3, 'good') + lcFinalPill('불일치', 0, 'bad') + lcFinalPill('확인필요', 16, 'warn') + '</summary>';
-  out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [3, 0, 16],
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>수당 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 0, 'bad') + lcFinalPill('확인필요', 9, 'warn') + '</summary>';
+  out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [0, 0, 9],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직', 4)
       + lcFinalRow(['연차수당', { v: '4,759,556÷209×8×10일×14명', formula: true }, { v: '25,506' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['초과근무수당', { v: '산출식 없음', formula: true }, { v: '115,456' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['초과근무수당', { v: '단가×인원×시간×12개월×1.5÷209 (시간·단가 세부 미기재, 총액만 있음)', formula: true }, { v: '115,456' }, { v: '확인필요', status: true }])
       + lcFinalRow(['연차수당(사업운영)', { v: '5,122,881÷209×8×10일×3명', formula: true }, { v: '5,883' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['초과근무수당(사업운영)', { v: '산출식 없음', formula: true }, { v: '37,062' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['초과근무수당(사업운영)', { v: '단가×인원×시간×12개월×1.5÷209 (시간·단가 세부 미기재, 총액만 있음)', formula: true }, { v: '37,062' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('03 무기계약직', 4)
       + lcFinalRow(['연차수당', { v: '3,300,828÷209×8×10일×5명', formula: true }, { v: '6,318' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['초과근무수당', { v: '산출식 없음', formula: true }, { v: '17,057' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['초과근무수당', { v: '단가×인원×시간×12개월×1.5÷209 (시간·단가 세부 미기재, 총액만 있음)', formula: true }, { v: '17,057' }, { v: '확인필요', status: true }])
       + lcFinalRow(['연차수당(사업운영)', { v: '3,287,420÷209×8×10일×10명', formula: true }, { v: '12,584' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['초과근무수당(사업운영)', { v: '산출식 없음', formula: true }, { v: '75,503' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['초과근무수당(사업운영)', { v: '단가×인원×시간×12개월×1.5÷209 (시간·단가 세부 미기재, 총액만 있음)', formula: true }, { v: '75,503' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('04 기간제', 4)
-      + lcFinalRow(['연차수당', { v: '12,090×2명×8시간×8일', formula: true }, { v: '1,547' }, { v: '확인필요', status: true }])
-      + lcFinalGroupRow('타 위탁부서 — 초과근무수당(참고)', 4)
-      + lcFinalRow(['체육시설1부', { v: '통상임금÷209×시간×12개월×1.5(직원별 상이)', formula: true }, { v: '151,000' }, { v: '일치', status: true }])
-      + lcFinalRow(['서남부체육시설', { v: '통상임금÷209×시간×12개월×1.5(직원별 상이)', formula: true }, { v: '136,872' }, { v: '일치', status: true }])
-      + lcFinalRow(['화성체력인증센터', { v: '통상임금÷209×시간×5개월×1.5(직원별 상이)', formula: true }, { v: '6,327' }, { v: '일치', status: true }])
-      + lcFinalRow(['오토캠핑장', { v: '기간제 1건만 산출식 있음, 나머지 없음', formula: true }, { v: '81,382' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['캠핑장', { v: '기간제 1건만 산출식 있음, 나머지 없음', formula: true }, { v: '38,696' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['화성국민체육센터', { v: '산출식 없음', formula: true }, { v: '162,828' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['동탄어울림센터', { v: '산출식 없음', formula: true }, { v: '101,415' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['반월체육센터', { v: '산출식 없음', formula: true }, { v: '165,959' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['전곡항 마리나', { v: '산출식 없음', formula: true }, { v: '110,840' }, { v: '확인필요', status: true }])
-      + lcFinalGroupRow('체육시설1부 — 피복비(참고, 신규 항목)', 4)
-      + lcFinalRow(['피복비', { v: '100,000×1명×2회', formula: true }, { v: '200' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 296,916천원(경기타운) — 01 일반직 183,907 + 03 무기계약직 111,462 + 04 기간제 1,547. 연차수당은 근로기준법 산정식(통상임금÷209×8시간×미사용일수)을 그대로 따르고 있으나 미사용일수 자체가 맞는지는 확인필요, 초과근무수당 4건은 산출식조차 없어 확인필요. <b>타 부서 대조 결과, 경기타운의 초과근무수당 산출식 누락은 특별한 게 아니라 화성국민체육센터·동탄어울림·반월·전곡항도 동일하게 산출식이 없습니다</b>(체육시설1부·서남부·화성체력인증센터 3곳만 산출식 있음). 체육시설1부에만 있는 피복비는 다른 부서에 없는 항목이라 지급 근거 확인이 필요합니다.</p>'
+      + lcFinalRow(['연차수당', { v: '12,090×2명×8시간×8일', formula: true }, { v: '1,547' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 296,916천원 — 01 일반직 183,907 + 03 무기계약직 111,462 + 04 기간제 1,547. 연차수당은 근로기준법 산정식(통상임금÷209×8시간×미사용일수)을 따르고 있으나 미사용일수가 맞는지는 확인필요. 초과근무수당은 도시공사 위탁사업 전체가 공통으로 &ldquo;단가×인원×시간×12개월×1.5÷209&rdquo; 방식을 쓰는 게 확인됐지만, 경기타운 원자료엔 이 중 시간·단가 세부값이 빠지고 총액만 남아 있어 확인필요로 유지합니다.</p>'
   );
   out += '</details>';
 
