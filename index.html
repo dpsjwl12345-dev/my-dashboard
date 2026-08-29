@@ -9229,23 +9229,25 @@ function lcFinalSection() {
   out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>평가급 ' + lcFinalPill('일치', 0, 'good') + lcFinalPill('불일치', 4, 'bad') + lcFinalPill('확인필요', 11, 'warn') + '</summary>';
   out += lcFinalFundBlock('평가급(위탁금) — 화성종합경기타운', '', [0, 4, 11],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
-      lcFinalRow(['일반직 경영평가급', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['일반직 자체평가급', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['업무직 경영평가급', { v: '2,962,930×5명×100%', formula: true }, { v: '14,815' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['일반직 경영평가급(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['일반직 자체평가급(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['무기계약직 경영평가급(사업운영)', { v: '2,962,930×10명×100%', formula: true }, { v: '29,630' }, { v: '확인필요', status: true }])
-      + lcFinalGroupRow('타 위탁부서 — 지급률 차이', 4)
-      + lcFinalRow(['오토캠핑장 일반직 경영평가급', { v: '3,809,560×2명×150%', formula: true }, { v: '11,429' }, { v: '불일치', status: true }])
-      + lcFinalRow(['오토캠핑장 일반직 자체평가급', { v: '3,809,560×2명×100%', formula: true }, { v: '7,619' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['오토캠핑장 업무직 경영평가급', { v: '3,059,527×8명×150%', formula: true }, { v: '36,712' }, { v: '불일치', status: true }])
-      + lcFinalRow(['캠핑장 일반직 경영평가급', { v: '3,987,776×3명×150%', formula: true }, { v: '17,945' }, { v: '불일치', status: true }])
-      + lcFinalRow(['캠핑장 일반직 자체평가급', { v: '3,987,776×3명×100%', formula: true }, { v: '11,964' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['캠핑장 업무직 경영평가급', { v: '2,962,930×4명×150%', formula: true }, { v: '17,778' }, { v: '불일치', status: true }])
-      + lcFinalRow(['반월체육센터 일반직평가급(5명)', { v: '연봉÷12개월×인원×200%', formula: true }, { v: '37,904' }, { v: '불일치', status: true }])
-      + lcFinalRow(['반월체육센터 무기계약직평가급(13명)', { v: '2,962,930×13명×100%', formula: true }, { v: '38,519' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['화성체력인증센터(거점체력_국비)', { v: '평가급 목 자체가 0원 편성', formula: true }, { v: '0' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">소계 185,059천원(인력운영경비 129,215 + 사업운영 55,844). 지급률(100%)이 도시공사 자체 평가급 지급 규정에 맞는지 확인필요 — 지방공기업 예산편성기준상 개인성과급은 경영평가·자체평가 결과에 따라 등급별 차등 지급하는 게 원칙이라, 전 인원 일괄 100% 지급이 실제 평가 결과를 반영한 것인지 근거 확인이 필요합니다. <b>무기계약직 평가급은 도시공사 위탁사업 전체에서 공통으로 인정되는 항목입니다</b>(경기타운·체육시설1부·서남부·화성국민체육센터·동탄어울림·반월·전곡항·오토캠핑장·캠핑장 전부 업무직/무기계약직 몫 평가급이 있고, 대부분 경영평가급×100%). <b>단, 화성체력인증센터만 예외</b> — 평가급 목 자체가 0원으로 편성돼 있어 무기계약직은 물론 아무도 평가급을 받지 않습니다. <b>지급률 자체도 통일돼 있지 않습니다</b> — 오토캠핑장·캠핑장은 경영평가급만 150%, 반월체육센터 일반직은 아예 다른 공식(연봉÷12개월×인원×200%)을 씁니다.</p>'
+      lcFinalGroupRow('일반직 — 경영평가급', 4)
+      + lcFinalRow(['경기타운', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['경기타운(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['오토캠핑장', { v: '3,809,560×2명×150%', formula: true }, { v: '11,429' }, { v: '불일치', status: true }])
+      + lcFinalRow(['캠핑장', { v: '3,987,776×3명×150%', formula: true }, { v: '17,945' }, { v: '불일치', status: true }])
+      + lcFinalRow(['반월체육센터(경영+자체 합산 200%)', { v: '연봉÷12개월×인원×200%', formula: true }, { v: '37,904' }, { v: '불일치', status: true }])
+      + lcFinalGroupRow('일반직 — 자체평가급', 4)
+      + lcFinalRow(['경기타운', { v: '4,085,672×14명×100%', formula: true }, { v: '57,200' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['경기타운(사업운영)', { v: '4,368,921×3명×100%', formula: true }, { v: '13,107' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['오토캠핑장', { v: '3,809,560×2명×100%', formula: true }, { v: '7,619' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['캠핑장', { v: '3,987,776×3명×100%', formula: true }, { v: '11,964' }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('무기계약직 — 경영평가급(자체평가급 항목 없음)', 4)
+      + lcFinalRow(['경기타운', { v: '2,962,930×5명×100%', formula: true }, { v: '14,815' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['경기타운(사업운영)', { v: '2,962,930×10명×100%', formula: true }, { v: '29,630' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['오토캠핑장', { v: '3,059,527×8명×150%', formula: true }, { v: '36,712' }, { v: '불일치', status: true }])
+      + lcFinalRow(['캠핑장', { v: '2,962,930×4명×150%', formula: true }, { v: '17,778' }, { v: '불일치', status: true }])
+      + lcFinalRow(['반월체육센터', { v: '2,962,930×13명×100%', formula: true }, { v: '38,519' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['화성체력인증센터(거점체력_국비)', { v: '평가급 목 자체가 0원 편성 — 대상 없음', formula: true }, { v: '0' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 185,059천원(인력운영경비 129,215 + 사업운영 55,844). <b>지급 대상은 일반직·무기계약직뿐</b>(도시공사 위탁금 세목상 109-01·109-02만 존재, 기간제용 평가급 세목 자체가 없음). <b>일반직</b>은 경영평가급·자체평가급 두 가지를 각각 받고(반월체육센터만 두 항목을 &ldquo;연봉÷12개월×인원×200%&rdquo; 한 줄로 합산 표기), <b>무기계약직</b>은 경영평가급 한 가지만 받습니다(자체평가급 항목 자체가 없음). 지급률은 대부분 100%인데 오토캠핑장·캠핑장은 경영평가급만 150%로 다르고, 화성체력인증센터는 평가급 목 자체가 0원이라 아무도 받지 않습니다. 100% 지급 자체가 도시공사 평가급 지급 규정에 맞는지는 규정 문서 대조 전까지 확인필요.</p>'
   );
   out += '</details>';
 
