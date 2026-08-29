@@ -9072,7 +9072,7 @@ function lcFinalSection() {
   if (f.instKey === 'fc') {
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>인건비</summary>';
-  out += lcFinalFundBlock('보수(출연금)', '', [6, 0, 1],
+  out += lcFinalFundBlock('보수(출연금)', '', [19, 0, 1],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직(연봉제: 1·2급 / 봉급제: 3~6급)', 4)
       + lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300×1.035×1명×12월', formula: true }, { v: '89,192', formula: true }, { v: '일치', status: true }])
@@ -9082,8 +9082,23 @@ function lcFinalSection() {
       + lcFinalRow(['5급', { v: '2,574,000×1.035×4명×12월', formula: true }, { v: '127,877', formula: true }, { v: '일치', status: true }])
       + lcFinalRow(['6급', { v: '2,087,000×1.035×7명×12월', formula: true }, { v: '181,444', formula: true }, { v: '일치', status: true }])
       + lcFinalGroupRow('기간제', 4)
-      + lcFinalRow(['인턴 사원 보수(화성시 생활임금 적용)', { v: '산출식 없음', formula: true }, { v: '50,500' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">보수 소계 750,895천원(일반직 기본급 700,395 + 기간제 인턴 사원 보수 50,500) — 일반직은 원자료 세목 합계와 정확히 일치, 기간제는 총액만 있고 산출식이 없어 확인필요.</p>'
+      + lcFinalRow(['인턴 사원 보수(화성시 생활임금 적용)', { v: '산출식 없음', formula: true }, { v: '50,500' }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('(성인선수단) 코칭스태프', 4)
+      + lcFinalRow(['감독', { v: '200,000,000×1명×1년', formula: true }, { v: '200,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['수석코치', { v: '6,125,000×1명×12월', formula: true }, { v: '73,500', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['피지컬 코치', { v: '5,950,000×1명×12월', formula: true }, { v: '71,400', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['코치(3명)', { v: '4,375,000×3명×12월', formula: true }, { v: '157,500', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('(성인선수단) 지원스태프', 4)
+      + lcFinalRow(['스카우터', { v: '5,833,333×1명×12월', formula: true }, { v: '70,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['분석관', { v: '3,937,500×1명×12월', formula: true }, { v: '47,250', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['의무(PT)', { v: '4,375,000×1명×12월', formula: true }, { v: '52,500', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['의무(AT)', { v: '3,115,000×1명×12월', formula: true }, { v: '37,380', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['의무(AT) 추가', { v: '2,500,000×1명×12월', formula: true }, { v: '30,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['주무', { v: '3,750,000×1명×12월', formula: true }, { v: '45,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['차량매니저', { v: '3,850,000×1명×12월', formula: true }, { v: '46,200', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['킷트매니저', { v: '2,625,000×1명×12월', formula: true }, { v: '31,500', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['통역', { v: '2,916,666×1명×12월', formula: true }, { v: '35,000', formula: true }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">보수 소계 1,648,125천원 — 사무국 750,895(일반직 기본급 700,395 + 기간제 인턴 사원 보수 50,500) + 성인선수단 코칭스태프 502,400(6명) + 성인선수단 지원스태프 394,830(9명). 코칭·지원스태프는 원자료 세목 합계와 정확히 일치, 인턴 사원 보수만 총액만 있고 산출식이 없어 확인필요.</p>'
   );
   out += '</details>';
 
