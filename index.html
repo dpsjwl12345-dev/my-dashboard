@@ -9071,22 +9071,31 @@ function lcFinalSection() {
   // ===== 3. 화성FC (사무국 인력운영비부터 순차 정리 — hscf/talent와 동일하게 카테고리별 <details>로 분리) =====
   if (f.instKey === 'fc') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>인건비 — 사무국 인력운영비</summary>';
-  out += lcFinalFundBlock('사무국 인력운영비(출연금)', '', [25, 0, 2],
-    '<p class="lc-hint" style="margin-top:0;"><b>01 보수</b></p>'
-    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
-      lcFinalGroupRow('기본급(연봉제: 1·2급 / 봉급제: 3~6급)', 4)
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>보수 — 사무국 인력운영비</summary>';
+  out += lcFinalFundBlock('보수(출연금)', '', [6, 0, 1],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('일반직(연봉제: 1·2급 / 봉급제: 3~6급)', 4)
       + lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300×1.035×1명×12월', formula: true }, { v: '89,192', formula: true }, { v: '일치', status: true }])
       + lcFinalRow(['2급(사무국장, 5급상당)', { v: '6,735,000×1.035×1명×12월', formula: true }, { v: '83,649', formula: true }, { v: '일치', status: true }])
       + lcFinalRow(['3급', { v: '3,859,000×1.035×3명×12월', formula: true }, { v: '143,787', formula: true }, { v: '일치', status: true }])
       + lcFinalRow(['4급', { v: '2,997,000×1.035×2명×12월', formula: true }, { v: '74,446', formula: true }, { v: '일치', status: true }])
       + lcFinalRow(['5급', { v: '2,574,000×1.035×4명×12월', formula: true }, { v: '127,877', formula: true }, { v: '일치', status: true }])
       + lcFinalRow(['6급', { v: '2,087,000×1.035×7명×12월', formula: true }, { v: '181,444', formula: true }, { v: '일치', status: true }])
-      + lcFinalGroupRow('초과근무수당', 4)
-      + lcFinalRow(['3급', { v: '4,733,000÷209×1.5×30시간×3명×12월', formula: true }, { v: '36,687', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['4급', { v: '3,790,000÷209×1.5×30시간×2명×12월', formula: true }, { v: '19,585', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['5급', { v: '3,335,000÷209×1.5×30시간×4명×12월', formula: true }, { v: '34,467', formula: true }, { v: '일치', status: true }])
-      + lcFinalRow(['6급', { v: '2,708,000÷209×1.5×30시간×7명×12월', formula: true }, { v: '48,978', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('기간제', 4)
+      + lcFinalRow(['인턴 사원 보수(화성시 생활임금 적용)', { v: '산출식 없음', formula: true }, { v: '50,500' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">보수 소계 750,895천원(일반직 기본급 700,395 + 기간제 인턴 사원 보수 50,500) — 일반직은 원자료 세목 합계와 정확히 일치, 기간제는 총액만 있고 산출식이 없어 확인필요.</p>'
+  );
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>수당 — 사무국 인력운영비</summary>';
+  out += lcFinalFundBlock('수당(출연금)', '', [19, 0, 1],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('초과근무수당', 4)
+      + lcFinalRow(['3급(일반직)', { v: '4,733,000÷209×1.5×30시간×3명×12월', formula: true }, { v: '36,687', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급(일반직)', { v: '3,790,000÷209×1.5×30시간×2명×12월', formula: true }, { v: '19,585', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급(일반직)', { v: '3,335,000÷209×1.5×30시간×4명×12월', formula: true }, { v: '34,467', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급(일반직)', { v: '2,708,000÷209×1.5×30시간×7명×12월', formula: true }, { v: '48,978', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['인턴 초과근무수당(기간제)', { v: '산출식 없음', formula: true }, { v: '3,630' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('명절휴가비(×1.03×2회×60%, 연봉제 1·2급 제외)', 4)
       + lcFinalRow(['3급', { v: '3,859,000×1.03×3명×2회×60%', formula: true }, { v: '14,310', formula: true }, { v: '일치', status: true }])
       + lcFinalRow(['4급', { v: '2,997,000×1.03×2명×2회×60%', formula: true }, { v: '7,409', formula: true }, { v: '일치', status: true }])
@@ -9108,12 +9117,7 @@ function lcFinalSection() {
       + lcFinalRow(['5년이상 10년미만', { v: '50,000×5명×12월', formula: true }, { v: '3,000', formula: true }, { v: '일치', status: true }])
       + lcFinalGroupRow('파견공무원 근무수당', 4)
       + lcFinalRow(['파견공무원(1명)', { v: '400,000×1명×12월', formula: true }, { v: '4,800', formula: true }, { v: '일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">01 보수 소계 963,470천원(기본급 700,395 + 초과근무수당 139,717 + 명절휴가비 52,502 + 가족수당 13,680 + 정액급식비 28,560 + 정근수당 16,856 + 정근수당가산금 6,960 + 파견공무원근무수당 4,800) — 원자료 세목 합계와 정확히 일치.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>04 기간제근로자등보수</b></p>'
-    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)' }, { t: '상태' }],
-      lcFinalRow(['인턴 사원 보수(화성시 생활임금 적용)', { v: '산출식 없음', formula: true }, { v: '50,500' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['인턴 초과근무수당', { v: '산출식 없음', formula: true }, { v: '3,630' }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">04 소계 54,130천원(인턴 2건) — 원자료에 총액만 있고 산출식이 없어 확인필요. 세목01(963,470) + 세목04(54,130) = 목101 인건비 합계 1,017,600천원, 원자료와 일치.</p>'
+    + '<p class="lc-hint" style="margin-top:8px;">수당 소계 266,705천원(초과근무수당 143,347 + 명절휴가비 52,502 + 가족수당 13,680 + 정액급식비 28,560 + 정근수당 16,856 + 정근수당가산금 6,960 + 파견공무원근무수당 4,800). 보수(750,895) + 수당(266,705) = 목101 인건비 합계 1,017,600천원, 원자료와 일치.</p>'
   );
   out += '</details>';
 
