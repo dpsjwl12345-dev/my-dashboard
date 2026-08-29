@@ -2022,7 +2022,26 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .lc-numstep .lc-step-btn:first-child { border-radius: 0 6px 0 0; border-bottom: none; }
 .lc-numstep .lc-step-btn:last-child { border-radius: 0 0 6px 0; }
 .lc-numstep .lc-step-btn:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.lc-folder-btn { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; background: none; border: none; padding: 4px 6px; }
+.lc-folder-btn .lc-folder-label { font-size: 16px; font-weight: 800; color: var(--text); white-space: nowrap; font-family: 'GmarketSans', 'Pretendard', sans-serif; }
+.lc-folder { position: relative; width: 46px; height: 32px; perspective: 600px; flex: none; }
+.lc-folder .f-back { position: absolute; inset: 0; background: #d97706; border-radius: 6px 6px 6px 0; transition: transform .25s ease; }
+.lc-folder .f-back::after { content: ''; position: absolute; bottom: 99%; left: 0; width: 16px; height: 4px; background: #d97706; border-radius: 4px 4px 0 0; }
+.lc-folder .f-paper { position: absolute; left: 2px; right: 2px; top: 2px; bottom: 2px; background: #d4d4d8; border-radius: 5px; transition: transform .25s ease; transform-origin: bottom; }
+.lc-folder .f-front { position: absolute; left: 0; right: 0; bottom: 0; height: 84%; background: linear-gradient(to top, #f59e0b, #fbbf24); border-radius: 6px 0 6px 6px; transition: transform .25s ease; transform-origin: bottom; }
+.lc-folder .f-front::after { content: ''; position: absolute; bottom: 99%; right: 0; width: 28px; height: 4px; background: #fbbf24; border-radius: 4px 4px 0 0; }
+.lc-folder-btn:hover .lc-folder .f-paper { transform: rotateX(-24deg); }
+.lc-folder-btn:hover .lc-folder .f-front { transform: rotateX(-32deg); }
+.lc-folder-btn.is-open .lc-folder .f-paper { transform: rotateX(-24deg); }
+.lc-folder-btn.is-open .lc-folder .f-front { transform: rotateX(-32deg); }
 .lc-section { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--border-strong); border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm); overflow-x: auto; }
+.lc-section > summary { cursor: pointer; list-style: none; font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 16px; font-weight: 800; color: var(--text); }
+.lc-section > summary::-webkit-details-marker { display: none; }
+.lc-section > summary::before { content: '▸ '; }
+.lc-section[open] > summary::before { content: '▾ '; }
+.lc-section[open] > summary { margin-bottom: 14px; }
+.lc-rules-table td:first-child { white-space: nowrap; }
+.lc-rules-table td:last-child { text-align: left; white-space: normal; }
 .lc-section h3 { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 18px; font-weight: 800; margin: 0 0 10px; color: var(--text); }
 .lc-section h3 .lc-cat-tag { display: inline-block; vertical-align: middle; margin-left: 8px; font-family: 'Pretendard', sans-serif; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
 .lc-section > div:first-child { margin-top: 0 !important; }
@@ -7822,7 +7841,7 @@ function switchPanel(panelId) {
 var LC = {
   view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'final'(기준값 최종 정리, 원자료 조회 포함)
   basis: { institutionId: '', fundType: '출연금', dept: '', workGroup: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '', statusFilter: '' },
-  final: { instKey: 'hscf', fundType: '', rawOpen: false }, // 기준값 (최종) 탭 상단 고정 필터: instKey(기관) | fundType(''=전체, '출연금'|'위탁금') | rawOpen(원자료 아코디언 열림 상태 — 리렌더 후에도 유지하려고 DOM classList 대신 여기서 추적)
+  final: { instKey: 'hscf', fundType: '', rawOpen: false, rulesOpen: false, rulesTab: 'labor' }, // 기준값 (최종) 탭 상단 고정 필터: instKey(기관) | fundType(''=전체, '출연금'|'위탁금') | rawOpen(원자료 아코디언 열림 상태) | rulesOpen(보수규정 서류함 클릭 시 열림 상태) | rulesTab(보수규정 내부 챕터탭: 'labor'인건비|'retire'퇴직금|'eval'평가급)
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
   quota: '', // 전년도 말 정원(일반직 및 무기계약직) — 인상률처럼 실제 확정되면 입력해 계산에 반영하는 모수. 빈칸이 기본값.
@@ -8459,7 +8478,7 @@ function lcFinalFundBlock(title, tag, counts, bodyHtml) {
 }
 var LC_FINAL_INSTS = [
   { key: 'hscf', label: '① 화성시문화관광재단', funds: [] },
-  { key: 'talent', label: '② 화성시인재육성재단', funds: ['출연금', '위탁금'] },
+  { key: 'talent', label: '② 화성시인재육성재단', funds: [] },
   { key: 'fc', label: '③ 화성FC', funds: ['출연금'] },
   { key: 'corp', label: '④ 화성시도시공사', funds: ['위탁금'] }
 ];
@@ -8467,6 +8486,14 @@ function lcFinalSetInst(key) {
   LC.final.instKey = key;
   var inst = LC_FINAL_INSTS.filter(function (i) { return i.key === key; })[0];
   if (inst && inst.funds.indexOf(LC.final.fundType) === -1) LC.final.fundType = '';
+  renderLaborCalc();
+}
+function lcFinalToggleRules() {
+  LC.final.rulesOpen = !LC.final.rulesOpen;
+  renderLaborCalc();
+}
+function lcFinalSetRulesTab(tab) {
+  LC.final.rulesTab = tab;
   renderLaborCalc();
 }
 function lcFinalSetFund(fund) {
@@ -8496,9 +8523,16 @@ function lcFinalFilterBar() {
   };
   var badge = LC_FINAL_BADGES[f.instKey];
   var badgeHtml = badge ? '<span class="lc-cat-tag" style="margin-left:10px;background:' + badge.bg + ';color:' + badge.fg + ';">' + badge.text + '</span>' : '';
+  var LC_FOLDER_LABELS = { hscf: '화성시문화관광재단보수규정', talent: '화성시인재육성재단보수규정' };
+  var folderHtml = LC_FOLDER_LABELS[f.instKey]
+    ? '<button type="button" class="lc-folder-btn' + (f.rulesOpen ? ' is-open' : '') + '" onclick="lcFinalToggleRules()">'
+      + '<span class="lc-folder-label">' + LC_FOLDER_LABELS[f.instKey] + '</span>'
+      + '<span class="lc-folder"><span class="f-back"></span><span class="f-paper"></span><span class="f-front"></span></span>'
+      + '</button>'
+    : '';
   return '<div style="position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--border-strong);padding:10px 0 12px;margin-bottom:16px;">'
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">' + instBtns + '</div>'
-    + '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' + fundBtns + badgeHtml + '</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' + fundBtns + folderHtml + badgeHtml + '</div>'
     + '</div>';
 }
 function lcFinalSection() {
@@ -8508,11 +8542,118 @@ function lcFinalSection() {
 
   out += lcFinalFilterBar();
 
+  if (f.instKey === 'hscf' && f.rulesOpen) {
+  var rtab = f.rulesTab || 'labor';
+  var rtabBtn = function (key, label) {
+    var active = rtab === key;
+    return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;">' + label + '</button>';
+  };
+  var rtabTable;
+  if (rtab === 'retire') {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalRow(['퇴직급여금(제43조)', '[별표14] 월 평균임금×근속년수(만1년 이상 근속). 평균임금=퇴직 전 최근 3개월간 지급된 보수·성과급 등 합계÷3(근로기준법상 통상임금보다 낮으면 통상임금 적용)'])
+      + lcFinalRow(['근속년수 계산(제44조)', '임명일이 속한 월~퇴직일이 속한 월, 만12개월=1년. 1년 미만 단수는 월 미만 일할계산'])
+      + lcFinalRow(['해임 등에 따른 퇴직금 제한(제45조의2)', '재직 중 사유로 금고 이상 형 확정, 또는 지방출자출연법 제9조·제15조의2·제30조에 따라 해임 시 퇴직금 1/2 감액(감액 사유 소급 소멸 시 민법 제379조 이자 가산). 수사·재판 중일 때 1/2 지급정지 가능'])
+      + lcFinalRow(['퇴직급여금 지급일(제46조)', '청구일부터 14일 이내(특별한 사유 시 당사자 합의로 연기 가능)'])
+      + lcFinalRow(['명예퇴직수당(제47조)', '재직 20년 이상, 정년퇴직일 전 1년 이상 기간 중 자진퇴직 시 [별표15] 지급. 징계의결 요구·형사기소·수사 중인 자는 제외'])
+      + lcFinalRow(['조기퇴직수당(제48조)', '1년 이상~20년 미만 근속자가 폐직·과원으로 그 날부터 3개월 이내 자진퇴직 시 퇴직 당시 월봉급액 6월분(정년 잔여 6월 미만이면 그 잔여기간분). 명예퇴직수당 제외사유 동일 적용']));
+  } else if (rtab === 'eval') {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalRow(['기관성과급(제41조)', '시 또는 중앙부처 등 공인기관의 성과평가 결과에 따라 시장이 결정한 지급률을 개인별로 적용, 합산 총액 범위 내에서 결정'])
+      + lcFinalRow(['개인성과급(제42조)', '기관장 제외 소속직원 근무성적평정 결과 반영. 개인·부서단위 3~5등급 좌우대칭 정규분포로 차등 지급 — 최고-최저 등급 지급률차 50% 이상, 최고등급 인원 20% 이내·최저등급 10% 이상 강제배분'])
+      + lcFinalRow(['지급 제외(제42조①·⑤)', '휴직(공상휴직 제외)·직위해제·교육훈련파견·장기병가 기간은 일할계산 제외, 연도 중 입사자 제외, 연도 중 퇴사자는 일할계산 지급. 평가대상기간 중 중징계, 시효 5년 비위, 성폭력·성매매·성희롱·음주운전 징계 시 미지급']));
+  } else {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalGroupRow('기본급(연봉·봉급)', 2)
+      + lcFinalRow(['용어정의(제4조)', '"보수"=봉급+수당(연봉제는 연봉+수당). "봉급"=직책·계급·호봉별 기본급여. "연봉"=대표이사·전문계약직에게 연 단위로 계약된 기본급여'])
+      + lcFinalRow(['연봉 적용범위(제8조)', '대표이사, 전문계약직 2급(본부장)·3급(팀·관장급)에게만 적용'])
+      + lcFinalRow(['연봉의 계산(제9조)', '「공무원보수규정」별표33 연봉한계액표 준용 — 대표이사: 4급상당 상한액×90%(시장 재량 120%까지) / 2급본부장: 5급상당 상한액×90% / 3급팀장: 일반임기제6급상당×58%(대표이사 재량 120%까지), 매년 1~12월 12등분 지급'])
+      + lcFinalRow(['연봉의 결정(제15조)', '당해연도 연봉=전년도 연봉+기본가산급(전년도 연봉×시장이 정한 가율). 가율은 인건비 인상 총액 범위 내 근무성적평정등급별 차등'])
+      + lcFinalRow(['봉급 적용범위(제16조)', '연봉제 대상자를 제외한 나머지 전 직원에게 적용'])
+      + lcFinalRow(['봉급의 계산(제17조)', '「공무원보수규정」별표3(일반직 봉급표) 6급~9급 호봉별 금액을 재단 3급~6급 호봉별 금액으로 각각 적용(재단급수=공무원급수−3)'])
+      + lcFinalRow(['초임호봉 획정(제23조)', '신규채용 시 해당계급 1호봉을 기준으로 [별표3] 경력환산율표에 따라 획정'])
+      + lcFinalRow(['승급(제25조)', '호봉간 승급기간 1년, 매월 1일자로 승급'])
+      + lcFinalGroupRow('수당', 2)
+      + lcFinalRow(['정근수당(제29조)', '[별표4] 근속연수별 지급률(2년미만10%·5년미만20%·6년미만25%·7년미만30%·8년미만35%·9년미만40%·10년미만45%·10년이상50%), 연2회(1·7월) 지급'])
+      + lcFinalRow(['정근수당가산금(제29조③)', '5년미만3만 ~ 25년이상13만(월, 6구간)'])
+      + lcFinalRow(['정액급식비(제30조)', '「공무원 수당 등에 관한 규정」 준용 — 14만원(월)'])
+      + lcFinalRow(['명절휴가비(제31조)', '기준월액×105.55%×60%×연2회'])
+      + lcFinalRow(['직급보조비(제32조)', '3급18.5만 / 4급18만 / 5·6급17.5만(월)'])
+      + lcFinalRow(['가족수당(제33조)', '배우자4만 / 부양2만 / 첫째5만 / 둘째8만 / 셋째이후12만, 4명 이내(자녀 예외) * 배우자가 국가기관·지자체·공공기관·출자출연기관 등에서 가족수당 수령 중이면 재단 지급 금지'])
+      + lcFinalRow(['생활임금보전수당(제34조)', '화성시 생활임금 고시액까지 차액 보전, 한시적·대상자 한정([별표8]) — 임의 수당 아님'])
+      + lcFinalRow(['위험근무수당(제36조)', '[별표10] 갑5만 / 을4만(월)'])
+      + lcFinalRow(['특수업무수당(제37조)', '[별표11] 특정업무수행경비8만 / 특수직무수당(사서)3만 / 전산직수당5만 / 기술자격수당(3·4급3만·5·6급2만)+가산금(기술사5만·기능장등3만·산업기사등2만·3급1만)(월)'])
+      + lcFinalRow(['초과근무수당(제38조③)', '[별표12] 시간외·휴일근무수당 통상임금×1.5/209×시간(평일·무급휴일/주휴일) / 야간근무수당 통상임금×0.5/209×시간 — 휴일근무 시 중식(12~13시) 공제. 2급 이상 직원 지급대상 제외'])
+      + lcFinalRow(['대우수당(제40조의2)', '월 봉급액×4.1%, 상위직급 봉급액 초과 시 차액만 지급'])
+      + lcFinalRow(['업무대행수당(제40조의4)', '월 20만원, 여러 명이 나눠 대행 시 20만원÷대행 지정 인원수'])
+      + lcFinalRow(['파견수당(제50조)', '[별표16] 2급 40만원 / 3급 30만원 / 4급 이하 20만원(월), 파견월수는 근무일수로 일할계산 — 무기직·공무직은 4급 이하 지급액 적용'])
+      + lcFinalRow(['연봉제 대상자 수당 제외(제40조⑤)', '정근수당·정액급식비·명절휴가비·직급보조비·위험근무수당·특수업무수당 지급 안 함(가족수당·연차수당은 지급)']));
+  }
+  out += '<div style="margin:0 0 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);">'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + rtabBtn('eval', '평가급') + '</div>'
+    + '<div class="lc-rules-table">' + rtabTable + '</div>'
+    + '</div>';
+  }
+
+  if (f.instKey === 'talent' && f.rulesOpen) {
+  var rtab = f.rulesTab || 'labor';
+  var rtabBtn = function (key, label) {
+    var active = rtab === key;
+    return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;">' + label + '</button>';
+  };
+  var rtabTable;
+  if (rtab === 'retire') {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalRow(['퇴직급여제도(제59조)', '「근로자퇴직급여 보장법」 준용. 계속근로기간 1년 미만, 4주평균 주15시간 미만 근로자는 제외'])
+      + lcFinalRow(['퇴직금 산정(제60조)', '계속근로기간 1년당 30일분 평균임금(「근로기준법」제2조①6호). 통상임금보다 낮으면 통상임금 적용. 1년 미만 잔여기간은 월할·일할 비례 산정'])
+      + lcFinalRow(['퇴직금 중도정산(제61조)', '주택구입 등 「근로자퇴직급여 보장법 시행령」제3조① 사유 시 재직 중 정산 가능 — 정산 후 근속기간은 정산시점부터 재계산'])
+      + lcFinalRow(['퇴직금 지급(제62조)', '지급사유 발생일부터 14일 이내 지급(합의 시 연장 가능). 개인형퇴직연금(IRP) 계정으로 이전 지급 원칙'])
+      + lcFinalRow(['퇴직금 감액(제63조)', '재직 중 사유로 금고 이상 형 확정, 지방출자출연법 제9조④·제15조의2③·제30조③에 따른 해임, 같은 법 제10조에 따른 퇴직 시 1/2 감액'])
+      + lcFinalRow(['명예퇴직금(제64조)', '[별표6] 1~5년: 봉급월액 반액×정년잔여월수 / 5~10년: 반액×[60+(잔여월수-60)/2] / 10년초과: 10년 해당액과 동일(초과분 미지급)'])
+      + lcFinalRow(['조기퇴직금(제68조)', '퇴직 당시 봉급월액 6월분(정년 잔여기간 6월 미만이면 그 잔여기간분)']));
+  } else if (rtab === 'eval') {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalRow(['평가기간(제54조)', '전년도 1월 1일~12월 31일 원칙'])
+      + lcFinalRow(['지급대상(제55조①)', '평가기간 중 재직한 대표이사, 일반직, 전문계약직, 일반계약직, 무기계약직 — hscf와 달리 대표이사가 지급대상 1순위로 명시됨(기간제근로자는 대표이사 재량으로 추가 가능, 제55조②)'])
+      + lcFinalRow(['지급 제외(제55조① 단서)', '근로기간 3개월 미만, 평가기간 중 중징계 처분, 「징계 규정」제20조② 특정호 징계, 비리로 사회적 물의를 일으켜 퇴사하거나 형이 확정된 자'])
+      + lcFinalRow(['지급방법(제56조)', '「평정제도 운영내규」개인별 근무실적에 따라 지급. 휴직·직위해제·병가(평가기간 중 6일 초과분)·징계·공로연수 기간은 일할계산 제외'])
+      + lcFinalRow(['지급률·등급(제56조⑥)', '지급률, 개인별 등급, 계산방식은 「지방출자출연기관 예산편성 운영지침」에 따라 대표이사가 정함 — hscf식 3~5등급 강제배분 같은 명문 규정은 이 규정 자체엔 없음'])
+      + lcFinalRow(['지급시기(제57조)', '경영실적평가결과를 통보받은 날부터 3개월 이내 지급']));
+  } else {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalGroupRow('기본급(연봉·봉급)', 2)
+      + lcFinalRow(['용어정의(제3조)', '"보수"=봉급+수당+성과급(연봉제 대상자는 연봉+수당+성과급)'])
+      + lcFinalRow(['연봉 적용범위(제11조)', '대표이사, 전문·일반계약직, 무기계약직, 일반직 2급에게 적용 — hscf보다 훨씬 넓음(hscf는 대표이사·전문계약직 2·3급만)'])
+      + lcFinalRow(['기준연봉액(제12조)', '「지방공무원보수규정」별표13 상한액 기준 — 대표이사 4급상당×85%이내(시장 재량 100~120%) / 전문계약직특급 4급상당×80% / 가급·일반직2급 5급상당×80% / 나급 6급상당×75% / 다급 7급상당×75% / 무기계약직라급 8급상당×75% / 마급 9급상당×75%(대표이사 재량 100~120%)'])
+      + lcFinalRow(['봉급 적용범위(제20조)', '연봉제 대상 제외한 일반직(2급 제외)에게 적용. 「공무원보수규정」별표3 준용(9급=6급, 8급=5급, 7급=4급, 6급=3급)'])
+      + lcFinalRow(['초임호봉 획정(제29조)', '신규임용 시 해당계급 1호봉 기준, [별표1] 경력환산율표에 따라 획정'])
+      + lcFinalRow(['정기승급(제34조)', '호봉간 승급기간 1년, 매월 1일자 승급'])
+      + lcFinalGroupRow('수당 — 14종: 대우수당·정근수당(가산금)·가족수당·명절휴가비·정액급식비·특수지근무수당·위험근무수당·특수업무수당·연장/야간/휴일근로수당·업무대행수당·연차미사용수당·직급보조비', 2)
+      + lcFinalRow(['대상별 적용범위(제40조②~④)', '대표이사·전문계약직특·가급·일반직2급=가족수당·정액급식비·연차미사용수당·직급보조비만 / 나급·일반·무기계약직=+연장근로등~직급보조비(9~14호) / 일반직=14종 전체'])
+      + lcFinalRow(['대우수당(제41조)', '월봉급액×4.1%, 상위직급 봉급액 초과 시 차액만 지급'])
+      + lcFinalRow(['정근수당(제42조)', '[별표2 준용] 2년미만10%·5년미만20%·6년미만25%·7년미만30%·8년미만35%·9년미만40%·10년미만45%·10년이상50%(월봉급액 기준), 매년 1·7월 지급'])
+      + lcFinalRow(['가족수당(제43조)', '[제10조 준용] 배우자 4만원 / 부양가족(직계존속 등) 2만원 / 자녀 첫째 5만원·둘째 8만원·셋째이후 12만원(월), 4명 이내(자녀 예외) * 배우자가 국가기관·공공기관·지방출자출연기관 등에서 가족수당 수령 중이면 지급 금지'])
+      + lcFinalRow(['명절휴가비(제44조)', '월봉급액×60%, 설·추석 연2회 지급'])
+      + lcFinalRow(['정액급식비(제45조)', '[제18조 준용] 140,000원(월)'])
+      + lcFinalRow(['특수지근무수당(제46조)', '[제12조·별표10 준용] 특지·갑지·을지·병지 등급별 지급 — 교통·문화·교육시설이 열악한 지역 근무자 대상. 화성시 관내는 해당 지역 지정 사례가 없어 실무상 미적용으로 추정(등급구분표 원문 대조 필요)'])
+      + lcFinalRow(['위험근무수당(제47조)', '[별표7·8 준용] 갑종 5만원 / 을종 4만원(월) — 등급별 위험직무 종사자'])
+      + lcFinalRow(['특수업무수당(제48조)', '[별표3] 기술정보수당(2급이상5만·3·4급3만·5급이하2만+자격증가산금) / 특수직무수당(사서5급이상4만·6급이하3만) / 예산·결산·계약·감사·노사·안전보건·경영평가실무 8만'])
+      + lcFinalRow(['연장·야간·휴일근로수당(제49조)', '[별표4] 연장 통상임금×1.5/209×시간(평일·휴무일) / 야간 통상임금×0.5/209×시간 / 휴일 통상임금×1.5/209×시간(유급휴일) — hscf [별표12]와 산식 동일'])
+      + lcFinalRow(['업무대행수당(제50조)', '월 20만원 이내(hscf는 정액 20만원 — 여긴 "이내"로 재량 여지)'])
+      + lcFinalRow(['연차미사용수당(제51조)', '통상임금÷209×8×연차 유급휴가 미사용일수'])
+      + lcFinalRow(['직급보조비(제52조)', '[별표5] 대표이사·1급·특급 40만 / 2급·가급 25만 / 3급·나급 18.5만 / 4급 18만 / 5급·라급·6급·마급 17.5만']));
+  }
+  out += '<div style="margin:0 0 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);">'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + rtabBtn('eval', '평가급') + '</div>'
+    + '<div class="lc-rules-table">' + rtabTable + '</div>'
+    + '</div>';
+  }
+
   // ===== 1. 화성시문화관광재단 =====
   if (f.instKey === 'hscf') {
-  out += '<div class="lc-section" style="border-left-color:var(--dept-culture)">';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>인건비</summary>';
 
-  out += lcFinalFundBlock('보수', '01~04 기본급/봉급 — 출연금·위탁금 통합(재원 무관 동일 규정 적용)', [14, 5, 10],
+  out += lcFinalFundBlock('보수', '', [14, 5, 10],
     '<p class="lc-hint" style="margin-top:0;"><b>01 일반직 보수</b></p>'
     + lcFinalTable([{ t: '재원' }, { t: '급수' }, { t: '산출근거', formula: true }, { t: '단가(원)', formula: true }, { t: '인원' }, { t: '상태' }],
       lcFinalRow(['위탁금', '3급(공무원6급 23호봉)', { v: '2025년도 봉급표', formula: true }, { v: '4,416,700', formula: true }, '—', { v: '일치', status: true }])
@@ -8557,8 +8698,10 @@ function lcFinalSection() {
       + lcFinalRow(['출연금', '생활임금(예술지원팀)', { v: '근거 미확인', formula: true }, { v: '330,000×12개월', formula: true }, { v: '확인필요', status: true }]))
     + '<p class="lc-hint" style="margin-top:8px;">전시기획팀(출연금) 대체인력 기본급도 동일 공식과 일치해 별도 행 추가 없음. 단가·근무기간 차이는 계약 유형이 달라서(대체인력 vs 단기계약직) 생기는 당연한 차이 — 문제는 예술지원팀 두 항목의 근거 규정을 아직 못 찾았다는 점.</p>'
   );
+  out += '</details>';
 
-  out += lcFinalFundBlock('수당', '05 수당·퇴직급여·평가급·4대보험 — 출연금·위탁금 통합', [7, 7, 19],
+  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>수당</summary>';
+  out += lcFinalFundBlock('수당', '', [9, 3, 17],
     '<p class="lc-hint" style="margin-top:0;"><b>05 수당(위탁금 기준 전체 목록 — 정액형 항목은 출연금도 동일 정액 확인, 중복 표 생략)</b></p>'
     + lcFinalTable([{ t: '세부' }, { t: '산식·기준', formula: true }, { t: '금액(원)' }, { t: '인원' }, { t: '상태' }],
       lcFinalGroupRow('정근수당(위탁금, ×105.55%)', 5)
@@ -8625,14 +8768,29 @@ function lcFinalSection() {
       + lcFinalRow(['생활임금보전수당(전시기획팀)', { v: '269,930×2명×6개월', formula: true }, { v: '269,930' }, { v: '확인필요', status: true }])
       + lcFinalRow(['연차수당·초과근무수당(전시기획팀)', { v: '2,526,810원(8단계) 기준', formula: true }, { v: '—' }, { v: '불일치', status: true }]))
     + '<p class="lc-hint" style="margin-top:8px;">코디네이터 회사부담금은 성격(4대보험 회사분담분 추정) 확인 필요. 정액급식비·교통보조비는 일반직(14만원)과 다른 별도 단가로 대상 근거 규정 미확인, 생활임금보전수당 대상 인원(2명)이 기본급 인원(1명)과 불일치. 연차·초과근무수당 계산기준(2,526,810원)은 [별표3] 최고단계 상한(2,523,517원) 초과 — 위탁금 3곳·출연금 경영기획본부에 이어 6번째 재확인.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(별도 목, 출연금 데이터로 검증)</b></p>'
+  );
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>퇴직급여</summary>';
+  out += lcFinalFundBlock('퇴직급여', '', [0, 1, 0],
+    '<p class="lc-hint" style="margin-top:0;"><b>퇴직급여(별도 목, 출연금 데이터로 검증)</b></p>'
     + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
       lcFinalRow(['퇴직급여 및 퇴직급여충당금', { v: '6,460,798,000÷12×103.8%', formula: true }, { v: '558,859' }, { v: '0' }, { v: '불일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>평가급(별도 목, 출연금 데이터로 검증)</b></p>'
+  );
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>평가급</summary>';
+  out += lcFinalFundBlock('평가급', '', [0, 2, 0],
+    '<p class="lc-hint" style="margin-top:0;"><b>평가급(별도 목, 출연금 데이터로 검증)</b></p>'
     + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
       lcFinalRow(['가급 기관장 평가급', { v: '7,900,000×190%', formula: true }, { v: '15,010' }, { v: '0' }, { v: '불일치', status: true }])
       + lcFinalRow(['가급 기관 평가급', { v: '200,000,000×1식', formula: true }, { v: '200,000' }, { v: '0' }, { v: '불일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>4대보험(경영기획본부 목304, 기준액 6,460,798,000원)</b></p>'
+  );
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>연금</summary>';
+  out += lcFinalFundBlock('연금', '', [0, 1, 0],
+    '<p class="lc-hint" style="margin-top:0;"><b>4대보험(경영기획본부 목304, 기준액 6,460,798,000원)</b></p>'
     + lcFinalTable([{ t: '보험' }, { t: '요율' }, { t: '금액(천원)' }, { t: '상태' }],
       lcFinalRow(['국민연금', '6.75%', { v: '436,104' }, { v: '불일치', status: true }])
       + lcFinalRow(['건강보험', '3.645%', { v: '235,497' }, { v: '—' }])
@@ -8642,116 +8800,272 @@ function lcFinalSection() {
     + '<p class="lc-hint" style="margin-top:8px;">국민연금 6.75%는 법정 사업주부담률(2025년 4.5% / 2026년 4.75%)과 불일치, 출처 재확인 필요. 문화사업팀(기준액 559,691,000원)·전시기획팀(기준액 26,884,000원) 4대보험은 국민연금 4.5%로 법정 사업주부담률과 일치해 별도 행 추가 없음 — 다만 2026년 4.75% 인상분 반영은 경영기획본부와 마찬가지로 필요. 위탁금 쪽 4대보험은 아직 별도 검증 안 됨.</p>'
     + '<p class="lc-hint" style="margin-top:10px;">대표이사 직속(감사팀·문화정책팀·안전관리팀)·예술진흥본부(예술기반팀·축제기획팀)·관광진흥본부(기획전략팀·관광콘텐츠팀)는 인건비(목01~05) 항목 자체가 없고 사업비·운영비만 편성 — 일반직 인건비는 경영기획본부에서 전 직원분을 통합 관리하는 구조로 확인됨.</p>'
   );
-  out += '</div>';
+  out += '</details>';
   }
 
-  if (f.instKey === 'hscf') {
-  out += '<div style="margin:18px 0 30px;">'
-    + '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">'
-    + '<h4 style="margin:0;font-size:15.5px;font-weight:800;">규정 참고자료</h4>'
-    + '<span style="font-size:11.5px;color:var(--text-soft);background:var(--bg-hover);border-radius:999px;padding:2px 10px;">재단 보수규정 제5장 제28조~제40조의4, 통계목별 조문 대조표</span>'
-    + '</div>'
-    + lcFinalTable([{ t: '통계목' }, { t: '조문' }, { t: '기준값 / 규칙' }],
-      lcFinalRow(['정근수당', '제29조', '[별표4] 근속연수별 지급률(2년미만10%·5년미만20%·6년미만25%·7년미만30%·8년미만35%·9년미만40%·10년미만45%·10년이상50%), 연2회(1·7월) 지급'])
-      + lcFinalRow(['파견공무원수당', '제조 미확인', '월 400,000원 — 원본 확인 필요'])
-      + lcFinalRow(['정근수당가산금', '제29조③', '5년미만3만 ~ 25년이상13만(월, 6구간)'])
-      + lcFinalRow(['정액급식비', '제30조', '「공무원 수당 등에 관한 규정」 준용 — 14만원(월)'])
-      + lcFinalRow(['명절휴가비', '제31조', '기준월액×105.55%×60%×연2회'])
-      + lcFinalRow(['직급보조비', '제32조', '3급18.5만 / 4급18만 / 5·6급17.5만(월)'])
-      + lcFinalRow(['가족수당', '제33조', '배우자4만 / 부양2만 / 첫째5만 / 둘째8만 / 셋째이후12만, 4명 이내(자녀 예외)'])
-      + lcFinalRow(['가족수당 이중수령 금지', '제33조⑦', '배우자가 국가기관·지자체·공공기관·출자출연기관 등에서 가족수당 수령 중이면 재단 지급 금지 — 예산서로는 확인 불가, 인사자료 대조 필요'])
-      + lcFinalRow(['생활임금보전수당', '제34조', '화성시 생활임금 고시액까지 차액 보전, 한시적·대상자 한정([별표8]) — 임의 수당 아님'])
-      + lcFinalRow(['위험근무수당', '제36조', '[별표10] 갑5만 / 을4만(월)'])
-      + lcFinalRow(['특수업무수당', '제37조', '[별표11] 특정업무수행경비8만 / 특수직무수당(사서)3만 / 전산직수당5만 / 기술자격수당(3·4급3만·5·6급2만)+가산금(기술사5만·기능장등3만·산업기사등2만·3급1만)(월)'])
-      + lcFinalRow(['초과근무수당', '제38조③', '2급 이상 직원은 지급대상에서 제외'])
-      + lcFinalRow(['대우수당', '제40조의2', '월 봉급액×4.1%, 상위직급 봉급액 초과 시 차액만 지급'])
-      + lcFinalRow(['업무대행수당', '제40조의4', '월 20만원, 여러 명이 나눠 대행 시 20만원÷대행 지정 인원수'])
-      + lcFinalRow(['연봉제 대상자 수당 제외', '제40조⑤', '정근수당·정액급식비·명절휴가비·직급보조비·위험근무수당·특수업무수당 지급 안 함(가족수당·연차수당은 지급)']))
-    + '</div>';
-  }
-
-  // ===== 2. 화성시인재육성재단 =====
+  // ===== 2. 화성시인재육성재단 (출연금·위탁금 — 재단 보수규정은 재원 구분 없이 동일 적용, 도서관정책과만 업무 특성상 산출식 상이) =====
   if (f.instKey === 'talent') {
-  out += '<div class="lc-section" style="border-left-color:var(--dept-library)">';
 
-  if (fundOk('출연금')) {
-  out += lcFinalFundBlock('출연금', '기관 운영 요구서 전체 통합', [112, 0, 0],
-    lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
-      lcFinalGroupRow('일반직', 3)
-      + lcFinalRow(['대표이사', { v: '8,676,400 / 8,136,400' }, { v: '2' }])
-      + lcFinalRow(['2급', { v: '—' }, '자료 없음'])
-      + lcFinalRow(['3급', { v: '3,586,810 / 4,897,470 / 3,848,900 / 3,732,280' }, { v: '69' }])
-      + lcFinalRow(['4급', { v: '4,168,660 / 3,219,200' }, { v: '40' }])
-      + lcFinalRow(['5급', { v: '3,174,560 / 2,434,400' }, { v: '68' }])
-      + lcFinalRow(['6급', { v: '2,688,400 / 2,068,300' }, { v: '48' }])
-      + lcFinalGroupRow('기타직', 3)
-      + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
-      + lcFinalGroupRow('무기계약직', 3)
-      + lcFinalRow(['무기계약직', { v: '—' }, '자료 없음'])
-      + lcFinalGroupRow('기간제', 3)
-      + lcFinalRow(['기간제', { v: '—' }, '자료 없음']))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
-    + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
-      lcFinalRow(['가족수당', { v: '40,000 / 50,000 / 80,000 / 120,000 / 20,000' }, '배우자 / 직계비속(첫째·둘째·셋째) / 직계존속'])
-      + lcFinalRow(['기술자격수당', { v: '50,000' }, '—'])
-      + lcFinalRow(['전산직수당', { v: '50,000' }, '—'])
-      + lcFinalRow(['정근수당가산금', { v: '30,000 ~ 60,000' }, '5년미만 ~ 15년미만'])
-      + lcFinalRow(['정액급식비', { v: '140,000' }, '—'])
-      + lcFinalRow(['직급보조비', { v: '400,000 / 185,000 / 180,000 / 175,000' }, '대표이사 / 3급 / 4급 / 5·6급'])
-      + lcFinalRow(['특정업무수행경비', { v: '80,000' }, '—']))
-    + '<p class="lc-hint" style="margin-top:8px;">기타직(가급·나급)은 별도 단가·수당 체계를 사용합니다.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>일치 112건, 불일치 0건, 확인필요 0건</b> — 목:인건비 범위에서는 완전히 깨끗합니다.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여·평가급(별도 목, 수동 검증) — 정정: 실제로는 둘 다 있습니다.</b> 이전에 &ldquo;항목 자체가 없다&rdquo;고 보고했던 건 검색 범위가 좁아서 놓친 것이었습니다.</p>'
-    + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '요구액(천원)' }, { t: '상태' }],
-      lcFinalRow(['퇴직급여(목 전체)', { v: '산출식 없음(합계만 기재)', formula: true }, { v: '208,509' }, { v: '확인필요', status: true }])
-      + lcFinalRow(['평가급 - 기관장 경영평가', { v: '7,900,000×1명×230%', formula: true }, { v: '18,170' }, { v: '일치', status: true }])
-      + lcFinalRow(['평가급 - 직원(가급) 경영평가', { v: '6,100,000×5명×110%', formula: true }, { v: '33,550' }, { v: '일치', status: true }])
-      + lcFinalRow(['평가급 - 직원(나급) 경영평가', { v: '6,000,000×1명×110%', formula: true }, { v: '6,600' }, { v: '일치', status: true }])
-      + lcFinalRow(['평가급 - 직원(3급) 경영평가', { v: '4,700,000×14명×110%', formula: true }, { v: '72,380' }, { v: '일치', status: true }])
-      + lcFinalRow(['평가급 - 직원(4급) 경영평가', { v: '4,000,000×23명×110%', formula: true }, { v: '101,200' }, { v: '일치', status: true }])
-      + lcFinalRow(['평가급 - 직원(5급,라급) 경영평가', { v: '3,100,000×46명×110%', formula: true }, { v: '156,860' }, { v: '일치', status: true }])
-      + lcFinalRow(['평가급 - 직원(6급,마급) 경영평가', { v: '2,700,000×68명×110%', formula: true }, { v: '201,960' }, { v: '일치', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">평가급은 7건 합계 590,720천원(5.9억원), 산출식 전부 요구액과 정확히 일치. 퇴직급여는 208,509천원(2.1억원)이 잡혀 있지만 산출식이 없어 단가·인원 근거를 원자료에서 직접 확인해야 합니다.</p>'
+  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>인건비</summary>';
+  out += lcFinalFundBlock('보수', '', [0, 0, 22],
+    '<p class="lc-hint" style="margin-top:0;"><b>① 경영기획본부(출연금)<÷b><÷p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalRow(['대표이사', { v: '8,136,400×1명×12월', formula: true }, { v: '97,636,800', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['3급', { v: '3,848,900×2명×12월', formula: true }, { v: '92,373,600', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급', { v: '3,219,200×9명×12월', formula: true }, { v: '347,673,600', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급', { v: '2,434,400×7명×12월', formula: true }, { v: '204,489,600', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급', { v: '2,068,300×4명×12월', formula: true }, { v: '99,278,400', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['가급', { v: '6,223,180×1명×12월', formula: true }, { v: '74,678,160', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['나급', { v: '6,116,200×1명×12월', formula: true }, { v: '73,394,400', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['장애인 행정실무', { v: '12,536×104.5시간×1명×12월', formula: true }, { v: '15,720,144', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['행정실무사', { v: '12,536×209시간×1명×12월', formula: true }, { v: '31,440,288', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>② 교육지원과(위탁금)<÷b><÷p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalRow(['3급', { v: '4,161,200×2명×12월', formula: true }, { v: '99,868,800', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급', { v: '3,027,300×2명×12월', formula: true }, { v: '72,655,200', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급', { v: '2,970,500×5명×12월', formula: true }, { v: '178,230,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급', { v: '2,104,000×3명×12월', formula: true }, { v: '75,744,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['라급', { v: '3,093,270×1명×12월', formula: true }, { v: '37,119,240', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['마급', { v: '2,403,010×9명×12월', formula: true }, { v: '259,525,080', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>③ 도서관정책과(위탁금)<÷b><÷p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalRow(['3급', { v: '3,848,900×1명×12월', formula: true }, { v: '46,186,800', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급', { v: '3,027,300×4명×12월', formula: true }, { v: '145,310,400', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급', { v: '2,228,500×5명×12월', formula: true }, { v: '133,710,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급', { v: '2,068,300×10명×12월', formula: true }, { v: '248,196,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['도서관 실무(공무직) 1단계', { v: '2,221,590×12명×12월', formula: true }, { v: '319,908,960', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['도서관실무(초단시간) 등', { v: '12,090×59시간×10명×12월', formula: true }, { v: '85,597,200', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['장애인 도서관실무', { v: '12,090×104.5시간×2명×12월', formula: true }, { v: '30,321,720', formula: true }, { v: '확인필요', status: true }]))
   );
-  }
+  out += '</details>';
 
-  if (fundOk('위탁금')) {
-  out += lcFinalFundBlock('위탁금', '도서관 운영 등 사업별', [139, 0, 0],
-    lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
-      lcFinalGroupRow('일반직', 3)
-      + lcFinalRow(['일반직 2급', { v: '—' }, '자료 없음'])
-      + lcFinalRow(['일반직 3급', { v: '3,895,800 / 5,195,450 / 4,090,900 등 9종' }, { v: '113' }])
-      + lcFinalRow(['일반직 4급', { v: '4,152,560 / 3,219,200 / 3,952,310 등' }, { v: '49' }])
-      + lcFinalRow(['일반직 5급', { v: '3,499,650 / 2,717,900 / 3,810,780 등' }, { v: '109' }])
-      + lcFinalRow(['일반직 6급', { v: '2,735,510 / 2,104,000 / 2,756,550 등' }, { v: '132' }])
-      + lcFinalGroupRow('기타직', 3)
-      + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
-      + lcFinalGroupRow('무기계약직', 3)
-      + lcFinalRow(['무기계약직', { v: '—' }, '기본급 항목 없음(수당 표 참조)'])
-      + lcFinalGroupRow('기간제', 3)
-      + lcFinalRow(['기간제', { v: '—' }, '기본급 항목 없음(수당 표 참조)']))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>주요 수당</b></p>'
-    + lcFinalTable([{ t: '수당명' }, { t: '단가(원)' }, { t: '비고' }],
-      lcFinalRow(['도서관 실무(공무직)', { v: '166,770' }, '무기계약직, 19명·12월'])
-      + lcFinalRow(['도서관 실무(공무직) 1단계', { v: '2,221,590' }, '무기계약직, 12명·12월'])
-      + lcFinalRow(['도서관실무(초단시간) 등', { v: '12,090' }, '기간제, 10명·12월'])
-      + lcFinalRow(['영상미디어·악기대여·도예지도 등', { v: '12,536' }, '기간제, 7명·12월'])
-      + lcFinalRow(['사서수당', { v: '30,000' }, '—'])
-      + lcFinalRow(['위험근무수당', { v: '40,000' }, '—'])
-      + lcFinalRow(['정근수당가산금', { v: '30,000 ~ 80,000' }, '—'])
-      + lcFinalRow(['정액급식비', { v: '140,000' }, '—'])
-      + lcFinalRow(['직급보조비', { v: '185,000 / 180,000 / 175,000' }, '3급 / 4급 / 5·6급'])
-      + lcFinalRow(['무기계약직 초과근무수당', { v: '2,620,024' }, '연장근로, 기준단가']))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>일치 139건, 불일치 0건, 확인필요 0건</b> — 목:인건비 범위에서는 완전히 깨끗합니다.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(별도 목, 수동 검증) — 정정: 1건이 아니라 사업 4개 목, 합계 432,079천원(4.3억원), 전부 일치.</b> 8.33%(1/12) 근로자퇴직급여보장법 표준 방식 — HSCF의 103.8% 충당금 산식과 계산 근거 자체가 다릅니다.</p>'
-    + lcFinalTable([{ t: '사업(부서)' }, { t: '요구액(천원)' }, { t: '상태' }],
-      lcFinalRow(['일반직 전체(3~6급 통상임금평균 등)', { v: '229,829' }, { v: '일치(5건 소계)', status: true }])
-      + lcFinalRow(['일반직 전체(3~6급, 라·마급 통상임금평균)', { v: '79,131' }, { v: '일치(2건 소계)', status: true }])
-      + lcFinalRow(['도서관 운영(무기계약직)', { v: '18,333' }, { v: '일치', status: true }])
-      + lcFinalRow(['도서관 운영(3~6급, 도서관실무, 장애인 도서관실무)', { v: '104,786' }, { v: '일치(3건 소계)', status: true }]))
+  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>수당</summary>';
+  out += lcFinalFundBlock('수당', '', [87, 4, 26],
+    '<p class="lc-hint" style="margin-top:0;"><b>① 경영기획본부(출연금)<÷b><÷p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('경영기획본부 직급보조비', 4)
+      + lcFinalRow(['대표이사', { v: '400,000×1명×12월', formula: true }, { v: '4,800,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['3급', { v: '185,000×2명×12월', formula: true }, { v: '4,440,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '180,000×9명×12월', formula: true }, { v: '19,440,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급, 6급', { v: '175,000×11명×12월', formula: true }, { v: '23,100,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부 정근수당', 4)
+      + lcFinalRow(['3급', { v: '3,848,900×2명×2회×45%', formula: true }, { v: '6,928,020', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급', { v: '3,219,200×9명×2회×48%', formula: true }, { v: '27,813,888', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급', { v: '2,434,400×7명×2회×30%', formula: true }, { v: '10,224,480', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급', { v: '2,068,300×4명×2회×14%', formula: true }, { v: '2,316,496', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('경영기획본부 정근수당가산금', 4)
+      + lcFinalRow(['5년미만', { v: '30,000×6명×12월', formula: true }, { v: '2,160,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5년이상 10년미만', { v: '50,000×14명×12월', formula: true }, { v: '8,400,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['10년이상 15년미만', { v: '60,000×2명×12월', formula: true }, { v: '1,440,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('경영기획본부 정액급식비', 4)
+      + lcFinalRow(['대표이사~6급', { v: '140,000×23명×12월', formula: true }, { v: '38,640,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부 명절휴가비', 4)
+      + lcFinalRow(['3급', { v: '3,848,900×2명×2회×60%', formula: true }, { v: '9,237,360', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '3,219,200×9명×2회×60%', formula: true }, { v: '34,767,360', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '2,434,400×7명×2회×60%', formula: true }, { v: '20,448,960', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,068,300×4명×2회×60%', formula: true }, { v: '9,927,840', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부 연가보상비', 4)
+      + lcFinalRow(['대표이사', { v: '8,676,400÷209시간×8시간×1명×5일', formula: true }, { v: '1,660,555', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['3급', { v: '4,897,470÷209시간×8시간×2명×5일', formula: true }, { v: '1,874,630', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '4,168,660÷209시간×8시간×9명×5일', formula: true }, { v: '7,180,467', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '3,174,560÷209시간×8시간×7명×5일', formula: true }, { v: '4,252,999', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,688,400÷209시간×8시간×4명×5일', formula: true }, { v: '2,058,105', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부 특수업무수당', 4)
+      + lcFinalRow(['기술자격수당', { v: '50,000×1명×12월', formula: true }, { v: '600,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['전산직수당', { v: '50,000×1명×12월', formula: true }, { v: '600,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['특정업무수행경비', { v: '80,000×11명×12월', formula: true }, { v: '10,560,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('경영기획본부 초과근무수당(시간외·휴일)', 4)
+      + lcFinalRow(['3급~6급', { v: '3,732,280÷209시간×1.5×22명×14시간×12월', formula: true }, { v: '99,003,638', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부 가족수당', 4)
+      + lcFinalRow(['배우자', { v: '40,000×10명×12월', formula: true }, { v: '4,800,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계존속', { v: '20,000×5명×12월', formula: true }, { v: '1,200,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 첫째', { v: '50,000×2명×12월', formula: true }, { v: '1,200,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 둘째', { v: '80,000×2명×12월', formula: true }, { v: '1,920,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 셋째', { v: '120,000×1명×12월', formula: true }, { v: '1,440,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부(기타직) 직급보조비', 4)
+      + lcFinalRow(['가급', { v: '250,000×1명×12월', formula: true }, { v: '3,000,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['나급', { v: '185,000×1명×12월', formula: true }, { v: '2,220,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부(기타직) 정액급식비', 4)
+      + lcFinalRow(['가~나급', { v: '140,000×2명×12월', formula: true }, { v: '3,360,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부(기타직) 초과근무수당(시간외·휴일)', 4)
+      + lcFinalRow(['나급', { v: '6,441,200÷209시간×1.5×1명×10시간×12월', formula: true }, { v: '5,547,445', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부(기타직) 가족수당', 4)
+      + lcFinalRow(['배우자', { v: '40,000×1명×12월', formula: true }, { v: '480,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부(기타직) 연가보상비', 4)
+      + lcFinalRow(['가급', { v: '6,613,180÷209시간×8시간×1명×5일', formula: true }, { v: '1,265,680', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['나급', { v: '6,441,200÷209시간×8시간×1명×5일', formula: true }, { v: '1,232,766', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부(기간제) 초과근무수당(시간외·휴일)', 4)
+      + lcFinalRow(['행정실무사', { v: '2,620,024÷209시간×1.5×1명×10시간×12월', formula: true }, { v: '2,256,480', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('경영기획본부(기간제) 연가보상비', 4)
+      + lcFinalRow(['장애인 행정실무', { v: '12,536×4시간×1명×5일', formula: true }, { v: '250,720', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['행정실무사', { v: '12,536×8시간×1명×5일', formula: true }, { v: '501,440', formula: true }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>② 교육지원과(위탁금)<÷b><÷p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('교육지원과 직급보조비', 4)
+      + lcFinalRow(['3급', { v: '185,000×2명×12월', formula: true }, { v: '4,440,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '180,000×2명×12월', formula: true }, { v: '4,320,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급, 6급', { v: '175,000×8명×12월', formula: true }, { v: '16,800,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과 정근수당', 4)
+      + lcFinalRow(['3급', { v: '4,161,200×2명×2회×49%', formula: true }, { v: '8,155,952', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급', { v: '3,027,300×2명×2회×50%', formula: true }, { v: '6,054,600', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급', { v: '2,970,500×5명×2회×36%', formula: true }, { v: '10,693,800', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급', { v: '2,104,000×3명×2회×22%', formula: true }, { v: '2,777,280', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('교육지원과 정근수당가산금', 4)
+      + lcFinalRow(['5년미만', { v: '30,000×4명×12월', formula: true }, { v: '1,440,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5년이상 10년미만', { v: '50,000×7명×12월', formula: true }, { v: '4,200,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['15년이상 20년미만', { v: '80,000×1명×12월', formula: true }, { v: '960,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('교육지원과 정액급식비', 4)
+      + lcFinalRow(['3~6급', { v: '140,000×12명×12월', formula: true }, { v: '20,160,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과 명절휴가비', 4)
+      + lcFinalRow(['3급', { v: '4,161,200×2명×2회×60%', formula: true }, { v: '9,986,880', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '3,027,300×2명×2회×60%', formula: true }, { v: '7,265,520', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '2,970,500×5명×2회×60%', formula: true }, { v: '17,823,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,104,000×3명×2회×60%', formula: true }, { v: '7,574,400', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과 연가보상비', 4)
+      + lcFinalRow(['3급', { v: '5,312,160÷209시간×8시간×2명×5일', formula: true }, { v: '2,033,363', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '3,952,310÷209시간×8시간×2명×5일', formula: true }, { v: '1,512,846', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '3,810,780÷209시간×8시간×5명×5일', formula: true }, { v: '3,646,679', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,756,550÷209시간×8시간×3명×5일', formula: true }, { v: '1,582,708', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과 특수업무수당', 4)
+      + lcFinalRow(['기술자격수당', { v: '50,000×3명×12월', formula: true }, { v: '1,800,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['위험근무수당', { v: '40,000×3명×12월', formula: true }, { v: '1,440,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('교육지원과 근무수당(시간외·휴일)', 4)
+      + lcFinalRow(['3급~6급', { v: '3,957,950÷209시간×1.5×14시간×12명×12월', formula: true }, { v: '57,267,181', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과 가족수당', 4)
+      + lcFinalRow(['배우자', { v: '40,000×4명×12월', formula: true }, { v: '1,920,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계존속', { v: '20,000×7명×12월', formula: true }, { v: '1,680,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 첫째', { v: '50,000×1명×12월', formula: true }, { v: '600,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과(기타직) 정액급식비', 4)
+      + lcFinalRow(['라~마급', { v: '140,000×10명×12월', formula: true }, { v: '16,800,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과(기타직) 직급보조비', 4)
+      + lcFinalRow(['라~마급', { v: '175,000×10명×12월', formula: true }, { v: '21,000,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과(기타직) 근무수당(시간외·휴일)', 4)
+      + lcFinalRow(['라~마급', { v: '3,063,140÷209시간×1.5×14시간×6명×12월', formula: true }, { v: '22,160,132', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['야간근로수당', { v: '2,718,010÷209시간×0.5×4명×14시간×12월', formula: true }, { v: '4,369,624', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과(기타직) 연가보상비', 4)
+      + lcFinalRow(['라급', { v: '3,408,270÷209시간×8시간×1명×5일', formula: true }, { v: '652,300', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['마급', { v: '2,718,010÷209시간×8시간×9명×5일', formula: true }, { v: '4,681,740', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('교육지원과(기타직) 가족수당', 4)
+      + lcFinalRow(['배우자', { v: '40,000×7명×12월', formula: true }, { v: '3,360,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 첫째', { v: '50,000×1명×12월', formula: true }, { v: '600,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 둘째', { v: '80,000×1명×12월', formula: true }, { v: '960,000', formula: true }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:10px;"><b>③ 도서관정책과(위탁금)<÷b><÷p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('도서관정책과 직급보조비', 4)
+      + lcFinalRow(['3급', { v: '185,000×1명×12월', formula: true }, { v: '2,220,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '180,000×4명×12월', formula: true }, { v: '8,640,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급, 6급', { v: '175,000×15명×12월', formula: true }, { v: '31,500,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과 정근수당', 4)
+      + lcFinalRow(['3급', { v: '3,848,900×1명×2회×25%', formula: true }, { v: '1,924,450', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['4급', { v: '3,027,300×4명×2회×20%', formula: true }, { v: '4,843,680', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5급', { v: '2,228,500×5명×2회×23%', formula: true }, { v: '5,125,550', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['6급', { v: '2,068,300×10명×2회×12%', formula: true }, { v: '4,963,920', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('도서관정책과 정근수당가산금', 4)
+      + lcFinalRow(['5년이하', { v: '30,000×18명×12월', formula: true }, { v: '6,480,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['5년이상 10년미만', { v: '50,000×2명×12월', formula: true }, { v: '1,200,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('도서관정책과 정액급식비', 4)
+      + lcFinalRow(['3~6급', { v: '140,000×20명×12월', formula: true }, { v: '33,600,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과 명절휴가비', 4)
+      + lcFinalRow(['3급', { v: '3,848,900×1명×2회×60%', formula: true }, { v: '4,618,680', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '3,027,300×4명×2회×60%', formula: true }, { v: '14,531,040', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '2,228,500×5명×2회×60%', formula: true }, { v: '13,371,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,068,300×10명×2회×60%', formula: true }, { v: '24,819,600', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과 연가보상비', 4)
+      + lcFinalRow(['3급', { v: '4,769,170÷209시간×8시간×1명×9일', formula: true }, { v: '1,642,968', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4급', { v: '3,800,940÷209시간×8시간×4명×9일', formula: true }, { v: '5,237,659', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5급', { v: '2,901,780÷209시간×8시간×5명×9일', formula: true }, { v: '4,998,281', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6급', { v: '2,681,500÷209시간×8시간×10명×9일', formula: true }, { v: '9,237,703', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과 특수업무수당', 4)
+      + lcFinalRow(['사서수당', { v: '30,000×19명×12월', formula: true }, { v: '6,840,000', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('도서관정책과 근무수당(시간외·휴일)', 4)
+      + lcFinalRow(['3급~6급', { v: '3,538,350÷209시간×1.5×18시간×20명×12월', formula: true }, { v: '109,705,780', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과 가족수당', 4)
+      + lcFinalRow(['배우자', { v: '40,000×6명×12월', formula: true }, { v: '2,880,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계존속', { v: '20,000×3명×12월', formula: true }, { v: '720,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 첫째', { v: '50,000×2명×12월', formula: true }, { v: '1,200,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 둘째', { v: '80,000×2명×12월', formula: true }, { v: '1,920,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(무기계약) 정액급식비', 4)
+      + lcFinalRow(['도서관 실무(공무직)', { v: '140,000×12명×12월', formula: true }, { v: '20,160,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(무기계약) 보전수당', 4)
+      + lcFinalRow(['도서관 실무(공무직)', { v: '166,770×12명×12월', formula: true }, { v: '24,014,880', formula: true }, { v: '불일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(무기계약) 명절휴가비', 4)
+      + lcFinalRow(['도서관 실무(공무직)', { v: '550,000×12명×2회', formula: true }, { v: '13,200,000', formula: true }, { v: '불일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(무기계약) 연가보상비', 4)
+      + lcFinalRow(['도서관 실무(공무직)', { v: '2,851,700÷209시간×8시간×12명×9일', formula: true }, { v: '11,788,846', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(무기계약) 근무수당(시간외·휴일)', 4)
+      + lcFinalRow(['연장근로수당', { v: '2,620,024÷209시간×1.5×12명×18시간×12월', formula: true }, { v: '48,739,968', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(무기계약) 가족수당', 4)
+      + lcFinalRow(['배우자', { v: '40,000×9명×12월', formula: true }, { v: '4,320,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계존속', { v: '20,000×3명×12월', formula: true }, { v: '720,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 첫째', { v: '50,000×3명×12월', formula: true }, { v: '1,800,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 둘째', { v: '80,000×3명×12월', formula: true }, { v: '2,880,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(기간제) 연가보상비', 4)
+      + lcFinalRow(['장애인 도서관실무', { v: '12,090×4시간×2명×9일', formula: true }, { v: '870,480', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(보조금) 정액급식비', 4)
+      + lcFinalRow(['도서관 실무(공무직)', { v: '140,000×7명×12월', formula: true }, { v: '11,760,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(보조금) 보전수당', 4)
+      + lcFinalRow(['도서관 실무(공무직)', { v: '166,770×7명×12월', formula: true }, { v: '14,008,680', formula: true }, { v: '불일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(보조금) 명절휴가비', 4)
+      + lcFinalRow(['도서관 실무(공무직)', { v: '550,000×7명×2회', formula: true }, { v: '7,700,000', formula: true }, { v: '불일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(보조금) 연가보상비', 4)
+      + lcFinalRow(['도서관 실무(공무직)', { v: '2,620,024÷209시간×8시간×7명×10일', formula: true }, { v: '7,020,160', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(보조금) 근무수당(시간외·휴일)', 4)
+      + lcFinalRow(['연장근로수당', { v: '2,620,024÷209시간×1.5×7명×30시간×12월', formula: true }, { v: '47,386,080', formula: true }, { v: '일치', status: true }])
+      + lcFinalGroupRow('도서관정책과(보조금) 가족수당', 4)
+      + lcFinalRow(['배우자', { v: '40,000×6명×12월', formula: true }, { v: '2,880,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계존속', { v: '20,000×3명×12월', formula: true }, { v: '720,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 첫째', { v: '50,000×2명×12월', formula: true }, { v: '1,200,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직계비속 둘째', { v: '80,000×2명×12월', formula: true }, { v: '1,920,000', formula: true }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;"><b>무기계약직 명절휴가비·보전수당은 규정 근거 미확인(불일치).</b> 제40조③은 무기계약직에게 3호(가족수당)·5호(정액급식비)·9~14호(연장/야간/휴일근로·업무대행·연차미사용·직급보조비) 수당만 지급 가능하다고 규정 — 4호(명절휴가비)는 대상이 아닌데 예산서는 정액 55만원×2회를 편성. "보전수당"이라는 명칭도 14종 수당 목록에 없음. 도서관정책과는 연가보상비 미사용일수(9~10일)·초과근무시간(18시간)이 경영기획본부·교육지원과(5일·14시간)보다 높게 잡혀있는데, 도서관 개관시간 연장 운영이라는 업무 특성상 초과근무가 실제로 많을 개연성은 있으나 근태자료 대조 전까지는 확인필요.</p>'
   );
-  }
-  out += '</div>';
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>퇴직금</summary>';
+  out += lcFinalFundBlock('퇴직급여', '', [0, 0, 8],
+    '<p class="lc-hint" style="margin-top:0;"><b>107 퇴직급여 — ×8.33%(1/12), 전 부서 공통 산식(제60조① 부합)</b></p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalRow(['① 경영기획본부(출연금) — 대표이사', { v: '8,676,400×1명×12월×8.33%', formula: true }, { v: '8,672,929', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['① 경영기획본부 — 일반직(22명 평균)·계약직(2명 평균)', { v: '3,732,280×22명 + 6,527,190×2명, ×12월×8.33%', formula: true }, { v: '95,126,474', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['① 경영기획본부 — 기간제 2명', { v: '1,310,012+2,620,024, ×12월×8.33%', formula: true }, { v: '3,928,464', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['② 교육지원과(위탁금) — 일반직(12명 평균)·계약직(10명 평균)', { v: '3,957,950×12명 + 3,166,600×10명, ×12월×8.33%', formula: true }, { v: '79,129,735', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['③ 도서관정책과(위탁금) — 일반직(20명 평균)', { v: '3,538,350×20명×12월×8.33%', formula: true }, { v: '70,738,693', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['③ 도서관정책과 — 공무직(도서관실무 12명)', { v: '2,620,024×12명×12월×8.33%', formula: true }, { v: '31,427,712', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['③ 도서관정책과 — 기간제(2명)', { v: '1,310,012×2명×12월×8.33%', formula: true }, { v: '2,618,976', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['③ 도서관정책과 — 보조금분 공무직(7명)', { v: '2,620,024×7명×12월×8.33%', formula: true }, { v: '18,332,832', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">전체 소계 309,975천원. 요율(8.33%)·산식은 세 부서 전부 동일 — 재원(출연금·위탁금) 구분에 따른 차이 없음. 개별 단가(기본급) 검증이 아직 안 끝나 확인필요 유지.</p>'
+  );
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>평가급</summary>';
+  out += lcFinalFundBlock('평가급', '', [7, 0, 0],
+    '<p class="lc-hint" style="margin-top:0;"><b>109 평가급 — 경영기획본부(출연금) 운영경비 목에서만 전 재단 인원분 통합 편성</b></p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalRow(['기관장 경영평가 평가급', { v: '7,900,000×1명×230%', formula: true }, { v: '18,170,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직원(가급) 경영평가 평가급', { v: '6,100,000×5명×110%', formula: true }, { v: '33,550,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직원(나급) 경영평가 평가급', { v: '6,000,000×1명×110%', formula: true }, { v: '6,600,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직원(3급) 경영평가 평가급', { v: '4,700,000×14명×110%', formula: true }, { v: '72,380,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직원(4급) 경영평가 평가급', { v: '4,000,000×23명×110%', formula: true }, { v: '101,200,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직원(5급·라급) 경영평가 평가급', { v: '3,100,000×46명×110%', formula: true }, { v: '156,860,000', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['직원(6급·마급) 경영평가 평가급', { v: '2,700,000×68명×110%', formula: true }, { v: '201,960,000', formula: true }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">7건 합계 590,720천원, 원자료 합계와 정확히 일치. 제55조① 지급대상(대표이사·일반직·전문계약직·일반계약직·무기계약직) 7개 구간과 정확히 대응 — hscf(제42조① 기관장 제외)와 달리 대표이사가 지급대상에 명시돼 있어 "기관장 경영평가 평가급"이 있는 이유가 규정상 설명됨. <b>교육지원과·도서관정책과(위탁금)에는 평가급 미포함</b> — 개인성과급 재원이 출연금으로 일원화된 것으로 추정.</p>'
+  );
+  out += '</details>';
+
+  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>연금</summary>';
+  out += lcFinalFundBlock('연금부담금', '', [0, 0, 8],
+    '<p class="lc-hint" style="margin-top:0;"><b>304 연금부담금 등(사회보험부담금) — ×11.75%, 전 부서 공통 요율</b></p>'
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalRow(['① 경영기획본부(출연금) — 대표이사', { v: '8,676,400×1명×12월×11.75%', formula: true }, { v: '12,233,724', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['① 경영기획본부 — 일반직(22명 평균)·계약직(2명 평균)', { v: '3,732,280×22명 + 6,527,190×2명, ×12월×11.75%', formula: true }, { v: '134,182,002', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['① 경영기획본부 — 기간제 2명', { v: '1,310,012+2,620,024, ×12월×11.75%', formula: true }, { v: '5,541,351', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['② 교육지원과(위탁금) — 일반직(12명 평균)·계약직(10명 평균)', { v: '3,957,950×12명 + 3,166,600×10명, ×12월×11.75%', formula: true }, { v: '111,617,574', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['③ 도서관정책과(위탁금) — 일반직(20명 평균)', { v: '3,538,350×20명×12월×11.75%', formula: true }, { v: '99,781,470', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['③ 도서관정책과 — 공무직(도서관실무 12명)', { v: '2,620,024×12명×12월×11.75%', formula: true }, { v: '44,330,806', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['③ 도서관정책과 — 기간제(2명)', { v: '1,310,012×2명×12월×11.75%', formula: true }, { v: '3,694,234', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['③ 도서관정책과 — 보조금분 공무직(7명)', { v: '2,620,024×7명×12월×11.75%', formula: true }, { v: '25,860,236', formula: true }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">전체 소계 437,241천원. 요율(11.75%) 자체가 2026년도 법정 사업주부담 합산요율과 맞는지 아직 확인 안 됨(오픈 이슈, 참고로 국민연금4.5%+건강보험3.545%+장기요양0.459%+고용보험1.05%+산재보험1.0%=10.554%는 2027년 기준이라 2026년 검증엔 직접 못 씀) — 재단 보수규정엔 이 목 조문이 없어 규정 대조 대상도 아님. 참고: 304는 총인건비 인상률 심사 제외 항목이라 101(인건비) 목과는 절대 합산하지 않음.</p>'
+  );
+  out += '</details>';
   }
 
   // ===== 3. 화성FC =====
