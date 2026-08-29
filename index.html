@@ -9241,44 +9241,15 @@ function lcFinalSection() {
   out += '</details>';
 
   out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>연금</summary>';
-  out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [0, 5, 25],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
-      lcFinalGroupRow('일반직', 4)
-      + lcFinalRow(['국민연금부담금', { v: '1,022,252,162×4.5%', formula: true }, { v: '45,543', formula: true }, { v: '불일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '1,012,064,996×3.545%', formula: true }, { v: '35,878', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '35,877,704×6.475%', formula: true }, { v: '2,324', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '1,012,064,996×0.9%', formula: true }, { v: '9,109', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '1,012,064,996×0.65%', formula: true }, { v: '6,579', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['산재보험', { v: '1,012,064,996×0.766%', formula: true }, { v: '7,753', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalGroupRow('일반직(사업운영)', 4)
-      + lcFinalRow(['국민연금보험', { v: '243,751,128×4.5%', formula: true }, { v: '10,969', formula: true }, { v: '불일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '243,751,128×3.545%', formula: true }, { v: '8,641', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '8,640,977×6.475%', formula: true }, { v: '560', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '243,751,128×0.9%', formula: true }, { v: '2,194', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '243,751,128×0.65%', formula: true }, { v: '1,585', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['산재보험', { v: '243,751,128×0.766%', formula: true }, { v: '1,699', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalGroupRow('무기계약직', 4)
-      + lcFinalRow(['국민연금부담금', { v: '239,942,278×4.5%', formula: true }, { v: '10,798', formula: true }, { v: '불일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '239,942,278×3.545%', formula: true }, { v: '8,506', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '8,505,954×6.475%', formula: true }, { v: '551', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '239,942,278×0.9%', formula: true }, { v: '2,160', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '239,942,278×0.65%', formula: true }, { v: '1,560', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['산재보험', { v: '239,942,278×0.766%', formula: true }, { v: '1,838', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalGroupRow('무기계약직(사업운영)', 4)
-      + lcFinalRow(['국민연금보험', { v: '509,734,587×4.5%', formula: true }, { v: '22,939', formula: true }, { v: '불일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '509,734,587×3.545%', formula: true }, { v: '18,071', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '18,070,091×6.475%', formula: true }, { v: '1,171', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '509,734,587×0.9%', formula: true }, { v: '4,588', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '509,734,587×0.65%', formula: true }, { v: '3,314', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['산재보험', { v: '509,734,587×0.766%', formula: true }, { v: '3,553', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalGroupRow('기간제', 4)
-      + lcFinalRow(['국민연금부담금', { v: '41,976,000×4.5%', formula: true }, { v: '1,889', formula: true }, { v: '불일치', status: true }])
-      + lcFinalRow(['국민건강보험', { v: '41,976,000×3.545%', formula: true }, { v: '1,489', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['노인장기요양보험', { v: '1,488,049×6.475%', formula: true }, { v: '97', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(실업급여)', { v: '41,976,000×0.9%', formula: true }, { v: '378', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['고용보험(고용안정부담금)', { v: '41,976,000×0.65%', formula: true }, { v: '273', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['산재보험', { v: '41,976,000×0.766%', formula: true }, { v: '322', formula: true }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">소계 216,331천원(인력운영경비 137,047 + 사업운영 79,284). <b>국민연금 5건 전부 불일치</b> — 요율 4.5%는 2025년까지의 법정 사업주부담률이고, 2026년은 이미 4.75%로 법정 인상돼 2026년도 예산에는 갱신이 반영됐어야 합니다. 건강보험·장기요양·고용보험·산재보험 요율은 2026년 법정요율표를 아직 대조하지 못해 확인필요로 남겨둡니다.</p>'
+  out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [0, 1, 5],
+    lcFinalTable([{ t: '보험' }, { t: '요율' }, { t: '금액(천원)' }, { t: '상태' }],
+      lcFinalRow(['국민연금', '4.5%', { v: '92,138' }, { v: '불일치', status: true }])
+      + lcFinalRow(['건강보험', '3.545%', { v: '72,585' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['노인장기요양보험', '6.475%(건강보험료 기준)', { v: '4,703' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(실업급여)', '0.9%', { v: '18,429' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['고용보험(고용안정부담금)', '0.65%', { v: '13,311' }, { v: '확인필요', status: true }])
+      + lcFinalRow(['산재보험', '0.766%', { v: '15,165' }, { v: '확인필요', status: true }]))
+    + '<p class="lc-hint" style="margin-top:8px;">소계 216,331천원(일반직·무기계약직·기간제, 인력운영경비+사업운영 전체 합산). <b>국민연금 불일치</b> — 요율 4.5%는 2025년까지의 법정 사업주부담률이고 2026년은 이미 4.75%로 인상돼 갱신이 필요합니다. 건강보험·장기요양·고용보험·산재보험 요율은 2026년 법정요율표 대조 전이라 확인필요.</p>'
   );
   out += '</details>';
 
