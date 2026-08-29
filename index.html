@@ -9272,65 +9272,6 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<div class="lc-section" style="border-left-color:var(--dept-temp)">';
-
-  if (fundOk('위탁금')) {
-  out += lcFinalFundBlock('위탁금', '', [115, 3, 30],
-    lcFinalTable([{ t: '구분' }, { t: '단가(원/년)' }, { t: '요구인원' }],
-      lcFinalGroupRow('일반직', 3)
-      + lcFinalRow(['2급', { v: '84,991,284 / 84,992,000' }, { v: '2' }])
-      + lcFinalRow(['3급', { v: '66,213,828 / 66,514,284 / 66,514,668 등' }, { v: '10' }])
-      + lcFinalRow(['4급', { v: '57,233,368 / 54,189,906 / 54,411,710 등' }, { v: '20' }])
-      + lcFinalRow(['5급', { v: '45,712,584 / 45,531,114 등' }, { v: '17' }])
-      + lcFinalRow(['6급', { v: '40,102,665 / 38,063,782 등' }, { v: '10' }])
-      + lcFinalGroupRow('기타직', 3)
-      + lcFinalRow(['기타직(통합평균)', { v: '—' }, '자료 없음'])
-      + lcFinalGroupRow('무기계약직', 3)
-      + lcFinalRow(['무기계약직', { v: '37,387,739 / 37,226,844 / 41,172,107 등 7종' }, { v: '70' }])
-      + lcFinalGroupRow('기간제', 3)
-      + lcFinalRow(['기간제', { v: '2,526,810(월) / 30,321,720(년) / 27,112,130(년)' }, { v: '13' }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>퇴직급여(별도 목, 수동 검증) — 정정: 2건이 아니라 사업 11개 목, 합계 597,713천원(6.0억원).</b> 전부 DB형 퇴직연금 1/12(=8.33%) 방식. 대부분 일치, 1건 미편성, 1건 소액 불일치. (경기타운부/화성종합경기타운은 위 &ldquo;퇴직급여&rdquo; 탭에서 별도로 상세 정리했습니다.)</p>'
-    + lcFinalTable([{ t: '사업(부서)' }, { t: '요구액(천원)' }, { t: '상태' }],
-      lcFinalRow(['화성체력인증센터(거점체력_국비)', { v: '13,844' }, { v: '확인필요(산출식 복합서식)', status: true }])
-      + lcFinalRow(['체육시설1부(동부)', { v: '65,147' }, { v: '일치(4건 소계)', status: true }])
-      + lcFinalRow(['서남부체육시설', { v: '70,852' }, { v: '일치(2건 소계)', status: true }])
-      + lcFinalRow(['화성국민체육센터', { v: '92,970' }, { v: '일치(3건 소계)', status: true }])
-      + lcFinalRow(['동탄어울림센터', { v: '78,369' }, { v: '일치(2건 소계)', status: true }])
-      + lcFinalRow(['반월체육센터', { v: '88,177' }, { v: '일치(2건 소계)', status: true }])
-      + lcFinalRow(['향남복합문화센터TF', { v: '0' }, { v: '미편성', status: true }])
-      + lcFinalRow(['제부도 관광편의시설', { v: '62,889' }, { v: '일치(2건 소계)', status: true }])
-      + lcFinalRow(['전곡항 마리나', { v: '37,789' }, { v: '불일치 1건 포함(3건 중)', status: true }])
-      + lcFinalRow(['오토캠핑장', { v: '49,285' }, { v: '일치(3건 소계)', status: true }])
-      + lcFinalRow(['캠핑장', { v: '38,391' }, { v: '일치(3건 소계)', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">전곡항 마리나 &ldquo;일반직, 청원경찰(7명)&rdquo; 항목만 계산값 34,480천원인데 요구액 32,110천원으로 -2,370천원 차이. 향남복합문화센터TF는 산출식조차 없이 요구액 0원.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>평가급 및 성과금 등(별도 목, 수동 검증) — 정정: 2건이 아니라 사업 11개 목, 합계 607,726천원(6.1억원).</b> 경영평가급+자체평가급 이중 구조. 대부분 일치, 2건 미편성, 2건 소액 불일치. (경기타운부/화성종합경기타운은 위 &ldquo;평가급&rdquo; 탭에서 별도로 상세 정리했습니다.)</p>'
-    + lcFinalTable([{ t: '사업(부서)' }, { t: '요구액(천원)' }, { t: '상태' }],
-      lcFinalRow(['화성체력인증센터(거점체력_국비)', { v: '0' }, { v: '미편성(2건)', status: true }])
-      + lcFinalRow(['체육시설1부(동부)', { v: '84,345' }, { v: '일치(6건 소계)', status: true }])
-      + lcFinalRow(['서남부체육시설', { v: '79,932' }, { v: '일치(3건 소계)', status: true }])
-      + lcFinalRow(['화성국민체육센터', { v: '102,688' }, { v: '불일치 1건 포함(3건 중)', status: true }])
-      + lcFinalRow(['동탄어울림센터', { v: '69,820' }, { v: '일치(3건 소계)', status: true }])
-      + lcFinalRow(['반월체육센터', { v: '76,423' }, { v: '일치(5건 소계)', status: true }])
-      + lcFinalRow(['향남복합문화센터TF', { v: '0' }, { v: '미편성(2건)', status: true }])
-      + lcFinalRow(['제부도 관광편의시설', { v: '55,844' }, { v: '일치(3건 소계)', status: true }])
-      + lcFinalRow(['전곡항 마리나', { v: '35,227' }, { v: '일치(5건 소계)', status: true }])
-      + lcFinalRow(['오토캠핑장', { v: '55,760' }, { v: '불일치 1건 포함(3건 중)', status: true }])
-      + lcFinalRow(['캠핑장', { v: '47,687' }, { v: '일치(3건 소계)', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">화성국민체육센터 &ldquo;업무직(체력100 포함)&rdquo; 계산값 44,560천원 vs 요구액 44,656천원(-96) · 오토캠핑장 &ldquo;업무직 경영평가급&rdquo; 계산값 36,714천원 vs 요구액 36,712천원(+2, 무시 가능) · 거점체력·향남복합문화센터TF는 두 사업 모두 퇴직급여·평가급이 통째로 미편성.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>4대보험</b> · 국민연금 4.5%로 여러 사업에 일관 적용, 요구액과 전부 일치. 2025년까지의 법정 사업주부담률과 같은 값이나, <span style="color:var(--danger);font-weight:700;">2026년 4.75%, 2027년 5.0%로 법정 인상이 이미 시작</span>되어 갱신이 필요합니다.</p>'
-    + '<p class="lc-hint" style="margin-top:10px;"><b>확인필요 30건, 합계 899,124천원(9.0억원)</b> — 산출식 없이 합계액만 기재돼 원자료 대조가 필요합니다.</p>'
-    + lcFinalTable([{ t: '항목명' }, { t: '건수' }, { t: '합계(천원)' }],
-      lcFinalRow(['초과근무수당(시간외·휴일근무)', { v: '25건' }, { v: '899,124' }])
-      + lcFinalRow(['보수 · 무기계약근로자보수 · 기간제근로자등보수', { v: '3건' }, { v: '0(요구액 0원 자리표시)' }]))
-    + '<p class="lc-hint" style="margin-top:10px;"><b>불일치 3건</b></p>'
-    + lcFinalTable([{ t: '항목' }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '차이(천원)' }, { t: '비고' }],
-      lcFinalRow(['기본연봉(수질관리원 3명)', { v: '112,161' }, { v: '112,164' }, { v: '-3' }, '반올림 오차, 무시 가능'])
-      + lcFinalRow(['기본연봉(전임강사 7명)', { v: '261,709' }, { v: '261,716' }, { v: '-7' }, '반올림 오차, 무시 가능'])
-      + lcFinalRow(['기본연봉(안내데스크 3명)', { v: '112,161' }, { v: '112,164' }, { v: '-3' }, '반올림 오차, 무시 가능']))
-    + '<div class="callout" style="border-left:3px solid var(--dept-tour);background:var(--bg-hover);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;"><b>무기계약근로자보수 · 기간제근로자등보수 — 이전 보고 정정.</b> 이전에는 이 두 항목이 계산값 988,131천원 / 650,691천원으로 요구액(40,420천원 / 26,411천원)보다 20배 넘게 부풀려진 &ldquo;파서 버그&rdquo;로 보고됐습니다. 2026-08-25 원자료(Supabase budget_items)와 현재 계산기 코드로 다시 확인한 결과, 이 두 항목은 산출식(calc) 자체가 비어 있어 계산기가 애초에 어떤 값도 계산하지 못하는 상태였습니다 — 즉 &ldquo;확인필요&rdquo;가 맞는 상태이며, 988,131 / 650,691이라는 계산값은 현재 코드·데이터 어디서도 재현되지 않습니다. 위 &ldquo;불일치&rdquo; 집계에서 제외했고, 원본 예산요구서를 직접 대조하기 전까지는 정확도를 확정할 수 없는 상태로 남겨둡니다.</div>'
-  );
-  }
-  out += '</div>';
   }
 
   return out;
