@@ -9073,7 +9073,7 @@ function lcFinalSection() {
   out += '<div class="lc-section" style="border-left-color:var(--dept-tour)">';
 
   if (fundOk('출연금')) {
-  out += lcFinalFundBlock('출연금', '위탁금 재원 없음 · 유일한 재원', [92, 0, 10],
+  out += lcFinalFundBlock('출연금', '', [92, 0, 10],
     lcFinalTable([{ t: '구분' }, { t: '단가(원)' }, { t: '요구인원' }],
       lcFinalGroupRow('일반직', 3)
       + lcFinalRow(['1급(실장, 4급상당)', { v: '7,181,300' }, { v: '2' }])
