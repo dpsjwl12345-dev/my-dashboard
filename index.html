@@ -145,6 +145,9 @@ table.summary th:first-child, table.summary td:first-child { text-align: center;
 table.summary th { color: var(--navy); font-weight: 800; font-size: 13.5px; text-transform: uppercase; letter-spacing: .03em; background: var(--bg-hover); border-bottom: 1.5px solid var(--border-strong); text-align: center; }
 table.summary th:first-child { text-align: center; color: var(--navy); }
 table.summary tr.total td { font-weight: 700; border-bottom: 1.5px solid var(--border-strong); background: var(--bg-hover); }
+table.summary.ov2-income-table tr.total td,
+table.summary.ov2-rev-total-table tr.total td,
+table.summary.ov2-expense-table tr.total td { font-size: 17px !important; }
 table.summary td.diff { text-align: center; white-space: normal; word-break: keep-all; }
 table.summary td.diff.up { color: var(--danger); }
 table.summary td.diff.down { color: #4A5578; }
@@ -167,16 +170,40 @@ table.summary td.diff.down { color: #4A5578; }
 .settle-year-tab.selected { background: var(--navy); color: #fff; border-color: var(--navy); }
 .settle-year-tab.disabled { cursor: not-allowed; opacity: .45; }
 
-.ov-year-acc { position: relative; display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
-.ov-year-acc-head { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid var(--border-strong); border-radius: 999px; background: var(--bg-card); font-size: 13.5px; font-weight: 700; color: var(--text); cursor: pointer; }
-.ov-year-acc-head:hover { background: var(--bg-hover); }
-.ov-year-acc-arrow { display: inline-block; font-size: 10px; transition: transform .15s ease; color: var(--text-muted); }
-.ov-year-acc.open .ov-year-acc-arrow { transform: rotate(180deg); }
-.ov-year-acc-body { display: none; flex-direction: column; gap: 4px; margin-top: 8px; padding: 8px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-card); box-shadow: var(--shadow-sm); min-width: 96px; }
-.ov-year-acc.open .ov-year-acc-body { display: flex; }
-.ov-year-acc-item { padding: 6px 12px; border-radius: 6px; font-size: 13.5px; font-weight: 600; color: var(--text-muted); cursor: pointer; text-align: center; }
-.ov-year-acc-item:hover { background: var(--bg-hover); }
-.ov-year-acc-item.selected { color: var(--accent); font-weight: 800; background: var(--accent-soft); }
+.ov-year-acc { position: relative; display: flex; align-items: center; flex-shrink: 0; }
+.ov-year-pill {
+  position: relative; display: flex; align-items: center; cursor: pointer;
+  border: 1px solid transparent; border-radius: 999px; overflow: hidden;
+  background: transparent; padding: 2px;
+  transition: background .45s cubic-bezier(.65,0,.076,1), border-color .45s cubic-bezier(.65,0,.076,1);
+}
+.ov-year-pill:hover, .ov-year-acc.open .ov-year-pill { background: rgba(198,241,53,.75); border-color: rgba(198,241,53,.85); }
+.ov-year-pill:hover .ov-year-acc-item, .ov-year-acc.open .ov-year-acc-item {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.ov-year-pill-circle {
+  flex-shrink: 0; position: relative; width: 2.2rem; height: 2.2rem; border-radius: 50%;
+  background: var(--sidebar-bg);
+}
+.ov-year-pill-circle .icon.arrow { position: absolute; left: .55rem; top: 50%; margin-top: -.06rem; width: .9rem; height: .12rem; background: none; }
+.ov-year-pill-circle .icon.arrow::before {
+  position: absolute; content: ''; top: -.26rem; right: .05rem;
+  width: .5rem; height: .5rem; transform: rotate(45deg);
+  border-top: .125rem solid var(--lime); border-right: .125rem solid var(--lime);
+}
+.ov-year-pill-label {
+  display: inline-flex; align-items: center;
+  padding: 0 6px 0 10px; font-size: 18px; font-weight: 700; line-height: 1; font-family: 'GmarketSans', 'Pretendard', sans-serif;
+  color: var(--navy); white-space: nowrap;
+}
+.ov-year-pill-options {
+  display: flex; align-items: center; max-width: 0; min-width: 0; overflow: hidden;
+  transition: max-width .45s cubic-bezier(.65,0,.076,1), padding-right .45s cubic-bezier(.65,0,.076,1);
+}
+.ov-year-pill:hover .ov-year-pill-options, .ov-year-acc.open .ov-year-pill-options { max-width: 300px; padding-right: 4px; }
+.ov-year-acc-item { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; font-size: 17px; font-weight: 800; line-height: 1; font-family: 'GmarketSans', 'Pretendard', sans-serif; color: var(--navy); cursor: pointer; text-align: center; white-space: nowrap; }
+.ov-year-acc-item.selected { font-weight: 800; text-decoration: underline; text-underline-offset: 2px; }
 .settle-subheading { font-size: 15px; font-weight: 700; color: var(--navy); margin: 0 0 12px; }
 .settle-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
 .settle-kpi-grid.ov2-kpi-2col { grid-template-columns: repeat(2, 1fr); gap: 18px; }
@@ -193,9 +220,9 @@ table.summary td.diff.down { color: #4A5578; }
 .ov2-kpi-row4 { gap: 10px; margin-bottom: 14px; }
 .ov2-kpi-row4 .settle-kpi-card { padding: 12px 10px; }
 .ov2-kpi-row4 .icon-badge, .ov2-kpi-row4 .icon-badge svg, .ov2-kpi-row4 .icon-badge img { width: 38px; height: 38px; }
-.ov2-kpi-row4 .label { font-size: 12.5px; }
-.ov2-kpi-row4 .value { font-size: 18px; }
-.ov2-kpi-row4 .sub { font-size: 10.5px; }
+.ov2-kpi-row4 .label { font-size: 17px !important; }
+.ov2-kpi-row4 .value { font-size: 24px !important; }
+.ov2-kpi-row4 .sub { font-size: 14px !important; }
 @media (max-width: 1400px) { .ov2-kpi-row4 { grid-template-columns: repeat(2, 1fr); } }
 .ov2-personnel-combo { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); align-items: stretch; }
 .ov2-dept-col { display: flex; flex-direction: column; min-width: 0; }
@@ -214,7 +241,7 @@ table.summary td.diff.down { color: #4A5578; }
 .settle-kpi-card .sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 .ov2-personnel-row .settle-kpi-card .sub { font-size: 13px; font-weight: 700; color: var(--text); }
 .settle-kpi-card .icon-badge { flex: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
-.settle-kpi-card .icon-badge svg { width: 36px; height: 36px; }
+.settle-kpi-card .icon-badge svg { width: 36px; height: 36px; filter: saturate(.35) brightness(.85); }
 .settle-kpi-card .icon-badge img { width: 36px; height: 36px; }
 .settle-kpi-card .icon-badge.icon-shortage svg { color: var(--accent-dark); }
 .settle-rate-bar { width: 100%; height: 6px; border-radius: 4px; background: rgba(16,23,42,.10); overflow: hidden; margin-top: 3px; }
@@ -285,20 +312,20 @@ table.summary td.diff.down { color: #4A5578; }
   border: 1px solid rgba(255,255,255,.4); border-radius: 12px;
   background: rgba(243,245,250,.72);
 }
-#dept-biz-breakdown .dyt-card { margin-bottom: 20px; }
 .dyt-card-header {
-  padding: 10px 18px; display: flex; justify-content: flex-end; border-radius: 12px; overflow: hidden;
-  background: rgba(243,245,250,.72);
+  padding: 10px 22px; display: flex; justify-content: flex-end; border-radius: 12px; overflow: hidden;
+  background: rgba(214,226,252,.6); min-width: 230px;
   backdrop-filter: blur(16px) saturate(1.3); -webkit-backdrop-filter: blur(16px) saturate(1.3);
 }
-.dyt-card-title { margin: 0; font-size: 16px; font-weight: 800; color: var(--primary-color, var(--text)); text-align: right; white-space: nowrap; }
+.dyt-card-title { margin: 0; font-size: 16px; font-weight: 800; color: var(--navy); text-align: right; white-space: nowrap; }
+.dyt-card-header .detail-toggle-btn { --primary-color: var(--navy); --hovered-color: var(--lime-dark, var(--accent)); }
 .dyt-card .dept-stat-yearly-panel {
   position: fixed; z-index: 9999;
-  width: max-content; max-width: min(480px, 90vw);
+  width: max-content; max-width: min(600px, 90vw);
   background: rgba(243,245,250,.82);
   backdrop-filter: blur(16px) saturate(1.3); -webkit-backdrop-filter: blur(16px) saturate(1.3);
   border: 1px solid rgba(255,255,255,.4); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.14);
-  padding: 12px 18px 14px;
+  padding: 16px 22px 18px;
 }
 .detail-toggle-btn {
   padding: 0; margin: 0; border: none; background: none; cursor: pointer;
@@ -314,13 +341,16 @@ table.summary td.diff.down { color: #4A5578; }
 #summary-title, #cards-title { padding-left: 0; }
 #panel-inst-overview .section-heading-lg,
 #dept-biz-breakdown .section-heading-lg,
-#dept-yearly-breakdown .section-heading-lg { padding-left: 0; padding-bottom: 8px; }
+#dept-yearly-breakdown .section-heading-lg,
+#panel-settlement .section-heading-lg { padding-left: 0; padding-bottom: 8px; }
 #panel-inst-overview .section-heading-lg::before,
 #dept-biz-breakdown .section-heading-lg::before,
-#dept-yearly-breakdown .section-heading-lg::before { content: none; }
+#dept-yearly-breakdown .section-heading-lg::before,
+#panel-settlement .section-heading-lg::before { content: none; }
 #panel-inst-overview .section-heading-lg::after,
 #dept-biz-breakdown .section-heading-lg::after,
-#dept-yearly-breakdown .section-heading-lg::after { content: ""; position: absolute; left: 0; bottom: 0; width: 22px; height: 3px; border-radius: 2px; background: var(--accent); }
+#dept-yearly-breakdown .section-heading-lg::after,
+#panel-settlement .section-heading-lg::after { content: ""; position: absolute; left: 0; bottom: 0; width: 22px; height: 3px; border-radius: 2px; background: var(--accent); }
 .section-badge {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   font-size: 12.5px; font-weight: 800; letter-spacing: .02em; color: var(--accent-dark);
@@ -365,10 +395,10 @@ table.fc-summary td .dot {
 .donut-legend .item .pct { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 
 /* 수입총괄 - 비중별 가로 막대 (도넛 대체) */
-.ov2-propbar { width: 100%; margin: 4px 0 2px; }
+.ov2-propbar { width: 100%; margin: 4px 0 16px; }
 .ov2-propbar-labels { display: flex; align-items: flex-end; margin-bottom: 6px; }
 .ov2-propbar-label { display: flex; flex-direction: column; align-items: flex-start; overflow: hidden; padding-right: 6px; box-sizing: border-box; }
-.ov2-propbar-label .name { font-size: 13.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.ov2-propbar-label .name { font-size: 15.5px; font-weight: 700; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .ov2-propbar-label .pct { font-size: 14.5px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ov2-propbar-track { display: flex; width: 100%; height: 22px; border-radius: 11px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(16,20,35,.12); }
 .ov2-propbar-seg { height: 100%; box-shadow: inset 0 1px 1px rgba(255,255,255,.35); }
@@ -460,8 +490,8 @@ table.fc-summary td .dot {
 .ov2-tt-chip-label { font-size: 9.5px; font-weight: 700; color: var(--text-muted); white-space: nowrap; }
 .ov2-tt-chip-val { font-size: 11px; font-weight: 800; color: var(--text); white-space: nowrap; }
 .ov2-pbar-label { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.ov2-pbar-label-line { display: inline-flex; align-items: stretch; height: 24px; border-radius: 6px; overflow: hidden; box-shadow: 3px 3px 8px rgba(16,23,42,.08); width: fit-content; }
-.ov2-pbar-label-main { display: flex; align-items: center; padding: 0 10px; background: var(--navy); color: #fff; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.ov2-pbar-label-line { display: inline-flex; align-items: stretch; height: 26px; border-radius: 6px; overflow: hidden; box-shadow: 3px 3px 8px rgba(16,23,42,.08); width: fit-content; }
+.ov2-pbar-label-main { display: flex; align-items: center; padding: 0 10px; background: var(--navy); color: #fff; font-size: 14px; font-weight: 700; white-space: nowrap; }
 .ov2-pbar-val { display: flex; align-items: center; padding: 0 10px; background: #fff; color: var(--text); font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; position: relative; }
 .ov2-pbar-val::before { content: ''; position: absolute; left: -4px; top: 50%; width: 8px; height: 8px; background: #fff; transform: translateY(-50%) rotate(45deg); }
 .ov2-pbar-label-sub { font-size: 10px; color: var(--text-soft); font-weight: 500; white-space: nowrap; padding-left: 2px; height: 12px; line-height: 12px; }
@@ -504,6 +534,7 @@ table.fc-summary td .dot {
 .ov2-kpi-title-amt .diff.down { color: var(--accent); }
 table.summary.ov2-budget-fmt tr.total td { font-weight: 800; }
 table.summary.ov2-bc-table th:last-child { background: var(--bg-hover); font-weight: 800; }
+table.summary.ov2-bc-table td.ov2-bc-total { font-weight: 800; }
 table.summary.ov2-bc-table th { white-space: normal; line-height: 1.4; text-align: right; padding-right: 6px; }
 table.summary.ov2-bc-table th:first-child { text-align: center; padding-left: 6px; }
 /* 예산편성현황 - 헤더 텍스트 길이가 항목마다 달라 열 폭이 들쭉날쭉해지고 그 아래 숫자들이 서로 안 맞아 보이던 것을,
@@ -516,15 +547,15 @@ table.summary.ov2-bc-table th:first-child, table.summary.ov2-bc-table td:first-c
 table.summary tr.ov2-eb-section td { font-weight: 800; background: var(--accent-soft); color: var(--accent-dark); }
 table.summary tr.ov2-eb-row td:first-child { padding-left: 16px; color: var(--text-muted); font-weight: 400; }
 table.summary tr.ov2-eb-row td { padding-top: 5px; padding-bottom: 5px; line-height: 1.4; }
-table.summary.ov2-expense-table { table-layout: auto; }
+table.summary.ov2-expense-table { table-layout: fixed; }
 table.summary.ov2-expense-table th, table.summary.ov2-expense-table td { padding-left: 4px; padding-right: 4px; }
-table.summary.ov2-expense-table th:first-child, table.summary.ov2-expense-table td:first-child { text-align: left; white-space: nowrap; padding-left: 6px; padding-right: 8px; }
+table.summary.ov2-expense-table th:first-child, table.summary.ov2-expense-table td:first-child { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 118px; padding-left: 6px; padding-right: 8px; }
 table.summary.ov2-expense-table.ov2-inst-corp th:first-child, table.summary.ov2-expense-table.ov2-inst-corp td:first-child { white-space: nowrap; }
 table.summary.ov2-expense-table.ov2-inst-corp tr.ov2-eb-row td:first-child { padding-left: 18px; }
 .ov2-two-col.ov2-inst-sports { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
-table.summary.ov2-inst-sports th:first-child, table.summary.ov2-inst-sports td:first-child { width: 46%; text-align: left; }
-table.summary.ov2-inst-sports th:not(:first-child), table.summary.ov2-inst-sports td:not(:first-child) { text-align: right; padding-right: 16px; }
-table.summary.ov2-rev-total-table.ov2-inst-sports th:last-child, table.summary.ov2-rev-total-table.ov2-inst-sports td:last-child { width: auto; padding-right: 16px; }
+table.summary.ov2-inst-sports { table-layout: fixed; }
+table.summary.ov2-inst-sports th:first-child, table.summary.ov2-inst-sports td:first-child { width: 30%; text-align: left; }
+table.summary.ov2-inst-sports th:not(:first-child), table.summary.ov2-inst-sports td:not(:first-child) { width: 23.33%; text-align: right; padding-right: 16px; }
 .ov2-eb-footnote { font-size: 14.5px; font-weight: 700; color: var(--text-muted); margin: 10px 2px 0; }
 table.summary.ov2-income-table th { font-size: 18px; }
 table.summary.ov2-income-table td { font-size: 16.5px; }
@@ -539,6 +570,11 @@ table.summary.ov2-rev-total-table td.diff { white-space: normal; word-break: kee
 /* 수입총괄/지출총괄 - 같은 줄 안에서 열마다 폰트 크기가 제각각이던 것을 통일 (헤더+데이터, 모든 열 동일) */
 table.summary.ov2-rev-total-table th, table.summary.ov2-rev-total-table td,
 table.summary.ov2-expense-table th, table.summary.ov2-expense-table td { font-size: 14px !important; }
+/* 예산편성현황·수입총괄·지출총괄 헤더(구분~기타재원)를 모두 크게, 동일한 크기로 통일 */
+table.summary.ov2-bc-table th,
+table.summary.ov2-income-table th,
+table.summary.ov2-rev-total-table th,
+table.summary.ov2-expense-table th { font-size: 17px !important; }
 tr.ov2-rev-group-row td { background: var(--bg-hover); color: var(--navy); font-weight: 800; font-size: 13px; letter-spacing: .01em; padding-top: 4px !important; padding-bottom: 4px !important; border-bottom: 1.5px solid var(--border-strong); }
 tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .ov2-rev-detail-sub { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border-strong); }
@@ -661,7 +697,8 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 }
 
 /* 회차 탭(본예산~3회추경) - 부서/사업 탭 줄 바로 위, 첫 번째 탭 자리에 고정. Upload/Download는 같은 줄 오른쪽 끝 */
-.round-tabs-row { display: none; align-items: center; margin: -20px 0 10px; }
+.round-tabs-row { display: none; align-items: center; margin: 6px 0 10px; }
+.round-tabs-row #dept-biz-breakdown { margin-left: auto; }
 
 /* 연도 선택 - 회차탭(본예산~3회추경)과 같은 네이비 바 안 첫 세그먼트. 회차탭 라벨과 구분되도록 글자색/배경을 다르게 줌 */
 .year-select-wrap { position: relative; flex-shrink: 0; }
@@ -819,25 +856,25 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .dept-yearly-strip { display: flex; align-items: stretch; gap: 14px; }
 .dept-yearly-item { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
 .dept-yearly-item + .dept-yearly-item { padding-left: 14px; border-left: 1px solid var(--border); }
-.dept-yearly-item .dy-label { font-size: 11.5px; font-weight: 700; color: var(--text-soft); white-space: nowrap; }
-.dept-yearly-item .dy-amt { font-size: 13.5px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dept-yearly-item .dy-label { font-size: 13px; font-weight: 700; color: var(--text-soft); white-space: nowrap; }
+.dept-yearly-item .dy-amt { font-size: 16px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .dept-yearly-item.no-data .dy-amt { color: var(--text-soft); font-weight: 500; }
 /* 사업(카드)별로 나눠 편성하는 부서용 - 카드형 표(shadcn Table08 스타일): 부기명·2025·2026예산 */
-.dept-yearly-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
-.dept-yearly-table th, .dept-yearly-table td { padding: 4px 6px; text-align: left; white-space: nowrap; line-height: 1.2; }
+.dept-yearly-table { width: 100%; border-collapse: collapse; font-size: 17px; }
+.dept-yearly-table th, .dept-yearly-table td { padding: 7px 9px; text-align: left; white-space: nowrap; line-height: 1.3; }
 .dept-yearly-table th:first-child, .dept-yearly-table td:first-child { padding-left: 0; }
 .dept-yearly-table th:last-child, .dept-yearly-table td:last-child { padding-right: 0; }
-.dept-yearly-table thead th { font-size: 12px; font-weight: 700; color: var(--text-soft); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.dept-yearly-table thead th { font-size: 14px; font-weight: 700; color: var(--text-soft); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 .dept-yearly-table td.dyt-num, .dept-yearly-table th.dyt-num { text-align: right; font-variant-numeric: tabular-nums; }
 .dept-yearly-table td.dyt-num.no-data { color: var(--text-soft); font-weight: 500; }
 .dept-yearly-table tbody tr { border-bottom: 1px solid var(--border); }
 .dept-yearly-table tbody tr:last-child { border-bottom: none; }
-.dept-yearly-table td.dyt-name-col { font-weight: 700; color: var(--accent-dark); font-size: 13.5px; white-space: normal; word-break: keep-all; line-height: 1.2; }
-.dept-yearly-table tr.child td.dyt-name-col { font-weight: 600; color: var(--text-muted); padding-left: 22px; }
+.dept-yearly-table td.dyt-name-col { font-weight: 700; color: var(--accent-dark); font-size: 16px; white-space: normal; word-break: keep-all; line-height: 1.3; }
+.dept-yearly-table tr.child td.dyt-name-col { font-weight: 600; color: var(--text-muted); padding-left: 26px; }
 .dept-yearly-table tr.dyt-total td { font-weight: 800; color: var(--accent-dark); border-top: none; border-bottom: 2px solid var(--border); }
 .dyt-more-btn {
-  display: block; width: 100%; margin-top: 6px; padding: 4px 0; text-align: center;
-  font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft);
+  display: block; width: 100%; margin-top: 8px; padding: 6px 0; text-align: center;
+  font-size: 13px; font-weight: 700; color: var(--accent); background: var(--accent-soft);
   border: none; border-radius: 7px; cursor: pointer;
 }
 .dyt-more-btn:hover { background: var(--accent); color: #fff; }
@@ -1246,11 +1283,11 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .app.is-landing .sidebar .caret,
 .app.is-landing .sidebar .settle-data-dots,
 .app.is-landing .sidebar .side-sub { display: none; }
-.app.is-landing .labor-box.animated-button { width: 34px !important; padding: 0 !important; height: 34px !important; }
+.app.is-landing .labor-box.animated-button { width: 100% !important; padding: 0 !important; height: 34px !important; border-radius: 10px; background: var(--lime); box-shadow: inset 0 0 0 1px rgba(198,241,53,.6); }
 .app.is-landing .labor-box.animated-button .text,
 .app.is-landing .labor-box.animated-button .circle,
 .app.is-landing .labor-box.animated-button .arr-1 { display: none; }
-.app.is-landing .labor-box.animated-button .arr-2 { position: static; }
+.app.is-landing .labor-box.animated-button .arr-2 { position: static; width: 24px !important; filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)); }
 
 .app.is-landing .sidebar-stack:hover { width: 240px !important; z-index: 20; }
 .app.is-landing .sidebar-stack:hover .sidebar { padding: 20px 14px; }
@@ -1277,6 +1314,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   background: var(--bg-card); border-radius: var(--r-lg); box-shadow: var(--shadow-md);
 }
 .panel { display: none; position: relative; }
+#panel-laborcalc { min-height: 700px; }
 .panel.active { display: block; }
 .placeholder-box {
   background: var(--bg-card); border: 1px dashed var(--border-strong); border-radius: var(--r-lg);
@@ -1369,12 +1407,12 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   animation: landing-card-rise .55s cubic-bezier(.22,1,.36,1) forwards,
              landing-card-float 3.2s ease-in-out infinite;
 }
-.landing-grid .landing-card:nth-child(1) { animation-delay: 1.25s, 1.80s; }
-.landing-grid .landing-card:nth-child(2) { animation-delay: 1.31s, 1.86s; animation-duration: .55s, 3.4s; }
-.landing-grid .landing-card:nth-child(3) { animation-delay: 1.37s, 1.92s; animation-duration: .55s, 3.6s; }
-.landing-grid .landing-card:nth-child(4) { animation-delay: 1.43s, 1.98s; animation-duration: .55s, 3.3s; }
-.landing-grid .landing-card:nth-child(5) { animation-delay: 1.49s, 2.04s; animation-duration: .55s, 3.5s; }
-.landing-grid .landing-card:nth-child(6) { animation-delay: 1.55s, 2.10s; animation-duration: .55s, 3.7s; }
+.landing-grid .landing-card:nth-child(1) { animation-delay: 1.20s, 1.75s; }
+.landing-grid .landing-card:nth-child(2) { animation-delay: 1.26s, 1.81s; animation-duration: .55s, 3.4s; }
+.landing-grid .landing-card:nth-child(3) { animation-delay: 1.32s, 1.87s; animation-duration: .55s, 3.6s; }
+.landing-grid .landing-card:nth-child(4) { animation-delay: 1.38s, 1.93s; animation-duration: .55s, 3.3s; }
+.landing-grid .landing-card:nth-child(5) { animation-delay: 1.44s, 1.99s; animation-duration: .55s, 3.5s; }
+.landing-grid .landing-card:nth-child(6) { animation-delay: 1.50s, 2.05s; animation-duration: .55s, 3.7s; }
 @keyframes landing-card-rise { to { opacity: 1; transform: translateY(0); } }
 @keyframes landing-card-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @media (prefers-reduced-motion: reduce) {
@@ -1487,7 +1525,7 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .landing-settle-btn#landing-settle-btn .icon-btn { color: var(--navy); }
 .landing-card {
   position: relative;
-  width: clamp(76px, 8vw, 96px); height: clamp(76px, 8vw, 96px);
+  width: clamp(64px, 7vw, 82px); height: clamp(64px, 7vw, 82px);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
@@ -1917,15 +1955,18 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .witak-topbar-wrap .topbar-logo-slot #overview-topbar-logo-text { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #ov-year-acc-slot {
   position: absolute;
-  top: 50%;
-  right: 26px;
+  top: 28%;
+  right: 8px;
+  width: 340px;
+  max-width: calc(100% - 52px);
   transform: translateY(-50%);
   z-index: 51;
 }
+.witak-topbar-wrap.no-witak #ov-year-acc-slot { top: 50%; right: -50px; }
 .witak-dropdown {
   position: absolute;
-  top: 50%;
-  right: 128px;
+  top: 74%;
+  right: 8px;
   transform: translateY(-50%);
   width: 340px;
   max-width: calc(100% - 52px);
@@ -1936,8 +1977,9 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   z-index: 50;
 }
 .witak-dropdown input:not(:checked) + .witak-trigger {
-  background: linear-gradient(180deg, #ffffff, #f3f5fb);
-  box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 4px 10px rgba(16,23,42,.10), 0 1px 2px rgba(16,23,42,.06);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 4px 10px rgba(16,23,42,.10), 0 1px 2px rgba(16,23,42,.06);
 }
 .witak-dropdown input:where(:checked) ~ .witak-list {
   opacity: 1;
@@ -1972,6 +2014,7 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 }
 .witak-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
 .witak-caret { width: 16px; height: 16px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--text); }
+.witak-dropdown input:not(:checked) + .witak-trigger .witak-caret { color: var(--sidebar-text); }
 .witak-caret svg { width: 15px; height: 15px; display: block; transition: transform 300ms ease; }
 .witak-dropdown input:where(:checked) + .witak-trigger .witak-caret svg { transform: rotate(90deg); }
 .witak-list {
@@ -2011,7 +2054,7 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .lc-raise-row { display: flex; align-items: center; gap: 10px; background: var(--accent-soft); border-radius: var(--r); padding: 10px 16px; margin-bottom: 16px; font-size: 14.5px; font-weight: 600; color: var(--accent-dark); flex-wrap: wrap; }
 .lc-raise-row input { width: 70px; padding: 5px 8px; border: 1px solid var(--border-strong); border-radius: 6px; font-size: 14.5px; text-align: right; font-variant-numeric: tabular-nums; }
 .lc-numstep { display: inline-flex; align-items: stretch; vertical-align: middle; }
-.lc-numstep input { width: 70px !important; }
+.lc-numstep input { width: 70px; }
 .lc-numstep-wide input { width: 170px !important; }
 .lc-numstep input[type="number"] { -moz-appearance: textfield; border-radius: 6px 0 0 6px; border-right: none; }
 .lc-numstep input[type="number"]::-webkit-inner-spin-button,
@@ -2048,17 +2091,40 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .lc-section h3 { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 18px; font-weight: 800; margin: 0 0 10px; color: var(--text); }
 .lc-section h3 .lc-cat-tag { display: inline-block; vertical-align: middle; margin-left: 8px; font-family: 'Pretendard', sans-serif; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
 .lc-section > div:first-child { margin-top: 0 !important; }
-.lc-section.cat-general { border-left-color: var(--accent); }
-.lc-section.cat-general .lc-cat-tag { background: var(--accent-soft); color: var(--accent-dark); }
-.lc-section.cat-other { border-left-color: var(--dept-library); }
-.lc-section.cat-other .lc-cat-tag { background: var(--dept-library-bg); color: var(--dept-library); }
-.lc-section.cat-permanent { border-left-color: var(--dept-tour); }
-.lc-section.cat-permanent .lc-cat-tag { background: var(--dept-tour-bg); color: var(--dept-tour); }
-.lc-section.cat-temp { border-left-color: var(--dept-temp); }
-.lc-section.cat-temp .lc-cat-tag { background: var(--dept-temp-bg); color: var(--dept-temp); }
+.lc-section.cat-general, .lc-section.cat-other, .lc-section.cat-permanent, .lc-section.cat-temp { border-left-color: var(--navy); }
+.lc-section.cat-general .lc-cat-tag, .lc-section.cat-other .lc-cat-tag, .lc-section.cat-permanent .lc-cat-tag, .lc-section.cat-temp .lc-cat-tag { background: rgba(16,24,46,.08); color: var(--navy); }
 .lc-section .lc-hint { font-size: 13.5px; color: var(--text-soft); margin: 0 0 12px; line-height: 1.6; }
 .lc-top-row { display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
+.lc-guide-cinema { position: absolute; top: 0; right: 0; width: 420px; max-width: 40vw; min-width: 260px; z-index: 50; }
+.lc-guide-cinema-title-row { border-bottom: 1px solid var(--border); }
+.lc-guide-cinema-item + .lc-guide-cinema-item { margin-top: 8px; }
+.lc-top-row { position: relative; }
+.lc-guide-cinema-item {
+  position: relative; cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card, #fff);
+}
+.lc-guide-cinema-head { display: flex; align-items: center; gap: 16px; padding: 0 6px; height: 44px; }
+.lc-guide-cinema-id { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 12.5px; font-weight: 600; color: var(--text-soft); flex-shrink: 0; }
+.lc-guide-cinema-title { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 16px; font-weight: 800; color: var(--navy); transition: color .3s ease; white-space: nowrap; min-width: 0; }
+.lc-guide-cinema-item.is-open .lc-guide-cinema-title { color: var(--accent-dark); }
+.lc-guide-cinema-arrowbox {
+  margin-left: auto; flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--border-strong); color: var(--text-soft);
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  transition: all .35s ease;
+}
+.lc-guide-cinema-item.is-open .lc-guide-cinema-arrowbox { background: var(--navy); border-color: var(--navy); color: #fff; transform: rotate(-45deg); }
+.lc-guide-cinema-body {
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 40;
+  background: var(--bg-card, #fff); border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px;
+  box-shadow: 0 14px 30px rgba(0,0,0,.16);
+  max-height: 0; overflow: hidden; opacity: 0; padding: 0 6px;
+  transition: max-height .5s cubic-bezier(.25,1,.5,1), opacity .3s ease;
+}
+.lc-guide-cinema-item.is-open .lc-guide-cinema-body { max-height: 620px; opacity: 1; padding: 4px 6px 18px; overflow-y: auto; }
 .lc-top-row .lc-raise-row { margin-bottom: 0; }
+.lc-subtoggle-row .lc-raise-row { margin-bottom: 0; }
 .lc-top-row .filter-switch { margin-bottom: 0; }
 .lc-subtoggle { display: inline-flex; align-items: flex-end; gap: 26px; margin: 0 0 6px 20px; border-bottom: 1px solid var(--border); }
 .lc-subtoggle .tab-group { position: relative; }
@@ -2073,7 +2139,7 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 }
 .lc-subtoggle label:hover { color: var(--navy); }
 .lc-subtoggle input:checked + label { color: var(--navy); border-bottom-color: var(--lime); font-weight: 700; }
-.lc-subtab-desc { margin: 0 0 14px 0; font-size: 15px; font-weight: 500; color: var(--navy-fill); }
+.lc-subtab-desc { margin: 12px 0 14px 0; font-size: 15px; font-weight: 500; color: var(--navy-fill); }
 table.lc-table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 640px; }
 table.lc-table th, table.lc-table td { padding: 8px 9px; border-bottom: 1px solid var(--border); text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.lc-table th { color: var(--navy); font-weight: 800; font-size: 14.5px; background: var(--bg-hover); text-align: center; }
@@ -2116,7 +2182,7 @@ table.lc-table-6col th:nth-child(6), table.lc-table-6col td:nth-child(6) { width
 .lc-accordion.open .lc-accordion-body { display: block; }
 table.lc-table input { width: 64px; padding: 4px 6px; border: 1px solid var(--border-strong); border-radius: 5px; text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; }
 input.lc-result-box { text-align: right; }
-table.lc-table input.lc-result-box { width: 100%; min-width: 84px; font-weight: 700; background: var(--bg-hover); cursor: default; }
+table.lc-table input.lc-result-box { width: 110px; font-weight: 700; background: var(--bg-hover); cursor: default; }
 .lc-detail-toggle { margin: 8px 0 0; }
 .lc-detail-toggle summary { cursor: pointer; font-size: 13px; color: var(--text-muted); font-weight: 600; padding: 2px 0; list-style: none; }
 .lc-detail-toggle summary::-webkit-details-marker { display: none; }
@@ -2356,7 +2422,6 @@ td.lc-warn-cell { position: relative; }
         <h2 class="section-heading section-heading-lg" id="summary-title"></h2>
       </div>
       <div id="summary-slot"></div>
-      <div id="dept-biz-breakdown" style="display:none;"></div>
 
       <div class="round-tabs-row" id="round-tabs-row">
         <div class="radio-input" id="round-tabs">
@@ -2424,6 +2489,7 @@ td.lc-warn-cell { position: relative; }
           </div>
           <div class="dept-stat-yearly-panel" id="dept-stat-yearly-panel" style="display:none;"></div>
         </div>
+        <div id="dept-biz-breakdown" style="display:none;"></div>
       </div>
 
       <h2 class="section-heading section-heading-lg" id="cards-title" style="display:none;"></h2>
@@ -2448,7 +2514,7 @@ td.lc-warn-cell { position: relative; }
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
   // ── 여기에 Supabase 프로젝트 정보를 넣으세요 ──
-  var SUPABASE_URL = "https://gpzbjvumumkudarikbzm.supabase.co";
+  var SUPABASE_URL = "https://my-dashboard-lilac-rho.vercel.app/api/supabase";
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwemJqdnVtdW1rdWRhcmlrYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMzcxMjQsImV4cCI6MjEwMTcxMzEyNH0.m3OsDAvCVWiK6eBbArAbhEGQ2AsZAnNg_PHC-q-WIBw";
   var db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </script>
@@ -3495,8 +3561,14 @@ function renderWitakDropdown(instKey) {
   var list = document.getElementById('witak-list');
   var checkbox = document.getElementById('witak-dropdown');
   var data = WITAK_DATA[instKey];
-  if (!data) { wrap.style.display = 'none'; return; }
+  var topbarWrap = document.querySelector('.witak-topbar-wrap');
+  if (!data) {
+    wrap.style.display = 'none';
+    if (topbarWrap) topbarWrap.classList.add('no-witak');
+    return;
+  }
   wrap.style.display = 'block';
+  if (topbarWrap) topbarWrap.classList.remove('no-witak');
   checkbox.checked = false;
   var groups = {};
   var order = [];
@@ -3523,7 +3595,7 @@ hscf: {
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '408명' },
       { tone: 'purple', iconKey: 'settle', label: '현원', value: '386명' },
       { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '94.6%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:94.6%;"></div></div>' },
-      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '16명', extra: '<span class="ov2-outside-detail">기간제근로자(휴직대체)</span>' }
+      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '16명' }
     ],
     note: '⚠️ 정원 내 부족 인원: 22명 · 현원(총계) 402명'
   },
@@ -3640,7 +3712,7 @@ corp: {
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '907명' },
       { tone: 'purple', iconKey: 'settle', label: '현원', value: '787명' },
       { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '86.8%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:86.8%;"></div></div>' },
-      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '3명', extra: '<span class="ov2-outside-detail">기간제</span>' }
+      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '3명' }
     ],
     note: null
   },
@@ -3784,7 +3856,7 @@ talent: {
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '170명' },
       { tone: 'purple', iconKey: 'settle', label: '현원', value: '164명' },
       { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '96.5%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:96.5%;"></div></div>' },
-      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '32명', extra: '<span class="ov2-outside-detail">기간제근로자</span>' }
+      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '32명' }
     ],
     note: '⚠️ 정원 내 부족 인원: 6명'
   },
@@ -3891,7 +3963,7 @@ fc: {
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '19명' },
       { tone: 'purple', iconKey: 'settle', label: '현원', value: '16명' },
       { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '84.2%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:84.2%;"></div></div>' },
-      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '4명', extra: '<span class="ov2-outside-detail">기관장·파견공무원·기간제</span>' }
+      { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '4명' }
     ],
     note: '⚠️ 정원 내 부족 인원: 3명'
   },
@@ -4106,13 +4178,13 @@ function ovPersonnelSectionHtml(personnelInnerHtml) {
   var yearSlot = document.getElementById('ov-year-acc-slot');
   if (yearSlot) {
     yearSlot.innerHTML = '<div class="ov-year-acc">'
-      + '<div class="ov-year-acc-head" onclick="this.parentElement.classList.toggle(\'open\')">'
-      +   '<span class="ov-year-acc-label">2026년</span>'
-      +   '<span class="ov-year-acc-arrow">▾</span>'
-      + '</div>'
-      + '<div class="ov-year-acc-body">'
-      +   '<div class="ov-year-acc-item selected" onclick="selectOvYear(this,2026)">2026년</div>'
-      +   '<div class="ov-year-acc-item" onclick="selectOvYear(this,2027)">2027년</div>'
+      + '<div class="ov-year-pill" onclick="this.closest(\'.ov-year-acc\').classList.toggle(\'open\')">'
+      +   '<span class="ov-year-pill-circle" aria-hidden="true"><span class="icon arrow"></span></span>'
+      +   '<span class="ov-year-pill-label"><span class="ov-year-acc-label">2026년</span></span>'
+      +   '<span class="ov-year-pill-options">'
+      +     '<span class="ov-year-acc-item selected" onclick="event.stopPropagation();selectOvYear(this,2026)">2026</span>'
+      +     '<span class="ov-year-acc-item" onclick="event.stopPropagation();selectOvYear(this,2027)">2027</span>'
+      +   '</span>'
       + '</div>'
       + '</div>';
   }
@@ -4121,19 +4193,21 @@ function ovPersonnelSectionHtml(personnelInnerHtml) {
     +   '<h2 class="section-heading section-heading-lg">정현원 현황</h2>'
     + '</div>'
     + '<div class="ov-year-panel" data-year="2026">' + personnelInnerHtml + '</div>'
-    + '<div class="ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">2027년 데이터는 아직 준비 중입니다.</div></div>'
+    + '<div class="ov-year-panel" data-year="2027" style="display:none;"><div class="summary-box"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
     + '</div>';
 }
 
 function selectOvYear(el, year) {
-  var section = document.querySelector('.ov-personnel-section');
   var yearSlot = document.getElementById('ov-year-acc-slot');
-  if (!section || !yearSlot) return;
+  if (!yearSlot) return;
   yearSlot.querySelectorAll('.ov-year-acc-item').forEach(function (it) { it.classList.remove('selected'); });
   el.classList.add('selected');
   yearSlot.querySelector('.ov-year-acc-label').textContent = year + '년';
-  section.querySelectorAll('.ov-year-panel').forEach(function (p) {
+  document.querySelectorAll('#panel-inst-overview .ov-year-panel').forEach(function (p) {
     p.style.display = (Number(p.getAttribute('data-year')) === year) ? '' : 'none';
+  });
+  document.querySelectorAll('#panel-inst-overview .section-heading-lg').forEach(function (h) {
+    h.textContent = h.textContent.replace(/^\d{4}(?=년\s*(수입총괄|지출총괄))/, year);
   });
   yearSlot.querySelector('.ov-year-acc').classList.remove('open');
 }
@@ -4191,8 +4265,8 @@ function renderOv2Overview(instKey) {
   // 3) 소관별 정현원 - 정현원 현황과 나란히 배치해 높이를 맞추고 전체 섹션 높이를 줄임
   var deptPersonHtml = '<div class="ov2-two-col ov2-personnel-combo">'
     + orgHtml
-    + '<div class="ov2-dept-col"><div class="section-title-row"><h2 class="section-heading section-heading-lg">소관별 정현원</h2><span class="ov2-section-sub">' + escapeHtml(d.org.subtitle) + '</span></div>'
-    +   '<div class="summary-box ov2-dept-box">' + ov2PersonnelVBarList(d.byDept) + '</div></div>'
+    + '<div class="ov2-dept-col"><div class="section-title-row"><h2 class="section-heading section-heading-lg">소관별 정현원</h2></div>'
+    +   '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2026">' + ov2PersonnelVBarList(d.byDept) + '</div>' + '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
     + '</div>';
   orgHtml = '';
 
@@ -4294,19 +4368,21 @@ function renderOv2Overview(instKey) {
     } else {
       ebVisibleHtml = ebBlocks.map(function (blk) { return blk.html; }).join('');
     }
-    expenseBreakdownHtml = '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-expense-table ov2-inst-' + instKey + '"><thead><tr>' + ebHeadHtml + '</tr></thead>'
+    expenseBreakdownHtml = '<div class="summary-box ov-year-panel" data-year="2026"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-expense-table ov2-inst-' + instKey + '"><thead><tr>' + ebHeadHtml + '</tr></thead>'
       + '<tbody>' + ebGrandRow + ebVisibleHtml + '</tbody>'
       + (ebHiddenCount ? '<tbody id="' + ebMoreId + '" style="display:none;">' + ebHiddenHtml + '</tbody>' : '')
       + '</table></div>' + ebFootnoteHtml
       + (ebHiddenCount ? '<button type="button" class="dyt-more-btn" onclick="toggleExpenseDetailMore(this, \'' + ebMoreId + '\')">나머지 ' + ebHiddenCount + '건 더보기 ▾</button>' : '')
-      + '</div>';
+      + '</div>'
+      + '<div class="summary-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div>';
   }
 
-  var incomeBoxHtml = '<div class="summary-box">' + (d.hideIncomeTitle ? '' : '<h3>총 수입</h3>')
+  var incomeBoxHtml = '<div class="summary-box ov-year-panel" data-year="2026">' + (d.hideIncomeTitle ? '' : '<h3>총 수입</h3>')
         + buildIncomeProportionBar(d.revenueItems, revTotal26)
         + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table ov2-inst-' + instKey + '"><thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>'
         + (revDetailHtml ? '<div class="ov2-rev-detail-sub"><h4>' + escapeHtml(d.revenueDetailTitle || '세부 내역') + '</h4>' + revDetailHtml + '</div>' : '')
-      + '</div>';
+      + '</div>'
+      + '<div class="summary-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div>';
 
   var incomeExpenseHtml;
   if (expenseBreakdownHtml) {
@@ -4340,9 +4416,10 @@ function renderOv2Overview(instKey) {
   var bcY26Html = '<tr><td>2026년</td>' + d.budgetCompare.map(function (r) { return '<td>' + fmtWon(r.y26) + '</td>'; }).join('') + '<td class="ov2-bc-total">' + fmtWon(expTotal26) + '</td></tr>';
   var bcY25Html = '<tr><td>2025년</td>' + d.budgetCompare.map(function (r) { return '<td>' + fmtWon(r.y25) + '</td>'; }).join('') + '<td class="ov2-bc-total">' + fmtWon(expTotal25) + '</td></tr>';
   var budgetCompareHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">예산편성현황</h2><span class="ov2-unit-note-out">(단위: 천원)</span></div>'
-    + '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-budget-fmt ov2-bc-table"><thead><tr>'
-    + bcHeadHtml
-    + '</tr></thead><tbody>' + bcY26Html + bcY25Html + '</tbody></table></div></div>';
+    + '<div class="summary-box ov-year-panel" data-year="2026"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-budget-fmt ov2-bc-table"><thead><tr>'
+      + bcHeadHtml
+      + '</tr></thead><tbody>' + bcY26Html + bcY25Html + '</tbody></table></div></div>'
+    + '<div class="summary-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div>';
 
   // 7) 지출총괄표는 위 incomeExpenseHtml 안에 이미 포함됨
 
@@ -5489,8 +5566,8 @@ function renderDetail() {
   var roundRow = document.getElementById('round-tabs-row');
   var badgeRow = document.getElementById('tab-headcount-badge-row');
   if (!b) {
-    el.innerHTML = '';
-    if (roundRow) roundRow.style.display = 'none';
+    el.innerHTML = '<div class="empty-state">' + (state.fund === '위탁금' ? '사업을 선택해 주세요.' : '기관을 선택해 주세요.') + '</div>';
+    if (roundRow) roundRow.style.display = 'flex';
     if (badgeRow) badgeRow.style.display = 'none';
     var emptyBadge = document.getElementById('tab-headcount-badge');
     if (emptyBadge) emptyBadge.innerHTML = '';
@@ -7509,6 +7586,8 @@ function showPlaceholderInstOverview(name) {
 
   var witakWrap = document.getElementById('witak-dropdown-wrap');
   if (witakWrap) witakWrap.style.display = 'none';
+  var topbarWrapSports = document.querySelector('.witak-topbar-wrap');
+  if (topbarWrapSports) topbarWrapSports.classList.add('no-witak');
 
   var legacy = document.getElementById('overview-legacy-blocks');
   if (legacy) legacy.style.display = 'none';
@@ -7540,8 +7619,8 @@ function showPlaceholderInstOverview(name) {
     );
     var deptPersonHtml = '<div class="ov2-two-col ov2-personnel-combo">'
       + orgHtml
-      + '<div class="ov2-dept-col"><div class="section-title-row"><h2 class="section-heading section-heading-lg">소관별 정현원</h2><span class="ov2-section-sub">' + escapeHtml(d.org.subtitle) + '</span></div>'
-      +   '<div class="summary-box ov2-dept-box">' + ov2PersonnelVBarList(d.byDept) + '</div></div>'
+      + '<div class="ov2-dept-col"><div class="section-title-row"><h2 class="section-heading section-heading-lg">소관별 정현원</h2></div>'
+      +   '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2026">' + ov2PersonnelVBarList(d.byDept) + '</div>' + '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
       + '</div>';
     orgHtml = '';
 
@@ -7559,8 +7638,9 @@ function showPlaceholderInstOverview(name) {
     var bcY26Html = '<tr><td>2026년</td>' + d.budgetCompare.map(function (r) { return '<td>' + fmtWon(r.y26) + '</td>'; }).join('') + '<td class="ov2-bc-total">' + fmtWon(expTotal26) + '</td></tr>';
     var bcY25Html = '<tr><td>2025년</td>' + d.budgetCompare.map(function (r) { return '<td>' + fmtWon(r.y25) + '</td>'; }).join('') + '<td class="ov2-bc-total">' + fmtWon(expTotal25) + '</td></tr>';
     var budgetCompareHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">예산편성현황</h2><span class="ov2-unit-note-out">(단위: 천원)</span></div>'
-      + '<div class="summary-box"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-budget-fmt ov2-bc-table ov2-bc-sports"><thead><tr>'
-      + bcHeadHtml + '</tr></thead><tbody>' + bcY26Html + bcY25Html + '</tbody></table></div></div>';
+      + '<div class="summary-box ov-year-panel" data-year="2026"><div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-budget-fmt ov2-bc-table ov2-bc-sports"><thead><tr>'
+      + bcHeadHtml + '</tr></thead><tbody>' + bcY26Html + bcY25Html + '</tbody></table></div></div>'
+      + '<div class="summary-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div>';
 
     // 2026년 수입총괄 - 수입총괄표의 관/항/목/세목 중 실제로 갈라지는 항목만 남긴 전체 목록
     var revTotal26 = d.revenueItems.reduce(function (a, r) { return a + r.y26; }, 0);
@@ -7581,8 +7661,9 @@ function showPlaceholderInstOverview(name) {
     }).join('');
     var revTotalHtml = '<tr class="total"><td>계</td><td>' + fmtWon(revTotal26) + '</td><td>' + fmtWon(revTotal25) + '</td>' + diffCellHtml(revTotal25, revTotal26) + '</tr>';
     var revFootnoteHtml = revFootnotes.length ? '<p class="ov2-rev-footnote">* ' + revFootnotes.map(escapeHtml).join(' · ') + '</p>' : '';
-    var incomeHtml = '<div class="summary-box">' + buildIncomeProportionBar(d.revenueItems, revTotal26)
-      + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table"><thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>' + revFootnoteHtml + '</div>';
+    var incomeHtml = '<div class="summary-box ov-year-panel" data-year="2026">' + buildIncomeProportionBar(d.revenueItems, revTotal26)
+      + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table"><thead><tr><th>구&nbsp;&nbsp;분</th><th>2026년</th><th>2025년</th><th>증&nbsp;&nbsp;감</th></tr></thead><tbody>' + revTotalHtml + revRowsHtml + '</tbody></table></div>' + revFootnoteHtml + '</div>'
+      + '<div class="summary-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div>';
 
     // 2026년 지출총괄 - 지출총괄표의 세부사업 54개 전부. 통계목 하나뿐인 사업은 "사업명 (통계목)" 한 줄로, 여러 개면 소계+세부 행으로.
     // 사업명 옆 "(일반운영비)" 등 통계목 표기는 구분 열에서는 생략하고 사업명만 보여준다.
@@ -7623,13 +7704,14 @@ function showPlaceholderInstOverview(name) {
       visibleHtml = expProgramBlocks.map(function (blk) { return blk.html; }).join('');
     }
     // 표를 둘로 쪼개지 않고 하나의 table 안에 tbody 2개(기본 노출 + 더보기)를 두어, 펼쳐도 헤더가 중간에 다시 나오지 않고 한 표로 이어지게 한다.
-    var expenseHtml = '<div class="summary-box">'
+    var expenseHtml = '<div class="summary-box ov-year-panel" data-year="2026">'
       + '<div class="table-scroll"><table class="summary fc-summary ov2-income-table ov2-rev-total-table ov2-inst-sports">' + expTableHead
       + '<tbody>' + expDetailTotalHtml + visibleHtml + '</tbody>'
       + (hiddenCount ? '<tbody id="sports-exp-more-body" style="display:none;">' + hiddenHtml + '</tbody>' : '')
       + '</table></div>'
       + (hiddenCount ? '<button type="button" class="dyt-more-btn" onclick="toggleExpenseDetailMore(this, \'sports-exp-more-body\')">나머지 사업 ' + hiddenCount + '건 더보기 ▾</button>' : '')
-      + '</div>';
+      + '</div>'
+      + '<div class="summary-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div>';
 
     var incomeExpenseHtml = '<div class="ov2-two-col ov2-inst-sports">'
       + '<div>'
@@ -7865,6 +7947,7 @@ var LC = {
   view: 'labor', // 'labor'(인건비) | 'retire'(퇴직급여) | 'eval'(평가급) | 'pension'(연금부담금) | 'final'(기준값 최종 정리, 원자료 조회 포함)
   basis: { institutionId: '', fundType: '출연금', dept: '', workGroup: '', sectionId: '', sections: [], rows: [], teams: [], overview: null, loading: false, error: '', statusFilter: '' },
   final: { instKey: 'hscf', fundType: '', rawOpen: false, rulesOpen: false, rulesTab: 'labor' }, // 기준값 (최종) 탭 상단 고정 필터: instKey(기관) | fundType(''=전체, '출연금'|'위탁금') | rawOpen(원자료 아코디언 열림 상태) | rulesOpen(보수규정 서류함 클릭 시 열림 상태) | rulesTab(보수규정 내부 챕터탭: 'labor'인건비|'retire'퇴직금|'eval'평가급)
+  guideCinemaOpen: {}, // 우측 상단 지침 리스트(01/02) 클릭 펼침 상태 — { '01': true/false, '02': true/false }
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
   quota: '', // 전년도 말 정원(일반직 및 무기계약직) — 인상률처럼 실제 확정되면 입력해 계산에 반영하는 모수. 빈칸이 기본값.
@@ -8364,7 +8447,7 @@ function lcBasisAggregateTable(rows) {
         return groupRow + '<tr><td>' + escapeHtml(g.grade) + '</td><td>' + escapeHtml(g.name || (onlyNonEmpty ? '수당명 확인필요' : '')) + '</td><td style="text-align:right">' + (g.units.length ? g.units.map(function (v) { return fmtWon(v); }).join(' / ') : '') + '</td><td style="text-align:right">' + (g.rows ? g.count : '') + '</td><td style="text-align:right">' + (g.months.length ? g.months.join(' / ') : '') + '</td><td>' + escapeHtml(g.rates.join(' · ')) + '</td><td>' + (g.rows ? g.rows + '건' : '') + '</td></tr>';
       }).join('');
       var nameHeader = onlyNonEmpty ? '수당명(부기명)' : '부기명';
-      return '<div style="margin-top:20px;padding-top:14px;border-top:2px solid var(--border-strong);"><h4 style="margin:0 0 8px;padding:7px 10px;border-left:5px solid var(--primary);background:var(--surface-2);">' + escapeHtml(type) + '</h4><div style="overflow:auto;"><table class="lc-table"><thead><tr><th>급수</th><th>' + nameHeader + '</th><th>기준단가(원)</th><th>요구인원 합계</th><th>개월</th><th>적용률</th><th>자료건수</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
+      return '<div style="margin-top:20px;padding-top:14px;border-top:2px solid var(--border-strong);"><h4 style="margin:0 0 8px;padding:7px 10px;border-left:5px solid var(--primary);background:var(--surface-2);">' + escapeHtml(type) + '</h4><div style="overflow:auto;"><table class="lc-table"><thead><tr><th>급수</th><th>' + nameHeader + '</th><th>기준단가(원)</th><th>요구인원 합계</th><th>근무개월</th><th>적용률</th><th>자료건수</th></tr></thead><tbody>' + body + '</tbody></table></div></div>';
     }).join('');
     return '<div class="summary-box"><h4>' + title + '</h4>' + sections + '</div>';
   }
@@ -8508,7 +8591,7 @@ function lcBasisSection() {
     + (b.loading ? '<p>불러오는 중입니다.</p>' : '') + (b.error ? '<p class="lc-warn">' + escapeHtml(b.error) + '</p>' : '')
     + (filteredRows.length ? lcBasisExplanation(basisInst, b.fundType) + lcCulturalEmploymentCompare(basisInst) + aggregate + '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px;">' + summary + '</div>' : '')
     + (filteredRows.length ? statusFilterHtml : '')
-    + '<div style="overflow:auto;"><table class="lc-table"><thead><tr><th>고용형태</th><th>급수</th><th>부기명</th><th>산출기초</th><th>단가(원)</th><th>인원</th><th>개월</th><th>자동계산액(천원)</th><th>요구액(천원)</th><th>차이(천원)</th><th>상태</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+    + '<div style="overflow:auto;"><table class="lc-table"><thead><tr><th>고용형태</th><th>급수</th><th>부기명</th><th>산출기초</th><th>단가(원)</th><th>인원</th><th>근무개월</th><th>자동계산액(천원)</th><th>요구액(천원)</th><th>차이(천원)</th><th>상태</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
 }
 
 function lcBasisGuideSection() {
@@ -8574,6 +8657,10 @@ function lcFinalToggleRules() {
   LC.final.rulesOpen = !LC.final.rulesOpen;
   renderLaborCalc();
 }
+function lcToggleGuideCinema(id) {
+  LC.guideCinemaOpen[id] = !LC.guideCinemaOpen[id];
+  renderLaborCalc();
+}
 function lcFinalSetRulesTab(tab) {
   LC.final.rulesTab = tab;
   renderLaborCalc();
@@ -8597,13 +8684,14 @@ function lcFinalFilterBar() {
     var active = fund === f.fundType;
     return '<button type="button" onclick="lcFinalSetFund(\'' + fund + '\')" style="padding:6px 12px;border-radius:999px;border:1px solid ' + (active ? 'var(--dept-tour)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--dept-tour)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:12.5px;font-weight:600;">' + (fund || '전체 재원') + '</button>';
   }).join('');
+  var LC_FINAL_BADGE_TONE = { bg: 'rgba(16,24,46,.08)', fg: 'var(--navy)' };
   var LC_FINAL_BADGES = {
-    hscf: { bg: 'var(--dept-culture-bg)', fg: 'var(--dept-culture)', text: '정원 408 · 현원 386 · 결원율 5.4%' },
-    talent: { bg: 'var(--dept-library-bg)', fg: 'var(--dept-library)', text: '정원 170 · 현원 164 · 결원율 3.5%(기준 이내)' },
-    fc: { bg: 'var(--dept-tour-bg)', fg: 'var(--dept-tour)', text: '정원 19 · 현원 16 · 결원율 15.8%(기준 대폭 초과)' },
-    corp: { bg: 'var(--dept-temp-bg)', fg: 'var(--dept-temp)', text: '정원 907 · 현원 787 · 결원율 13.2%(기준 대폭 초과)' },
-    sports: { bg: 'var(--dept-tour-bg)', fg: 'var(--dept-tour)', text: '정원 29 · 현원 28 · 결원율 3.4%(기준 이내)' },
-    disabledsports: { bg: 'var(--dept-tour-bg)', fg: 'var(--dept-tour)', text: '정원 17 · 현원 27(정원 외 계약직·지도자 포함)' }
+    hscf: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 408 · 현원 386 · 결원율 5.4%' },
+    talent: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 170 · 현원 164 · 결원율 3.5%(기준 이내)' },
+    fc: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 19 · 현원 16 · 결원율 15.8%(기준 대폭 초과)' },
+    corp: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 907 · 현원 787 · 결원율 13.2%(기준 대폭 초과)' },
+    sports: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 29 · 현원 28 · 결원율 3.4%(기준 이내)' },
+    disabledsports: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 17 · 현원 27(정원 외 계약직·지도자 포함)' }
   };
   var badge = LC_FINAL_BADGES[f.instKey];
   var badgeHtml = badge ? '<span class="lc-cat-tag" style="margin-left:10px;background:' + badge.bg + ';color:' + badge.fg + ';">' + badge.text + '</span>' : '';
@@ -8614,7 +8702,7 @@ function lcFinalFilterBar() {
       + '<span class="lc-folder"><span class="f-back"></span><span class="f-paper"></span><span class="f-front"></span></span>'
       + '</button>'
     : '';
-  return '<div style="position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--border-strong);padding:10px 0 12px;margin-bottom:16px;">'
+  return '<div style="position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--border-strong);padding:10px 12px 12px;margin-bottom:16px;width:fit-content;max-width:100%;">'
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">' + instBtns + '</div>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' + fundBtns + folderHtml + badgeHtml + '</div>'
     + '</div>';
@@ -8735,7 +8823,7 @@ function lcFinalSection() {
 
   // ===== 1. 화성시문화관광재단 =====
   if (f.instKey === 'hscf') {
-  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>인건비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>인건비</summary>';
 
   out += lcFinalFundBlock('보수', '', [14, 5, 10],
     '<p class="lc-hint" style="margin-top:0;"><b>01 일반직 보수</b></p>'
@@ -8784,7 +8872,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당', '', [9, 3, 17],
     '<p class="lc-hint" style="margin-top:0;"><b>05 수당(위탁금 기준 전체 목록 — 정액형 항목은 출연금도 동일 정액 확인, 중복 표 생략)</b></p>'
     + lcFinalTable([{ t: '세부' }, { t: '산식·기준', formula: true }, { t: '금액(원)' }, { t: '인원' }, { t: '상태' }],
@@ -8855,7 +8943,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여', '', [0, 1, 0],
     '<p class="lc-hint" style="margin-top:0;"><b>퇴직급여(별도 목, 출연금 데이터로 검증)</b></p>'
     + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
@@ -8863,7 +8951,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>평가급</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>평가급</summary>';
   out += lcFinalFundBlock('평가급', '', [0, 2, 0],
     '<p class="lc-hint" style="margin-top:0;"><b>평가급(별도 목, 출연금 데이터로 검증)</b></p>'
     + lcFinalTable([{ t: '항목' }, { t: '산출기초', formula: true }, { t: '계산값(천원)' }, { t: '요구액(천원)' }, { t: '상태' }],
@@ -8872,7 +8960,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-culture)"><summary>연금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금', '', [0, 1, 0],
     '<p class="lc-hint" style="margin-top:0;"><b>4대보험(경영기획본부 목304, 기준액 6,460,798,000원)</b></p>'
     + lcFinalTable([{ t: '보험' }, { t: '요율' }, { t: '금액(천원)' }, { t: '상태' }],
@@ -8890,7 +8978,7 @@ function lcFinalSection() {
   // ===== 2. 화성시인재육성재단 (출연금·위탁금 — 재단 보수규정은 재원 구분 없이 동일 적용, 도서관정책과만 업무 특성상 산출식 상이) =====
   if (f.instKey === 'talent') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>인건비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>인건비</summary>';
   out += lcFinalFundBlock('보수', '', [0, 0, 22],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직', 4)
@@ -8923,7 +9011,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당', '', [87, 4, 26],
     '<p class="lc-hint" style="margin-top:0;"><b>① 경영기획본부(출연금)<÷b><÷p>'
     + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
@@ -9104,7 +9192,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>퇴직금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>퇴직금</summary>';
   out += lcFinalFundBlock('퇴직급여', '', [0, 0, 8],
     '<p class="lc-hint" style="margin-top:0;"><b>107 퇴직급여 — ×8.33%(1/12), 전 부서 공통 산식(제60조① 부합)</b></p>'
     + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
@@ -9120,7 +9208,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>평가급</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>평가급</summary>';
   out += lcFinalFundBlock('평가급', '', [7, 0, 0],
     '<p class="lc-hint" style="margin-top:0;"><b>109 평가급 — 경영기획본부(출연금) 운영경비 목에서만 전 재단 인원분 통합 편성</b></p>'
     + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
@@ -9135,7 +9223,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-library)"><summary>연금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금부담금', '', [0, 0, 8],
     '<p class="lc-hint" style="margin-top:0;"><b>304 연금부담금 등(사회보험부담금) — ×11.75%, 전 부서 공통 요율</b></p>'
     + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
@@ -9155,7 +9243,7 @@ function lcFinalSection() {
   // ===== 3. 화성FC (사무국 인력운영비부터 순차 정리 — hscf/talent와 동일하게 카테고리별 <details>로 분리) =====
   if (f.instKey === 'fc') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>인건비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>인건비</summary>';
   out += lcFinalFundBlock('보수(출연금)', '', [27, 0, 2],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직(연봉제: 1·2급 / 봉급제: 3~6급)', 4)
@@ -9199,7 +9287,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(출연금)', '', [19, 0, 2],
     lcFinalTable([{ t: '세부' }, { t: '산식·기준', formula: true }, { t: '단가(원)' }, { t: '인원' }, { t: '상태' }],
       lcFinalGroupRow('초과근무수당(통상임금÷209×1.5×30시간×12월)', 5)
@@ -9235,7 +9323,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(107목)', '', [2, 0, 0],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['퇴직연금 부담금', { v: '1,004,390,000÷12개월', formula: true }, { v: '83,700', formula: true }, { v: '일치', status: true }])
@@ -9244,7 +9332,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>평가급</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>평가급</summary>';
   out += lcFinalFundBlock('평가급(109목)', '', [0, 0, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)' }, { t: '상태' }],
       lcFinalRow(['직원(3급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,760' }, { v: '확인필요', status: true }])
@@ -9259,7 +9347,7 @@ function lcFinalSection() {
   // ===== 4. 화성시도시공사 =====
   if (f.instKey === 'corp') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>인건비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>인건비</summary>';
   out += lcFinalFundBlock('보수(위탁금) — 화성종합경기타운', '', [0, 0, 11],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직 보수', 4)
@@ -9280,7 +9368,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [0, 0, 9],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직', 4)
@@ -9300,7 +9388,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(위탁금) — 화성종합경기타운', '', [0, 1, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['일반직', { v: '1,012,064,996÷12×1회', formula: true }, { v: '84,339' }, { v: '확인필요', status: true }])
@@ -9313,7 +9401,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>평가급</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>평가급</summary>';
   out += lcFinalFundBlock('평가급(위탁금) — 화성종합경기타운', '', [0, 3, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직 — 경영평가급', 4)
@@ -9330,7 +9418,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>연금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [0, 1, 11],
     lcFinalTable([{ t: '보험' }, { t: '요율' }, { t: '금액(천원)' }, { t: '상태' }],
       lcFinalRow(['국민연금', '4.5%', { v: '92,138' }, { v: '불일치', status: true }])
@@ -9355,7 +9443,7 @@ function lcFinalSection() {
 
   if (f.instKey === 'sports') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>인건비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>인건비</summary>';
   out += lcFinalFundBlock('인건비(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 3],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['사무국장(1명, 현재 결원)', { v: '연간 보수총액(단가 미상)', formula: true }, { v: '84,591' }, { v: '확인필요', status: true }])
@@ -9364,7 +9452,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 3],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['휴일·연장·야간근로수당', { v: '40,000원×20명×12시간×12개월', formula: true }, { v: '115,200' }, { v: '확인필요', status: true }])
@@ -9374,7 +9462,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>상여금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>상여금</summary>';
   out += lcFinalFundBlock('상여금(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['성과상여금', { v: '60,000,000원×1식', formula: true }, { v: '60,000' }, { v: '확인필요', status: true }]))
@@ -9382,7 +9470,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['퇴직급여(사업주 적립분)', { v: '10,000,000원×12개월', formula: true }, { v: '120,000' }, { v: '확인필요', status: true }]))
@@ -9390,7 +9478,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>연금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금부담금 등(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['연금부담금 등(사업주부담금)', { v: '10,000,000원×12개월(건강보험·국민연금·고용보험·산재보험 합산)', formula: true }, { v: '120,000' }, { v: '확인필요', status: true }]))
@@ -9402,7 +9490,7 @@ function lcFinalSection() {
 
   if (f.instKey === 'disabledsports') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>인건비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>인건비</summary>';
   out += lcFinalFundBlock('인건비(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 7],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회 - 정원(현원) 7(6) - 경영기획과(3), 체육지원과(3)', 4)
@@ -9428,7 +9516,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 5],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
@@ -9450,7 +9538,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>상여금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>상여금</summary>';
   out += lcFinalFundBlock('상여금(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
@@ -9460,7 +9548,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
@@ -9471,7 +9559,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>연금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
@@ -9488,15 +9576,38 @@ function lcFinalSection() {
   return out;
 }
 
+var LC_GUIDE_ITEMS = [
+  { tag: '101목 인건비/보수', title: '총인건비 인상률 결정 권한 지자체 이관', points: ['행안부: 인상률 상한 가이드라인만 설정', '지자체장: 기관 재정·경평 결과 고려해 최종 인상률 직접 결정 및 통보'] },
+  { tag: '101목 인건비/보수', title: '생활임금 증가분의 총인건비 산정 제외', points: ['지자체 생활임금 도입·인상에 따른 인건비 증가액은 총인건비 인상률 심사 대상에서 제외'] },
+  { tag: '101-04목 기간제보수 / 107목 퇴직급여 / 304-05목 기간제부담금', title: '기간제 처우 개선 및 비목 분리', points: ['1년 미만 기간제 대상 공정수당 지급 및 적정임금(최저임금의 118%) 감안 편성', '퇴직금(107목) 및 법정부담금(304-05목) 예산은 보수(101-04목)와 반드시 구분하여 별도 편성이 의무화'] },
+  { tag: '101목 인건비/보수', title: '업무대행수당 지급 사유 확대', points: ['&lsquo;육아기 근로시간 단축 근무자&rsquo;의 단축 시간 동안 업무를 대행하는 직원까지 지급 대상 추가', '예산 범위 내에서 월 20만 원 한도로 수당 지급'] },
+  { tag: '101-03목 공무직보수', title: '무기계약직 필수 처우개선비 의무 반영', points: ['정규직 전환인력(기존 무기계약직 포함) 처우개선 소요액 예산 편성', '지급 기준: 급식비 월 16만 원, 복지포인트 연 50만 원, 명절상여금 기본급의 120% 등 반영'] },
+  { tag: '109-01목 평가급', title: '경영평가 성과급(평가급) 지급 대상 구체화', points: ['기존 정규직 외에 무기계약직 및 기타 인력도 평가급 지급 대상에 포함 가능 명문화'] },
+  { tag: '204-03목 특정업무경비', title: '특정업무경비 상향 및 지급대상 확대', points: ['물가상승률 감안해 금액 기준 일괄 50% 상향 (월 3~8만 원 → 4.5~12만 원)', '검침 등 단체업무 직접 담당 공무원 대상 특정업무경비를 지방직영기업 전체로 확대 적용'] },
+  { tag: '203-02목 정원가산업무추진비', title: '정원가산업무비 산정 범위 구체화', points: ['직원 사기진작 경비 산출 시, 정규직 외에 1년 이상 장기 근로 비정규직 정원까지 합산하여 수당 누락 방지'] },
+  { tag: '213목 교육훈련비 → 201목 일반운영비', title: '교육훈련비 예산 과목 위치 변경', points: ['예산 체계 일관성을 위해 기존 독립 과목에서 일반운영비(201목) 하위 세목으로 통합 및 이동'] },
+  { tag: '306-14목 사내근로복지기금출연금 등', title: '복리후생비 편성의 5대 금지 조항 엄격화', points: ['대학생 자녀 학자금 무상지원 전면 금지 (융자 방식으로 전환)', '출산축하금을 제외한 경조사비 예산 편성 금지 (축의·부의금은 월정액 지급 불가 및 업무추진비 집행)', '기념일의 온누리상품권 등 현금성 기념품 및 상품권 일괄 지급 금지', '타 기관 장학금 등을 합산한 등록금 범위 초과 이중 수혜 금지', '직전 연도 당기순손실 발생 시 사내근로복지기금 출연 전면 금지'] }
+];
+var LC_GUIDE2_ITEMS = [
+  { tag: '예산 체계', title: '기준 제목 수정 및 회계 체계 합리적 개편', points: ['기존 &lsquo;예산편성기준&rsquo;에서 법령상 용어인 &lsquo;예산에 관한 공통기준&rsquo;으로 명칭 변경 및 예산 구조 개편'] },
+  { tag: '101-04목 기간제보수 / 107목 퇴직급여 / 304목 연금부담금등', title: '비정규직 공정수당·적정임금 반영 및 비목 분리', points: ['1년 미만 기간제 대상 공정수당 및 최저임금 118% 수준의 적정임금 적용 편성', '법정부담금(304목) 및 퇴직금(107목) 예산은 보수(101목)와 반드시 구분하여 편성이 의무화'] },
+  { tag: '101목 인건비', title: '생활임금 도입·인상에 따른 총인건비 제한 완화', points: ['최저임금 및 생활임금 인상으로 인한 인건비 증가분은 총인건비 인상률 산정 시 제외 (정책인상률 초과분에 한함)'] },
+  { tag: '204-03목 특정업무경비', title: '특정업무경비 기준 50% 상향 및 지급대상 확대', points: ['물가상승률을 감안해 지급액 단가를 일괄 50% 상향 (월 3~8만 원 → 월 4.5~12만 원)', '공무원 단체업무 직접 담당 특정업무경비 적용 대상을 지방직영기업 전체로 확대'] },
+  { tag: '101목 인건비 (수당)', title: '육아기 근로시간 단축 근무 대행자 수당 신설', points: ['육아기 단축 근무자의 업무 대행 직원에게 공무원 산식을 준용하여 업무대행수당(월 20만 원 한도 등) 지급 근거 신설'] },
+  { tag: '301-01목 사회보장적수혜금', title: '출산축하금 예산-기금 중복 지원 예외 허용', points: ['사내근로복지기금 지원 시 예산 중복 지원 금지 원칙 예외로 출산축하금에 한해 중복 지원을 허용하여 출산장려 지원 강화'] },
+  { tag: '101목 인건비', title: '한시적 초과 현원의 총인건비 산정 제외 명확화', points: ['대체충원 및 복직 등으로 인한 한시적 초과 현원은 정원 및 총인건비 산정 시 제외하도록 명문화'] },
+  { tag: '101목 인건비', title: '전년도 총인건비 미집행액 이월 편성 허용', points: ['2026년도 총인건비 예산 한도 내 미집행액만큼 2027년도 총인건비 한도 외로 증액 편성·집행을 허용 (단, 차년도 반복 이월 불가)'] },
+  { tag: '예산집행원칙', title: '카드 포인트·항공 마일리지의 기부 및 공적 사용 근거 마련', points: ['세입조치가 불가능한 사용처 적립 포인트는 기부 또는 공적 행정용도로 우선 사용', '공무출장 적립 항공 마일리지는 항공권 확보 및 좌석 승급 등에 우선 활용 노력'] },
+  { tag: '203목 업무추진비', title: '통합특별시 출범에 따른 업무추진비 편성 기준 개정', points: ['통합특별시 출범에 맞춰 직영기업 관리자(상하수도본부장 등)의 기관운영 및 시책추진 업무추진비 연액 한도 기준 조정'] }
+];
 function renderLaborCalc() {
   var el = document.getElementById('laborcalc-body');
   if (!el) return;
   var r = lcRaiseMul();
 
-  var raiseHtml = '<div class="lc-raise-row" style="flex-direction:column;align-items:flex-start;gap:6px;">'
-    + '<div>▸ 2027년 총인건비 인상률(%) '
-    + '<input type="number" step="0.1" value="' + LC.raise + '" onchange="lcSet(\'raise\',this.value)"> '
-    + '&nbsp;(행안부 상한 한도 내에서 지방자치단체의 장이 최종 인상률 확정 통보)</div>'
+  var raiseHtml = '<div class="lc-raise-row" style="flex:0 0 auto;padding:5px 10px;gap:6px;">'
+    + '▸ 2027년 총인건비 인상률(%) '
+    + '<input type="number" step="0.1" value="' + LC.raise + '" onchange="lcSet(\'raise\',this.value)" style="width:50px;padding:3px 6px;"> '
     + '</div>';
 
   // ---- 01 보수: 직급별 표 — 기본급(박스1)과 수당(박스2)으로 분리 ----
@@ -9504,7 +9615,7 @@ function renderLaborCalc() {
     var a = lcGradeAmts(g);
     return '<tr>'
       + '<td>' + g.name + '</td>'
-      + '<td>' + fmtWon(g.baseRate) + '</td>'
+      + '<td>' + lcNumInput('grades.' + gi + '.baseRate', 150) + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.months', 60) + '</td>'
       + '<td class="lc-col-base" title="단가' + fmtWon(g.baseRate) + '원×인상률×인원' + g.count + '명×' + (g.annual ? '(개월÷12)' : '개월') + g.months + '">' + lcResultBox(fmtWon(lcRound(a.base))) + '</td>'
@@ -9533,7 +9644,7 @@ function renderLaborCalc() {
     if (g.treatmentRate == null) return '';
     var amt = g.treatmentRate * r * (LC.treatmentPct / 100) * g.treatmentCount * g.months;
     return '<tr><td>' + g.name + '</td>'
-      + '<td>' + lcNumInput('grades.' + gi + '.treatmentRate', 90, true) + '</td>'
+      + '<td>' + lcNumInput('grades.' + gi + '.treatmentRate', 110, true) + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.treatmentCount', 50, true) + '</td>'
       + '<td class="lc-formula">단가×인상률×요율×인원×개월</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
@@ -9542,7 +9653,7 @@ function renderLaborCalc() {
     if (g.holidayRate == null) return '';
     var amt = g.holidayRate * r * g.count * 2 * (LC.holidayPct / 100);
     return '<tr><td>' + g.name + '</td>'
-      + '<td>' + lcNumInput('grades.' + gi + '.holidayRate', 90, true) + '</td>'
+      + '<td>' + lcNumInput('grades.' + gi + '.holidayRate', 110, true) + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.count', 50, true) + '</td>'
       + '<td class="lc-formula">단가×인상률×인원×2회×요율</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
@@ -9558,7 +9669,7 @@ function renderLaborCalc() {
   var meritBonusRows = LC.meritBonus.map(function (m, i) {
     var amt = m.unit * m.count * m.months;
     return '<tr><td>' + m.label + '</td>'
-      + '<td>' + lcNumInput('meritBonus.' + i + '.unit', 60, true) + '</td>'
+      + '<td>' + lcNumInput('meritBonus.' + i + '.unit', 110, true) + '</td>'
       + '<td>' + lcNumInput('meritBonus.' + i + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('meritBonus.' + i + '.months', 60) + '</td>'
       + '<td class="lc-formula">단가×인원×개월</td>'
@@ -9595,19 +9706,19 @@ function renderLaborCalc() {
       + '<div class="lc-accordion-body">' + bodyHtml + '</div>'
       + '</div>';
   };
-  var section01 = '<div class="lc-section cat-general" style="border-left-color:var(--border-strong)"><h3>01 일반직 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">전년도 말 정원 기준 편성 (현원이 정원보다 적은 경우 현원 기준 편성)</span></h3>'
-    + lcAcc('기본급 <span class="lc-acc-sub">(호봉별 봉급액/기본연봉액)</span>',
+  var section01 = '<div class="lc-section cat-general" style="border-left-color:var(--navy)"><h3>01 일반직 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">│ 전년도 말 정원 기준 편성 (현원이 정원보다 적은 경우 현원 기준 편성)</span></h3>'
+    + lcAcc('기본급 <span class="lc-acc-sub" style="color:navy;">│ 호봉별 봉급액/기본연봉액</span>',
         gradesSubtotal,
         '<div class="lc-split-narrow">'
-        + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th>기본급(천원)</th></tr></thead>'
+        + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th>기본급(천원)</th></tr></thead>'
         + '<tbody>' + lcSubtotalRow('합계', gradesSubtotal, 4) + gradeBaseRows + '</tbody></table></div>',
         'var(--bg-hover)', 'var(--text)')
-    + lcAcc('수당 <span class="lc-acc-sub">(15종)</span>', lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal() + lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal() + lcOvertimeTotal() + lcNightWorkTotal() + lcHolidayWorkTotal() + lcLeaveCompTotal() + familyTotalAmt + lcChildAllowTotal() + lcBirthGrantTotal() + lcProxyTotal(),
+    + lcAcc('수당 <span class="lc-acc-sub" style="color:navy;">│ 15종</span>', lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal() + lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal() + lcOvertimeTotal() + lcNightWorkTotal() + lcHolidayWorkTotal() + lcLeaveCompTotal() + familyTotalAmt + lcChildAllowTotal() + lcBirthGrantTotal() + lcProxyTotal(),
         lcAcc('기본급 연동형 수당', lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal(),
-            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td><span style="font-size:16px;">1. 대우공무원수당</span></td><td>' + lcNumInput('treatmentPct', 55) + '%</td><td>' + lcNumInput('treatmentInfo.count', 55, true) + '</td><td>' + lcNumInput('treatmentInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×요율×대상인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcTreatmentTotal()))) + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">2. 명절휴가비</span></td><td>' + lcNumInput('holidayPct', 55) + '%</td><td>' + lcNumInput('holidayInfo.count', 55, true) + '</td><td>' + lcNumInput('holidayInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×인원×2회×요율(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcHolidayTotal()))) + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">3. 관리업무수당</span></td><td>' + lcNumInput('mgmtAllow.unit', 80, true) + '</td><td>' + lcNumInput('mgmtAllow.count', 50, true) + '</td><td>' + lcNumInput('mgmtAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcMgmtAllowTotal() ? fmtWon(lcRound(lcMgmtAllowTotal())) : '') + '</td></tr>'
+            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            + '<tr><td><span style="font-size:16px;">1. 대우공무원수당</span></td><td style="text-align:left;">' + lcNumInput('treatmentPct', 55) + '%</td><td>' + lcNumInput('treatmentInfo.count', 55, true) + '</td><td>' + lcNumInput('treatmentInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×요율×대상인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcTreatmentTotal()))) + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">2. 명절휴가비</span></td><td style="text-align:left;">' + lcNumInput('holidayPct', 55) + '%</td><td>' + lcNumInput('holidayInfo.count', 55, true) + '</td><td>' + lcNumInput('holidayInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×인원×2회×요율(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcHolidayTotal()))) + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">3. 관리업무수당</span></td><td style="text-align:left;">' + lcNumInput('mgmtAllow.unit', 55, true) + '</td><td>' + lcNumInput('mgmtAllow.count', 50, true) + '</td><td>' + lcNumInput('mgmtAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcMgmtAllowTotal() ? fmtWon(lcRound(lcMgmtAllowTotal())) : '') + '</td></tr>'
             + '<tr><td><span style="font-size:16px;">4. 정근수당</span></td><td></td><td></td><td></td><td class="lc-formula">단가×인상률×인원×2회×구간별요율(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritTotal()))) + '</td></tr>'
             + '</tbody></table>'
             + '<details class="lc-detail-toggle"><summary>대우공무원수당 직급별 상세</summary>'
@@ -9621,32 +9732,32 @@ function renderLaborCalc() {
             + '</details>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('직급형 수당', lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal(),
-            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td><span style="font-size:16px;">5. 직급보조비</span></td><td>' + lcNumInput('gradeAllowInfo.unit', 55, true) + '</td><td>' + lcNumInput('gradeAllowInfo.count', 55, true) + '</td><td>' + lcNumInput('gradeAllowInfo.months', 45) + '</td><td class="lc-formula">고시단가×인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcGradeAllowTotal()))) + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">6. 기술수당</span></td><td>' + lcNumInput('techAllow.unit', 80, true) + '</td><td>' + lcNumInput('techAllow.count', 50, true) + '</td><td>' + lcNumInput('techAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcTechAllowTotal() ? fmtWon(lcRound(lcTechAllowTotal())) : '') + '</td></tr>'
+            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            + '<tr><td><span style="font-size:16px;">5. 직급보조비</span></td><td>' + lcNumInput('gradeAllowInfo.unit', 110, true) + '</td><td>' + lcNumInput('gradeAllowInfo.count', 55, true) + '</td><td>' + lcNumInput('gradeAllowInfo.months', 45) + '</td><td class="lc-formula">고시단가×인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcGradeAllowTotal()))) + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">6. 기술수당</span></td><td>' + lcNumInput('techAllow.unit', 110, true) + '</td><td>' + lcNumInput('techAllow.count', 50, true) + '</td><td>' + lcNumInput('techAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcTechAllowTotal() ? fmtWon(lcRound(lcTechAllowTotal())) : '') + '</td></tr>'
             + '<tr><td><span style="font-size:16px;">7. 정근수당가산금</span></td><td></td><td></td><td></td><td class="lc-formula">단가×인원×개월(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritBonusTotal()))) + '</td></tr>'
             + '</tbody></table>'
             + '<details class="lc-detail-toggle"><summary>정근수당가산금 근속연수 구간별 상세</summary>'
-            + '<table class="lc-table lc-table-6col"><thead><tr><th>구간</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritBonusTotal(), 5) + meritBonusRows + '</tbody></table>'
+            + '<table class="lc-table lc-table-6col"><thead><tr><th>구간</th><th>월정액(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritBonusTotal(), 5) + meritBonusRows + '</tbody></table>'
             + '</details>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('실적형 수당', lcOvertimeTotal() + lcNightWorkTotal() + lcHolidayWorkTotal() + lcLeaveCompTotal(),
-            '<table class="lc-table"><thead><tr><th>구분</th><th>시간당 통상임금(원)</th><th>인원(명)</th><th>월 시간</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td><span style="font-size:16px;">8. 시간외근무수당</span></td><td>' + lcNumInput('overtime.unit', 70, true) + '</td><td>' + lcNumInput('overtime.count', 50, true) + '</td><td>' + lcNumInput('overtime.hours', 40) + '</td><td>' + lcNumInput('overtime.months', 40) + '</td><td class="lc-formula">단가×1.5×인원×시간×개월</td><td>' + lcResultBox(lcOvertimeTotal() ? fmtWon(lcRound(lcOvertimeTotal())) : '') + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">9. 야간근무수당</span></td><td>' + lcNumInput('nightWork.unit', 70, true) + '</td><td>' + lcNumInput('nightWork.count', 50, true) + '</td><td>' + lcNumInput('nightWork.hours', 40) + '</td><td>' + lcNumInput('nightWork.months', 40) + '</td><td class="lc-formula">단가×0.5×인원×시간×개월</td><td>' + lcResultBox(lcNightWorkTotal() ? fmtWon(lcRound(lcNightWorkTotal())) : '') + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">10. 휴일근무수당</span></td><td>' + lcNumInput('holidayWork.unit', 70, true) + '</td><td>' + lcNumInput('holidayWork.count', 50, true) + '</td><td>' + lcNumInput('holidayWork.hours', 40) + '</td><td>' + lcNumInput('holidayWork.months', 40) + '</td><td class="lc-formula">단가×1.5×인원×시간×개월</td><td>' + lcResultBox(lcHolidayWorkTotal() ? fmtWon(lcRound(lcHolidayWorkTotal())) : '') + '</td></tr>'
+            '<table class="lc-table"><thead><tr><th>구분</th><th>시간당 통상임금(원)</th><th>인원(명)</th><th>월 시간</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            + '<tr><td><span style="font-size:16px;">8. 시간외근무수당</span></td><td>' + lcNumInput('overtime.unit', 110, true) + '</td><td>' + lcNumInput('overtime.count', 50, true) + '</td><td>' + lcNumInput('overtime.hours', 40) + '</td><td>' + lcNumInput('overtime.months', 40) + '</td><td class="lc-formula">단가×1.5×인원×시간×개월</td><td>' + lcResultBox(lcOvertimeTotal() ? fmtWon(lcRound(lcOvertimeTotal())) : '') + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">9. 야간근무수당</span></td><td>' + lcNumInput('nightWork.unit', 110, true) + '</td><td>' + lcNumInput('nightWork.count', 50, true) + '</td><td>' + lcNumInput('nightWork.hours', 40) + '</td><td>' + lcNumInput('nightWork.months', 40) + '</td><td class="lc-formula">단가×0.5×인원×시간×개월</td><td>' + lcResultBox(lcNightWorkTotal() ? fmtWon(lcRound(lcNightWorkTotal())) : '') + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">10. 휴일근무수당</span></td><td>' + lcNumInput('holidayWork.unit', 110, true) + '</td><td>' + lcNumInput('holidayWork.count', 50, true) + '</td><td>' + lcNumInput('holidayWork.hours', 40) + '</td><td>' + lcNumInput('holidayWork.months', 40) + '</td><td class="lc-formula">단가×1.5×인원×시간×개월</td><td>' + lcResultBox(lcHolidayWorkTotal() ? fmtWon(lcRound(lcHolidayWorkTotal())) : '') + '</td></tr>'
             + '</tbody></table>'
             + '<h3 style="margin-top:14px;font-size:16px;">11. 연가보상비</h3>'
             + '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>일 통상임금(원)</th><th>인원(명)</th><th>예측일수</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td>연가보상비</td><td>' + lcNumInput('leaveComp.unit', 70, true) + '</td><td>' + lcNumInput('leaveComp.count', 50, true) + '</td><td>' + lcNumInput('leaveComp.days', 40) + '</td><td class="lc-formula">단가×인원×일수<br><span class="lc-hint" style="margin:4px 0 0;">연가보상비 산정 시 별도의 임의 할증률 적용 불가</span></td><td>' + lcResultBox(lcLeaveCompTotal() ? fmtWon(lcRound(lcLeaveCompTotal())) : '') + '</td></tr>'
+            + '<tr><td>연가보상비</td><td>' + lcNumInput('leaveComp.unit', 110, true) + '</td><td>' + lcNumInput('leaveComp.count', 50, true) + '</td><td>' + lcNumInput('leaveComp.days', 40) + '</td><td class="lc-formula">단가×인원×일수</td><td>' + lcResultBox(lcLeaveCompTotal() ? fmtWon(lcRound(lcLeaveCompTotal())) : '') + '</td></tr>'
             + '</tbody></table>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('정책형 수당', familyTotalAmt + lcChildAllowTotal() + lcBirthGrantTotal() + lcProxyTotal(),
-            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>월정액(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('<span style="font-size:16px;">12. 가족수당</span>', familyTotalAmt, 5) + familyRows + '</tbody></table>'
-            + '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td><span style="font-size:16px;">13. 자녀수당</span></td><td>' + lcNumInput('childAllow.unit', 80, true) + '</td><td>' + lcNumInput('childAllow.count', 50, true) + '</td><td>' + lcNumInput('childAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcChildAllowTotal() ? fmtWon(lcRound(lcChildAllowTotal())) : '') + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">14. 출산축하금</span></td><td>' + lcNumInput('birthGrant.unit', 80, true) + '</td><td>' + lcNumInput('birthGrant.count', 50, true) + '</td><td>' + lcNumInput('birthGrant.months', 50) + '</td><td class="lc-formula">단가×인원×개월(1회성은 개월=1)</td><td>' + lcResultBox(lcBirthGrantTotal() ? fmtWon(lcRound(lcBirthGrantTotal())) : '') + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">15. 대행업무수당</span></td><td>' + lcNumInput('proxy.unit', 70, true) + '</td><td>' + lcNumInput('proxy.count', 50) + '</td><td>' + lcNumInput('proxy.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcProxyTotal()))) + '</td></tr>'
+            '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>월정액(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('<span style="font-size:16px;">12. 가족수당</span>', familyTotalAmt, 5) + familyRows + '</tbody></table>'
+            + '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월/회</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+            + '<tr><td><span style="font-size:16px;">13. 자녀수당</span></td><td>' + lcNumInput('childAllow.unit', 110, true) + '</td><td>' + lcNumInput('childAllow.count', 50, true) + '</td><td>' + lcNumInput('childAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcChildAllowTotal() ? fmtWon(lcRound(lcChildAllowTotal())) : '') + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">14. 출산축하금</span></td><td>' + lcNumInput('birthGrant.unit', 110, true) + '</td><td>' + lcNumInput('birthGrant.count', 50, true) + '</td><td>' + lcNumInput('birthGrant.months', 50) + '</td><td class="lc-formula">단가×인원×개월(1회성은 개월=1)</td><td>' + lcResultBox(lcBirthGrantTotal() ? fmtWon(lcRound(lcBirthGrantTotal())) : '') + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">15. 대행업무수당</span></td><td>' + lcNumInput('proxy.unit', 110, true) + '</td><td>' + lcNumInput('proxy.count', 50) + '</td><td>' + lcNumInput('proxy.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcProxyTotal()))) + '</td></tr>'
             + '</tbody></table>',
             'var(--bg-hover)', 'var(--text)'),
         'var(--bg-hover)', 'var(--text)')
@@ -9657,7 +9768,7 @@ function renderLaborCalc() {
   var other02GradeRows = LC.other02.grades.map(function (g, gi) {
     var amt = lc02GradeAmt(g);
     return '<tr><td>' + g.name + (g.note ? ' <span class="lc-hint" style="margin:0;font-weight:400;display:inline;">(' + g.note + ')</span>' : '') + '</td>'
-      + '<td>' + lcNumInput('other02.grades.' + gi + '.baseRate', 100) + '원</td>'
+      + '<td>' + lcNumInput('other02.grades.' + gi + '.baseRate', 150) + '원</td>'
       + '<td>' + lcNumInput('other02.grades.' + gi + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('other02.grades.' + gi + '.months', 60) + '</td>'
       + '<td class="lc-formula">' + (g.statutory ? '단가×인원×(개월÷12)' : '단가×인상률×인원×(개월÷12)') + '</td>'
@@ -9668,19 +9779,19 @@ function renderLaborCalc() {
   var o2AnnualLeaveAmt = (LC.other02.annualLeaveRate * 8 / 209 * 10) * LC.other02.annualLeaveCount;
   var o2MealAmt = LC.other02.mealUnit * LC.other02.mealCount * LC.other02.mealMonths;
   var o2AllowanceTotal = o2FamilySpouseAmt + o2FamilyChildAmt + o2AnnualLeaveAmt + o2MealAmt;
-  var section02 = '<div class="lc-section cat-other" style="border-left-color:var(--border-strong)"><h3>02 기타직 보수</h3>'
+  var section02 = '<div class="lc-section cat-other" style="border-left-color:var(--navy)"><h3>02 기타직 보수</h3>'
     + lcAcc('계약 연봉액', lc02GradesTotal(),
-        '<table class="lc-table lc-table-6col"><thead><tr><th>등급</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>등급</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', lc02GradesTotal(), 5) + other02GradeRows
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당', o2AllowanceTotal,
-        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o2AllowanceTotal, 5)
-        + '<tr><td>가족수당(배우자)</td><td>' + fmtWon(LC.other02.familySpouseUnit) + '</td><td>' + lcNumInput('other02.familySpouseCount', 50) + '</td><td>' + lcNumInput('other02.familySpouseMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilySpouseAmt))) + '</td></tr>'
-        + '<tr><td>가족수당(자녀)</td><td>' + fmtWon(LC.other02.familyChildUnit) + '</td><td>' + lcNumInput('other02.familyChildCount', 50) + '</td><td>' + lcNumInput('other02.familyChildMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilyChildAmt))) + '</td></tr>'
-        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other02.annualLeaveRate', 90, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other02.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o2AnnualLeaveAmt))) + '</td></tr>'
-        + '<tr><td>정액급식비</td><td>' + fmtWon(LC.other02.mealUnit) + '</td><td>' + lcNumInput('other02.mealCount', 50) + '</td><td>' + lcNumInput('other02.mealMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2MealAmt))) + '</td></tr>'
+        + '<tr><td>가족수당(배우자)</td><td>' + lcNumInput('other02.familySpouseUnit', 100) + '</td><td>' + lcNumInput('other02.familySpouseCount', 50) + '</td><td>' + lcNumInput('other02.familySpouseMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilySpouseAmt))) + '</td></tr>'
+        + '<tr><td>가족수당(자녀)</td><td>' + lcNumInput('other02.familyChildUnit', 100) + '</td><td>' + lcNumInput('other02.familyChildCount', 50) + '</td><td>' + lcNumInput('other02.familyChildMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilyChildAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other02.annualLeaveRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other02.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o2AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>정액급식비</td><td>' + lcNumInput('other02.mealUnit', 100) + '</td><td>' + lcNumInput('other02.mealCount', 50) + '</td><td>' + lcNumInput('other02.mealMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2MealAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + '</div>';
@@ -9697,28 +9808,28 @@ function renderLaborCalc() {
   var o3FamilyTotal = o3.familyUnit.reduce(function (s, f) { return s + f.unit * f.count * f.months; }, 0);
   var o3BenefitTotal = o3MealAmt + o3HolidayAmt + o3WelfarePointAmt;
   var o3AllowanceTotal = o3FamilyTotal + o3LivingWageAmt + o3AnnualLeaveAmt + o3OvertimeAmt + o3NightworkAmt;
-  var section03 = '<div class="lc-section cat-permanent" style="border-left-color:var(--border-strong)"><h3>03 무기계약근로자 보수</h3>'
-    + lcAcc('기본급 <span class="lc-acc-sub">(공무직 관리 규정 및 호봉·급여 테이블에 따라 매월 고정적으로 지급하는 기본급)</span>', o3BaseAmt,
-        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td>기본급</td><td>' + lcNumInput('other03.baseRate', 90) + '원</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3BaseAmt))) + '</td></tr>'
+  var section03 = '<div class="lc-section cat-permanent" style="border-left-color:var(--navy)"><h3>03 무기계약근로자 보수</h3>'
+    + lcAcc('기본급 <span class="lc-acc-sub" style="color:navy;">│ 공무직 관리 규정 및 호봉·급여 테이블에 따라 매월 고정적으로 지급하는 기본급</span>', o3BaseAmt,
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + '<tr><td>기본급</td><td>' + lcNumInput('other03.baseRate', 110) + '원</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3BaseAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('<span style="color:var(--danger);">법정필수처우개선비(의무)</span>', o3BenefitTotal,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월/회</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;">(현원×3,280,000원)</span>', o3BenefitTotal, 5)
-        + '<tr><td>정액급식비</td><td>' + fmtWon(o3.mealUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3MealAmt))) + '</td></tr>'
-        + '<tr><td>명절상여금</td><td>' + fmtWon(o3.holidayUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.holidayTimes', 40) + '</td><td class="lc-formula">단가×인원×횟수(설날, 추석)</td><td>' + lcResultBox(fmtWon(lcRound(o3HolidayAmt))) + '</td></tr>'
-        + '<tr><td>복지포인트</td><td>' + fmtWon(o3.welfarePointUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>1회</td><td class="lc-formula">연간 정액×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3WelfarePointAmt))) + '</td></tr>'
+        + '<tr><td>정액급식비</td><td>' + lcNumInput('other03.mealUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3MealAmt))) + '</td></tr>'
+        + '<tr><td>명절상여금</td><td>' + lcNumInput('other03.holidayUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.holidayTimes', 40) + '</td><td class="lc-formula">단가×인원×횟수(설날, 추석)</td><td>' + lcResultBox(fmtWon(lcRound(o3HolidayAmt))) + '</td></tr>'
+        + '<tr><td>복지포인트</td><td>' + lcNumInput('other03.welfarePointUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>1회</td><td class="lc-formula">연간 정액×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3WelfarePointAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당', o3AllowanceTotal,
-        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o3AllowanceTotal, 5)
-        + o3.familyUnit.map(function (f, i) { return '<tr><td>가족수당(' + f.label + ')</td><td>' + fmtWon(f.unit) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.count', 50) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(f.unit * f.count * f.months))) + '</td></tr>'; }).join('')
-        + '<tr><td>생활임금보전수당</td><td>' + fmtWon(o3.livingWageUnit) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3LivingWageAmt))) + '</td></tr>'
-        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 90, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other03.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3AnnualLeaveAmt))) + '</td></tr>'
-        + '<tr><td>초과근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 90, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×1.5/209×30h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">단가×1.5/209×30h×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3OvertimeAmt))) + '</td></tr>'
-        + '<tr><td>야간근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 90, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×0.5/209×8h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">단가×0.5/209×8h×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3NightworkAmt))) + '</td></tr>'
+        + o3.familyUnit.map(function (f, i) { return '<tr><td>가족수당(' + f.label + ')</td><td>' + lcNumInput('other03.familyUnit.' + i + '.unit', 100) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.count', 50) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(f.unit * f.count * f.months))) + '</td></tr>'; }).join('')
+        + '<tr><td>생활임금보전수당</td><td>' + lcNumInput('other03.livingWageUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3LivingWageAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other03.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>초과근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×1.5/209×30h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">단가×1.5/209×30h×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3OvertimeAmt))) + '</td></tr>'
+        + '<tr><td>야간근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×0.5/209×8h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">단가×0.5/209×8h×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3NightworkAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + '</div>';
@@ -9732,25 +9843,25 @@ function renderLaborCalc() {
   var o4OvertimeAmt = (o4.ordinaryRate * 1.5 / 209 * 30) * o4.count * o4.months * 0.7;
   var o4FairnessAmt = o4.baseRate * (o4.fairnessPct / 100) * o4.count;
   var o4AllowanceTotal = o4MealAmt + o4TransportAmt + o4LivingWageAmt + o4AnnualLeaveAmt + o4OvertimeAmt;
-  var section04 = '<div class="lc-section cat-temp" style="border-left-color:var(--border-strong)"><h3>04 기간제근로자등 보수</h3>'
-    + lcAcc('기본급 <span class="lc-acc-sub">(생활임금, 최저임금의 118% 반영 (총인건비 인상률 적용 배제))</span>', o4BaseAmt,
-        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td>기본급</td><td>' + lcNumInput('other04.baseRate', 90) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4BaseAmt))) + '</td></tr>'
+  var section04 = '<div class="lc-section cat-temp" style="border-left-color:var(--navy)"><h3>04 기간제근로자등 보수</h3>'
+    + lcAcc('기본급 <span class="lc-acc-sub" style="color:navy;">│ 생활임금, 최저임금의 118% 반영 (총인건비 인상률 적용 배제)</span>', o4BaseAmt,
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        + '<tr><td>기본급</td><td>' + lcNumInput('other04.baseRate', 110) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4BaseAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
-    + lcAcc('<span style="color:var(--danger);">공정수당 (신설)</span> <span class="lc-acc-sub">(1년 미만 근무자에게 계약 만료시 일시 지급 (월 기본급의 약 8.5~10% 수준))</span>', o4FairnessAmt,
+    + lcAcc('<span style="color:var(--danger);">공정수당 (신설)</span> <span class="lc-acc-sub" style="color:navy;">│ 1년 미만 근무자에게 계약 만료시 일시 지급 (월 기본급의 약 8.5~10% 수준)</span>', o4FairnessAmt,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>적용률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td style="color:var(--text);font-weight:700;">공정수당 (의무)</td><td>' + lcNumInput('other04.baseRate', 90) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.fairnessPct', 55) + '%</td><td class="lc-formula">기본급×요율×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4FairnessAmt))) + '</td></tr>'
+        + '<tr><td style="color:var(--text);font-weight:700;">공정수당 (의무)</td><td>' + lcNumInput('other04.baseRate', 110) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.fairnessPct', 55) + '%</td><td class="lc-formula">기본급×요율×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4FairnessAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당', o4AllowanceTotal,
-        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+        '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o4AllowanceTotal, 5)
-        + '<tr><td>정액급식비</td><td>' + fmtWon(o4.mealUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4MealAmt))) + '</td></tr>'
-        + '<tr><td>교통보조비</td><td>' + fmtWon(o4.transportUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4TransportAmt))) + '</td></tr>'
-        + '<tr><td>생활임금보전수당</td><td>' + fmtWon(o4.livingWageUnit) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4LivingWageAmt))) + '</td></tr>'
-        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other04.ordinaryRate', 90, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other04.count', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4AnnualLeaveAmt))) + '</td></tr>'
-        + '<tr><td>초과근무수당</td><td>' + fmtWon(o4.ordinaryRate) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">(단가×1.5/209×30h)×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o4OvertimeAmt))) + '</td></tr>'
+        + '<tr><td>정액급식비</td><td>' + lcNumInput('other04.mealUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4MealAmt))) + '</td></tr>'
+        + '<tr><td>교통보조비</td><td>' + lcNumInput('other04.transportUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4TransportAmt))) + '</td></tr>'
+        + '<tr><td>생활임금보전수당</td><td>' + lcNumInput('other04.livingWageUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4LivingWageAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other04.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other04.count', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>초과근무수당</td><td>' + lcNumInput('other04.ordinaryRate', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">(단가×1.5/209×30h)×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o4OvertimeAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + '</div>';
@@ -9764,11 +9875,11 @@ function renderLaborCalc() {
     var pctInput = (p.label === '노인장기요양보험')
       ? lcNumInput('pension.' + i + '.ltcRateOfHealth', 55) + '%'
       : lcNumInput('pension.' + i + '.pct', 55) + '%';
-    return '<tr><td>' + p.label + '</td><td>' + lcNumInputWide('pensionBase', 170) + '</td><td>' + pctInput + '</td><td class="lc-formula">' + formulaTxt + '</td><td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
+    return '<tr><td><span style="font-size:16px;">' + p.label + '</span></td><td>' + lcNumInputWide('pensionBase', 170) + '</td><td>' + pctInput + '</td><td class="lc-formula">' + formulaTxt + '</td><td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
-  var section05 = '<div class="lc-section" style="border-left-color:#F6AD55"><h3>304-01 연금부담금 등 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">근로자(임원, 정규직, 무기계약직, 기간제 근로자 등)에 법적으로 의무 납부해야 하는 4대 사회보험의 &lsquo;사업주(사용자) 부담분&rsquo;</span></h3>'
+  var section05 = '<div class="lc-section" style="border-left-color:#F6AD55;margin-top:12px;"><h3>304-01 연금부담금 등 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">│ 근로자(임원, 정규직, 무기계약직, 기간제 근로자 등)에 법적으로 의무 납부해야 하는 4대 사회보험의 &lsquo;사업주(사용자) 부담분&rsquo;</span></h3>'
     + '<div class="lc-raise-row" style="margin-bottom:12px;">연금부담금 등 요구액 = 연간 보수액 ' + lcNumInputWide('pensionBase', 170) + ' × 사업주 부담 법정 요율 총합 <input type="text" class="lc-result-box" style="width:90px;display:inline-block;" value="' + pensionRatePct.toFixed(4) + '%" readonly tabindex="-1"></div>'
-    + '<table class="lc-table"><thead><tr><th>구분</th><th>연간보수액</th><th>요율</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
+    + '<table class="lc-table"><thead><tr><th>구분</th><th>연간보수액(원)</th><th>요율</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
     + lcSubtotalRow('합계', pensionTotal, 4) + pensionRows
     + '</tbody></table>'
     + '<div style="margin-top:14px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);">'
@@ -9790,13 +9901,13 @@ function renderLaborCalc() {
 
   // ---- 107 퇴직급여 — DB 2026년 편성액 0원, 산식만 참고용으로 자동계산 ----
   var retirementTotal = lcRetirementTotal();
-  var section06 = '<div class="lc-section" style="border-left-color:#3D4560"><h3>107 퇴직급여 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">일반직, 기타직, 무기계약직, 기간제 근로자 불문 근무기간 1년 이상인 근로자 전체를 대상으로 반영</span></h3>'
+  var section06 = '<div class="lc-section" style="border-left-color:#3D4560;margin-top:12px;"><h3>107 퇴직급여 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">│ 일반직, 기타직, 무기계약직, 기간제 근로자 불문 근무기간 1년 이상인 근로자 전체를 대상으로 반영</span></h3>'
     + '<table class="lc-table"><thead>'
-    + '<tr><th>구분</th><th>가입자 연간임금 총액</th><th>인상률</th><th class="lc-th-formula" style="padding-left:60px;">산출식</th><th>예산액(천원)</th></tr>'
+    + '<tr><th>구분</th><th style="text-align:left;">가입자 연간임금 총액(원)</th><th style="text-align:left;">인상률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr>'
     + '</thead><tbody>'
-    + '<tr><td>확정기여형(DC형) 퇴직급여</td><td>' + lcNumInputWide('retirement.base', 170) + '</td><td>' + lcNumInput('retirement.rate', 70) + '%</td><td class="lc-formula" style="padding-left:60px;">가입자 연간임금 총액÷12개월×인상률</td><td>' + lcResultBox(fmtWon(lcRound(retirementTotal))) + '</td></tr>'
-    + '<tr><th>구분</th><th>평균임금</th><th>인상률</th><th class="lc-th-formula" style="padding-left:60px;">산출식</th><th>예산액(천원)</th></tr>'
-    + '<tr><td>확정급여형(DB형) 퇴직급여 및 일반 충당금</td><td class="lc-hint" style="text-align:center;">퇴직 또는 추계일 이전 3개월간 지급된 임금 총액 / 이전 3개월간의 총 일수 (89~92일)</td><td>' + lcNumInput('retirement.dbRate', 70) + '%</td><td class="lc-formula" style="padding-left:60px;">Σ(기준임금 30일분×근속연수) - 기 적립 충당금</td><td>' + lcResultBox(fmtWon(0)) + '</td></tr>'
+    + '<tr><td><span style="font-size:16px;">확정기여형(DC형) 퇴직급여</span></td><td style="text-align:left;">' + lcNumInputWide('retirement.base', 170) + '</td><td style="text-align:left;">' + lcNumInput('retirement.rate', 70) + '%</td><td class="lc-formula">가입자 연간임금 총액÷12개월×인상률</td><td>' + lcResultBox(fmtWon(lcRound(retirementTotal))) + '</td></tr>'
+    + '<tr><th>구분</th><th style="text-align:left;">평균임금</th><th style="text-align:left;">인상률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr>'
+    + '<tr><td><span style="font-size:16px;">확정급여형(DB형) 퇴직급여 및 일반 충당금</span></td><td class="lc-hint" style="text-align:left;">퇴직 또는 추계일 이전 3개월간 지급된 임금 총액 / 이전 3개월간의 총 일수 (89~92일)</td><td style="text-align:left;">' + lcNumInput('retirement.dbRate', 70) + '%</td><td class="lc-formula">Σ(기준임금 30일분×근속연수) - 기 적립 충당금</td><td>' + lcResultBox(fmtWon(0)) + '</td></tr>'
     + '</tbody></table></div>';
 
   // ---- 218 평가급 — 기준값(최종) 탭 전수 대조로 확인된 실제 산출근거 2건(가급 기관장·기관 평가급) 반영. ----
@@ -9810,7 +9921,7 @@ function renderLaborCalc() {
       + '<td class="lc-formula">' + (item.id === 'midResign' ? '산출 보수월액×확정 지급률×실제근무일수/365' : '연봉보수월액×개인별 평가등급별 지급률') + '</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
-  var section07 = '<div class="lc-section" style="border-left-color:#C2699A"><h3>218 평가급 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;">정관상 정원에 포함된 정규직이 지급 대상이나 무기계약직, 기간제근로자 등도 기관 경영평가 관련성 등을 종합적으로 고려하여 지급 가능</span></h3>'
+  var section07 = '<div class="lc-section" style="border-left-color:#C2699A;margin-top:12px;"><h3>218 평가급 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">│ 정관상 정원에 포함된 정규직이 지급 대상이나 무기계약직, 기간제근로자 등도 기관 경영평가 관련성 등을 종합적으로 고려하여 지급 가능</span></h3>'
     + '<table class="lc-table"><thead><tr><th>구분</th><th>보수월액</th><th>인원/식</th><th>평가 지급률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
     + evalRows
     + '</tbody></table>'
@@ -9846,12 +9957,15 @@ function renderLaborCalc() {
   ];
   var laborSubColor = {};
   laborSubTabs.forEach(function (t) { laborSubColor[t.key] = t.rgb; });
-  var laborSubToggle = '<div class="lc-subtoggle">' + laborSubTabs.map(function (t) {
-    return '<div class="tab-group" style="--tc:' + t.rgb + '">'
-      + '<input type="radio" name="lc-labor-sub" id="lc-sub-' + t.key + '" ' + (LC.laborSub === t.key ? 'checked' : '') + ' onchange="lcSetLaborSub(\'' + t.key + '\')" />'
-      + '<label for="lc-sub-' + t.key + '"><span>' + t.label + '</span></label>'
-      + '</div>';
-  }).join('') + '</div>';
+  var laborSubToggle = '<div class="lc-subtoggle-row" style="display:flex;align-items:center;flex-wrap:wrap;gap:16px;justify-content:flex-start;margin-left:20px;">'
+    + '<div class="lc-subtoggle" style="margin:0;">' + laborSubTabs.map(function (t) {
+      return '<div class="tab-group" style="--tc:' + t.rgb + '">'
+        + '<input type="radio" name="lc-labor-sub" id="lc-sub-' + t.key + '" ' + (LC.laborSub === t.key ? 'checked' : '') + ' onchange="lcSetLaborSub(\'' + t.key + '\')" />'
+        + '<label for="lc-sub-' + t.key + '"><span>' + t.label + '</span></label>'
+        + '</div>';
+    }).join('') + '</div>'
+    + raiseHtml
+    + '</div>';
   var laborSectionMap = { pay: section01, other02: section02, other03: section03, other04: section04 };
   var laborSubDesc = { pay: '정원 내 정규직 1-6급 체계', other02: '정원 범위 내 전문 임기제 직원(가~마급 체계)', other03: '정원 내 무기계약직(공무직 등)', other04: '정원 외의 계약직, 출산대체직 등 비정규직' };
   var laborDescHtml = laborSubDesc[LC.laborSub] ? '<p id="lc-subtab-desc" class="lc-subtab-desc">' + laborSubDesc[LC.laborSub] + '</p>' : '';
@@ -9862,11 +9976,40 @@ function renderLaborCalc() {
     : LC.view === 'final' ? lcFinalSection()
     : laborHtml;
   var showTotalWageExcludeHint = (LC.view === 'retire' || LC.view === 'eval' || LC.view === 'pension');
-  var totalWageExcludeHint = showTotalWageExcludeHint ? '<span class="lc-hint" style="margin:0;flex:1 1 0;min-width:0;align-self:center;font-size:12px;line-height:1.4;">※ 107 퇴직급여, 109 평가급, 304 연금부담금 등은 총인건비 인상률 준수 제외</span>' : '';
-  var topRow = '<div class="lc-top-row" style="align-items:center;">' + toggleHtml + totalWageExcludeHint + (LC.view === 'labor' ? raiseHtml : '') + '</div>';
-  el.innerHTML = topRow + viewHtml;
+  var totalWageExcludeHint = showTotalWageExcludeHint ? '<div class="lc-raise-row" style="max-width:640px;margin:26px 0 16px;">※ 107 퇴직급여, 109 평가급, 304 연금부담금 등은 총인건비 인상률 적용 제외</div>' : '';
+  var guideCinemaHtml = lcGuideCinemaHtml();
+  var topRow = '<div class="lc-top-row" style="align-items:flex-start;">' + toggleHtml + guideCinemaHtml + '</div>';
+  el.innerHTML = topRow + totalWageExcludeHint + viewHtml;
   requestAnimationFrame(lcPositionFilterIndicator);
   requestAnimationFrame(lcPositionSubDesc);
+}
+function lcGuideCinemaHtml() {
+  var items = [
+    { id: '01', title: '2027 출자출연기관 예산편성지침', list: LC_GUIDE_ITEMS },
+    { id: '02', title: '2027 지방공기업 예산 공통기준', list: LC_GUIDE2_ITEMS }
+  ];
+  var rowsHtml = items.map(function (g) {
+    var bodyItemsHtml = g.list.map(function (it, i) {
+      return '<li style="margin-bottom:12px;">'
+        + '<div style="font-size:11.5px;font-weight:700;color:var(--accent-dark);background:var(--accent-soft);display:inline-block;padding:2px 8px;border-radius:999px;margin-bottom:4px;">' + it.tag + '</div>'
+        + '<div style="font-weight:700;color:var(--navy);font-size:14.5px;">' + (i + 1) + '. ' + it.title + '</div>'
+        + '<ul style="margin:4px 0 0;padding-left:18px;color:var(--text-muted);font-size:13px;line-height:1.55;">'
+        + it.points.map(function (p) { return '<li>' + p + '</li>'; }).join('')
+        + '</ul></li>';
+    }).join('');
+    var isOpen = !!LC.guideCinemaOpen[g.id];
+    return '<div class="lc-guide-cinema-item' + (isOpen ? ' is-open' : '') + '" onclick="lcToggleGuideCinema(\'' + g.id + '\')">'
+      + '<div class="lc-guide-cinema-head">'
+      + '<span class="lc-guide-cinema-id">' + g.id + '</span>'
+      + '<span class="lc-guide-cinema-title">' + g.title + '</span>'
+      + '<span class="lc-guide-cinema-arrowbox">&rarr;</span>'
+      + '</div>'
+      + '<div class="lc-guide-cinema-body"><ul style="margin:0;padding-left:0;list-style:none;">' + bodyItemsHtml + '</ul></div>'
+      + '</div>';
+  }).join('');
+  return '<div class="lc-guide-cinema">'
+    + '<div class="lc-guide-cinema-title-row" style="font-weight:800;font-size:19px;color:var(--navy);padding:0 6px 10px;">│ 개정사항</div>'
+    + rowsHtml + '</div>';
 }
 
 function showLaborCalc() {
@@ -10260,9 +10403,9 @@ function renderSettlementPanel(instKey, inst) {
   if (data.yoy) {
     yoyHtml = '<div class="section-title-row settle-section-gap"><h2 class="section-heading section-heading-lg">전년 대비 증감</h2></div>'
       + '<div class="settle-yoy-grid">'
-        + renderSettleYoyCard('총수익', data.yoy.totalRevenue.curr, data.yoy.totalRevenue.prev, '백만원', 'var(--lime)', 1000)
-        + renderSettleYoyCard('총비용', data.yoy.totalExpense.curr, data.yoy.totalExpense.prev, '백만원', 'var(--danger)', 1000)
-        + renderSettleYoyCard('당기순손익', data.yoy.netIncome.curr, data.yoy.netIncome.prev, '백만원', 'var(--success)', 1000)
+        + renderSettleYoyCard('총수익', data.yoy.totalRevenue.curr, data.yoy.totalRevenue.prev, '백만원', '#1D2740', 1000)
+        + renderSettleYoyCard('총비용', data.yoy.totalExpense.curr, data.yoy.totalExpense.prev, '백만원', '#6879A8', 1000)
+        + renderSettleYoyCard('당기순손익', data.yoy.netIncome.curr, data.yoy.netIncome.prev, '백만원', '#2C3A5C', 1000)
       + '</div>';
   }
 
