@@ -8619,12 +8619,12 @@ function lcFinalFundBlock(title, tag, counts, bodyHtml) {
   return '<div style="margin:18px 0 30px;">' + bodyHtml + '</div>';
 }
 var LC_FINAL_INSTS = [
-  { key: 'hscf', label: '화성시문화관광재단', funds: [] },
-  { key: 'talent', label: '화성시인재육성재단', funds: [] },
-  { key: 'fc', label: '화성FC', funds: [] },
-  { key: 'corp', label: '화성시도시공사', funds: [] },
-  { key: 'sports', label: '화성시체육회', funds: [] },
-  { key: 'disabledsports', label: '장애인체육회', funds: [] }
+  { key: 'hscf', label: '① 화성시문화관광재단', funds: [] },
+  { key: 'talent', label: '② 화성시인재육성재단', funds: [] },
+  { key: 'fc', label: '③ 화성FC', funds: [] },
+  { key: 'corp', label: '④ 화성시도시공사', funds: [] },
+  { key: 'sports', label: '⑤ 화성시체육회', funds: [] },
+  { key: 'disabledsports', label: '⑥ 장애인체육회', funds: [] }
 ];
 function lcFinalSetInst(key) {
   LC.final.instKey = key;
@@ -9222,7 +9222,7 @@ function lcFinalSection() {
   // ===== 3. 화성FC (사무국 인력운영비부터 순차 정리 — hscf/talent와 동일하게 카테고리별 <details>로 분리) =====
   if (f.instKey === 'fc') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>인건비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>인건비</summary>';
   out += lcFinalFundBlock('보수(출연금)', '', [27, 0, 2],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직(연봉제: 1·2급 / 봉급제: 3~6급)', 4)
@@ -9266,7 +9266,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(출연금)', '', [19, 0, 2],
     lcFinalTable([{ t: '세부' }, { t: '산식·기준', formula: true }, { t: '단가(원)' }, { t: '인원' }, { t: '상태' }],
       lcFinalGroupRow('초과근무수당(통상임금÷209×1.5×30시간×12월)', 5)
@@ -9302,7 +9302,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(107목)', '', [2, 0, 0],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['퇴직연금 부담금', { v: '1,004,390,000÷12개월', formula: true }, { v: '83,700', formula: true }, { v: '일치', status: true }])
@@ -9311,7 +9311,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>평가급</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-tour)"><summary>평가급</summary>';
   out += lcFinalFundBlock('평가급(109목)', '', [0, 0, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)' }, { t: '상태' }],
       lcFinalRow(['직원(3급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,760' }, { v: '확인필요', status: true }])
@@ -9326,7 +9326,7 @@ function lcFinalSection() {
   // ===== 4. 화성시도시공사 =====
   if (f.instKey === 'corp') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>인건비</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>인건비</summary>';
   out += lcFinalFundBlock('보수(위탁금) — 화성종합경기타운', '', [0, 0, 11],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직 보수', 4)
@@ -9347,7 +9347,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [0, 0, 9],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직', 4)
@@ -9367,7 +9367,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(위탁금) — 화성종합경기타운', '', [0, 1, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['일반직', { v: '1,012,064,996÷12×1회', formula: true }, { v: '84,339' }, { v: '확인필요', status: true }])
@@ -9380,7 +9380,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>평가급</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>평가급</summary>';
   out += lcFinalFundBlock('평가급(위탁금) — 화성종합경기타운', '', [0, 3, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직 — 경영평가급', 4)
@@ -9397,7 +9397,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy)"><summary>연금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--dept-temp)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [0, 1, 11],
     lcFinalTable([{ t: '보험' }, { t: '요율' }, { t: '금액(천원)' }, { t: '상태' }],
       lcFinalRow(['국민연금', '4.5%', { v: '92,138' }, { v: '불일치', status: true }])
