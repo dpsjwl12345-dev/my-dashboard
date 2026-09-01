@@ -4,9 +4,8 @@
     {
       "name": "dashboard",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["-y", "serve", "."],
-      "port": 8532,
-      "autoPort": true
+      "runtimeArgs": ["-y", "serve", "-l", "8532", "."],
+      "port": 8532
     }
   ]
 }

@@ -3,6 +3,12 @@ const SUPABASE_ORIGIN = 'https://gpzbjvumumkudarikbzm.supabase.co';
 export const config = { api: { bodyParser: false } };
 
 export default async function handler(req, res) {
+  // 로컬 파일(file://)이나 다른 도메인에서 열었을 때도 되게 - 배포 사이트(같은 출처)에서는 원래도 필요 없지만 있어도 무해함.
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  if (req.method === 'OPTIONS') { res.status(204).end(); return; }
+
   const url = new URL(req.url, 'http://x');
   const params = url.searchParams;
   const pathParam = params.get('path') || '';
@@ -13,7 +19,7 @@ export default async function handler(req, res) {
   const headers = {};
   for (const [key, value] of Object.entries(req.headers)) {
     const k = key.toLowerCase();
-    if (['host', 'connection', 'content-length', 'accept-encoding'].includes(k)) continue;
+    if (['host', 'connection', 'content-length', 'accept-encoding', 'origin', 'referer'].includes(k)) continue;
     headers[key] = value;
   }
 

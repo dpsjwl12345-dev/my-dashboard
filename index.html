@@ -723,6 +723,16 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 
 /* Upload/Download 버튼 - 저장 아이콘(플로피디스크) + UP/DOWN 텍스트, 호버 시 라인이 접히는 애니메이션 */
 .io-btn-group { display: flex; align-items: center; gap: 8px; flex-shrink: 0; height: 44px; margin-left: 16px; }
+.dept-requested-total { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 400; color: var(--text-muted); white-space: nowrap; margin-left: 4px; }
+.drt-box {
+  display: inline-flex; align-items: center; gap: 6px; background: var(--bg-hover); border: 1px solid var(--border);
+  border-radius: 8px; padding: 4px 10px; color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.drt-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); flex-shrink: 0; animation: drt-pulse 1.6s ease-in-out infinite; }
+@keyframes drt-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(198,241,53,.55); }
+  50% { box-shadow: 0 0 0 5px rgba(198,241,53,0); }
+}
 .io-btn-group .download-menu-wrap { position: relative; flex-shrink: 0; display: flex; align-items: center; }
 .action_has {
   --sz: 1rem;
@@ -769,15 +779,9 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
   border-radius: 6px;
   transition: color .15s ease, background-color .15s ease;
 }
-#round-tabs.radio-input label::before {
-  content: ""; position: absolute; top: 15%; left: 0; width: 3px; height: 70%;
-  background-color: var(--accent); border-radius: 3px; opacity: 0;
-  transition: opacity .15s ease;
-}
 #round-tabs.radio-input label:has(input:checked) {
-  color: #fff; background-color: rgba(255,255,255,.16);
+  color: var(--accent-dark); background-color: var(--lime); font-weight: 800;
 }
-#round-tabs.radio-input label:has(input:checked)::before { opacity: 1; }
 
 /* 조직 상세 확장 영역 (정원현원 총괄 + 세부사업) */
 
@@ -921,6 +925,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 
 .team-block { margin-bottom: 24px; }
 .team-block h3 { font-size: 17px; font-weight: 700; margin: 0 0 10px; }
+.tree-unit-note { text-align: right; font-size: 12.5px; color: var(--text-muted); margin-bottom: 4px; }
 .tree-scroll { overflow-x: auto; border-radius: var(--r-lg); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 26px rgba(0,0,0,.28); background: var(--hero-dark); }
 table.tree {
   border-collapse: collapse; font-size: 15.5px; table-layout: fixed; width: 100%;
@@ -1610,34 +1615,68 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 
 .col-resize-handle { position: absolute; right: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 2; }
 .col-resize-handle:hover, .col-resize-handle.resizing { background: var(--accent); opacity: 0.4; }
-.th-filter-label { cursor: pointer; user-select: none; }
-.filter-caret { font-size: 14px; }
+.th-filter-label { cursor: pointer; user-select: none; position: relative; display: inline-block; }
+/* 헤더 필터 트리거 버튼 - 사용자 제공 체크박스 디자인의 원형+아이콘 모양을 그대로 가져다 씀(체크 상태는 없고 항상 아이콘 보임) */
+.filter-caret {
+  display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+  border-radius: 50%; background-color: #191A1E; margin-left: 4px; vertical-align: 3px;
+  box-shadow: 1px 1px 2px #0e0e0e, -1px -1px 2px rgba(95,94,94,.25); transition: all ease .2s;
+}
+.filter-caret svg { width: 55%; height: 55%; color: var(--lime); }
+.th-filter-label:hover .filter-caret { box-shadow: inset 1px 1px 2px #0e0e0e, inset -1px -1px 2px #5f5e5e; }
 .mok-filter-popover {
-  position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; z-index: 30;
-  background: var(--bg-card); border: 1px solid var(--border-strong);
-  border-radius: var(--r); box-shadow: var(--shadow-md); padding: 8px; width: 280px; max-width: 80vw;
+  position: absolute; top: 100%; left: 0; margin-top: 6px; z-index: 30;
+  background: rgba(255,255,255,.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.6);
+  border-radius: 16px; box-shadow: 0 18px 44px rgba(16,19,28,.24), 0 2px 8px rgba(16,19,28,.1);
+  padding: 12px; width: max-content; min-width: 300px; max-width: 420px; box-sizing: border-box;
   text-align: left; font-weight: 400; font-size: 14px; color: var(--text); white-space: normal;
 }
-.mok-filter-actions { display: flex; gap: 6px; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-.mok-filter-actions .mok-filter-confirm { margin-left: auto; background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
-.mok-filter-actions button { border: 1px solid var(--border-strong); background: var(--bg-card); border-radius: var(--r); padding: 4px 10px; font-size: 14px; cursor: pointer; }
-.mok-filter-item { display: block; font-size: 16px; padding: 3px 2px; cursor: pointer; }
-.mok-filter-item input { margin-right: 6px; }
-.mokf-acc { border-radius: 10px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 4px 14px rgba(16,19,28,.1); }
+.err-filter-popover {
+  position: absolute; top: 100%; right: 0; margin-top: 4px; z-index: 30;
+  background: rgba(255,255,255,.78); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--border-strong); border-radius: var(--r); box-shadow: var(--shadow-md);
+  padding: 8px 12px; white-space: nowrap; font-size: 14px; color: var(--text); text-align: left; font-weight: 400;
+}
+.err-filter-popover label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.mok-filter-search { display: block; width: 100%; box-sizing: border-box; margin-bottom: 10px; padding: 8px 12px; border: 1px solid rgba(16,19,28,.1); border-radius: 10px; font-size: 14px; background: rgba(255,255,255,.7); }
+.mok-filter-search:focus { outline: none; border-color: var(--lime); box-shadow: 0 0 0 3px rgba(198,241,53,.25); }
+.mok-filter-actions { display: flex; gap: 6px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(16,19,28,.08); }
+.mok-filter-actions .mok-filter-confirm { margin-left: auto; background: var(--accent-dark); border-color: var(--accent-dark); color: #fff; font-weight: 700; }
+.mok-filter-actions button { border: 1px solid rgba(16,19,28,.12); background: rgba(255,255,255,.8); border-radius: 999px; padding: 5px 12px; font-size: 13px; cursor: pointer; transition: background .15s; }
+.mok-filter-actions button:hover { background: #fff; }
+.mok-filter-item { display: flex; align-items: center; font-size: 15px; padding: 6px 8px; cursor: pointer; border-radius: 8px; transition: background .12s; }
+.mok-filter-item:hover { background: rgba(16,19,28,.05); }
+/* 커스텀 체크박스(사용자 제공 디자인, 필터 팝업용으로 축소) */
+.cb-container { --size: 18px; width: var(--size); height: var(--size); display: inline-flex; flex-shrink: 0; margin-right: 8px; position: relative; vertical-align: middle; }
+.cb-container input { position: absolute; opacity: 0; cursor: pointer; height: 100%; width: 100%; margin: 0; }
+.cb-checkmark {
+  width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background-color: #191A1E; color: #fff;
+  box-shadow: 1px 1px 2px #0e0e0e, -1px -1px 2px rgba(95,94,94,.25), inset 0 0 0 #0e0e0e, inset 0 0 0 #5f5e5e;
+  transition: all ease .2s; pointer-events: none;
+}
+.cb-checkmark svg { width: 60%; height: 60%; opacity: 0; transition: all ease .2s; }
+.cb-container input:checked + .cb-checkmark {
+  box-shadow: 0 0 0 #0e0e0e, 0 0 0 rgba(95,94,94,.25), inset 1px 1px 2px #0e0e0e, inset -1px -1px 2px #5f5e5e;
+}
+.cb-container input:checked + .cb-checkmark svg { opacity: 1; }
+.mokf-acc { border-radius: 12px; overflow: hidden; margin-bottom: 8px; border: 1px solid rgba(16,19,28,.08); box-shadow: 0 2px 8px rgba(16,19,28,.05); }
 .mokf-acc-trigger {
   width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  padding: 10px 14px; text-align: left; font-weight: 700; font-size: 14px; color: #fff;
-  background: var(--accent); border: none; border-radius: 10px;
-  cursor: pointer; transition: background .2s ease, border-radius .2s ease;
+  padding: 10px 14px; text-align: left; font-weight: 700; font-size: 13.5px; color: var(--text);
+  background: rgba(255,255,255,.55); border: none;
+  cursor: pointer; transition: background .2s ease;
 }
-.mokf-acc.open .mokf-acc-trigger { border-radius: 10px 10px 0 0; }
-.mokf-acc-trigger:hover { background: var(--accent-dark); }
-.mokf-acc-chevron { width: 16px; height: 16px; flex-shrink: 0; transition: transform .3s ease; }
+.mokf-acc.open .mokf-acc-trigger { background: var(--lime); color: var(--accent-dark); }
+.mokf-acc-trigger:hover { background: rgba(255,255,255,.9); }
+.mokf-acc.open .mokf-acc-trigger:hover { background: var(--lime); }
+.mokf-acc-chevron { width: 14px; height: 14px; flex-shrink: 0; transition: transform .3s ease; }
 .mokf-acc.open .mokf-acc-chevron { transform: rotate(180deg); }
 .mokf-acc-body-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
 .mokf-acc.open .mokf-acc-body-wrap { grid-template-rows: 1fr; }
 .mokf-acc-body { overflow: hidden; }
-.mokf-acc-body-inner { padding: 8px 14px 10px; background: linear-gradient(to bottom right, #f9fafb, #f3f4f6); border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px; }
+.mokf-acc-body-inner { padding: 6px 10px 8px; background: rgba(255,255,255,.4); }
 
 .business-section {
   background: var(--bg-hover); border-radius: var(--r-lg); padding: 20px 22px 24px; margin-top: 0;
@@ -1687,6 +1726,8 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   margin-right: 8px; vertical-align: middle;
 }
 .detail-total-amt .unit { font-size: 17px; font-weight: 700; color: var(--text-muted); margin-left: 4px; }
+.base-amt-badge { display: inline-flex; align-items: baseline; gap: 6px; flex-shrink: 0; background: var(--lime); border-radius: var(--r); padding: 6px 14px; font-size: 15px; font-weight: 800; color: var(--accent-dark); }
+.base-amt-badge .label { font-size: 12px; font-weight: 700; color: var(--accent-dark); opacity: .75; }
 .detail-summary-line { font-size: 17px; font-weight: 700; color: var(--text-muted); margin-bottom: 0; }
 .detail-summary-row {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
@@ -1715,6 +1756,8 @@ table.tree tr.search-match td { color: #fff !important; }
 table.tree tr.search-dim { display: none; }
 table.tree tr.calc-mismatch td.basis { background: rgba(214,69,90,.22); }
 .mismatch-flag { color: var(--danger); margin-left: 5px; font-size: 13px; cursor: help; }
+.error-cell { white-space: nowrap; }
+.error-cell-flag { display: inline-block; background: var(--danger-soft); color: var(--danger); border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 700; }
 table.tree tr.mismatch-only-hide { display: none; }
 table.tree tr.increase-only-hide { display: none; }
 table.tree tr.new-only-hide { display: none; }
@@ -2477,6 +2520,7 @@ td.lc-warn-cell { position: relative; }
               <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
             </div>
           </div>
+          <span class="dept-requested-total" id="dept-requested-total"></span>
         </div>
         <div id="dept-yearly-breakdown" class="dyt-card" style="display:none;">
           <div class="dyt-card-header">
@@ -2510,11 +2554,11 @@ td.lc-warn-cell { position: relative; }
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./lib-db-client.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
   // ── 여기에 Supabase 프로젝트 정보를 넣으세요 ──
-  var SUPABASE_URL = "https://my-dashboard-lilac-rho.vercel.app/api/supabase";
+  var SUPABASE_URL = "https://my-dashboard-lilac-rho.vercel.app/api/core";
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwemJqdnVtdW1rdWRhcmlrYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMzcxMjQsImV4cCI6MjEwMTcxMzEyNH0.m3OsDAvCVWiK6eBbArAbhEGQ2AsZAnNg_PHC-q-WIBw";
   var db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </script>
@@ -2836,9 +2880,28 @@ function renderDeptTabs() {
   var fillEl = document.getElementById('dept-select-fill');
   if (amtEl) {
     var deptBiz = filteredBusinesses();
-    var requestedTotal = (nav.instKey === 'hscf' && state.dept === '도서관정책과' && state.fund === '위탁금')
-      ? 18935831
-      : deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
+    var requestedTotal = deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
+    // 우상단(시 편성액)과 분리해서, 업로드/다운로드 버튼 옆(재단 자체 영역)에 재단이 실제로 요구한 금액 합계를 따로 보여준다.
+    // 표시 라벨은 "본예산 요구액"이지만 실제 값은 최종 회차(3회 추경)까지 누적한 합계여야 하므로,
+    // 우선 본예산만으로 즉시 그려두고, 각 사업카드의 회차별 증분을 비동기로 더해 갱신한다.
+    var reqTotalEl = document.getElementById('dept-requested-total');
+    if (reqTotalEl) reqTotalEl.innerHTML = requestedTotal
+      ? ((state.selectedYear || 2026) + '년 본예산 요구액 <span class="drt-box"><span class="drt-live-dot"></span>' + fmtWon(requestedTotal) + '천원</span>')
+      : '';
+    (function () {
+      var instKeyAtCall = nav.instKey, deptAtCall = state.dept, fundAtCall = state.fund;
+      var inst = INSTITUTIONS.filter(function (i) { return i.key === instKeyAtCall; })[0];
+      if (!inst || !deptBiz.length) return;
+      Promise.all(deptBiz.map(function (b) { return computeCumulativeRoundTotal(inst, b, 'supp3'); }))
+        .then(function (totals) {
+          if (nav.instKey !== instKeyAtCall || state.dept !== deptAtCall || state.fund !== fundAtCall) return; // 그 사이 다른 탭으로 이동했으면 버린다
+          var cumulativeTotal = totals.reduce(function (sum, t) { return sum + (t || 0); }, 0);
+          var el = document.getElementById('dept-requested-total');
+          if (el && cumulativeTotal) {
+            el.innerHTML = (state.selectedYear || 2026) + '년 본예산 요구액 <span class="drt-box"><span class="drt-live-dot"></span>' + fmtWon(cumulativeTotal) + '천원</span>';
+          }
+        });
+    })();
     // 우상단 금액은 요구액이 아니라 실제 편성액(가장 최근 회차)을 보여준다 — 입력된 편성액이 없는 부서는 기존대로 요구액 합계를 쓴다.
     var enactedTotal = getDeptLatestEnactedTotal(state.dept, state.fund);
     var total = enactedTotal != null ? enactedTotal : requestedTotal;
@@ -2913,9 +2976,8 @@ function renderDeptTabs() {
             + '</tr>';
         }).join('');
         // 부기명이 2개 이상이면(출연금 포함) 합계 행을 표 맨 위에 같이 보여준다.
-        // 단, hscf 관광진흥과 위탁금(뱃놀이축제/관광진흥)과 fc 체육진흥과 출연금은 예외로 합계를 표시하지 않는다.
+        // 단, fc 체육진흥과 출연금은 예외로 합계를 표시하지 않는다.
         var showTotal = enactedCards.length > 1
-          && !(nav.instKey === 'hscf' && state.dept === '관광진흥과' && state.fund === '위탁금')
           && !(nav.instKey === 'fc' && state.dept === '체육진흥과' && state.fund === '출연금');
         var totalRowHtml = '';
         if (showTotal) {
@@ -4636,9 +4698,9 @@ function fmtDiff(amt26, amt25) {
   return sign + fmtWon(Math.abs(d));
 }
 function fmtPct(amt26, amt25) {
-  if (!amt25) return amt26 ? '<span style="color:var(--accent)">신규</span>' : '0%';
+  if (!amt25) return amt26 ? '<span style="color:var(--accent)">신규</span>' : '0';
   var d = amt26 - amt25;
-  return Math.round(d / amt25 * 100) + '%';
+  return Math.round(d / amt25 * 100);
 }
 
 function getTreeColLabels() {
@@ -4649,9 +4711,10 @@ function getTreeColLabels() {
     amtLabel = (ROUND_LABELS[round] || '') + '요구액';
     baseLabel = '기정액';
   }
-  return ['정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '증감액', '증감률'];
+  return ['정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '증감액', '증감률', '오류'];
 }
-var DEFAULT_TREE_COL_WIDTHS = [34, 28, 10, 10, 10, 8];
+// 오류 칸 텍스트("⚠ 산출기초 불일치")가 잘리길래 앞 칸들을 전체적으로 조금씩 줄여서 오류 칸에 여유를 더 줬다.
+var DEFAULT_TREE_COL_WIDTHS = [27, 26, 9, 9, 8, 8, 13];
 function loadTreeColWidths() {
   try {
     var raw = localStorage.getItem('hscf_tree_col_widths_v2');
@@ -4785,9 +4848,9 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   var leafDepth = isNamedLevel ? 0 : (parentLeafDepth || 0) + 1;
   var nodePath = (parentPath ? parentPath + '>' : '') + node.level + ':' + node.name;
   var label = (node.level === '팀' ? node.name
-    : node.level === '정책' ? '[정책] ' + node.name
-    : node.level === '단위' ? '[단위] ' + node.name
-    : node.level === '세부' ? '[세부] ' + node.name
+    : node.level === '정책' ? node.name
+    : node.level === '단위' ? node.name
+    : node.level === '세부' ? node.name
     : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
     : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name));
   var cls = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목') ? node.level : 'leaf';
@@ -4813,6 +4876,8 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   var mismatchIcon = mismatchAmt != null
     ? '<span class="mismatch-flag" title="산출기초 계산값 ' + fmtWon(mismatchAmt) + '천원 ≠ 입력 금액 ' + fmtWon(node.amt26) + '천원">\u26A0</span>'
     : '';
+  // 오류 칸 - 지금은 산출기초 불일치만 표시. 인건비 지침 위반 등 다른 오류 유형은 검토 스킬 결과가 자동화되면 여기 추가한다.
+  var errorCellHtml = mismatchAmt != null ? '<span class="error-cell-flag">⚠ 산출기초 불일치</span>' : '';
   var increasedAttr = (Number(node.amt26) || 0) > (Number(node.amt25) || 0) ? ' data-increased="1"' : '';
   var isNew = (!node.amt25 || Number(node.amt25) === 0) && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
@@ -4832,12 +4897,15 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
     + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
     + '<td class="num pct">' + fmtPct(node.amt26, node.amt25) + '</td>'
+    + '<td class="error-cell">' + errorCellHtml + '</td>'
     + '</tr>');
   if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded, leafDepth); });
 }
 
 // 산출기초 불일치 항목만 보기 토글
 function toggleMismatchOnly(checked) {
+  // 툴바 토글과 오류 칸 헤더 필터 체크박스가 여러 개 있을 수 있으니 전부 같은 상태로 맞춘다.
+  document.querySelectorAll('.mismatch-only-checkbox').forEach(function (cb) { cb.checked = checked; });
   var rows = document.querySelectorAll('#detail table.tree tbody tr');
   rows.forEach(function (tr) {
     if (!checked) {
@@ -4955,10 +5023,14 @@ function closeUploadPreviewModal() {
 // "예산서_업로드_양식.xlsx" 고정 서식 - 이 헤더와 일치하면 정책→단위→세부사업→목→세목→부기명 트리로 매핑해서 실제 저장까지 지원한다.
 // 마지막 열("이전 대비 비교" 예산액)은 회차마다 라벨이 달라진다 - 본예산 업로드면 "2025예산액", 1추 업로드면 "2026년 본예산",
 // 2추면 "2026년 1추", 3추면 "2026년 2추" 식으로 자유롭게 바꿔 써도 되므로 텍스트를 강제하지 않고 열 개수만 확인한다.
-var TEMPLATE_HEADERS = ['정책', '단위', '세부사업', '목코드', '목명', '세목코드', '세목명', '부기명(항목명)', '산출기초', '2026예산액(천원)'];
+// 금액 헤더(예: "2026예산액(천원)")는 연도가 매년 바뀌므로 고정 문자열이 아니라 패턴으로 인식한다.
+var TEMPLATE_HEADERS = ['정책', '단위', '세부사업', '목코드', '목명', '세목코드', '세목명', '부기명(항목명)', '산출기초'];
+var TEMPLATE_AMT_HEADER_RE = /^\d{4}예산액\(천원\)$/;
 function isTemplateHeader(headerRow) {
-  if (!headerRow || headerRow.length < TEMPLATE_HEADERS.length + 1) return false;
-  return TEMPLATE_HEADERS.every(function (h, i) { return String(headerRow[i] || '').trim() === h; });
+  if (!headerRow || headerRow.length < TEMPLATE_HEADERS.length + 2) return false;
+  var fixedOk = TEMPLATE_HEADERS.every(function (h, i) { return String(headerRow[i] || '').trim() === h; });
+  if (!fixedOk) return false;
+  return TEMPLATE_AMT_HEADER_RE.test(String(headerRow[TEMPLATE_HEADERS.length] || '').trim());
 }
 function parseTemplateAmt(v) {
   var n = Number(String(v == null ? '' : v).replace(/[^0-9.-]/g, ''));
@@ -5144,17 +5216,28 @@ function collectCurrentTreeRows() {
     return { name: sportsBiz.label, rows: sportsRows };
   }
   var b = getBusiness(state.selectedId);
-  if (!b || !b.teams || !b.teams.length) return null;
-  var trees = b.teams.filter(function (t) { return t.treeKey && TEAM_TREES[t.treeKey]; }).map(function (t) { return TEAM_TREES[t.treeKey]; });
+  if (!b) return null;
+  // 화면(renderDetail)과 동일하게 - base면 TEAM_TREES, 추경 회차면 state.roundData를 쓴다.
+  // 예전엔 항상 TEAM_TREES(본예산)만 내보내서, 추경 화면을 보면서 다운로드해도 본예산 값이 나가는 문제가 있었다.
+  var activeTeams = b.teams;
+  var activeTrees = TEAM_TREES;
+  if (state.selectedRound && state.selectedRound !== 'base') {
+    if (!state.roundData || !state.roundData.teams || !state.roundData.teams.length) return null;
+    activeTeams = state.roundData.teams;
+    activeTrees = state.roundData.trees;
+  }
+  if (!activeTeams || !activeTeams.length) return null;
+  var trees = activeTeams.filter(function (t) { return t.treeKey && activeTrees[t.treeKey]; }).map(function (t) { return activeTrees[t.treeKey]; });
   if (!trees.length) return null;
 
-  var rows = [['구분', '산출기초', '2026년도', '2025년도', '비교증감', '증감률']];
+  var colLabels = getTreeColLabels();
+  var rows = [['구분', '산출기초', colLabels[2], colLabels[3], '증감액', '증감률']];
   function walk(node, depth) {
     var prefix = depth > 0 ? Array(depth + 1).join('  ') : '';
     var label = (node.level === '팀' ? node.name
-      : node.level === '정책' ? '[정책] ' + node.name
-      : node.level === '단위' ? '[단위] ' + node.name
-      : node.level === '세부' ? '[세부] ' + node.name
+      : node.level === '정책' ? node.name
+      : node.level === '단위' ? node.name
+      : node.level === '세부' ? node.name
       : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
       : node.name);
     var diff = (node.amt26 || 0) - (node.amt25 || 0);
@@ -5233,7 +5316,9 @@ function exportCurrentTreePdf() {
     + 'td.num,th.num{text-align:right;}'
     + '</style></head><body>'
     + '<h1>' + escapeHtml(data.name) + ' 세부예산 (' + new Date().toLocaleDateString('ko-KR') + ')</h1>'
-    + '<table><thead><tr><th>구분</th><th>산출기초</th><th class="num">2026년도</th><th class="num">2025년도</th><th class="num">비교증감</th><th class="num">증감률</th></tr></thead>'
+    + '<table><thead><tr><th>' + escapeHtml(data.rows[0][0]) + '</th><th>' + escapeHtml(data.rows[0][1]) + '</th>'
+    + '<th class="num">' + escapeHtml(data.rows[0][2]) + '</th><th class="num">' + escapeHtml(data.rows[0][3]) + '</th>'
+    + '<th class="num">' + escapeHtml(data.rows[0][4]) + '</th><th class="num">' + escapeHtml(data.rows[0][5]) + '</th></tr></thead>'
     + '<tbody>' + bodyRows + '</tbody></table>'
     + '<script>window.onload=function(){window.print();};</' + 'script>'
     + '</body></html>';
@@ -5429,35 +5514,49 @@ function renderTeamTreesCombined(trees, totalLabel) {
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
       + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
       + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
+      + '<td class="error-cell"></td>'
       + '</tr>';
   }
   // 같은 편성목/세부사업(이름 기준)이 트리 여러 개(팀 여러 개)에 걸쳐 나타나도, 팀별로 따로 묶지 않고
   // 전체를 합쳐 "세부사업"/"통계목" 두 목록으로만 보여준다 - 체크박스 하나로 해당 이름 전체가 같이 필터링된다.
+  // 이름 끝에 공백이 붙었는지("연금부담금 등"/"연금부담금 등 ") 같은 사소한 표기 차이 때문에
+  // 같은 항목이 필터 목록에 여러 줄로 따로 뜨는 걸 막기 위해 앞뒤/중복 공백을 정리하고 키를 만든다.
+  var normName = function (s) { return (s || '').replace(/\s+/g, ' ').trim(); };
   var mokDedup = {}; var mokOrder = [];
   var detailDedup = {}; var detailOrder = [];
   trees.forEach(function (tree, ti) {
     collectMokList(tree).forEach(function (m, i) {
-      var key = (m.code || '') + '|' + m.name;
-      if (!mokDedup[key]) { mokDedup[key] = { code: m.code, name: m.name, tag: instId + '_m' + ti + '_' + i }; mokOrder.push(key); }
+      var nName = normName(m.name);
+      var key = (m.code || '') + '|' + nName;
+      if (!mokDedup[key]) { mokDedup[key] = { code: m.code, name: nName, tag: instId + '_m' + ti + '_' + i }; mokOrder.push(key); }
       tagMok(m, mokDedup[key].tag);
     });
     collectDetailList(tree).forEach(function (d, i) {
-      var key = d.name;
-      if (!detailDedup[key]) { detailDedup[key] = { name: d.name, tag: instId + '_d' + ti + '_' + i }; detailOrder.push(key); }
+      var key = normName(d.name);
+      if (!detailDedup[key]) { detailDedup[key] = { name: key, tag: instId + '_d' + ti + '_' + i }; detailOrder.push(key); }
       tagDetail(d, detailDedup[key].tag);
     });
     computeSubtreeMokTags(tree);
     computeSubtreeDetailTags(tree);
     renderTreeRows(tree, rows, 0, '', true);
   });
-  var mokItemsHtml = mokOrder.map(function (key) {
+  // 200번대 나왔다가 400번대 나오는 식으로 뒤섞이지 않게, 목코드 숫자 순으로 정렬해서 보여준다.
+  var mokOrderSorted = mokOrder.slice().sort(function (a, b) {
+    var ca = parseInt((mokDedup[a].code || '').replace(/[^0-9]/g, ''), 10);
+    var cb = parseInt((mokDedup[b].code || '').replace(/[^0-9]/g, ''), 10);
+    if (isNaN(ca) && isNaN(cb)) return 0;
+    if (isNaN(ca)) return 1;
+    if (isNaN(cb)) return -1;
+    return ca - cb;
+  });
+  var mokItemsHtml = mokOrderSorted.map(function (key) {
     var e = mokDedup[key];
-    return '<label class="mok-filter-item" style="padding-left:16px"><input type="checkbox" checked data-mok-tag="' + e.tag + '" onchange="applyMokFilter(\'' + instId + '\')"> '
+    return '<label class="mok-filter-item" style="padding-left:16px">' + customCheckboxHtml(true, 'data-mok-tag="' + e.tag + '" onchange="applyMokFilter(\'' + instId + '\')"') + ' '
       + (e.code ? escapeHtml(e.code) + ' ' : '') + escapeHtml(e.name) + '</label>';
   }).join('');
   var detailItemsHtml = detailOrder.map(function (key) {
     var e = detailDedup[key];
-    return '<label class="mok-filter-item" style="padding-left:16px"><input type="checkbox" checked data-detail-tag="' + e.tag + '" onchange="applyMokFilter(\'' + instId + '\')"> '
+    return '<label class="mok-filter-item" style="padding-left:16px">' + customCheckboxHtml(true, 'data-detail-tag="' + e.tag + '" onchange="applyMokFilter(\'' + instId + '\')"') + ' '
       + escapeHtml(e.name) + '</label>';
   }).join('');
   var groupsHtml = mokFilterAccordion('세부사업', detailItemsHtml) + mokFilterAccordion('통계목', mokItemsHtml);
@@ -5465,18 +5564,26 @@ function renderTeamTreesCombined(trees, totalLabel) {
   var treeColLabels = getTreeColLabels();
   var colgroup = '<colgroup>' + treeColLabels.map(function (_, i) { return '<col class="tcol-' + i + '">'; }).join('') + '</colgroup>';
   var popover = '<div id="mokpop-' + instId + '" class="mok-filter-popover" style="display:none">'
+    + '<input type="text" class="mok-filter-search" placeholder="세부사업·통계목 검색" oninput="filterMokPopSearch(\'' + instId + '\', this.value)">'
     + '<div class="mok-filter-actions"><button onclick="setAllMokFilter(\'' + instId + '\', true)">전체선택</button><button onclick="setAllMokFilter(\'' + instId + '\', false)">전체해제</button><button class="mok-filter-confirm" onclick="closeMokFilter(\'' + instId + '\')">확인</button></div>'
     + groupsHtml + '</div>';
 
+  var errPopover = '<div id="errpop-' + instId + '" class="err-filter-popover" style="display:none">'
+    + '<label>' + customCheckboxHtml(false, 'class="mismatch-only-checkbox" onchange="toggleMismatchOnly(this.checked)"') + ' ⚠ 산출기초 불일치만</label>'
+    + '</div>';
   var headCells = treeColLabels.map(function (label, i) {
     var handle = i < treeColLabels.length - 1 ? '<span class="col-resize-handle" data-resize="' + i + '"></span>' : '';
     if (i === 0) {
-      return '<th><span class="th-filter-label" onclick="toggleMokFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret">▾</i></span>' + popover + handle + '</th>';
+      return '<th><span class="th-filter-label" onclick="toggleMokFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret"><svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="44" d="M416 128L192 384l-96-96"></path></svg></i>' + popover + '</span>' + handle + '</th>';
+    }
+    if (i === treeColLabels.length - 1) {
+      return '<th><span class="th-filter-label err-filter-label" onclick="toggleErrFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret"><svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="44" d="M416 128L192 384l-96-96"></path></svg></i>' + errPopover + '</span></th>';
     }
     return '<th>' + label + handle + '</th>';
   }).join('');
 
   return '<div class="team-block">'
+    + '<div class="tree-unit-note">(단위: 천원, %)</div>'
     + '<div class="tree-scroll"><div class="tree-container" id="treecontainer-' + instId + '">'
     + '<table class="tree">' + colgroup
     + '<thead><tr>' + headCells + '</tr></thead>'
@@ -5485,6 +5592,11 @@ function renderTeamTreesCombined(trees, totalLabel) {
 }
 function renderTeamTree(tree) {
   return renderTeamTreesCombined([tree]);
+}
+// 필터 팝업 체크박스 공통 마크업 - input은 그대로 실제 체크박스라 기존 onchange/data-* 로직이 그대로 동작하고, 모양만 커스텀 svg로 바꾼다.
+function customCheckboxHtml(checked, extraAttrs) {
+  return '<span class="cb-container"><input type="checkbox"' + (checked ? ' checked' : '') + ' ' + extraAttrs + '>'
+    + '<span class="cb-checkmark"><svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M416 128L192 384l-96-96"></path></svg></span></span>';
 }
 function mokFilterAccordion(title, itemsHtml) {
   if (!itemsHtml) return '';
@@ -5500,7 +5612,29 @@ function toggleMokFilter(instId, e) {
   e.stopPropagation();
   var pop = document.getElementById('mokpop-' + instId);
   if (!pop) return;
-  pop.style.display = (pop.style.display === 'none') ? 'block' : 'none';
+  var opening = pop.style.display === 'none';
+  pop.style.display = opening ? 'block' : 'none';
+  if (opening) {
+    // 팝업 열 때마다 이전 검색어를 지우고 목록을 처음 상태로 되돌린다.
+    var search = pop.querySelector('.mok-filter-search');
+    if (search) { search.value = ''; search.focus(); }
+    filterMokPopSearch(instId, '');
+  }
+}
+// 세부사업/통계목 체크박스 목록에서 이름으로 검색해서 안 맞는 항목은 숨긴다 - 검색어가 있으면 아코디언도 자동으로 펼친다.
+function filterMokPopSearch(instId, query) {
+  var pop = document.getElementById('mokpop-' + instId);
+  if (!pop) return;
+  var q = query.trim().toLowerCase();
+  pop.querySelectorAll('.mokf-acc').forEach(function (acc) {
+    var anyMatch = false;
+    acc.querySelectorAll('.mok-filter-item').forEach(function (item) {
+      var match = !q || item.textContent.toLowerCase().indexOf(q) !== -1;
+      item.style.display = match ? '' : 'none';
+      if (match) anyMatch = true;
+    });
+    if (q) acc.classList.toggle('open', anyMatch);
+  });
 }
 function closeMokFilter(instId) {
   var pop = document.getElementById('mokpop-' + instId);
@@ -5511,6 +5645,18 @@ document.addEventListener('click', function (e) {
   document.querySelectorAll('.mok-filter-popover').forEach(function (pop) {
     if (pop.style.display === 'none') return;
     if (!pop.contains(e.target) && !e.target.closest('.th-filter-label')) pop.style.display = 'none';
+  });
+});
+function toggleErrFilter(instId, e) {
+  e.stopPropagation();
+  var pop = document.getElementById('errpop-' + instId);
+  if (!pop) return;
+  pop.style.display = (pop.style.display === 'none') ? 'block' : 'none';
+}
+document.addEventListener('click', function (e) {
+  document.querySelectorAll('.err-filter-popover').forEach(function (pop) {
+    if (pop.style.display === 'none') return;
+    if (!pop.contains(e.target) && !e.target.closest('.err-filter-label')) pop.style.display = 'none';
   });
 });
 function setAllMokFilter(instId, checked) {
@@ -5641,22 +5787,25 @@ function renderDetail() {
     activeTeams = state.roundData.teams;
     activeTrees = state.roundData.trees;
     if (!activeTeams || !activeTeams.length) {
-      el.innerHTML = '<div class="empty-state">' + escapeHtml(ROUND_LABELS[state.selectedRound] || '') + ' 자료가 아직 없습니다.</div>';
+      el.innerHTML = '<div class="empty-state">' + escapeHtml(ROUND_LABELS[state.selectedRound] || '') + ' 편성없음</div>';
       return;
     }
-    // 추경 회차의 예산액은 본예산 카드 금액이 아니라, 그 회차 트리의 합계로 다시 계산한다.
-    var roundTotal = 0;
-    activeTeams.forEach(function (t) { var node = activeTrees[t.treeKey]; if (node) roundTotal += Number(node.amt26) || 0; });
-    amtLine = '<div class="detail-total-amt">' + fmtWon(roundTotal) + '<span class="unit">천원</span></div>';
+    // 추경 회차의 예산액은 본예산 카드 금액이 아니라, applyRound에서 미리 계산해둔 누적값(본예산+회차별 증분 합)을 쓴다.
+    // (그 회차 트리 자체는 증분만 들어있는 부분 목록이라, 트리 합계만으로는 총액이 실제보다 작게 나온다.)
+    var roundTotal = state.roundCumulativeTotal != null ? state.roundCumulativeTotal
+      : activeTeams.reduce(function (sum, t) { var node = activeTrees[t.treeKey]; return sum + (node ? Number(node.amt26) || 0 : 0); }, 0);
+    // 추경 화면에서는 원래 본예산액이 얼마였는지 바로 대조할 수 있게 강조 박스로 같이 보여준다.
+    var baseAmtBadge = (b.amt != null) ? '<div class="base-amt-badge"><span class="label">본예산액</span>' + fmtWon(b.amt) + '천원</div>' : '';
+    amtLine = baseAmtBadge + '<div class="detail-total-amt">' + fmtWon(roundTotal) + '<span class="unit">천원</span></div>';
   }
 
   var searchBoxHtml = (activeTeams && activeTeams.length)
     ? '<div class="tree-search-box"><input type="text" id="tree-search-input" placeholder="예산서 검색 (항목명·산출기초)" oninput="filterTreeRows(this.value)"><svg class="tree-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><button type="button" class="tree-search-btn" onclick="submitTreeSearch()" aria-label="검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button></div>'
     : '';
   var filterToggleHtml = (activeTeams && activeTeams.length)
-    ? '<div class="tree-filter-toggle"><input type="checkbox" id="mismatch-only-toggle" onchange="toggleMismatchOnly(this.checked)"><label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
-      + '<div class="tree-filter-toggle increase"><input type="checkbox" id="increase-only-toggle" onchange="toggleIncreaseOnly(this.checked)"><label for="increase-only-toggle">\u25B2 전년대비 증액만</label></div>'
-      + '<div class="tree-filter-toggle new"><input type="checkbox" id="new-only-toggle" onchange="toggleNewOnly(this.checked)"><label for="new-only-toggle">\uD83C\uDD95 신규사업만</label></div>'
+    ? '<div class="tree-filter-toggle">' + '<input type="checkbox" id="mismatch-only-toggle" class="mismatch-only-checkbox" onchange="toggleMismatchOnly(this.checked)">' + '<label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
+      + '<div class="tree-filter-toggle increase">' + '<input type="checkbox" id="increase-only-toggle" onchange="toggleIncreaseOnly(this.checked)">' + '<label for="increase-only-toggle">\u25B2 전년대비 증액만</label></div>'
+      + '<div class="tree-filter-toggle new">' + '<input type="checkbox" id="new-only-toggle" onchange="toggleNewOnly(this.checked)">' + '<label for="new-only-toggle">\uD83C\uDD95 신규사업만</label></div>'
     : '';
   var hasNoteClass = b.note ? ' has-note' : '';
   var shapeSvg = ['a','b','c','a','b','c','a','b','c'].map(function (cls) {
@@ -5759,7 +5908,24 @@ async function applyRound(round) {
   // 불러오는 동안 다른 탭/회차를 눌렀으면 그 결과는 버린다.
   if (state.selectedId !== b.id || state.selectedRound !== round) return;
   state.roundData = data;
+  // 추경은 그 회차에 새로 생기거나 바뀐 항목만 들어있는 "증분" 자료라, 화면에 보여줄 총액은
+  // 본예산 + (본예산부터 이 회차까지) 각 회차 증분을 전부 더한 누적값으로 계산한다.
+  state.roundCumulativeTotal = await computeCumulativeRoundTotal(inst, b, round);
+  if (state.selectedId !== b.id || state.selectedRound !== round) return;
   renderDetail();
+}
+var ROUND_SEQUENCE = ['base', 'supp1', 'supp2', 'supp3'];
+async function computeCumulativeRoundTotal(inst, b, round) {
+  var total = Number(b.amt) || 0;
+  var idx = ROUND_SEQUENCE.indexOf(round);
+  for (var i = 1; i <= idx; i++) {
+    var rd = await fetchRoundData(inst.id, b, ROUND_SEQUENCE[i]);
+    (rd.teams || []).forEach(function (t) {
+      var node = rd.trees[t.treeKey];
+      if (node) total += Number(node.amt26) || 0;
+    });
+  }
+  return total;
 }
 function onRoundChange(input) {
   applyRound(input.value);
@@ -5823,8 +5989,8 @@ var SPORTS_GROUP_EXPAND_KEY = { '화성시체육회': '__sportsCouncil', '화성
 // 화성시체육회 하위 3개 항목(민간단체법정운영보조/민간사업보조/민간위탁금)마다 소관부서 편성 내역이 서로 달라서 항목별로 분리해 관리한다.
 var SPORTS_DEPT_ENACTED_CARDS_BY_NAME = {
   '민간단체법정운영보조': [
-    { name: '인건비 및 운영비', rounds: { y25: 1657000, base: 1927000, supp1: 216000 } },
-    { name: '인건비 보조', rounds: { y25: 12000, base: 12000 } }
+    { name: '인건비 및 운영비', rounds: { y25: 1657000, base: 2142000 } },
+    { name: '인건비 보조', rounds: { y25: 12000, base: 0 } }
   ],
   '민간위탁금': [
     { name: '민간위탁금', rounds: { base: 306582 } }
@@ -5836,38 +6002,38 @@ var SPORTS_DEPT_ENACTED_CARDS_BY_NAME = {
     { name: '체육인 체육대회 개최 지원', group: '민간행사사업보조', rounds: { y25: 22800, base: 22000 } },
     { name: '체육상 시상식 개최 지원', group: '민간행사사업보조', rounds: { y25: 12000, base: 12000 } },
     { name: '효 마라톤대회 개최', group: '민간행사사업보조', rounds: { y25: 275000, base: 275000 } },
-    { name: '화성시민 한마음 체육대회 개최', group: '민간행사사업보조', rounds: { y25: 212000, base: 212000, supp1: 69000 } },
+    { name: '화성시민 한마음 체육대회 개최', group: '민간행사사업보조', rounds: { y25: 212000, base: 281000 } },
     { name: '경기마라톤대회 개최', group: '민간행사사업보조', rounds: { y25: 110000, base: 110000 } },
     { name: '환경자전거 대행진 개최', group: '민간행사사업보조', rounds: { y25: 80000, base: 80000 } },
-    { name: '시장기 종목별 체육대회 개최지원', group: '민간행사사업보조', rounds: { y25: 217800, base: 212800, supp1: 20000 } },
+    { name: '시장기 종목별 체육대회 개최지원', group: '민간행사사업보조', rounds: { y25: 217800, base: 232800 } },
     { name: '화성시의회 의장기 생활체육 축구대회', group: '민간행사사업보조', rounds: { y25: 25000, base: 25000 } },
     { name: '화성시의회 의장기 생활체육 배드민턴 대회', group: '민간행사사업보조', rounds: { y25: 12000, base: 12000 } },
     { name: '화성시의회 의장기 생활체육 게이트볼 대회', group: '민간행사사업보조', rounds: { y25: 8000, base: 8000 } },
     { name: '화성시의회 의장기 생활체육 족구대회', group: '민간행사사업보조', rounds: { y25: 8000, base: 8000 } },
-    { name: '협회장기 종목별 생활체육대회 개최지원', group: '민간행사사업보조', rounds: { y25: 60800, base: 60800, supp1: 20000 } },
+    { name: '협회장기 종목별 생활체육대회 개최지원', group: '민간행사사업보조', rounds: { y25: 60800, base: 80800 } },
     { name: '전국 및 국제 규모 스포츠 대회 개최', group: '민간행사사업보조', rounds: { y25: 1235000, base: 1120000 } },
-    { name: '한국바둑리그 출전 지원', group: '민간경상사업보조', rounds: { y25: 0, base: 0, supp1: 290000 } },
-    { name: '2026 화성특례시컵 전국 프로볼링대회', group: '민간행사사업보조', rounds: { y25: 0, base: 0, supp1: 200000 } },
-    { name: '경기도체육대회 출전', group: '민간경상사업보조', rounds: { y25: 341635, base: 345200, supp1: 13300 } },
-    { name: '경기도생활체육대축전 출전', group: '민간경상사업보조', rounds: { y25: 228000, base: 228000, supp1: 6000 } },
+    { name: '한국바둑리그 출전 지원', group: '민간경상사업보조', rounds: { y25: 0, base: 290000 } },
+    { name: '2026 화성특례시컵 전국 프로볼링대회', group: '민간행사사업보조', rounds: { y25: 0, base: 200000 } },
+    { name: '경기도체육대회 출전', group: '민간경상사업보조', rounds: { y25: 341635, base: 358500 } },
+    { name: '경기도생활체육대축전 출전', group: '민간경상사업보조', rounds: { y25: 228000, base: 234000 } },
     { name: '도 단위급 이상 종목별 엘리트대회 출전지원', group: '민간경상사업보조', rounds: { y25: 8000, base: 8000 } },
     { name: '도 단위 및 전국단위 생활체육대회 출전', group: '민간경상사업보조', rounds: { y25: 23085, base: 23085 } },
-    { name: '도지사기 및 도의장기, 도체육회장기 생활체육대회 출전', group: '민간경상사업보조', rounds: { y25: 75000, base: 75000, supp1: 9920 } },
-    { name: '쓰리GO', group: '민간경상사업보조', rounds: { y25: 1200000, base: 720800 } },
+    { name: '도지사기 및 도의장기, 도체육회장기 생활체육대회 출전', group: '민간경상사업보조', rounds: { y25: 75000, base: 84920 } },
+    { name: '쓰리GO', group: '민간경상사업보조', rounds: { y25: 1200000, base: 1020000 } },
     { name: '동호회 활동비 지원', group: '민간경상사업보조', rounds: { y25: 50000, base: 50000 } },
     { name: '유·청소년 체육 육성', group: '민간경상사업보조', rounds: { y25: 167000, base: 167000 } },
     { name: '학교운동부 지도자 지원', group: '민간경상사업보조', rounds: { y25: 650400, base: 630000 } },
     { name: '학교운동부 출전 지원', group: '민간경상사업보조', rounds: { y25: 135000, base: 135000 } },
     { name: '학교운동부 용품 지원', group: '민간경상사업보조', rounds: { y25: 77000, base: 77000 } },
-    { name: 'G-스포츠클럽 운영지원', group: '민간경상사업보조', rounds: { y25: 27200, base: 140000, supp1: 56000 } },
-    { name: '우수(전문)선수 육성지원', group: '민간경상사업보조', rounds: { y25: 954400, base: 924400, supp1: 61000 } },
-    { name: '일반생활체육 지도자 배치(활동지원)', group: '민간경상사업보조', rounds: { y25: 129584, base: 133440, supp1: 656 } },
-    { name: '어르신생활체육 지도자 배치(활동지원)', group: '민간경상사업보조', rounds: { y25: 161980, base: 166800, supp1: 820 } },
+    { name: 'G-스포츠클럽 운영지원', group: '민간경상사업보조', rounds: { y25: 27200, base: 206000 } },
+    { name: '우수(전문)선수 육성지원', group: '민간경상사업보조', rounds: { y25: 954400, base: 985400 } },
+    { name: '일반생활체육 지도자 배치(활동지원)', group: '민간경상사업보조', rounds: { y25: 129584, base: 134096 } },
+    { name: '어르신생활체육 지도자 배치(활동지원)', group: '민간경상사업보조', rounds: { y25: 161980, base: 167620 } },
     { name: '생활체육지도자 복리후생비', group: '민간경상사업보조', rounds: { y25: 161232, base: 161232 } },
     { name: '생활체육지도 수업용품비', group: '민간경상사업보조', rounds: { y25: 4000, base: 4000 } },
-    { name: '경기도 생활체육지도자 처우개선(명절수당)', group: '민간경상사업보조', rounds: { y25: 10692, base: 10692, supp1: 27 } },
+    { name: '경기도 생활체육지도자 처우개선(명절수당)', group: '민간경상사업보조', rounds: { y25: 10692, base: 10719 } },
     { name: '여성축구단 지원', group: '민간경상사업보조', rounds: { y25: 30000, base: 16740 } },
-    { name: '축구단 지원', group: '민간경상사업보조', rounds: { y25: 54700, base: 54700, supp1: 5000 } },
+    { name: '축구단 지원', group: '민간경상사업보조', rounds: { y25: 54700, base: 59700 } },
     { name: '족구단 지원', group: '민간경상사업보조', rounds: { y25: 7200, base: 7200 } },
     { name: '농구단 지원', group: '민간경상사업보조', rounds: { y25: 8800, base: 8800 } },
     { name: '지역자율형 생활체육지원', group: '민간경상사업보조', rounds: { y25: 31000, base: 31000 } },
@@ -5879,13 +6045,13 @@ var SPORTS_DEPT_ENACTED_CARDS_BY_NAME = {
     { name: '초등학교 바둑교실 운영', group: '민간경상사업보조', rounds: { y25: 184000, base: 184000 } }
   ],
   '장애인단체법정운영보조': [
-    { name: '인건비 및 운영비', rounds: { y25: 581000, base: 602000 } }
+    { name: '인건비 및 운영비', rounds: { y25: 581000, base: 606000 } }
   ],
   // 16개 사업(장애인체육회 민간경상사업보조 12개+민간행사사업보조 4개). base(2026)/y25(2025) 둘 다 사용자가 별도로 준 편성액 자료(SPORTS_BIZ_TREES 값과는 무관).
   // 화성시 장애인체육회 전무이사 활동비는 이번 2026년도 자료 목록에도 없어서 base 미확인 상태로 트리 값(9,600)을 그대로 둠, y25도 미확인.
   '장애인사업보조': [
     { name: '장애인 생활체육 활성화 사업', group: '민간경상사업보조', rounds: { y25: 51000, base: 51000 } },
-    { name: '장애인생활체육지도자 배치 지원', group: '민간경상사업보조', rounds: { y25: 194364, base: 201132 } },
+    { name: '장애인생활체육지도자 배치 지원', group: '민간경상사업보조', rounds: { y25: 194364, base: 201000 } },
     { name: '장애인생활체육지도자 배치(자체)', group: '민간경상사업보조', rounds: { y25: 79530, base: 79530 } },
     { name: '장애인생활체육지도자 처우개선 지원', group: '민간경상사업보조', rounds: { y25: 7128, base: 7146 } },
     { name: '경기도장애인생활체육대회 출전', group: '민간경상사업보조', rounds: { y25: 60000, base: 60000 } },
@@ -5902,8 +6068,8 @@ var SPORTS_DEPT_ENACTED_CARDS_BY_NAME = {
     { name: '화성시장애인체육회 임직원 및 종목단체 통합 워크숍', group: '민간행사사업보조', rounds: { y25: 15000, base: 10000 } }
   ],
   '장애인위탁금': [
-    { name: '인건비', rounds: { y25: 444000, base: 699000, supp1: 32000 } },
-    { name: '운영비', rounds: { y25: 845000, base: 1065000, supp1: 49000 } }
+    { name: '인건비', rounds: { y25: 444000, base: 730246, supp1: 32000 } },
+    { name: '운영비', rounds: { y25: 845000, base: 1114687, supp1: 49000 } }
   ]
 };
 var SPORTS_TOPBAR_LOGOS = {
@@ -5950,6 +6116,9 @@ function showPlaceholderInst(name) {
     });
     var amtEl = document.getElementById('dept-select-amt');
     if (amtEl) amtEl.textContent = latestTotal ? (fmtWon(Math.round(latestTotal / 1000)) + '백만원') : '';
+    // 화성시체육회는 요구액 합계 개념이 따로 없어서, 다른 기관 화면에서 남아있던 값이 안 보이게 비워둔다.
+    var reqTotalElSports = document.getElementById('dept-requested-total');
+    if (reqTotalElSports) reqTotalElSports.innerHTML = '';
     // 우상단 전년대비 증감률 박스 - 다른 기관과 동일하게 최신 회차 합계를 2025년 합계와 비교해서 채운다.
     if (pctValEl && pctWrapEl) {
       if (y25Total) {
@@ -6127,7 +6296,7 @@ function showPlaceholderInst(name) {
 
 // 화성시체육회 하위 항목 중 실제 사업카드(탭)로 보여줄 세부사업 목록.
 var SPORTS_SUB_BUSINESS_LABELS = {
-  '민간단체법정운영보조': ['화성시 체육회 운영', '화성시 체육회 운영 지원', '화성시체육회 워크샵 개최 지원 (일반운영비)'],
+  '민간단체법정운영보조': ['화성시 체육회 운영', '화성시체육회 워크샵 개최 지원 (일반운영비)'],
   '민간위탁금': ['구봉산다목적체육관 운영'],
   '민간사업보조': [
     '자체 개최 행사', '상급대회 출전 지원', '학교·청소년 체육 육성', '생활체육 지도자 인건비', '생활체육 클럽·단체 지원'
@@ -6235,28 +6404,6 @@ var SPORTS_BIZ_TREES = {
                   { id: 'sb-pension', level: '목', name: '연금부담금 등', amt26: 120000, amt25: 96000, children: [
                     { id: 'sb-pension-01', name: '연금부담금(사업주부담금)', calc: '10,000,000원×12개월 (건강보험,연금보험,고용·산재보험)', amt26: 120000, amt25: 96000 }
                   ] }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  '화성시 체육회 운영 지원': {
-    id: 'sports2-team', level: '팀', name: '화성시체육회',
-    children: [
-      { id: 'sports2-pol', level: '정책', name: '체육기반 확충, 지원', amt26: 12000, amt25: 0,
-        children: [
-          { id: 'sports2-unit', level: '단위', name: '시민체육역량강화', amt26: 12000, amt25: 0,
-            children: [
-              { id: 'sports2-detail', level: '세부', name: '화성시 체육회 운영 지원', amt26: 12000, amt25: 0,
-                children: [
-                  { id: 'sb2-101', level: '목', code: '101', name: '인건비', amt26: 12000, amt25: 0,
-                    children: [
-                      { id: 'sb2-101-note', name: '화성시체육회 인건비 지원', calc: '1,000,000원*12개월', amt26: 12000, amt25: 0 }
-                    ]
-                  }
                 ]
               }
             ]
@@ -7397,7 +7544,6 @@ var SPORTS_COUNCIL_DATA = {
       { label: '자산취득비', y26: 0, y25: 12020 },
       { label: '연금부담금 등', y26: 120000, y25: 96000 }
     ] },
-    { label: '화성시 체육회 운영 지원', y26: 12000, y25: 0 },
     { label: '화성시체육회 워크샵 개최 지원 (일반운영비)', y26: 30000, y25: 30000 },
     { label: '체육인 체육대회 개최 지원', y26: 22000, y25: 23100 },
     { label: '체육상 시상식 개최 지원', y26: 12000, y25: 12000 },
