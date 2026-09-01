@@ -2558,7 +2558,7 @@ td.lc-warn-cell { position: relative; }
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
   // ── 여기에 Supabase 프로젝트 정보를 넣으세요 ──
-  var SUPABASE_URL = "https://my-dashboard-lilac-rho.vercel.app/api/core";
+  var SUPABASE_URL = "https://my-dashboard-lilac-rho.vercel.app/api/svc";
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwemJqdnVtdW1rdWRhcmlrYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxMzcxMjQsImV4cCI6MjEwMTcxMzEyNH0.m3OsDAvCVWiK6eBbArAbhEGQ2AsZAnNg_PHC-q-WIBw";
   var db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </script>
@@ -6255,6 +6255,16 @@ function showPlaceholderInst(name) {
   var bizList = bizLabels
     ? bizSourceList.filter(function (p) { return bizLabels.indexOf(p.label) !== -1; })
     : null;
+  // 다른 기관과 동일하게, 현재 그룹(카드묶음)의 세부사업 y26 합계를 "본예산 요구액"으로 보여준다.
+  // (예: 민간단체법정운영보조 = 화성시 체육회 운영 + 화성시체육회 워크샵 개최 지원의 합)
+  // 1회 추경 요구액은 트리(SPORTS_BIZ_TREES) 안에 다른 기관과 동일하게 정책/단위/세부/편성목/통계목/부기명 구조로
+  // 직접 반영해뒀으므로(부기명에 "(1회 추경 요구)" 표기), 이 합계도 트리 amt26을 그대로 따라간다.
+  if (reqTotalElSports) {
+    var sportsReqTotal = bizList ? bizList.reduce(function (sum, b) { return sum + (b.y26 || 0); }, 0) : 0;
+    reqTotalElSports.innerHTML = sportsReqTotal
+      ? ((state.selectedYear || 2026) + '년 본예산 요구액 <span class="drt-box"><span class="drt-live-dot"></span>' + fmtWon(sportsReqTotal) + '천원</span>')
+      : '';
+  }
   var cardGrid = document.getElementById('card-grid');
   var detailEl = document.getElementById('detail');
   if (bizList && bizList.length) {
@@ -6296,7 +6306,7 @@ function showPlaceholderInst(name) {
 
 // 화성시체육회 하위 항목 중 실제 사업카드(탭)로 보여줄 세부사업 목록.
 var SPORTS_SUB_BUSINESS_LABELS = {
-  '민간단체법정운영보조': ['화성시 체육회 운영', '화성시체육회 워크샵 개최 지원 (일반운영비)'],
+  '민간단체법정운영보조': ['화성시 체육회 운영'],
   '민간위탁금': ['구봉산다목적체육관 운영'],
   '민간사업보조': [
     '자체 개최 행사', '상급대회 출전 지원', '학교·청소년 체육 육성', '생활체육 지도자 인건비', '생활체육 클럽·단체 지원'
@@ -6310,18 +6320,18 @@ var SPORTS_SUB_BUSINESS_LABELS = {
 // 카드 2개(탭)로 나눠 옮기고, "시보조금" 카드에는 자체 운영성 경비인 화성시장애인체육회 운영만 남긴다.
 // (지출총괄표의 재원별 금액 - 시보조금 1,308,706 / 장애인생활체육지도자 배치 287,790 등 - 은 그대로 유지되며, 이 값들은 사업카드용 재분류 총액이다.)
 var DISABLED_SPORTS_PRIVATE_BIZ_CATEGORIES = [
-  { label: '반다비체육센터 운영', y26: 1790304, y25: 1971294 },
+  { label: '반다비체육센터 운영', y26: 1871213, y25: 1971294 },
   { label: '장애인체육회 운영', y26: 611476, y25: 0 },
-  { label: '민간경상사업보조', y26: 826832, y25: 0 },
-  { label: '민간행사사업보조', y26: 148000, y25: 0 }
+  { label: '민간경상사업보조', y26: 836432, y25: 0 },
+  { label: '민간행사사업보조', y26: 158000, y25: 0 }
 ];
 // 민간사업보조 카테고리 카드(사업카드 개수를 줄이려고 성격이 비슷한 세부사업끼리 묶은 합계) - 각 값은 SPORTS_BIZ_TREES의 동명 트리 최상위(정책) 합계와 일치.
 var SPORTS_PRIVATE_BIZ_CATEGORIES = [
-  { label: '자체 개최 행사', y26: 1047600, y25: 1093700 },
-  { label: '상급대회 출전 지원', y26: 2155785, y25: 2240566 },
-  { label: '학교·청소년 체육 육성', y26: 1151000, y25: 1195400 },
-  { label: '생활체육 지도자 인건비', y26: 1400564, y25: 1424888 },
-  { label: '생활체육 클럽·단체 지원', y26: 1093240, y25: 1570700 }
+  { label: '자체 개최 행사', y26: 1415312, y25: 1397107 },
+  { label: '상급대회 출전 지원', y26: 2165705, y25: 3240566 },
+  { label: '학교·청소년 체육 육성', y26: 1151000, y25: 1206800 },
+  { label: '생활체육 지도자 인건비', y26: 1463067, y25: 1425761 },
+  { label: '생활체육 클럽·단체 지원', y26: 1358240, y25: 1908882 }
 ];
 // 다른 기관 예산서와 완전히 동일한 트리 구조(팀>정책>단위>세부사업>편성목>통계목)로 맞춘 상세 데이터.
 // 구글드라이브 "2026년-수입지출예산서.pdf" 지출총괄표 기준(단위: 천원). 인건비(101)는 보수(101-01)+연금부담금 등(101-05)의 합.
@@ -6412,40 +6422,6 @@ var SPORTS_BIZ_TREES = {
       }
     ]
   },
-  // expenseDetail의 "화성시체육회 워크샵 개최 지원 (일반운영비)"에 해당 - 기존엔 사업카드(탭)로 노출되지 않았는데,
-  // 민간단체법정운영보조 소속 항목이라 "화성시 체육회 운영 지원"과 같은 구조로 카드 추가.
-  '화성시체육회 워크샵 개최 지원 (일반운영비)': {
-    id: 'sports2b-team', level: '팀', name: '화성시체육회',
-    children: [
-      { id: 'sports2b-pol', level: '정책', name: '체육기반 확충, 지원', amt26: 30000, amt25: 30000,
-        children: [
-          { id: 'sports2b-unit', level: '단위', name: '시민체육역량강화', amt26: 30000, amt25: 30000,
-            children: [
-              { id: 'sports2b-detail', level: '세부', name: '화성시체육회 워크숍 개최 지원', amt26: 30000, amt25: 30000,
-                children: [
-                  { id: 'sb2b-m1', level: '목', name: '일반운영비', amt26: 30000, amt25: 30000,
-                    children: [
-                      { id: 'sb2b-s1', level: '세목', name: '행사운영비', amt26: 30000, amt25: 30000,
-                        children: [
-                          { id: 'sb2b-s1-1', name: '숙박', calc: '80,000원×100명×2일', amt26: 16000 },
-                          { id: 'sb2b-s1-2', name: '식비', calc: '25,000원×100명×3일', amt26: 7500 },
-                          { id: 'sb2b-s1-3', name: '교통비', calc: '1,850,000원×2대', amt26: 3700 },
-                          { id: 'sb2b-s1-4', name: '보험료', calc: '3,000원×100명', amt26: 300 },
-                          { id: 'sb2b-s1-5', name: '대관료', calc: '1,000,000원×1일', amt26: 1000 },
-                          { id: 'sb2b-s1-6', name: '특강강사', calc: '500,000원×2명', amt26: 1000 },
-                          { id: 'sb2b-s1-7', name: '용역비', calc: '5,000원×100명', amt26: 500 }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
   // 화성시장애인체육회 "장애인체육회 운영"(민간단체법정운영보조 카드) - 개별 지원사업 12건은 지방보조금 관리조례상 민간경상·민간행사사업보조로
   // 재분류되어 "민간경상/행사사업보조" 카드로 옮겼고, "장애인 생활체육 활성화 지원"은 삭제 요청으로 제외되어 화성시장애인체육회 운영만 남는다.
   // 민간단체법정운영비 보조 산출내역서 기준으로 인건비·운영비 통계목별 세부 산출근거까지 반영함
@@ -6520,9 +6496,9 @@ var SPORTS_BIZ_TREES = {
   '민간경상사업보조': {
     id: 'disabled-mgbjg-team', level: '팀', name: '화성시장애인체육회',
     children: [
-      { id: 'disabled-mgbjg-pol', level: '정책', name: '민간경상사업보조', amt26: 826832, amt25: 0,
+      { id: 'disabled-mgbjg-pol', level: '정책', name: '민간경상사업보조', amt26: 836432, amt25: 0,
         children: [
-          { id: 'disabled-mgbjg-unit', level: '단위', name: '민간경상사업보조', amt26: 826832, amt25: 0,
+          { id: 'disabled-mgbjg-unit', level: '단위', name: '민간경상사업보조', amt26: 836432, amt25: 0,
             children: [
               // 세부사업 산출내역(2026년 체육진흥과 편성 사업리스트) - 세부(세부사업)를 사업 단위로 나누고, 각 세부사업 밑에 통계목(민간경상사업보조)을 목으로 둔다.
               // 통계목 정의 출처: "2026년도 지방출자·출연기관 예산편성지침" Ⅴ장 경비 해설(사무관리비/행사운영비/행사실비보상금)
@@ -6583,13 +6559,14 @@ var SPORTS_BIZ_TREES = {
                   }
                 ]
               },
-              { id: 'disabled-mgbjg-detail-g3', level: '세부', name: '장애인 우수선수 육성 지원', amt26: 228000, amt25: 0,
+              { id: 'disabled-mgbjg-detail-g3', level: '세부', name: '장애인 우수선수 육성 지원', amt26: 237600, amt25: 0,
                 children: [
-                  { id: 'disabled-mgbj-g3', level: '목', name: '민간경상사업보조', amt26: 228000, amt25: 0,
+                  { id: 'disabled-mgbj-g3', level: '목', name: '민간경상사업보조', amt26: 237600, amt25: 0,
                     children: [
                       { id: 'disabled-mgbj-g3-1', name: '우수선수(A등급)', calc: '400,000원×12개월×22명', amt26: 105600, amt25: 0 },
                       { id: 'disabled-mgbj-g3-2', name: '우수선수(B등급)', calc: '300,000원×12개월×18명', amt26: 64800, amt25: 0 },
-                      { id: 'disabled-mgbj-g3-3', name: '우수선수(C등급)', calc: '200,000원×12개월×24명', amt26: 57600, amt25: 0 }
+                      { id: 'disabled-mgbj-g3-3', name: '우수선수(C등급)', calc: '200,000원×12개월×24명', amt26: 57600, amt25: 0 },
+                      { id: 'disabled-mgbj-g3-4', name: '우수선수(1회 추경 요구)', calc: '국가대표 선발 기존 선수 3명 등급변경(A→S) 및 역도 우수선수 영입(A등급)', amt26: 9600, amt25: 0 }
                     ]
                   }
                 ]
@@ -6709,9 +6686,9 @@ var SPORTS_BIZ_TREES = {
   '민간행사사업보조': {
     id: 'disabled-mgbjh-team', level: '팀', name: '화성시장애인체육회',
     children: [
-      { id: 'disabled-mgbjh-pol', level: '정책', name: '민간행사사업보조', amt26: 148000, amt25: 0,
+      { id: 'disabled-mgbjh-pol', level: '정책', name: '민간행사사업보조', amt26: 158000, amt25: 0,
         children: [
-          { id: 'disabled-mgbjh-unit', level: '단위', name: '민간행사사업보조', amt26: 148000, amt25: 0,
+          { id: 'disabled-mgbjh-unit', level: '단위', name: '민간행사사업보조', amt26: 158000, amt25: 0,
             children: [
               { id: 'disabled-mgbjh-detail-h2', level: '세부', name: '장애인 한마음 체육대회 개최', amt26: 44000, amt25: 0,
                 children: [
@@ -6765,9 +6742,10 @@ var SPORTS_BIZ_TREES = {
                   }
                 ]
               },
-              { id: 'disabled-mgbjh-detail-h1', level: '세부', name: '장애인종목별 대회 개최지원', amt26: 84000, amt25: 0,
+              { id: 'disabled-mgbjh-detail-h1', level: '세부', name: '장애인종목별 대회 개최지원', amt26: 94000, amt25: 0,
                 children: [
-                  { id: 'disabled-mgbj-h1', level: '목', name: '민간행사사업보조', calc: '론볼·배드민턴·탁구·슐런·파크골프·당구·게이트볼·사격·보치아 9개 종목, 시상비·대회운영비용·인건비·식비 등 참가규모별(참여인원) 차등 산출', amt26: 84000, amt25: 0 }
+                  { id: 'disabled-mgbj-h1', level: '목', name: '민간행사사업보조', calc: '론볼·배드민턴·탁구·슐런·파크골프·당구·게이트볼·사격·보치아 9개 종목, 시상비·대회운영비용·인건비·식비 등 참가규모별(참여인원) 차등 산출', amt26: 84000, amt25: 0 },
+                  { id: 'disabled-mgbj-h1-2', level: '목', name: '민간행사사업보조(1회 추경 요구)', calc: '신규 가맹단체(e스포츠) 대회 개최 환경 조성 및 참여 선수단 규모 증가', amt26: 10000, amt25: 0 }
                 ]
               },
               { id: 'disabled-mgbjh-detail-h3', level: '세부', name: '화성시 장애인체육인의 밤', amt26: 10000, amt25: 0,
@@ -6793,12 +6771,13 @@ var SPORTS_BIZ_TREES = {
   '반다비체육센터 운영': {
     id: 'disabled-bdb-team', level: '팀', name: '화성시장애인체육회',
     children: [
-      { id: 'disabled-bdb-pol', level: '정책', name: '체육기반 확충 지원', amt26: 1790304, amt25: 1971294,
+      { id: 'disabled-bdb-pol', level: '정책', name: '체육기반 확충 지원', amt26: 1871213, amt25: 1971294,
         children: [
-          { id: 'disabled-bdb-unit', level: '단위', name: '체육 인프라 구축', amt26: 1790304, amt25: 1971294,
+          { id: 'disabled-bdb-unit', level: '단위', name: '체육 인프라 구축', amt26: 1871213, amt25: 1971294,
             children: [
-              { id: 'disabled-bdb-detail1', level: '세부', name: '화성반다비체육센터운영', amt26: 1065385, amt25: 1146506,
+              { id: 'disabled-bdb-detail1', level: '세부', name: '화성반다비체육센터운영', amt26: 1114687, amt25: 1146506,
                 children: [
+                  { id: 'disabled-bdb-201-supp', level: '목', name: '1회 추경 요구액(운영시간확대안)', calc: '화성시도시공사 위탁 - 시설 운영시간 확대에 따른 일반운영비 증액', amt26: 49302, amt25: 0 },
                   { id: 'disabled-bdb-201', level: '목', code: '201', name: '일반운영비', amt26: 507835, amt25: 581420,
                     children: [
                       { id: 'disabled-bdb-201-01', level: '세목', code: '201-01', name: '사무관리비', amt26: 43080, amt25: 109450, children: [
@@ -6930,8 +6909,9 @@ var SPORTS_BIZ_TREES = {
                   }
                 ]
               },
-              { id: 'disabled-bdb-detail2', level: '세부', name: '화성반다비체육센터(인건비)', amt26: 698639, amt25: 443643,
+              { id: 'disabled-bdb-detail2', level: '세부', name: '화성반다비체육센터(인건비)', amt26: 730246, amt25: 443643,
                 children: [
+                  { id: 'disabled-bdb-101-supp', level: '목', name: '1회 추경 요구액(운영시간확대안)', calc: '화성시도시공사 위탁 - 시설 운영시간 확대에 따른 인건비 증액', amt26: 31607, amt25: 0 },
                   { id: 'disabled-bdb-101', level: '목', code: '101', name: '인건비', amt26: 497644, amt25: 332347,
                     children: [
                       { id: 'disabled-bdb-101-01', level: '세목', code: '101-01', name: '보수', amt26: 176924, amt25: 141474, children: [
@@ -7046,7 +7026,38 @@ var SPORTS_BIZ_TREES = {
   },
   // 민간사업보조 - 성격이 비슷한 세부사업끼리 5개 카테고리(사업카드)로 묶음. 카드 안에서는 세부사업별로 접혀 있고, 펼치면 목/세목/산출기초가 원문 그대로 보임.
   // 화성시민 한마음 체육대회 개최를 212,000천원(산출내역서 기준)으로 반영해 단위/정책 합계도 12,000천원 줄었음(기존 1,059,600 → 1,047,600).
-  '자체 개최 행사': { id: 'cat1t', level: '팀', name: '화성시체육회', children: [ { id: 'cat1p', level: '정책', name: '체육기반 확충, 지원', amt26: 1047600, amt25: 1093700, children: [ { id: 'cat1u', level: '단위', name: '시민체육역량강화', amt26: 1047600, amt25: 1093700, children: [
+  '자체 개최 행사': { id: 'cat1t', level: '팀', name: '화성시체육회', children: [ { id: 'cat1p', level: '정책', name: '체육기반 확충, 지원', amt26: 1415312, amt25: 1397107, children: [ { id: 'cat1u', level: '단위', name: '시민체육역량강화', amt26: 1415312, amt25: 1397107, children: [
+    { id: 'sbo11-d', level: '세부', name: '화성시 체육회 인건비 지원', amt26: 12000, amt25: 12000,
+      children: [
+        { id: 'sbo11-m1', level: '목', code: '101', name: '인건비', amt26: 12000, amt25: 12000,
+          children: [
+            { id: 'sbo11-m1-1', name: '보수', calc: '인건비', amt26: 12000, amt25: 12000 }
+          ]
+        }
+      ]
+    },
+    { id: 'sbo12-d', level: '세부', name: '종목단체장 및 임원회비', amt26: 216712, amt25: 261407,
+      children: [
+        { id: 'sbo12-m1', level: '목', code: '201', name: '일반운영비', amt26: 216712, amt25: 261407,
+          children: [
+            { id: 'sbo12-m1-1', name: '체육회 운영비', calc: '업무추진비, 경조사 지원비등', amt26: 216712, amt25: 261407 }
+          ]
+        }
+      ]
+    },
+    { id: 'sports2b-detail', level: '세부', name: '화성시체육회 워크숍 개최 지원', amt26: 30000, amt25: 30000, children: [
+      { id: 'sb2b-m1', level: '목', name: '일반운영비', amt26: 30000, amt25: 30000, children: [
+        { id: 'sb2b-s1', level: '세목', name: '행사운영비', amt26: 30000, amt25: 30000, children: [
+          { id: 'sb2b-s1-1', name: '숙박', calc: '80,000원×100명×2일', amt26: 16000 },
+          { id: 'sb2b-s1-2', name: '식비', calc: '25,000원×100명×3일', amt26: 7500 },
+          { id: 'sb2b-s1-3', name: '교통비', calc: '1,850,000원×2대', amt26: 3700 },
+          { id: 'sb2b-s1-4', name: '보험료', calc: '3,000원×100명', amt26: 300 },
+          { id: 'sb2b-s1-5', name: '대관료', calc: '1,000,000원×1일', amt26: 1000 },
+          { id: 'sb2b-s1-6', name: '특강강사', calc: '500,000원×2명', amt26: 1000 },
+          { id: 'sb2b-s1-7', name: '용역비', calc: '5,000원×100명', amt26: 500 }
+        ] }
+      ] }
+    ] },
     { id: 'mb1d', level: '세부', name: '체육인 체육대회 개최 지원', amt26: 22000, amt25: 23100, children: [
       { id: 'mb1m1', level: '목', name: '일반운영비', amt26: 22000, amt25: 23100, children: [
         { id: 'mb1s1', level: '세목', name: '행사운영비', amt26: 22000, amt25: 23100, children: [
@@ -7092,13 +7103,17 @@ var SPORTS_BIZ_TREES = {
       { id: 'mb3m2', level: '목', name: '일반보전금', amt26: 10000, amt25: 10000, children: [ { id: 'mb3s2', level: '세목', name: '기타보상금', calc: '효행자 시상금', amt26: 10000, amt25: 10000 } ] }
     ] },
     // 산출내역서 기준 212,000천원(행사용역+심판비+위원수당+대회운영비) - 체육회 요구액보다 실제 편성액이 줄어, 기존 지출계획서 수치(224,000)보다 12,000천원 작음. 산출내역서 쪽을 반영.
-    { id: 'mb4d', level: '세부', name: '화성시민 한마음 체육대회 개최', amt26: 212000, amt25: 224000, children: [
-      { id: 'mb4m1', level: '목', name: '일반운영비', amt26: 212000, amt25: 224000, children: [
+    { id: 'mb4d', level: '세부', name: '화성시민 한마음 체육대회 개최', amt26: 281000, amt25: 224000, children: [
+      { id: 'mb4m1', level: '목', name: '일반운영비', amt26: 281000, amt25: 224000, children: [
         { id: 'mb4s1', level: '세목', name: '행사운영비', amt26: 212000, amt25: 224000, children: [
           { id: 'mb4s1-1', name: '행사용역', calc: '행사 운영 대행용역비', amt26: 175320 },
           { id: 'mb4s1-2', name: '심판비', calc: '종목별 심판비', amt26: 31280 },
           { id: 'mb4s1-3', name: '위원 수당', calc: '행사 용역 제안서 평가 위원 수당', amt26: 1400 },
           { id: 'mb4s1-4', name: '대회운영비', calc: '운영 인력 간식비 등', amt26: 4000 }
+        ] },
+        { id: 'mb4s2', level: '세목', name: '행사운영비(1회 추경 요구)', amt26: 69000, children: [
+          { id: 'mb4s2-1', name: '행사장 조성', calc: '현수막, 무대 등 65,000천원×1식', amt26: 65000 },
+          { id: 'mb4s2-2', name: '심판비 및 위원수당 등 보정', calc: '물가상승·과업량 증가 반영', amt26: 4000 }
         ] }
       ] }
     ] },
@@ -7124,12 +7139,21 @@ var SPORTS_BIZ_TREES = {
         ] }
       ] }
     ] },
-    { id: 'mb7d', level: '세부', name: '시장기 종목별 대회 개최', amt26: 212800, amt25: 230800, children: [ { id: 'mb7m1', level: '목', name: '민간이전', amt26: 212800, amt25: 230800, children: [ { id: 'mb7s1', level: '세목', name: '민간행사사업보조', calc: '시상비 및 경기용품 구입, 심판비, 일반운영비 등', amt26: 212800, amt25: 230800 } ] } ] },
+    { id: 'mb7d', level: '세부', name: '시장기 종목별 대회 개최', amt26: 232800, amt25: 230800, children: [ { id: 'mb7m1', level: '목', name: '민간이전', amt26: 232800, amt25: 230800, children: [ { id: 'mb7s1', level: '세목', name: '민간행사사업보조', calc: '시상비 및 경기용품 구입, 심판비, 일반운영비 등', amt26: 212800, amt25: 230800 }, { id: 'mb7s2', level: '세목', name: '민간행사사업보조(1회 추경 요구)', calc: '신규 종목(유도·빙상 등) 신청 증가에 따른 지원 수요 확대', amt26: 20000 } ] } ] },
     { id: 'mb8d', level: '세부', name: '의장기 체육대회 개최', amt26: 53000, amt25: 53000, children: [ { id: 'mb8m1', level: '목', name: '민간이전', amt26: 53000, amt25: 53000, children: [ { id: 'mb8s1', level: '세목', name: '민간행사사업보조', calc: '시상비 및 경기용품 구입, 심판비, 일반운영비 등', amt26: 53000, amt25: 53000 } ] } ] },
-    { id: 'mb9d', level: '세부', name: '협회장기 종목별 대회 개최', amt26: 60800, amt25: 75800, children: [ { id: 'mb9m1', level: '목', name: '민간이전', amt26: 60800, amt25: 75800, children: [ { id: 'mb9s1', level: '세목', name: '민간행사사업보조', calc: '시상비 및 경기용품 구입, 심판비, 일반운영비 등', amt26: 60800, amt25: 75800 } ] } ] }
+    { id: 'mb9d', level: '세부', name: '협회장기 종목별 대회 개최', amt26: 80800, amt25: 75800, children: [ { id: 'mb9m1', level: '목', name: '민간이전', amt26: 80800, amt25: 75800, children: [ { id: 'mb9s1', level: '세목', name: '민간행사사업보조', calc: '시상비 및 경기용품 구입, 심판비, 일반운영비 등', amt26: 60800, amt25: 75800 }, { id: 'mb9s2', level: '세목', name: '민간행사사업보조(1회 추경 요구)', calc: '신규 종목단체 가맹 등 지원 수요 확대(3개년 사업비 동결분 보전)', amt26: 20000 } ] } ] }
   ] } ] } ] },
   // 전국 및 국제 규모 스포츠 대회 개최(mb34d)를 1,120,000천원으로 반영해 단위/정책 합계도 80,000천원 늘었음(기존 2,075,785 → 2,155,785).
-  '상급대회 출전 지원': { id: 'cat2t', level: '팀', name: '화성시체육회', children: [ { id: 'cat2p', level: '정책', name: '체육기반 확충, 지원', amt26: 2155785, amt25: 2240566, children: [ { id: 'cat2u', level: '단위', name: '시민체육역량강화', amt26: 2155785, amt25: 2240566, children: [
+  '상급대회 출전 지원': { id: 'cat2t', level: '팀', name: '화성시체육회', children: [ { id: 'cat2p', level: '정책', name: '체육기반 확충, 지원', amt26: 2165705, amt25: 3240566, children: [ { id: 'cat2u', level: '단위', name: '시민체육역량강화', amt26: 2165705, amt25: 3240566, children: [
+    { id: 'sbo2-d', level: '세부', name: '배틀 오브 이어 월드 파이널 개최', amt26: 0, amt25: 1000000,
+      children: [
+        { id: 'sbo2-m1', level: '목', code: '201', name: '일반운영비', amt26: 0, amt25: 1000000,
+          children: [
+            { id: 'sbo2-m1-1', name: '행사운영비', amt26: 0, amt25: 1000000 }
+          ]
+        }
+      ]
+    },
     { id: 'mb10d', level: '세부', name: '경기도 체육대회 출전', amt26: 486200, amt25: 499835, children: [
       { id: 'mb10m1', level: '목', name: '일반운영비', amt26: 345200, amt25: 366635, children: [ { id: 'mb10s1', level: '세목', name: '행사운영비', calc: '종목별 운영비, 단체복 구입비, 숙박비, 식비 등', amt26: 345200, amt25: 366635 } ] },
       { id: 'mb10m2', level: '목', name: '일반보전금', amt26: 141000, amt25: 133200, children: [ { id: 'mb10s2', level: '세목', name: '기타보상금', calc: '격려금 및 포상금', amt26: 141000, amt25: 133200 } ] }
@@ -7149,7 +7173,7 @@ var SPORTS_BIZ_TREES = {
         ] }
       ] }
     ] },
-    { id: 'mb14d', level: '세부', name: '도지사기 및 도의장기 생활체육대회 출전', amt26: 75000, amt25: 75000, children: [ { id: 'mb14m1', level: '목', name: '민간이전', amt26: 75000, amt25: 75000, children: [ { id: 'mb14s1', level: '세목', name: '민간경상사업보조', calc: '단체복, 유니폼, 교통비, 대회식비 등', amt26: 75000, amt25: 75000 } ] } ] },
+    { id: 'mb14d', level: '세부', name: '도지사기 및 도의장기 생활체육대회 출전', amt26: 84920, amt25: 75000, children: [ { id: 'mb14m1', level: '목', name: '민간이전', amt26: 84920, amt25: 75000, children: [ { id: 'mb14s1', level: '세목', name: '민간경상사업보조', calc: '단체복, 유니폼, 교통비, 대회식비 등', amt26: 75000, amt25: 75000 }, { id: 'mb14s2', level: '세목', name: '민간경상사업보조(1회 추경 요구)', calc: '대회 출전 인원 증가에 따른 증액', amt26: 9920 } ] } ] },
     { id: 'mb33d', level: '세부', name: '전국 및 국제 규모 스포츠 대회 개최 및 출전(출전)', amt26: 170500, amt25: 62000, children: [
       { id: 'mb33m1', level: '목', name: '일반운영비', amt26: 115000, amt25: 5000, children: [ { id: 'mb33s1', level: '세목', name: '행사운영비', calc: '전국규모대회 출전비', amt26: 115000, amt25: 5000 } ] },
       { id: 'mb33m2', level: '목', name: '일반보전금', amt26: 55500, amt25: 57000, children: [ { id: 'mb33s2', level: '세목', name: '기타보상금', calc: '격려금 등', amt26: 55500, amt25: 57000 } ] }
@@ -7178,7 +7202,16 @@ var SPORTS_BIZ_TREES = {
       { id: 'mb34m2', level: '목', name: '일반보전금', amt26: 0, amt25: 87346, children: [ { id: 'mb34s2', level: '세목', name: '기타보상금', calc: '격려금 등', amt26: 0, amt25: 87346 } ] }
     ] }
   ] } ] } ] },
-  '학교·청소년 체육 육성': { id: 'cat3t', level: '팀', name: '화성시체육회', children: [ { id: 'cat3p', level: '정책', name: '체육기반 확충, 지원', amt26: 1151000, amt25: 1195400, children: [ { id: 'cat3u', level: '단위', name: '시민체육역량강화', amt26: 1151000, amt25: 1195400, children: [
+  '학교·청소년 체육 육성': { id: 'cat3t', level: '팀', name: '화성시체육회', children: [ { id: 'cat3p', level: '정책', name: '체육기반 확충, 지원', amt26: 1151000, amt25: 1206800, children: [ { id: 'cat3u', level: '단위', name: '시민체육역량강화', amt26: 1151000, amt25: 1206800, children: [
+    { id: 'sbo3-d', level: '세부', name: '유청소년 축구단 운영지원(유청소년축구대회 개최)', amt26: 0, amt25: 11400,
+      children: [
+        { id: 'sbo3-m1', level: '목', code: '307', name: '민간이전', amt26: 0, amt25: 11400,
+          children: [
+            { id: 'sbo3-m1-1', name: '민간경상사업보조', calc: '시상비 및 경기용품 구입, 심판비, 일반운영비 등', amt26: 0, amt25: 11400 }
+          ]
+        }
+      ]
+    },
     { id: 'mb17d', level: '세부', name: '유·청소년 체육 육성', amt26: 167000, amt25: 167000, children: [ { id: 'mb17m1', level: '목', name: '민간이전', amt26: 167000, amt25: 167000, children: [ { id: 'mb17s1', level: '세목', name: '민간경상사업보조', calc: '지도자인건비, 대회출전비, 대회개최비 등', amt26: 167000, amt25: 167000 } ] } ] },
     { id: 'mb18d', level: '세부', name: '학교운동부 육성(지도자 지원)', amt26: 630000, amt25: 650400, children: [ { id: 'mb18m1', level: '목', name: '민간이전', amt26: 630000, amt25: 650400, children: [ { id: 'mb18s1', level: '세목', name: '기타보상금', calc: '학교운동부 지도자 지원금(처우개선) - 월 지급기준: S급(90점 이상) 2,500천원, A급(80점 이상) 2,400천원, B급(70점 이상) 2,300천원, C급(70점 미만) 2,200천원, D급(교육청 지도자) 1,000천원', amt26: 630000, amt25: 650400 } ] } ] },
     { id: 'mb19d', level: '세부', name: '학교운동부 육성(출전 지원)', amt26: 135000, amt25: 159000, children: [
@@ -7221,19 +7254,28 @@ var SPORTS_BIZ_TREES = {
       ] }
     ] }
   ] } ] } ] },
-  '생활체육 지도자 인건비': { id: 'cat4t', level: '팀', name: '화성시체육회', children: [ { id: 'cat4p', level: '정책', name: '체육기반 확충, 지원', amt26: 1400564, amt25: 1424888, children: [ { id: 'cat4u', level: '단위', name: '시민체육역량강화', amt26: 1400564, amt25: 1424888, children: [
-    { id: 'mb21d', level: '세부', name: '우수(전문)선수 및 지도자 육성', amt26: 924400, amt25: 957400, children: [
-      { id: 'mb21m1', level: '목', name: '인건비', amt26: 867096, amt25: 904800, children: [ { id: 'mb21s1', level: '세목', name: '기간제근로자등보수', calc: '훈련비', amt26: 867096, amt25: 904800 } ] },
+  '생활체육 지도자 인건비': { id: 'cat4t', level: '팀', name: '화성시체육회', children: [ { id: 'cat4p', level: '정책', name: '체육기반 확충, 지원', amt26: 1463067, amt25: 1425761, children: [ { id: 'cat4u', level: '단위', name: '시민체육역량강화', amt26: 1463067, amt25: 1425761, children: [
+    { id: 'sbo10-d', level: '세부', name: '생활체육지도자 교육', amt26: 0, amt25: 873,
+      children: [
+        { id: 'sbo10-m1', level: '목', code: '201', name: '일반운영비', amt26: 0, amt25: 873,
+          children: [
+            { id: 'sbo10-m1-1', name: '행사운영비', calc: '교육비용', amt26: 0, amt25: 873 }
+          ]
+        }
+      ]
+    },
+    { id: 'mb21d', level: '세부', name: '우수(전문)선수 및 지도자 육성', amt26: 985400, amt25: 957400, children: [
+      { id: 'mb21m1', level: '목', name: '인건비', amt26: 928096, amt25: 904800, children: [ { id: 'mb21s1', level: '세목', name: '기간제근로자등보수', calc: '훈련비', amt26: 867096, amt25: 904800 }, { id: 'mb21s3', level: '세목', name: '기간제근로자등보수(1회 추경 요구)', calc: '국가대표 선발 기존 선수 3명 등급변경(A→S) 및 역도 우수선수 영입(A등급)', amt26: 61000 } ] },
       { id: 'mb21m2', level: '목', name: '물건비', amt26: 57304, amt25: 49600, children: [ { id: 'mb21s2', level: '세목', name: '행사운영비', calc: '법정부담금, 숙소계약, 기타수용비 등', amt26: 57304, amt25: 49600 } ] }
     ] },
-    { id: 'mb22d', level: '세부', name: '일반생활체육지도자 배치(활동지원)', amt26: 133440, amt25: 129584, children: [
+    { id: 'mb22d', level: '세부', name: '일반생활체육지도자 배치(활동지원)', amt26: 134096, amt25: 129584, children: [
       // 재원 구성: 국비 66,720(50%) + 도비 33,360(25%) + 시비 33,360(25%) = 133,440천원
-      { id: 'mb22m1', level: '목', name: '인건비', amt26: 133440, amt25: 128928, children: [ { id: 'mb22s1', level: '세목', name: '공무직(무기계약)근로자보수', calc: '2,780,000원×4명×12월', amt26: 133440, amt25: 128928 } ] },
+      { id: 'mb22m1', level: '목', name: '인건비', amt26: 134096, amt25: 128928, children: [ { id: 'mb22s1', level: '세목', name: '공무직(무기계약)근로자보수', calc: '2,780,000원×4명×12월', amt26: 133440, amt25: 128928 }, { id: 'mb22s3', level: '세목', name: '공무직(무기계약)근로자보수(1회 추경 요구)', calc: '국·도·시 매칭비율 재산정 - 시비분', amt26: 656 } ] },
       { id: 'mb22m2', level: '목', name: '일반운영비', amt26: 0, amt25: 656, children: [ { id: 'mb22s2', level: '세목', name: '공공운영비', amt26: 0, amt25: 656 } ] }
     ] },
-    { id: 'mb23d', level: '세부', name: '어르신생활체육지도자 배치(활동지원)', amt26: 166800, amt25: 161980, children: [
+    { id: 'mb23d', level: '세부', name: '어르신생활체육지도자 배치(활동지원)', amt26: 167620, amt25: 161980, children: [
       // 재원 구성: 국비 83,400(50%) + 도비 41,700(25%) + 시비 41,700(25%) = 166,800천원
-      { id: 'mb23m1', level: '목', name: '인건비', amt26: 166800, amt25: 161160, children: [ { id: 'mb23s1', level: '세목', name: '공무직(무기계약)근로자보수', calc: '2,780,000원×5명×12월', amt26: 166800, amt25: 161160 } ] },
+      { id: 'mb23m1', level: '목', name: '인건비', amt26: 167620, amt25: 161160, children: [ { id: 'mb23s1', level: '세목', name: '공무직(무기계약)근로자보수', calc: '2,780,000원×5명×12월', amt26: 166800, amt25: 161160 }, { id: 'mb23s3', level: '세목', name: '공무직(무기계약)근로자보수(1회 추경 요구)', calc: '국·도·시 매칭비율 재산정 - 시비분', amt26: 820 } ] },
       { id: 'mb23m2', level: '목', name: '일반운영비', amt26: 0, amt25: 820, children: [ { id: 'mb23s2', level: '세목', name: '공공운영비', amt26: 0, amt25: 820 } ] }
     ] },
     // 산출내역서 12개 항목 기준으로 반영 - 기존 목 구성(인건비 158,232 / 일반운영비·맞춤형복지제도 3,000 2갈래 분리)은 쓰지 않고 산출내역서 그대로 인건비 한 목에 모음(요청사항).
@@ -7257,10 +7299,84 @@ var SPORTS_BIZ_TREES = {
     ] },
     { id: 'mb25d', level: '세부', name: '생활체육지도자 배치(자체)(수업용품비)', amt26: 4000, amt25: 4000, children: [ { id: 'mb25m1', level: '목', name: '일반운영비', amt26: 4000, amt25: 4000, children: [ { id: 'mb25s1', level: '세목', name: '사무관리비', amt26: 4000, amt25: 4000 } ] } ] },
     // 재원 구성: 도비 3,208(30%) + 시비 7,484(70%) = 10,692천원
-    { id: 'mb26d', level: '세부', name: '생활체육지도자 처우개선(명절수당)', amt26: 10692, amt25: 10692, children: [ { id: 'mb26m1', level: '목', name: '인건비', amt26: 10692, amt25: 10692, children: [ { id: 'mb26s1', level: '세목', name: '공무직(무기계약)근로자보수', calc: '명절수당 500천원·2회(설,추석) + 법정부담금(4대보험료, 퇴직충당금)', amt26: 10692, amt25: 10692 } ] } ] }
+    { id: 'mb26d', level: '세부', name: '생활체육지도자 처우개선(명절수당)', amt26: 10719, amt25: 10692, children: [ { id: 'mb26m1', level: '목', name: '인건비', amt26: 10719, amt25: 10692, children: [ { id: 'mb26s1', level: '세목', name: '공무직(무기계약)근로자보수', calc: '명절수당 500천원·2회(설,추석) + 법정부담금(4대보험료, 퇴직충당금)', amt26: 10692, amt25: 10692 }, { id: 'mb26s2', level: '세목', name: '공무직(무기계약)근로자보수(1회 추경 요구)', calc: '국·도·시 매칭비율 재산정 - 시비분', amt26: 27 } ] } ] }
   ] } ] } ] },
   // 지역자율형 생활체육활동 지원(mb31d)을 31,000천원으로 반영해 단위/정책 합계도 31,000천원 늘었음(기존 1,062,240 → 1,093,240).
-  '생활체육 클럽·단체 지원': { id: 'cat5t', level: '팀', name: '화성시체육회', children: [ { id: 'cat5p', level: '정책', name: '체육기반 확충, 지원', amt26: 1093240, amt25: 1570700, children: [ { id: 'cat5u', level: '단위', name: '시민체육역량강화', amt26: 1093240, amt25: 1570700, children: [
+  // 아래 12개는 지출총괄표엔 있으나 그동안 카드/트리 어디에도 반영 안 됐던 항목 - 산출내역서 미확보로 목 단위까지만(세목은 지출예산명세서 원문 준용).
+  '생활체육 클럽·단체 지원': { id: 'cat5t', level: '팀', name: '화성시체육회', children: [ { id: 'cat5p', level: '정책', name: '체육기반 확충, 지원', amt26: 1358240, amt25: 1908882, children: [ { id: 'cat5u', level: '단위', name: '시민체육역량강화', amt26: 1358240, amt25: 1908882, children: [
+    { id: 'sbo1-d', level: '세부', name: '스포츠데이', amt26: 0, amt25: 60000,
+      children: [
+        { id: 'sbo1-m1', level: '목', code: '201', name: '일반운영비', amt26: 0, amt25: 24000,
+          children: [
+            { id: 'sbo1-m1-1', name: '행사운영비', calc: '홍보비, 앱운영비', amt26: 0, amt25: 24000 }
+          ]
+        },
+        { id: 'sbo1-m2', level: '목', code: '301', name: '일반보전금', amt26: 0, amt25: 36000,
+          children: [
+            { id: 'sbo1-m2-1', name: '기타보상금', calc: '포인트', amt26: 0, amt25: 36000 }
+          ]
+        }
+      ]
+    },
+    { id: 'sbo4-d', level: '세부', name: 'G-스포츠클럽', amt26: 260000, amt25: 42200,
+      children: [
+        { id: 'sbo4-m1', level: '목', code: '201', name: '일반운영비', amt26: 102800, amt25: 20000,
+          children: [
+            { id: 'sbo4-m1-1', name: '행사운영비', calc: '대회출전비, 용품구입비 등', amt26: 102800, amt25: 20000 }
+          ]
+        },
+        { id: 'sbo4-m2', level: '목', code: '301', name: '일반보전금', amt26: 157200, amt25: 22200,
+          children: [
+            { id: 'sbo4-m2-1', name: '기타보상금', calc: '지도자 인건비', amt26: 157200, amt25: 22200 }
+          ]
+        }
+      ]
+    },
+    { id: 'sbo5-d', level: '세부', name: '경기도 초등스포츠클럽 육성지원', amt26: 0, amt25: 121680,
+      children: [
+        { id: 'sbo5-m1', level: '목', code: '201', name: '일반운영비', amt26: 0, amt25: 121680,
+          children: [
+            { id: 'sbo5-m1-1', name: '행사운영비', calc: '강사 수당, 용품비', amt26: 0, amt25: 121680 }
+          ]
+        }
+      ]
+    },
+    { id: 'sbo6-d', level: '세부', name: '경기도체육육성지원', amt26: 0, amt25: 93152,
+      children: [
+        { id: 'sbo6-m1', level: '목', code: '201', name: '일반운영비', amt26: 0, amt25: 93152,
+          children: [
+            { id: 'sbo6-m1-1', name: '행사운영비', calc: '대회 개최 지원금', amt26: 0, amt25: 93152 }
+          ]
+        }
+      ]
+    },
+    { id: 'sbo7-d', level: '세부', name: '해달맞이 생활체육교실', amt26: 0, amt25: 13500,
+      children: [
+        { id: 'sbo7-m1', level: '목', code: '201', name: '일반운영비', amt26: 0, amt25: 13500,
+          children: [
+            { id: 'sbo7-m1-1', name: '행사운영비', calc: '강사 수당', amt26: 0, amt25: 13500 }
+          ]
+        }
+      ]
+    },
+    { id: 'sbo8-d', level: '세부', name: '유아체육활동지원', amt26: 0, amt25: 2550,
+      children: [
+        { id: 'sbo8-m1', level: '목', code: '201', name: '일반운영비', amt26: 0, amt25: 2550,
+          children: [
+            { id: 'sbo8-m1-1', name: '행사운영비', calc: '용품비', amt26: 0, amt25: 2550 }
+          ]
+        }
+      ]
+    },
+    { id: 'sbo9-d', level: '세부', name: '경기시니어 건강관리 프로젝트', amt26: 0, amt25: 5100,
+      children: [
+        { id: 'sbo9-m1', level: '목', code: '201', name: '일반운영비', amt26: 0, amt25: 5100,
+          children: [
+            { id: 'sbo9-m1-1', name: '행사운영비', calc: '강사수당', amt26: 0, amt25: 5100 }
+          ]
+        }
+      ]
+    },
     // 산출내역서 항목별 합계(앱운영비+홍보비+일반운영비=80,800 / 포인트=640,000)는 기존 목 배분(일반운영비 61,550 / 일반보전금 659,250)과 각각 19,250천원 차이나지만
     // 전체 합계(720,800)는 일치 - 기존 목 배분을 유지하고 부기명만 참고로 추가함.
     { id: 'mb15d', level: '세부', name: '스포츠데이(쓰리GO)', amt26: 720800, amt25: 1200000, children: [
@@ -7303,7 +7419,7 @@ var SPORTS_BIZ_TREES = {
     ] },
     { id: 'mb38d', level: '세부', name: '초등학교 바둑교실 운영', amt26: 184000, amt25: 184000, children: [ { id: 'mb38m1', level: '목', name: '일반운영비', amt26: 184000, amt25: 184000, children: [ { id: 'mb38s1', level: '세목', name: '행사운영비', calc: '1,2학기 58개교 (강사수당, 교통비, 용품구입비 등)', amt26: 184000, amt25: 184000 } ] } ] },
     { id: 'mb27d', level: '세부', name: '생활체육 클럽 육성(여성축구단 지원)', amt26: 16740, amt25: 30000, children: [ { id: 'mb27m1', level: '목', name: '민간이전', amt26: 16740, amt25: 30000, children: [ { id: 'mb27s1', level: '세목', name: '민간경상사업보조', calc: '단체복, 운동용품, 일반운영비 등', amt26: 16740, amt25: 30000 } ] } ] },
-    { id: 'mb28d', level: '세부', name: '생활체육 클럽 육성(축구단 지원)', amt26: 54700, amt25: 59700, children: [ { id: 'mb28m1', level: '목', name: '민간이전', amt26: 54700, amt25: 59700, children: [ { id: 'mb28s1', level: '세목', name: '민간경상사업보조', calc: '단체복, 운동용품, 일반운영비 등', amt26: 54700, amt25: 59700 } ] } ] },
+    { id: 'mb28d', level: '세부', name: '생활체육 클럽 육성(축구단 지원)', amt26: 59700, amt25: 59700, children: [ { id: 'mb28m1', level: '목', name: '민간이전', amt26: 59700, amt25: 59700, children: [ { id: 'mb28s1', level: '세목', name: '민간경상사업보조', calc: '단체복, 운동용품, 일반운영비 등', amt26: 54700, amt25: 59700 }, { id: 'mb28s2', level: '세목', name: '민간경상사업보조(1회 추경 요구)', calc: '용품비, 훈련식비, 대회식비, 숙박비 등 지원 증액', amt26: 5000 } ] } ] },
     { id: 'mb29d', level: '세부', name: '생활체육 클럽 육성(족구단 지원)', amt26: 7200, amt25: 7200, children: [ { id: 'mb29m1', level: '목', name: '민간이전', amt26: 7200, amt25: 7200, children: [ { id: 'mb29s1', level: '세목', name: '민간경상사업보조', calc: '단체복, 운동용품, 일반운영비 등', amt26: 7200, amt25: 7200 } ] } ] },
     { id: 'mb30d', level: '세부', name: '생활체육 클럽 육성(농구단 지원)', amt26: 8800, amt25: 8800, children: [ { id: 'mb30m1', level: '목', name: '민간이전', amt26: 8800, amt25: 8800, children: [ { id: 'mb30s1', level: '세목', name: '민간경상사업보조', calc: '단체복, 운동용품, 일반운영비 등', amt26: 8800, amt25: 8800 } ] } ] },
     { id: 'mb32d', level: '세부', name: '화성시 독립야구단 육성 지원', amt26: 20000, amt25: 0, children: [ { id: 'mb32m1', level: '목', name: '민간이전', amt26: 20000, amt25: 0, children: [ { id: 'mb32s1', level: '세목', name: '민간경상사업보조', calc: '용품비', amt26: 20000, amt25: 0 } ] } ] },
@@ -7615,8 +7731,8 @@ var SPORTS_COUNCIL_DATA = {
       { label: '일반운영비', y26: 115000, y25: 5000 },
       { label: '일반보전금', y26: 55500, y25: 57000 }
     ] },
-    { label: '전국 및 국제 규모 스포츠 대회 개최 및 출전(개최)', y26: 1040000, y25: 1283346, items: [
-      { label: '일반운영비', y26: 1040000, y25: 1196000 },
+    { label: '전국 및 국제 규모 스포츠 대회 개최 및 출전(개최)', y26: 1120000, y25: 1283346, items: [
+      { label: '일반운영비', y26: 1120000, y25: 1196000 },
       { label: '일반보전금', y26: 0, y25: 87346 }
     ] },
     { label: '배틀 오브 이어 월드 파이널 개최 (일반운영비)', y26: 0, y25: 1000000 },
@@ -7634,7 +7750,7 @@ var SPORTS_COUNCIL_DATA = {
     { label: '해달맞이 생활체육교실 (일반운영비)', y26: 0, y25: 13500 },
     { label: '유아체육활동지원 (일반운영비)', y26: 0, y25: 2550 },
     { label: '경기시니어 건강관리 프로젝트 (일반운영비)', y26: 0, y25: 5100 },
-    { label: '지역자율형 생활체육활동 지원', y26: 0, y25: 31000 },
+    { label: '지역자율형 생활체육활동 지원', y26: 31000, y25: 31000 },
     { label: '생활체육지도자 교육 (일반운영비)', y26: 0, y25: 873 },
     { label: '화성시 체육회 인건비 지원 (인건비)', y26: 12000, y25: 12000 },
     { label: '화성시 독립야구단 육성 지원 (민간이전)', y26: 20000, y25: 0 },
