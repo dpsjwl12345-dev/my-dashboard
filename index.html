@@ -2512,6 +2512,15 @@ body[data-theme="dark"] .lc-exclude-hint {
   background: rgba(255,255,255,.08);
   color: #C7CBD6;
 }
+body[data-theme="dark"] .lc-final-inst-btn.active {
+  background: #3D6BFF !important;
+  border-color: #3D6BFF !important;
+  color: #ffffff !important;
+}
+body[data-theme="dark"] .lc-final-badge {
+  background: rgba(255,255,255,.08) !important;
+  color: #C7CBD6 !important;
+}
 body[data-theme="dark"] .lc-raise-row input {
   background: var(--bg-hover);
   color: #ffffff;
@@ -7272,7 +7281,7 @@ function lcFinalFilterBar() {
   var inst = LC_FINAL_INSTS.filter(function (i) { return i.key === f.instKey; })[0] || LC_FINAL_INSTS[0];
   var instBtns = LC_FINAL_INSTS.map(function (i) {
     var active = i.key === f.instKey;
-    return '<button type="button" onclick="lcFinalSetInst(\'' + i.key + '\')" style="padding:7px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap;">' + i.label + '</button>';
+    return '<button type="button" class="lc-final-inst-btn' + (active ? ' active' : '') + '" onclick="lcFinalSetInst(\'' + i.key + '\')" style="padding:7px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap;">' + i.label + '</button>';
   }).join('');
   var fundBtns = (inst.funds.length ? [''] : []).concat(inst.funds).map(function (fund) {
     var active = fund === f.fundType;
@@ -7288,7 +7297,7 @@ function lcFinalFilterBar() {
     disabledsports: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 17 · 현원 27(정원 외 계약직·지도자 포함)' }
   };
   var badge = LC_FINAL_BADGES[f.instKey];
-  var badgeHtml = badge ? '<span class="lc-cat-tag" style="margin-left:10px;background:' + badge.bg + ';color:' + badge.fg + ';">' + badge.text + '</span>' : '';
+  var badgeHtml = badge ? '<span class="lc-cat-tag lc-final-badge" style="margin-left:10px;background:' + badge.bg + ';color:' + badge.fg + ';">' + badge.text + '</span>' : '';
   var LC_FOLDER_LABELS = { hscf: '화성시문화관광재단보수규정', talent: '화성시인재육성재단보수규정', fc: '화성FC보수및수당규정', corp: '화성도시공사보수규정' };
   var folderHtml = LC_FOLDER_LABELS[f.instKey]
     ? '<button type="button" class="lc-folder-btn' + (f.rulesOpen ? ' is-open' : '') + '" onclick="lcFinalToggleRules()">'
