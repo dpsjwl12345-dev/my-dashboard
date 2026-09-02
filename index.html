@@ -229,8 +229,8 @@ table.summary td.diff.down { color: #4A5578; }
 .ov2-dept-col { display: flex; flex-direction: column; min-width: 0; }
 .ov2-dept-box { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
 .ov2-subhead { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); margin: 0 0 10px; }
-.settle-kpi-card { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-radius: 16px; padding: 11px 14px; position: relative; overflow: hidden; background: #eef0f3; box-shadow: 6px 6px 14px rgba(163,172,196,.34), -6px -6px 14px #ffffff; transition: transform .15s, box-shadow .15s; }
-.settle-kpi-card:hover { transform: translateY(-2px); box-shadow: 8px 8px 16px rgba(163,172,196,.38), -8px -8px 16px #ffffff; }
+.settle-kpi-card { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-radius: 16px; padding: 11px 14px; position: relative; overflow: hidden; background: var(--bg-hover); box-shadow: none; transition: transform .15s; }
+.settle-kpi-card:hover { transform: translateY(-2px); }
 .settle-kpi-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background-color: var(--kpi-tone, var(--border-strong)); }
 .settle-kpi-card.tone-blue { --kpi-tone: #1D2740; }
 .settle-kpi-card.tone-purple { --kpi-tone: #2C3A5C; }
@@ -851,7 +851,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
   box-shadow: none;
   width: 60%; margin-left: auto; height: 4px; border-radius: 2px;
 }
-.dept-stat-fill { position: absolute; top: 0; left: 0; background-color: var(--lime); width: 0%; height: 100%; border-radius: 2px; }
+.dept-stat-fill { position: absolute; top: 0; left: 0; background-color: #7BA068; width: 0%; height: 100%; border-radius: 2px; }
 /* "체육진흥과 편성액"과 동일한 패턴: 제목 + 접힌 표 + 더보기 버튼. */
 .dept-stat-yearly-panel {
   display: none; width: fit-content; max-width: 100%; overflow-x: auto;
@@ -1046,14 +1046,14 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   font-size: 16px; font-weight: 600;
   background-color: transparent;
   border-radius: 12px;
-  color: var(--text);
+  color: #10182E;
   text-shadow: none;
   cursor: pointer;
   overflow: hidden;
   transition: all .6s cubic-bezier(.23,1,.32,1);
 }
 .labor-box.animated-button svg {
-  position: absolute; width: 19px; fill: var(--text); z-index: 9;
+  position: absolute; width: 19px; fill: #10182E; z-index: 9;
   filter: none;
   transition: all .8s cubic-bezier(.23,1,.32,1);
 }
@@ -1323,8 +1323,8 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   background: var(--bg-card); border-radius: var(--r-lg); box-shadow: var(--shadow-md);
 }
 .panel { display: none; position: relative; }
-#panel-laborcalc { min-height: 700px; }
-.panel.active { display: block; }
+#panel-laborcalc { min-height: 900px; }
+.panel.active { display: block; min-height: 65vh; }
 .placeholder-box {
   background: var(--bg-card); border: 1px dashed var(--border-strong); border-radius: var(--r-lg);
   padding: 48px 24px; text-align: center; color: var(--text-soft); font-size: 16px;
@@ -1730,8 +1730,8 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   margin-right: 8px; vertical-align: middle;
 }
 .detail-total-amt .unit { font-size: 17px; font-weight: 700; color: var(--text-muted); margin-left: 4px; }
-.base-amt-badge { display: inline-flex; align-items: baseline; gap: 6px; flex-shrink: 0; background: var(--lime); border-radius: var(--r); padding: 6px 14px; font-size: 15px; font-weight: 800; color: var(--accent-dark); }
-.base-amt-badge .label { font-size: 12px; font-weight: 700; color: var(--accent-dark); opacity: .75; }
+.base-amt-badge { display: inline-flex; align-items: baseline; gap: 6px; flex-shrink: 0; background: rgba(160,190,110,.18); border-radius: var(--r); padding: 6px 14px; font-size: 15px; font-weight: 800; color: #A8C878; }
+.base-amt-badge .label { font-size: 12px; font-weight: 700; color: #A8C878; opacity: .75; }
 .detail-summary-line { font-size: 17px; font-weight: 700; color: var(--text-muted); margin-bottom: 0; }
 .detail-summary-row {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
@@ -2187,9 +2187,9 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .lc-subtoggle label:hover { color: var(--navy-text); }
 .lc-subtoggle input:checked + label { color: var(--navy-text); border-bottom-color: var(--lime); font-weight: 700; }
 .lc-subtab-desc { margin: 12px 0 14px 0; font-size: 15px; font-weight: 500; color: var(--navy-fill); }
-table.lc-table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 640px; }
+table.lc-table { width: 100%; border-collapse: collapse; font-size: 15.5px; min-width: 640px; }
 table.lc-table th, table.lc-table td { padding: 8px 9px; border-bottom: 1px solid var(--border); text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
-table.lc-table th { color: var(--navy-text); font-weight: 800; font-size: 14.5px; background: var(--bg-hover); text-align: center; }
+table.lc-table th { color: var(--navy-text); font-weight: 800; font-size: 15.5px; background: var(--bg-hover); text-align: center; }
 table.lc-table td:first-child, table.lc-table th:first-child { text-align: left; color: var(--text); font-weight: 600; white-space: normal; }
 table.lc-table tr.lc-subtotal td { font-weight: 700; background: var(--accent-soft); color: var(--accent-dark); }
 .lc-pair { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; }
@@ -2225,7 +2225,7 @@ table.lc-table-6col th:nth-child(6), table.lc-table-6col td:nth-child(6) { width
 .lc-accordion-head .lc-acc-sub { font-weight: 500; font-size: 15.5px; color: inherit; opacity: .75; margin-left: 4px; }
 .lc-acc-arrow { display: inline-block; margin-right: 8px; transition: transform .15s ease; color: var(--text-muted); }
 .lc-accordion.open .lc-acc-arrow { transform: rotate(90deg); }
-.lc-accordion-body { display: none; padding: 14px 16px; }
+.lc-accordion-body { display: none; padding: 18px 16px 24px; }
 .lc-accordion.open .lc-accordion-body { display: block; }
 table.lc-table input { width: 64px; padding: 4px 6px; border: 1px solid var(--border-strong); border-radius: 5px; text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; }
 input.lc-result-box { text-align: right; }
@@ -2321,7 +2321,11 @@ label[for="lc-opt-retire"] { flex: 1.4; }
 .lc-warn-box li b { color: var(--danger); }
 .lc-warn-badge { display: inline-block; background: var(--danger); color: #fff; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 999px; margin-left: 4px; vertical-align: middle; cursor: help; }
 td.lc-warn-cell { position: relative; }
-.settle-kpi-card,
+.settle-kpi-card {
+  background: var(--bg-hover);
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: none;
+}
 .card,
 .ov2-dept-card {
   background: rgba(255,255,255,.08);
@@ -2371,23 +2375,12 @@ td[contenteditable="true"] { background: var(--bg-card); color: var(--text); }
    그래서 블러 없이 배경만 다크 버전으로 맞춘다(.dyt-card 케이스와 동일한 문제). */
 #round-tabs.radio-input { background-color: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); }
 .topbar {
-  background: rgba(248,249,252,.92);
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255,255,255,.5);
-  --text: #10131C;
-  --text-muted: #5B6373;
-  --text-soft: #6B7484;
-  --navy: #10182E;
-  --navy-text: #10182E;
-  --navy-fill: #3D4560;
-  --accent-soft: #EEF0F4;
-  --border: #CBD2E0;
-  --border-strong: #A9B2C6;
-  --bg-hover: #F0F3FA;
-  --bg-card: #ffffff;
+  background: rgba(200,210,230,.14);
+  backdrop-filter: blur(18px) saturate(1.15); -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  border: 1px solid rgba(255,255,255,.1);
 }
-.org-tab.selected { background-color: #ffffff; color: #10182E; }
-.org-tab.selected:hover { color: #1d1d29; }
+.org-tab.selected { background-color: rgba(255,255,255,.14); color: #E8EAF0; }
+.org-tab.selected:hover { color: #ffffff; }
 .org-tab.selected::after,
 .org-tab.selected::before { display: none; }
 #panel-inst-overview .section-heading-lg::after,
@@ -2459,7 +2452,7 @@ tr.row-edited td:first-child::after {
   color: #ffffff;
 }
 .dyt-card-header:has(.detail-toggle-btn.is-open) {
-  background: #3D6BFF;
+  background: rgba(90,122,184,.35);
   box-shadow: none;
 }
 .dyt-card-header:has(.detail-toggle-btn.is-open),
@@ -2489,8 +2482,8 @@ table.summary th { color: #ffffff; border-bottom: 2px solid rgba(255,255,255,.4)
   color: #C7CBD6;
 }
 .lc-final-inst-btn.active {
-  background: #3D6BFF !important;
-  border-color: #3D6BFF !important;
+  background: #5A7AB8 !important;
+  border-color: #5A7AB8 !important;
   color: #ffffff !important;
 }
 .lc-final-badge {
