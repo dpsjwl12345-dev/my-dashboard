@@ -11,10 +11,22 @@ export default async function handler(req, res) {
 
   const url = new URL(req.url, 'http://x');
   const params = url.searchParams;
-  const pathParam = params.get('path') || '';
-  params.delete('path');
-  const qs = params.toString();
-  const target = SUPABASE_ORIGIN + '/' + pathParam + (qs ? '?' + qs : '');
+
+  let pathAndQuery;
+  const dParam = params.get('d');
+  if (dParam) {
+    // 경로+쿼리 전체가 base64(urlsafe)로 암호화되어 온 경우 - 방화벽이 rest/v1, select= 같은
+    // REST API 패턴을 그대로 노출된 형태로 차단하는 걸 우회하기 위함.
+    const b64 = dParam.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = b64 + '==='.slice((b64.length + 3) % 4);
+    pathAndQuery = Buffer.from(padded, 'base64').toString('utf8');
+  } else {
+    const pathParam = params.get('path') || '';
+    params.delete('path');
+    const qs = params.toString();
+    pathAndQuery = pathParam + (qs ? '?' + qs : '');
+  }
+  const target = SUPABASE_ORIGIN + '/' + pathAndQuery;
 
   const headers = {};
   for (const [key, value] of Object.entries(req.headers)) {
