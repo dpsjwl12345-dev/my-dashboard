@@ -2519,6 +2519,12 @@ body[data-theme="dark"] .lc-final-badge {
   background: rgba(255,255,255,.08) !important;
   color: #C7CBD6 !important;
 }
+/* .lc-section 왼쪽 세로선이 카테고리별로 인라인 style="border-left-color:var(--navy-text)"
+   등을 직접 박아놔서(퇴직급여/평가급/연금 등 전 카테고리 동일), 다크모드에서 남색이 도드라져
+   보이던 것을 무채색(--border-strong)으로 통일. */
+body[data-theme="dark"] .lc-section {
+  border-left-color: var(--border-strong) !important;
+}
 /* 랜딩페이지 기관 아이콘 호버 툴팁 - 배경이 var(--text) 재사용이라 다크모드에서는 밝은색이 되는데,
    글자색은 #fff 고정이라 밝은 배경 위에 흰 글씨로 안 보이던 문제. 다크모드만 글자색을 검정으로. */
 body[data-theme="dark"] .landing-card-tooltip {
