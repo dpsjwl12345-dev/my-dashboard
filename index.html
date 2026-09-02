@@ -2405,14 +2405,15 @@ td[contenteditable="true"] { background: var(--bg-card); color: var(--text); }
 #dept-biz-breakdown .section-heading-lg::after,
 #dept-yearly-breakdown .section-heading-lg::after,
 #panel-settlement .section-heading-lg::after { background: #ffffff; }
+/* 연도선택 버튼 - "출연금 편성현황" 버튼(.dyt-card-header)과 색상 통일 */
 .year-select-caret { color: #ffffff; }
 .year-select-btn {
-  background: rgba(0,0,0,.35);
+  background: rgba(255,255,255,.08);
   color: #ffffff;
 }
 .year-select-btn:hover,
 .year-select-wrap.open .year-select-btn {
-  background: rgba(0,0,0,.5);
+  background: rgba(90,122,184,.35);
 }
 #round-tabs.radio-input label:has(input:checked) {
   background-color: #10182E;
@@ -2494,6 +2495,11 @@ input.lc-result-box {
 }
 .action_has { background: #ffffff; color: #3D4560; }
 .dept-stat-card { background-color: #14161c; }
+/* .dept-stat-card는 .topbar 안에 있어 topbar의 밝은 톤 스코프(--text 등 어두운 값)를 물려받지만,
+   카드 자체 배경은 여전히 어두워서 글자색을 흰색으로 고정해야 보인다. */
+.dept-stat-card .dept-stat-title-text,
+.dept-stat-card .dept-stat-value,
+.dept-stat-card .dept-stat-icon { color: #ffffff; }
 table.summary th { color: #ffffff; border-bottom: 2px solid rgba(255,255,255,.4); }
 .lc-raise-row {
   background: rgba(255,255,255,.08);
