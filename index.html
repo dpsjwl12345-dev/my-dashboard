@@ -2508,6 +2508,10 @@ body[data-theme="dark"] table.summary th { color: #ffffff; border-bottom: 2px so
 body[data-theme="dark"] .lc-raise-row {
   color: #ffffff;
 }
+body[data-theme="dark"] .lc-exclude-hint {
+  background: rgba(255,255,255,.08);
+  color: #C7CBD6;
+}
 body[data-theme="dark"] .lc-raise-row input {
   background: var(--bg-hover);
   color: #ffffff;
@@ -8683,7 +8687,7 @@ function renderLaborCalc() {
     : LC.view === 'final' ? lcFinalSection()
     : laborHtml;
   var showTotalWageExcludeHint = (LC.view === 'retire' || LC.view === 'eval' || LC.view === 'pension');
-  var totalWageExcludeHint = showTotalWageExcludeHint ? '<div class="lc-raise-row" style="max-width:640px;margin:26px 0 16px;">※ 107 퇴직급여, 109 평가급, 304 연금부담금 등은 총인건비 인상률 적용 제외</div>' : '';
+  var totalWageExcludeHint = showTotalWageExcludeHint ? '<div class="lc-raise-row lc-exclude-hint" style="width:500px;max-width:100%;box-sizing:border-box;margin:26px 0 16px;">※ 107 퇴직급여, 109 평가급, 304 연금부담금 등은 총인건비 인상률 적용 제외</div>' : '';
   var guideCinemaHtml = lcGuideCinemaHtml();
   var topRow = '<div class="lc-top-row" style="align-items:flex-start;">' + toggleHtml + guideCinemaHtml + '</div>';
   el.innerHTML = topRow + totalWageExcludeHint + viewHtml;
