@@ -2343,12 +2343,21 @@ body[data-theme="dark"] {
   --shadow-md: 0 6px 20px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.25);
 }
 body[data-theme="dark"] .settle-kpi-card,
-body[data-theme="dark"] .dyt-card,
 body[data-theme="dark"] .card,
 body[data-theme="dark"] .ov2-dept-card {
   background: rgba(255,255,255,.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.16);
+  border-top-color: rgba(255,255,255,.32);
+  border-left-color: rgba(255,255,255,.24);
+  box-shadow: 0 8px 22px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.18), inset 1px 0 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.35);
+}
+/* .dyt-card는 위 공통 유리질감 규칙에서 의도적으로 제외 - backdrop-filter를 카드 자체에 두면
+   position:fixed 팝오버(.dept-stat-yearly-panel)의 containing block이 뷰포트가 아니라 이 카드가 되어
+   위치 계산이 다 틀어진다(파일 상단 .dyt-card 규칙 옆 주석 참고). 블러 없이 배경/테두리만 맞춘다. */
+body[data-theme="dark"] .dyt-card {
+  background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   border-top-color: rgba(255,255,255,.32);
   border-left-color: rgba(255,255,255,.24);
