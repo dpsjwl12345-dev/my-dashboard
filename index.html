@@ -2500,7 +2500,8 @@ body[data-theme="dark"] input.lc-result-box {
   border: 1px solid #CBD2E0;
 }
 body[data-theme="dark"] .filter-switch .background {
-  background-image: linear-gradient(180deg, #ffffff, #F0F3FA);
+  background-image: none;
+  background-color: #E4EAFC;
 }
 body[data-theme="dark"] .action_has { background: #ffffff; color: #3D4560; }
 body[data-theme="dark"] .dept-stat-card { background-color: #14161c; }
@@ -2520,6 +2521,11 @@ body[data-theme="dark"] .lc-final-inst-btn.active {
 body[data-theme="dark"] .lc-final-badge {
   background: rgba(255,255,255,.08) !important;
   color: #C7CBD6 !important;
+}
+/* 랜딩페이지 기관 아이콘 호버 툴팁 - 배경이 var(--text) 재사용이라 다크모드에서는 밝은색이 되는데,
+   글자색은 #fff 고정이라 밝은 배경 위에 흰 글씨로 안 보이던 문제. 다크모드만 글자색을 검정으로. */
+body[data-theme="dark"] .landing-card-tooltip {
+  color: #10131C;
 }
 body[data-theme="dark"] .lc-raise-row input {
   background: var(--bg-hover);
