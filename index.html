@@ -777,12 +777,12 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
   position: relative;
   display: flex; justify-content: center; align-items: center;
   z-index: 1; font-weight: 700; letter-spacing: -.4px; font-size: 17px;
-  white-space: nowrap; color: #C7D8FF;
+  white-space: nowrap; color: #5B6373;
   border-radius: 6px;
   transition: color .15s ease, background-color .15s ease;
 }
 #round-tabs.radio-input label:has(input:checked) {
-  color: #fff; background-color: #5A7AB8; font-weight: 800;
+  color: #fff; background-color: #10182E; font-weight: 800;
 }
 
 /* 조직 상세 확장 영역 (정원현원 총괄 + 세부사업) */
@@ -2374,13 +2374,23 @@ td[contenteditable="true"] { background: var(--bg-card); color: var(--text); }
 /* backdrop-filter를 #round-tabs에 직접 두면 그 안에 중첩된 연도선택 드롭다운(.year-select-menu, position:absolute)의
    containing block/stacking context가 여기로 갇혀서, z-index를 줘도 뒤 콘텐츠(조직 탭 등)에 가려 보인다.
    그래서 블러 없이 배경만 다크 버전으로 맞춘다(.dyt-card 케이스와 동일한 문제). */
-#round-tabs.radio-input { background-color: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); }
+#round-tabs.radio-input { background-color: rgba(16,24,46,.06); border: 1px solid rgba(16,24,46,.1); }
 .topbar {
-  background: rgba(200,210,230,.14);
+  --text: #10131C;
+  --text-muted: #5B6373;
+  --text-soft: #6B7484;
+  --navy: #10182E;
+  --navy-text: #10182E;
+  --navy-fill: #3D4560;
+  --bg-hover: #F0F3FA;
+  --border: #CBD2E0;
+  --border-strong: #A9B2C6;
+  background: rgba(245,247,252,.95);
   backdrop-filter: blur(18px) saturate(1.15); -webkit-backdrop-filter: blur(18px) saturate(1.15);
-  border: 1px solid rgba(255,255,255,.1);
+  border: 1px solid rgba(200,210,230,.45);
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
 }
-.org-tab.selected { background-color: rgba(255,255,255,.14); color: #E8EAF0; }
+.org-tab.selected { background-color: #10182E; color: #ffffff; }
 .org-tab.selected:hover { color: #ffffff; }
 .org-tab.selected::after,
 .org-tab.selected::before { display: none; }
@@ -2388,14 +2398,14 @@ td[contenteditable="true"] { background: var(--bg-card); color: var(--text); }
 #dept-biz-breakdown .section-heading-lg::after,
 #dept-yearly-breakdown .section-heading-lg::after,
 #panel-settlement .section-heading-lg::after { background: #ffffff; }
-.year-select-caret { color: #ffffff; }
+.year-select-caret { color: #10182E; }
 .year-select-btn {
-  background: rgba(0,0,0,.35);
-  color: #ffffff;
+  background: rgba(16,24,46,.08);
+  color: #10182E;
 }
 .year-select-btn:hover,
 .year-select-wrap.open .year-select-btn {
-  background: rgba(0,0,0,.5);
+  background: rgba(16,24,46,.14);
 }
 #round-tabs.radio-input label:has(input:checked) {
   background-color: #3D6BFF;
@@ -2433,12 +2443,6 @@ tr.row-edited td[contenteditable="true"]:hover {
 .settle-kpi-card .icon-badge {
   background: rgba(255,255,255,.1);
   border-radius: 50%;
-}
-#overview-topbar-logo,
-#topbar-logo {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 4px 8px;
 }
 .settle-kpi-card .icon-badge svg {
   filter: saturate(.55) brightness(1.2);
