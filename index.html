@@ -781,7 +781,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
   transition: color .15s ease, background-color .15s ease;
 }
 #round-tabs.radio-input label:has(input:checked) {
-  color: var(--accent-dark); background-color: var(--lime); font-weight: 800;
+  color: #fff; background-color: #3D6BFF; font-weight: 800;
 }
 
 /* 조직 상세 확장 영역 (정원현원 총괄 + 세부사업) */
@@ -871,6 +871,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .dept-yearly-table th:last-child, .dept-yearly-table td:last-child { padding-right: 0; }
 .dept-yearly-table thead th { font-size: 14px; font-weight: 700; color: var(--text-soft); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 .dept-yearly-table td.dyt-num, .dept-yearly-table th.dyt-num { text-align: right; font-variant-numeric: tabular-nums; }
+.dept-yearly-table td.dyt-num:not(.no-data) { color: #3D6BFF; font-weight: 700; }
 .dept-yearly-table td.dyt-num.no-data { color: var(--text-soft); font-weight: 500; }
 .dept-yearly-table tbody tr { border-bottom: 1px solid var(--border); }
 .dept-yearly-table tbody tr:last-child { border-bottom: none; }
@@ -2387,7 +2388,10 @@ body[data-theme="dark"] .err-filter-popover {
   --border-strong: #A9B2C6;
   --bg-hover: #F0F3FA;
 }
-body[data-theme="dark"] #round-tabs.radio-input { background-color: rgba(255,255,255,.14); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.18); }
+/* backdrop-filter를 #round-tabs에 직접 두면 그 안에 중첩된 연도선택 드롭다운(.year-select-menu, position:absolute)의
+   containing block/stacking context가 여기로 갇혀서, z-index를 줘도 뒤 콘텐츠(조직 탭 등)에 가려 보인다.
+   그래서 블러 없이 배경만 다크 버전으로 맞춘다(.dyt-card 케이스와 동일한 문제). */
+body[data-theme="dark"] #round-tabs.radio-input { background-color: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); }
 body[data-theme="dark"] .topbar {
   background: rgba(248,249,252,.92);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
@@ -2422,7 +2426,7 @@ body[data-theme="dark"] .year-select-wrap.open .year-select-btn {
   background: rgba(0,0,0,.5);
 }
 body[data-theme="dark"] #round-tabs.radio-input label:has(input:checked) {
-  background-color: rgba(198,241,53,.55);
+  background-color: #3D6BFF;
   color: #ffffff;
   padding-top: 4px; padding-bottom: 4px;
 }
