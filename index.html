@@ -50,26 +50,26 @@
   font-display: swap;
 }
 :root {
-  --bg: #F3F5FA;
-  --bg-card: #ffffff;
-  --bg-hover: #F0F3FA;
-  --text: #10131C;
-  --text-muted: #5B6373;
-  --text-soft: #6B7484;
-  --border: #CBD2E0;
-  --border-strong: #A9B2C6;
+  --bg: #14161C;
+  --bg-card: #1E212B;
+  --bg-hover: #262A36;
+  --text: #E8EAF0;
+  --text-muted: #A7AEBF;
+  --text-soft: #8890A3;
+  --border: #333846;
+  --border-strong: #454B5E;
   --accent: #10182E;
   --accent-dark: #060810;
-  --accent-soft: #EEF0F4;
+  --accent-soft: rgba(198,241,53,.14);
   --navy: #10182E;
-  --navy-fill: #3D4560;
-  --navy-text: var(--navy);
+  --navy-fill: #AEB6C9;
+  --navy-text: #C7D0E6;
   --success: #16924F;
-  --success-soft: #E6F6EC;
+  --success-soft: rgba(22,146,79,.16);
   --danger: #D6455A;
-  --danger-soft: #FCEAEC;
+  --danger-soft: rgba(214,69,90,.18);
   --warning: #E4B93A;
-  --warning-soft: #FFFCEB;
+  --warning-soft: rgba(228,185,58,.16);
   --warning-dark: #8A6D1F;
   --lime: #C6F135;
   --lime-dark: #9FCB1F;
@@ -77,12 +77,12 @@
   --hero-dark-2: #1B1D24;
   --r: 10px;
   --r-lg: 14px;
-  --shadow-sm: 0 1px 2px rgba(16,20,35,.08), 0 1px 1px rgba(16,20,35,.05);
-  --shadow-md: 0 6px 20px rgba(16,20,35,.10), 0 1px 2px rgba(16,20,35,.06);
-  --dept-culture: #5B84FF; --dept-culture-bg: #DCE6FF;
-  --dept-library: #48BB78; --dept-library-bg: #D8F3E3;
-  --dept-tour: #F6AD55; --dept-tour-bg: #FDECD1;
-  --dept-temp: #9B6BD6; --dept-temp-bg: #E8DCF7;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.35), 0 1px 1px rgba(0,0,0,.2);
+  --shadow-md: 0 6px 20px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.25);
+  --dept-culture: #5B84FF; --dept-culture-bg: rgba(91,132,255,.18);
+  --dept-library: #48BB78; --dept-library-bg: rgba(72,187,120,.18);
+  --dept-tour: #F6AD55; --dept-tour-bg: rgba(246,173,85,.18);
+  --dept-temp: #9B6BD6; --dept-temp-bg: rgba(155,107,214,.18);
   --sidebar-bg: rgba(20,22,28,.86);
   --sidebar-text: #F5F6F8;
   --sidebar-text-muted: rgba(255,255,255,.62);
@@ -2321,31 +2321,9 @@ label[for="lc-opt-retire"] { flex: 1.4; }
 .lc-warn-box li b { color: var(--danger); }
 .lc-warn-badge { display: inline-block; background: var(--danger); color: #fff; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 999px; margin-left: 4px; vertical-align: middle; cursor: help; }
 td.lc-warn-cell { position: relative; }
-body[data-theme="dark"] {
-  --bg: #14161C;
-  --bg-card: #1E212B;
-  --bg-hover: #262A36;
-  --text: #E8EAF0;
-  --text-muted: #A7AEBF;
-  --text-soft: #8890A3;
-  --border: #333846;
-  --border-strong: #454B5E;
-  --accent-soft: rgba(198,241,53,.14);
-  --navy-fill: #AEB6C9;
-  --navy-text: #C7D0E6;
-  --success-soft: rgba(22,146,79,.16);
-  --danger-soft: rgba(214,69,90,.18);
-  --warning-soft: rgba(228,185,58,.16);
-  --dept-culture-bg: rgba(91,132,255,.18);
-  --dept-library-bg: rgba(72,187,120,.18);
-  --dept-tour-bg: rgba(246,173,85,.18);
-  --dept-temp-bg: rgba(155,107,214,.18);
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.35), 0 1px 1px rgba(0,0,0,.2);
-  --shadow-md: 0 6px 20px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.25);
-}
-body[data-theme="dark"] .settle-kpi-card,
-body[data-theme="dark"] .card,
-body[data-theme="dark"] .ov2-dept-card {
+.settle-kpi-card,
+.card,
+.ov2-dept-card {
   background: rgba(255,255,255,.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -2357,26 +2335,26 @@ body[data-theme="dark"] .ov2-dept-card {
 /* .dyt-card는 위 공통 유리질감 규칙에서 의도적으로 제외 - backdrop-filter를 카드 자체에 두면
    position:fixed 팝오버(.dept-stat-yearly-panel)의 containing block이 뷰포트가 아니라 이 카드가 되어
    위치 계산이 다 틀어진다(파일 상단 .dyt-card 규칙 옆 주석 참고). 블러 없이 배경/테두리만 맞춘다. */
-body[data-theme="dark"] .dyt-card {
+.dyt-card {
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.16);
   border-top-color: rgba(255,255,255,.32);
   border-left-color: rgba(255,255,255,.24);
   box-shadow: 0 8px 22px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.18), inset 1px 0 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.35);
 }
-body[data-theme="dark"] .button { background: var(--bg-hover); color: var(--text); }
-body[data-theme="dark"] .note-textarea,
-body[data-theme="dark"] .tree-search-box input,
-body[data-theme="dark"] td[contenteditable="true"] { background: var(--bg-card); color: var(--text); }
-body[data-theme="dark"] .dept-stat-icon { box-shadow: -2px -2px 4px rgba(255,255,255,.06), 3px 3px 6px rgba(0,0,0,.5); }
-body[data-theme="dark"] .org-tabs { background-color: rgba(91,132,255,.16); }
-body[data-theme="dark"] .tab-scroll-btn { color: rgba(232,234,240,.65); }
-body[data-theme="dark"] .tab-scroll-btn.right { background: linear-gradient(to right, transparent, rgba(91,132,255,.16) 55%); }
-body[data-theme="dark"] .tab-scroll-btn.left { background: linear-gradient(to left, transparent, rgba(91,132,255,.16) 55%); }
-body[data-theme="dark"] .landing-card { background: radial-gradient(circle at 50% 42%, #f0f1f4 0%, #f7f8fa 55%, #ffffff 100%); }
-body[data-theme="dark"] .dyt-card,
-body[data-theme="dark"] .mok-filter-popover,
-body[data-theme="dark"] .err-filter-popover {
+.button { background: var(--bg-hover); color: var(--text); }
+.note-textarea,
+.tree-search-box input,
+td[contenteditable="true"] { background: var(--bg-card); color: var(--text); }
+.dept-stat-icon { box-shadow: -2px -2px 4px rgba(255,255,255,.06), 3px 3px 6px rgba(0,0,0,.5); }
+.org-tabs { background-color: rgba(91,132,255,.16); }
+.tab-scroll-btn { color: rgba(232,234,240,.65); }
+.tab-scroll-btn.right { background: linear-gradient(to right, transparent, rgba(91,132,255,.16) 55%); }
+.tab-scroll-btn.left { background: linear-gradient(to left, transparent, rgba(91,132,255,.16) 55%); }
+.landing-card { background: radial-gradient(circle at 50% 42%, #f0f1f4 0%, #f7f8fa 55%, #ffffff 100%); }
+.dyt-card,
+.mok-filter-popover,
+.err-filter-popover {
   --text: #10131C;
   --text-muted: #5B6373;
   --text-soft: #6B7484;
@@ -2391,8 +2369,8 @@ body[data-theme="dark"] .err-filter-popover {
 /* backdrop-filter를 #round-tabs에 직접 두면 그 안에 중첩된 연도선택 드롭다운(.year-select-menu, position:absolute)의
    containing block/stacking context가 여기로 갇혀서, z-index를 줘도 뒤 콘텐츠(조직 탭 등)에 가려 보인다.
    그래서 블러 없이 배경만 다크 버전으로 맞춘다(.dyt-card 케이스와 동일한 문제). */
-body[data-theme="dark"] #round-tabs.radio-input { background-color: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); }
-body[data-theme="dark"] .topbar {
+#round-tabs.radio-input { background-color: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); }
+.topbar {
   background: rgba(248,249,252,.92);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255,255,255,.5);
@@ -2408,159 +2386,159 @@ body[data-theme="dark"] .topbar {
   --bg-hover: #F0F3FA;
   --bg-card: #ffffff;
 }
-body[data-theme="dark"] .org-tab.selected { background-color: #ffffff; color: #10182E; }
-body[data-theme="dark"] .org-tab.selected:hover { color: #1d1d29; }
-body[data-theme="dark"] .org-tab.selected::after,
-body[data-theme="dark"] .org-tab.selected::before { display: none; }
-body[data-theme="dark"] #panel-inst-overview .section-heading-lg::after,
-body[data-theme="dark"] #dept-biz-breakdown .section-heading-lg::after,
-body[data-theme="dark"] #dept-yearly-breakdown .section-heading-lg::after,
-body[data-theme="dark"] #panel-settlement .section-heading-lg::after { background: #ffffff; }
-body[data-theme="dark"] .year-select-caret { color: #ffffff; }
-body[data-theme="dark"] .year-select-btn {
+.org-tab.selected { background-color: #ffffff; color: #10182E; }
+.org-tab.selected:hover { color: #1d1d29; }
+.org-tab.selected::after,
+.org-tab.selected::before { display: none; }
+#panel-inst-overview .section-heading-lg::after,
+#dept-biz-breakdown .section-heading-lg::after,
+#dept-yearly-breakdown .section-heading-lg::after,
+#panel-settlement .section-heading-lg::after { background: #ffffff; }
+.year-select-caret { color: #ffffff; }
+.year-select-btn {
   background: rgba(0,0,0,.35);
   color: #ffffff;
 }
-body[data-theme="dark"] .year-select-btn:hover,
-body[data-theme="dark"] .year-select-wrap.open .year-select-btn {
+.year-select-btn:hover,
+.year-select-wrap.open .year-select-btn {
   background: rgba(0,0,0,.5);
 }
-body[data-theme="dark"] #round-tabs.radio-input label:has(input:checked) {
+#round-tabs.radio-input label:has(input:checked) {
   background-color: #3D6BFF;
   color: #ffffff;
   padding-top: 4px; padding-bottom: 4px;
 }
-body[data-theme="dark"] tr.lvl-목 td,
-body[data-theme="dark"] tr.lvl-정책 td,
-body[data-theme="dark"] tr.lvl-단위 td {
+tr.lvl-목 td,
+tr.lvl-정책 td,
+tr.lvl-단위 td {
   color: #ffffff;
 }
-body[data-theme="dark"] tr.row-edited td {
+tr.row-edited td {
   background: rgba(16,24,46,.6);
   color: #ffffff;
 }
-body[data-theme="dark"] tr.row-edited td[contenteditable="true"]:hover {
+tr.row-edited td[contenteditable="true"]:hover {
   background: rgba(16,24,46,.8);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
 }
-body[data-theme="dark"] .ov2-dept-card::before {
+.ov2-dept-card::before {
   background-color: rgba(198,241,53,.65) !important;
 }
-body[data-theme="dark"] .ov2-dept-card .dept-badge {
+.ov2-dept-card .dept-badge {
   color: #ffffff !important;
   background: rgba(198,241,53,.18) !important;
 }
-body[data-theme="dark"] .settle-kpi-card.tone-blue,
-body[data-theme="dark"] .settle-kpi-card.tone-purple,
-body[data-theme="dark"] .settle-kpi-card.tone-mint,
-body[data-theme="dark"] .settle-kpi-card.tone-orange { --kpi-tone: rgba(94,234,212,.55); }
-body[data-theme="dark"] .settle-kpi-card .label,
-body[data-theme="dark"] .settle-kpi-card .value {
+.settle-kpi-card.tone-blue,
+.settle-kpi-card.tone-purple,
+.settle-kpi-card.tone-mint,
+.settle-kpi-card.tone-orange { --kpi-tone: rgba(94,234,212,.55); }
+.settle-kpi-card .label,
+.settle-kpi-card .value {
   color: var(--text);
 }
-body[data-theme="dark"] .settle-kpi-card .icon-badge {
+.settle-kpi-card .icon-badge {
   background: rgba(255,255,255,.1);
   border-radius: 50%;
 }
-body[data-theme="dark"] .settle-kpi-card .icon-badge svg {
+.settle-kpi-card .icon-badge svg {
   filter: saturate(.35) brightness(1.6);
 }
-body[data-theme="dark"] tr.row-edited td:first-child::after {
+tr.row-edited td:first-child::after {
   color: #ffffff;
   border-color: #ffffff;
   background: rgba(0,0,0,.2);
 }
-body[data-theme="dark"] .dyt-card-header {
+.dyt-card-header {
   background: rgba(255,255,255,.08);
   box-shadow: none;
 }
-body[data-theme="dark"] .dyt-card-header,
-body[data-theme="dark"] .dyt-card-header .dyt-card-title,
-body[data-theme="dark"] .dyt-card-header .witak-caret,
-body[data-theme="dark"] .dyt-card-header .detail-toggle-arrow {
+.dyt-card-header,
+.dyt-card-header .dyt-card-title,
+.dyt-card-header .witak-caret,
+.dyt-card-header .detail-toggle-arrow {
   color: #ffffff;
 }
-body[data-theme="dark"] .dyt-card-header:has(.detail-toggle-btn.is-open) {
+.dyt-card-header:has(.detail-toggle-btn.is-open) {
   background: #3D6BFF;
   box-shadow: none;
 }
-body[data-theme="dark"] .dyt-card-header:has(.detail-toggle-btn.is-open),
-body[data-theme="dark"] .dyt-card-header:has(.detail-toggle-btn.is-open) .dyt-card-title,
-body[data-theme="dark"] .dyt-card-header:has(.detail-toggle-btn.is-open) .detail-toggle-arrow {
+.dyt-card-header:has(.detail-toggle-btn.is-open),
+.dyt-card-header:has(.detail-toggle-btn.is-open) .dyt-card-title,
+.dyt-card-header:has(.detail-toggle-btn.is-open) .detail-toggle-arrow {
   color: #ffffff;
 }
-body[data-theme="dark"] .lc-accordion-head {
+.lc-accordion-head {
   background: #f0f3fa;
   color: #10131C;
 }
-body[data-theme="dark"] .lc-accordion-head .lc-acc-arrow { color: #5B6373; }
-body[data-theme="dark"] input.lc-result-box {
+.lc-accordion-head .lc-acc-arrow { color: #5B6373; }
+input.lc-result-box {
   background: #ffffff;
   color: #10131C;
   border: 1px solid #CBD2E0;
 }
-body[data-theme="dark"] .filter-switch .background {
+.filter-switch .background {
   background-image: none;
   background-color: #E4EAFC;
 }
-body[data-theme="dark"] .action_has { background: #ffffff; color: #3D4560; }
-body[data-theme="dark"] .dept-stat-card { background-color: #14161c; }
-body[data-theme="dark"] table.summary th { color: #ffffff; border-bottom: 2px solid rgba(255,255,255,.4); }
-body[data-theme="dark"] .lc-raise-row {
+.action_has { background: #ffffff; color: #3D4560; }
+.dept-stat-card { background-color: #14161c; }
+table.summary th { color: #ffffff; border-bottom: 2px solid rgba(255,255,255,.4); }
+.lc-raise-row {
   background: rgba(255,255,255,.08);
   color: #C7CBD6;
 }
-body[data-theme="dark"] .lc-final-inst-btn.active {
+.lc-final-inst-btn.active {
   background: #3D6BFF !important;
   border-color: #3D6BFF !important;
   color: #ffffff !important;
 }
-body[data-theme="dark"] .lc-final-badge {
+.lc-final-badge {
   background: rgba(255,255,255,.08) !important;
   color: #C7CBD6 !important;
 }
 /* .lc-section 왼쪽 세로선이 카테고리별로 인라인 style="border-left-color:var(--navy-text)"
    등을 직접 박아놔서(퇴직급여/평가급/연금 등 전 카테고리 동일), 다크모드에서 남색이 도드라져
    보이던 것을 무채색(--border-strong)으로 통일. */
-body[data-theme="dark"] .lc-section {
+.lc-section {
   border-left-color: var(--border-strong) !important;
 }
 /* 랜딩페이지 기관 아이콘 호버 툴팁 - 배경이 var(--text) 재사용이라 다크모드에서는 밝은색이 되는데,
    글자색은 #fff 고정이라 밝은 배경 위에 흰 글씨로 안 보이던 문제. 다크모드만 글자색을 검정으로. */
-body[data-theme="dark"] .landing-card-tooltip {
+.landing-card-tooltip {
   color: #10131C;
 }
-body[data-theme="dark"] .lc-raise-row input {
+.lc-raise-row input {
   background: var(--bg-hover);
   color: #ffffff;
   border: 1px solid var(--border-strong);
   border-radius: 6px;
 }
-body[data-theme="dark"] tr.lc-subtotal td {
+tr.lc-subtotal td {
   background: rgba(16,24,46,.6);
   color: #ffffff;
 }
-body[data-theme="dark"] tr.lc-subtotal input.lc-result-box {
+tr.lc-subtotal input.lc-result-box {
   background: #ffffff;
   color: #10131C;
 }
-body[data-theme="dark"] [style*="color:navy"] {
+[style*="color:navy"] {
   color: #A7B8E8 !important;
 }
-body[data-theme="dark"] table.summary tr.ov2-eb-section td {
+table.summary tr.ov2-eb-section td {
   background: rgba(255,255,255,.08);
   color: #A9B8E8;
 }
-body[data-theme="dark"] .settle-rate-bar {
+.settle-rate-bar {
   background: rgba(255,255,255,.14);
 }
-body[data-theme="dark"] .settle-rate-bar .fill {
+.settle-rate-bar .fill {
   background: #7B9EFF;
 }
-body[data-theme="dark"] .ov-year-acc-item {
+.ov-year-acc-item {
   color: #ffffff;
 }
-body[data-theme="dark"] .ov-year-pill-label {
+.ov-year-pill-label {
   color: #10182E;
 }
 </style>
@@ -9198,26 +9176,6 @@ function goToBudget() {
 
 loadInstitutions().then(function () { showDashboard(); });
 
-(function () {
-  var saved = localStorage.getItem('theme');
-  if (saved === 'dark') document.body.setAttribute('data-theme', 'dark');
-  var btn = document.createElement('button');
-  btn.id = 'theme-toggle-btn';
-  btn.type = 'button';
-  btn.title = '화면 밝기 전환';
-  btn.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:999;width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--bg-card);color:var(--text);box-shadow:var(--shadow-md);cursor:pointer;font-size:19px;display:flex;align-items:center;justify-content:center;';
-  function paint() {
-    btn.textContent = document.body.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
-  }
-  btn.addEventListener('click', function () {
-    var isDark = document.body.getAttribute('data-theme') === 'dark';
-    if (isDark) { document.body.removeAttribute('data-theme'); localStorage.setItem('theme', 'light'); }
-    else { document.body.setAttribute('data-theme', 'dark'); localStorage.setItem('theme', 'dark'); }
-    paint();
-  });
-  paint();
-  document.body.appendChild(btn);
-})();
 </script>
 </body>
 </html>
