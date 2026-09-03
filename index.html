@@ -545,6 +545,11 @@ table.fc-summary td .dot {
 .ov2-kpi-title-amt .diff.down { color: var(--navy-text); }
 table.summary.ov2-budget-fmt tr.total td { font-weight: 800; }
 table.summary.ov2-bc-table th:last-child { background: var(--bg-hover); font-weight: 800; }
+th.ov2-bc-cat { text-align: right; padding-left: 4px; }
+.ov2-bc-pill { display: inline-block; margin-bottom: 8px; padding: 3px 18px; border-radius: 999px; font-weight: 600; font-size: 16px; white-space: nowrap; line-height: 1.3; color: var(--lime); background: rgba(240,247,219,.22); }
+.ov2-bc-pill.navy { color: #3EC49E; background: rgba(143,184,255,.22); }
+.ov2-bc-pill.compact { padding: 3px 14px; font-size: 16px; white-space: normal; word-break: keep-all; line-height: 1.3; }
+.ov2-bc-pill.nudge-right { margin-right: -8px; }
 table.summary.ov2-bc-table td.ov2-bc-total { font-weight: 800; }
 table.summary.ov2-bc-table th { white-space: normal; line-height: 1.4; text-align: right; padding-right: 6px; }
 table.summary.ov2-bc-table th:first-child { text-align: center; padding-left: 6px; }
@@ -4247,7 +4252,7 @@ hscf: {
     { label: '사업비', y26: 36029432, y25: 33390911 }
   ],
   expenseBreakdown: {
-    columns: ['출연금·전출금', '위탁사업비'],
+    columns: ['출연금', '위탁사업비'],
     sections: [
       { label: '인건비', total: 22785497, values: [6498563, 16286934, 0], rows: [
         { label: '일반직 보수', total: 15708341, values: [5193713, 10514628, 0] },
@@ -4905,7 +4910,7 @@ function renderOv2Overview(instKey) {
     // 기타재원 총액이 있는 기관은 위탁사업비 옆에 별도 열로 보여주고, 없는 기관은 열 자체를 생략한다
     var ebHasOtherFund = !!eb.grandTotal.values[2];
     var ebCols = ebHasOtherFund ? eb.columns.concat(['기타재원']) : eb.columns;
-    var ebHeadHtml = '<th>구&nbsp;&nbsp;분</th><th>계</th>' + ebCols.map(function (c) { return '<th>' + escapeHtml(c) + '</th>'; }).join('');
+    var ebHeadHtml = '<th>구&nbsp;&nbsp;분</th><th>계</th>' + ebCols.map(function (c) { return '<th class="ov2-bc-cat"><span class="ov2-bc-pill navy compact' + (c === '위탁사업비' ? ' nudge-right' : '') + '">' + escapeHtml(c) + '</span></th>'; }).join('');
     var ebGrandRow = '<tr class="total"><td>총 계</td><td>' + fmtMillionInt(eb.grandTotal.total) + '</td>' + eb.grandTotal.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtMillionInt(v) : '-') + '</td>'; }).join('') + '</tr>';
     var ebBlocks = eb.sections.map(function (sec) {
       var secRow = '<tr class="ov2-eb-section"><td>' + escapeHtml(sec.label) + '</td><td>' + fmtMillionInt(sec.total) + '</td>' + sec.values.slice(0, ebCols.length).map(function (v) { return '<td>' + (v ? fmtMillionInt(v) : '-') + '</td>'; }).join('') + '</tr>';
@@ -5013,7 +5018,11 @@ function renderOv2Overview(instKey) {
   }
 
   // 6) 예산편성현황 - 세로: 연도별(2026년/2025년), 가로: 인건비~사업비/총계. 증감은 별도 칸 없이 헤더의 항목명 옆에 표기
+  var bcCatLabels = ['인건비', '운영경비', '사업비'];
   var bcHeadCell = function (label, extraClass) {
+    if (bcCatLabels.indexOf(label) !== -1) {
+      return '<th class="ov2-bc-cat"><span class="ov2-bc-pill">' + escapeHtml(label) + '</span></th>';
+    }
     return '<th' + (extraClass ? ' class="' + extraClass + '"' : '') + '>' + escapeHtml(label) + '</th>';
   };
   var bcDiffCell = function (y25, y26, extraClass) {
