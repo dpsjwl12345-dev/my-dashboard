@@ -2935,8 +2935,17 @@ var state = {
   selectedId: null,
   selectedRound: null, // 정현원까지만 노출된 상태에서, 회차 탭(본예산/1~3회 추경)을 골라야 아래 예산서가 나옴
   roundData: null, // 본예산이 아닌 회차를 선택했을 때 Supabase에서 불러온 { trees, teams } - fetchRoundData 참고
-  selectedYear: 2026 // 연도 선택 - 현재 실제 데이터(amt26/amt25)는 2026년 기준뿐이라, 다른 연도는 "자료 없음"으로 표시
+  selectedYear: 2026 // 연도 선택 - budget_items는 amt26/amt25/amt27 컬럼으로 연도를 관리(yearFields 참고), 그 외 연도는 "자료 없음"으로 표시
 };
+
+// budget_items가 연도를 amtYY 컬럼명에 박아넣는 방식이라(예: 2026년=amt26, 전년도=amt25),
+// 실제 DB 컬럼명을 트리 내부의 논리적 이름("amt26"=이번 연도, "amt25"=전년도)으로 매핑한다.
+// 2027년을 고르면 current는 amt27, prior는 amt26(=실제 2026년 데이터)이 되어 전년도 비교가 자동으로 맞는다.
+var SUPPORTED_YEARS = [2026, 2027];
+function yearFields(year) {
+  var y = year % 100;
+  return { current: 'amt' + y, prior: 'amt' + (y - 1) };
+}
 
 // 회차 탭 값 -> 화면 표시용 라벨 (자료 없음 안내 메시지 등에 사용)
 var ROUND_LABELS = { base: '본예산', supp1: '1추', supp2: '2추', supp3: '3추' };
@@ -2965,7 +2974,7 @@ async function fetchAllRows(table, institutionId, round) {
 // 회차(본예산 외 1~3회 추경) 트리 캐시: 'instId|businessId|round' -> { trees, teams }
 var roundDataCache = {};
 async function fetchRoundData(instId, business, round) {
-  var cacheKey = instId + '|' + business.id + '|' + round;
+  var cacheKey = instId + '|' + business.id + '|' + round + '|' + state.selectedYear;
   if (roundDataCache[cacheKey]) return roundDataCache[cacheKey];
   var { data: items, error: e1 } = await db.from('budget_items').select('*')
     .eq('institution_id', instId).eq('business_card', business.name).eq('round', round)
@@ -2973,7 +2982,7 @@ async function fetchRoundData(instId, business, round) {
   if (e1) { showLoadError('회차별 예산 트리', e1); return { trees: {}, teams: [] }; }
   var trees = buildTeamTrees(items || []);
   var { data: teamRows, error: e2 } = await db.from('card_teams').select('*')
-    .eq('card_id', business.id).eq('round', round).order('sort_order');
+    .eq('card_id', business.id).eq('round', round).eq('year', state.selectedYear).order('sort_order');
   if (e2) { showLoadError('회차별 정현원', e2); }
   var teams = (teamRows || []).map(function (t) {
     return { name: t.team_name, capacity: t.capacity, current: t.current, treeKey: t.team_root_budget_item_id };
@@ -2985,7 +2994,8 @@ async function fetchRoundData(instId, business, round) {
 
 function buildTeamTrees(rows) {
   var byId = {};
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r.amt26, amt25: r.amt25, calc: r.calc, edited: !!r.edited, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  var yf = yearFields(state.selectedYear);
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, edited: !!r.edited, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -3064,14 +3074,15 @@ async function loadInstitutions() {
 
 // 기관(instKey) 하나의 예산 데이터를 불러와 캐시에 저장하고, 성공하면 그 캐시를 반환한다.
 async function loadInstBudgetData(inst) {
-  if (instDataCache[inst.key]) return instDataCache[inst.key];
+  var cacheKey = inst.key + '|' + state.selectedYear;
+  if (instDataCache[cacheKey]) return instDataCache[cacheKey];
 
   var items = await fetchAllRows('budget_items', inst.id, 'base');
   var teamTrees = buildTeamTrees(items);
 
   var { data: cards, error: e2 } = await db.from('business_cards').select('*').eq('institution_id', inst.id).order('sort_order');
   if (e2) { showLoadError('본부/사업 카드', e2); return null; }
-  var { data: teams, error: e3 } = await db.from('card_teams').select('*').eq('round', 'base').order('sort_order');
+  var { data: teams, error: e3 } = await db.from('card_teams').select('*').eq('round', 'base').eq('year', state.selectedYear).order('sort_order');
   if (e3) { showLoadError('팀 정원현원', e3); return null; }
 
   var businesses = cards.map(function (c) {
@@ -3112,19 +3123,19 @@ async function loadInstBudgetData(inst) {
   }
 
   var cache = { teamTrees: teamTrees, businesses: businesses, departments: deptSet.length ? deptSet : DEPARTMENTS, enactedAmounts: enactedAmounts, enactedByCard: enactedByCard };
-  instDataCache[inst.key] = cache;
+  instDataCache[cacheKey] = cache;
   return cache;
 }
 // 부서·재원·회차의 실제 편성액(부서 전체 합계)을 조회한다. 값이 없으면 null(자료 없음).
 function getDeptEnactedAmount(dept, fundType, round) {
-  var cache = instDataCache[nav.instKey];
+  var cache = instDataCache[nav.instKey + '|' + state.selectedYear];
   if (!cache || !cache.enactedAmounts) return null;
   var key = dept + '|' + fundType + '|' + (round || 'base');
   return cache.enactedAmounts.hasOwnProperty(key) ? cache.enactedAmounts[key] : null;
 }
 // 부서·재원이 사업(카드)별로 나뉘어 편성돼 있으면 그 목록을 반환한다. 없으면 null.
 function getDeptEnactedCards(dept, fundType) {
-  var cache = instDataCache[nav.instKey];
+  var cache = instDataCache[nav.instKey + '|' + state.selectedYear];
   if (!cache || !cache.enactedByCard) return null;
   var key = dept + '|' + fundType;
   return cache.enactedByCard[key] || null;
@@ -3497,8 +3508,10 @@ document.addEventListener('click', function (e) {
   }
 });
 
-// 연도 선택 - 2026년(실제 데이터)만 예산서가 그대로 보이고, 나머지는 renderDetail()에서 "자료 없음"으로 처리한다.
-function selectYear(year) {
+// 연도 선택 - SUPPORTED_YEARS(2026/2027)만 예산서가 그대로 보이고, 나머지는 renderDetail()에서 "자료 없음"으로 처리한다.
+// 연도가 바뀌면 amt26/amt27 중 어느 컬럼을 볼지가 바뀌는 것뿐 아니라, budget_items/card_teams 자체를
+// 그 연도 것으로 다시 불러와야 한다(TEAM_TREES는 기관 선택 시 한 번만 채워지므로 여기서 갱신 필요).
+async function selectYear(year) {
   state.selectedYear = year;
   var label = document.getElementById('year-select-label');
   if (label) label.textContent = year + '년';
@@ -3509,7 +3522,22 @@ function selectYear(year) {
   var wrap = document.getElementById('year-select-wrap');
   if (menu) menu.style.display = 'none';
   if (wrap) wrap.classList.remove('open');
-  renderDetail();
+  if (SUPPORTED_YEARS.indexOf(year) === -1) { renderDetail(); return; }
+  var inst = INSTITUTIONS.filter(function (i) { return i.key === nav.instKey; })[0];
+  if (inst) {
+    var cache = await loadInstBudgetData(inst);
+    if (cache) {
+      TEAM_TREES = cache.teamTrees;
+      DEFAULT_BUSINESSES = cache.businesses;
+      state.businesses = cache.businesses;
+      state.departments = cache.departments;
+    }
+  }
+  if (state.selectedRound && state.selectedRound !== 'base') {
+    await applyRound(state.selectedRound);
+  } else {
+    renderDetail();
+  }
 }
 
 function classifyMokCode(code) {
@@ -5302,8 +5330,9 @@ function fmtPct(amt26, amt25) {
 
 function getTreeColLabels() {
   var round = state.selectedRound;
-  var amtLabel = '2026 예산액';
-  var baseLabel = '2025 예산액';
+  var year = state.selectedYear || 2026;
+  var amtLabel = year + ' 예산액';
+  var baseLabel = (year - 1) + ' 예산액';
   if (round && round !== 'base') {
     amtLabel = (ROUND_LABELS[round] || '') + '요구액';
     baseLabel = '기정액';
@@ -5699,7 +5728,8 @@ function resolveUploadContext() {
     dept: state.dept || null,
     businessCard: biz ? biz.name : null,
     businessId: biz ? biz.id : null,
-    round: state.selectedRound || 'base'
+    round: state.selectedRound || 'base',
+    year: state.selectedYear
   };
 }
 var _templateUploadTree = null;
@@ -5749,11 +5779,14 @@ function openTemplateUploadPreview(fileName, sheetName, rows) {
 // budget_items.id는 GENERATED ALWAYS IDENTITY라 값을 직접 넣으면 오류가 난다 - insert 후 자동 생성된 id를 돌려받아 자식의
 // parent_id로 쓴다. sort_order는 default가 없는 일반 컬럼이라 형제 순서(0,1,2..)를 직접 넣어준다.
 async function insertTemplateNode(node, parentId, ctx, sortOrder) {
+  var yf = yearFields(ctx.year);
   var row = {
     institution_id: ctx.institution.id, fund_type: ctx.fundType, dept: ctx.dept || null, business_card: ctx.businessCard || null,
     parent_id: parentId, level: node.level, code: node.code || null, name: node.name,
-    amt26: node.amt26 || 0, amt25: node.amt25 || 0, calc: node.calc || null, sort_order: sortOrder, round: ctx.round, edited: true
+    calc: node.calc || null, sort_order: sortOrder, round: ctx.round, edited: false
   };
+  row[yf.current] = node.amt26 || 0;
+  row[yf.prior] = node.amt25 || 0;
   var { data, error } = await db.from('budget_items').insert(row).select('id').single();
   if (error) throw error;
   for (var i = 0; i < (node.children || []).length; i++) {
@@ -5775,14 +5808,14 @@ async function confirmTemplateUploadSave() {
     }
     // 화면은 budget_items 트리만으로는 안 그려주고, card_teams에 "이 회차·이 사업카드는 이 루트 id를 봐라"는
     // 연결이 있어야 찾아서 그린다 - 그 연결이 없어서 저장은 됐는데 화면엔 안 뜨던 문제(2026-08-28)가 있었다.
-    var { count } = await db.from('card_teams').select('id', { count: 'exact', head: true }).eq('card_id', ctx.businessId).eq('round', ctx.round);
+    var { count } = await db.from('card_teams').select('id', { count: 'exact', head: true }).eq('card_id', ctx.businessId).eq('round', ctx.round).eq('year', ctx.year);
     var { error: teamErr } = await db.from('card_teams').insert({
       card_id: ctx.businessId, team_name: '', capacity: null, current: null,
-      team_root_budget_item_id: teamRootId, sort_order: count || 0, round: ctx.round
+      team_root_budget_item_id: teamRootId, sort_order: count || 0, round: ctx.round, year: ctx.year
     });
     if (teamErr) throw teamErr;
-    delete instDataCache[ctx.institution.key];
-    delete roundDataCache[ctx.institution.id + '|' + ctx.businessId + '|' + ctx.round];
+    delete instDataCache[ctx.institution.key + '|' + ctx.year];
+    delete roundDataCache[ctx.institution.id + '|' + ctx.businessId + '|' + ctx.round + '|' + ctx.year];
     alert('저장 완료했습니다. 최신 데이터를 반영하기 위해 화면을 새로고침합니다.');
     location.reload();
   } catch (err) {
@@ -5970,15 +6003,19 @@ async function saveBudgetCellEdit(id, btnEl) {
   var rawAmt26 = stripBtnText(amt26El);
   var rawAmt25 = stripBtnText(amt25El);
 
+  var editYear = state.selectedYear || 2026;
   var numAmt26 = Number(rawAmt26.replace(/[^0-9.-]/g, ''));
   if (rawAmt26 === '' || rawAmt26 === '-') numAmt26 = 0;
-  if (isNaN(numAmt26)) { alert('2026년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
+  if (isNaN(numAmt26)) { alert(editYear + '년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
 
   var numAmt25 = Number(rawAmt25.replace(/[^0-9.-]/g, ''));
   if (rawAmt25 === '' || rawAmt25 === '-') numAmt25 = 0;
-  if (isNaN(numAmt25)) { alert('2025년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
+  if (isNaN(numAmt25)) { alert((editYear - 1) + '년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
 
-  var payload = { edited: true, calc: rawCalc || null, amt26: numAmt26, amt25: numAmt25 };
+  var yf = yearFields(editYear);
+  var payload = { edited: true, calc: rawCalc || null };
+  payload[yf.current] = numAmt26;
+  payload[yf.prior] = numAmt25;
 
   btnEl.disabled = true;
   var { error } = await db.from('budget_items').update(payload).eq('id', id);
@@ -5991,8 +6028,8 @@ async function saveBudgetCellEdit(id, btnEl) {
 
   node.edited = true;
   node.calc = payload.calc;
-  node.amt26 = payload.amt26;
-  node.amt25 = payload.amt25;
+  node.amt26 = numAmt26;
+  node.amt25 = numAmt25;
 
   // 저장 완료: 이 행의 편집 체크 아이콘 표시 해제(다음 렌더링에서 자연히 사라짐)
   tr.querySelectorAll('td[contenteditable="true"]').forEach(function (t) { t.classList.remove('cell-touched'); });
@@ -6285,8 +6322,8 @@ function renderDetail() {
   }
   if (roundRow) roundRow.style.display = 'flex';
   if (badgeRow) badgeRow.style.display = 'flex';
-  // 2026년 외 연도는 아직 실제 데이터(amt26/amt25)가 없으므로, 탭·회차 선택은 그대로 두고 상세 영역만 안내 문구로 대체한다.
-  if (state.selectedYear && state.selectedYear !== 2026) {
+  // SUPPORTED_YEARS(2026/2027) 외 연도는 실제 데이터가 없으므로, 탭·회차 선택은 그대로 두고 상세 영역만 안내 문구로 대체한다.
+  if (state.selectedYear && SUPPORTED_YEARS.indexOf(state.selectedYear) === -1) {
     el.innerHTML = '<div class="empty-state">' + state.selectedYear + '년 자료가 아직 없습니다.</div>';
     return;
   }
@@ -7033,7 +7070,7 @@ async function lcLoadBasisRows() {
     var cardsRes = await cardsQ;
     var cardIds = (cardsRes.data || []).map(function (c) { return c.id; });
     if (cardIds.length) {
-      var teamsRes = await db.from('card_teams').select('team_name,capacity,current,card_id').in('card_id', cardIds).eq('round', 'base');
+      var teamsRes = await db.from('card_teams').select('team_name,capacity,current,card_id').in('card_id', cardIds).eq('round', 'base').eq('year', 2026);
       if (teamsRes.error) throw teamsRes.error;
       b.teams = teamsRes.data || [];
     }
