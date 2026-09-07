@@ -5312,7 +5312,7 @@ function bulletForLeafDepth(n) { return LEAF_BULLETS[4 + n] || LEAF_BULLETS[8]; 
 // 원본 데이터의 항목명 자체에 이미 "- "·"· " 같은 기호가 붙어있는 경우가 있어(기관마다 표기가 제각각),
 // 트리 렌더링용 기호(bulletForDepth)를 앞에 또 붙이면 "○ - 3급"처럼 기호가 중복된다. 그 원본 선행 기호를 지운다.
 function stripLeadingMarker(name) {
-  return String(name || '').replace(/^[-‣○•·ㆍ〮▸]+\s*/, '');
+  return String(name || '').replace(/^[-–—‣○•·ㆍ〮▸]+\s*/, '');
 }
 
 function fmtDiff(amt26, amt25) {
@@ -5431,20 +5431,39 @@ function toggleNode(e, path, level) {
   renderDetail();
 }
 
-// 산출기초("200,000원*8명*1회" 등 곱셈 구조)를 파싱해서 실제 계산 금액(원 단위)을 반환. 곱셈 구조가 아니면 null(검증불가)
+// 산출기초("200,000원*8명*1회" 또는 "(800,000원×12월)+1,000,000원" 등)를 파싱해서 실제 계산 금액(원 단위)을 반환. 구조가 아니면 null(검증불가)
 function parseCalcAmount(calc) {
   if (!calc) return null;
-  var parts = calc.split(/[*×xX]/).map(function (p) { return p.trim(); }).filter(Boolean);
-  if (parts.length < 2) return null;
-  var nums = [];
-  for (var i = 0; i < parts.length; i++) {
-    var m = parts[i].match(/[\d,]+(\.\d+)?/);
-    if (!m) return null;
-    var n = parseFloat(m[0].replace(/,/g, ''));
-    if (isNaN(n)) return null;
-    nums.push(n);
+
+  // "+"로 덧셈 항들을 분리
+  var terms = calc.split(/\+/).map(function (t) { return t.trim(); }).filter(Boolean);
+
+  var total = 0;
+  for (var ti = 0; ti < terms.length; ti++) {
+    var term = terms[ti];
+
+    // 각 항에서 곱셈 처리
+    var parts = term.split(/[*×xX]/).map(function (p) { return p.trim(); }).filter(Boolean);
+    if (parts.length < 1) return null;
+
+    var nums = [];
+    for (var i = 0; i < parts.length; i++) {
+      var m = parts[i].match(/[\d,]+(\.\d+)?/);
+      if (!m) return null;
+      var n = parseFloat(m[0].replace(/,/g, ''));
+      if (isNaN(n)) return null;
+      // "70%" 같은 백분율은 100으로 나누기
+      if (parts[i].includes('%')) {
+        n = n / 100;
+      }
+      nums.push(n);
+    }
+
+    var termResult = nums.reduce(function (a, b) { return a * b; }, 1);
+    total += termResult;
   }
-  return nums.reduce(function (a, b) { return a * b; }, 1);
+
+  return total;
 }
 // 산출기초 표시용 - "60,000원×12개월=" 처럼 끝에 붙는 "=" 기호는 화면에 보여줄 필요가 없어 잘라낸다.
 // (계산 로직인 parseCalcAmount는 원본 calc를 그대로 받으므로 이 함수와 무관하게 동작한다.)
