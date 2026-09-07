@@ -5448,7 +5448,7 @@ function parseCalcAmount(calc) {
 
     var nums = [];
     for (var i = 0; i < parts.length; i++) {
-      var m = parts[i].match(/[\d,]+(\.\d+)?/);
+      var m = parts[i].match(/-?[\d,]+(\.\d+)?/);
       if (!m) return null;
       var n = parseFloat(m[0].replace(/,/g, ''));
       if (isNaN(n)) return null;
@@ -6157,7 +6157,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
     });
     computeSubtreeMokTags(tree);
     computeSubtreeDetailTags(tree);
-    renderTreeRows(tree, rows, 0, '', true);
+    renderTreeRows(tree, rows, 0, '', true, 0);
   });
   // 200번대 나왔다가 400번대 나오는 식으로 뒤섞이지 않게, 목코드 숫자 순으로 정렬해서 보여준다.
   var mokOrderSorted = mokOrder.slice().sort(function (a, b) {
