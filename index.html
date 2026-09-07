@@ -5297,7 +5297,7 @@ function editLine() { /* 읽기 전용 */ }
 function deleteLine() { /* 읽기 전용 */ }
 
 // 4개 들여쓰기 칸(정책/단위/세부/목·세목·항목) + 산출기초 + 2026 + 2025 + 비교증감 + 증감률
-var LEVEL_BASE_DEPTH = { '팀': 0, '정책': 0, '단위': 1, '세부': 2, '부기명': 3, '목': 4, '세목': 5 };
+var LEVEL_BASE_DEPTH = { '팀': 0, '정책': 0, '단위': 1, '세부': 2, '목': 3, '세목': 4 };
 var LEAF_BULLETS = { 5: '○ ', 6: '- ', 7: '· ', 8: '‣ ' };
 // "목" 바로 밑에 "세목" 없이 바로 최말단 항목이 오는 경우(depth 4)가 있는데, LEAF_BULLETS에 4가 없어서
 // LEAF_BULLETS[8]인 '‣'(삼각형 불릿)로 잘못 대체됐다. 이게 접기 화살표(▸)와 모양이 비슷해서 헷갈렸던 것 —
@@ -5457,12 +5457,14 @@ function parseCalcAmount(calc) {
 
     var nums = [];
     for (var i = 0; i < parts.length; i++) {
-      var m = parts[i].match(/[\d,]+(\.\d+)?/);
+      var part = parts[i].trim();
+      var isPercent = part.includes('%');
+      var m = part.match(/[\d,]+(\.\d+)?/);
       if (!m) return null;
       var n = parseFloat(m[0].replace(/,/g, ''));
       if (isNaN(n)) return null;
       // "70%" 같은 백분율은 100으로 나누기
-      if (parts[i].includes('%')) {
+      if (isPercent) {
         n = n / 100;
       }
       nums.push(n);
