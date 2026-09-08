@@ -5622,8 +5622,9 @@ function handleBudgetUploadFile(e) {
       var sheetName = wb.SheetNames[0];
       var ws = wb.Sheets[sheetName];
       var rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-      if (isTemplateHeader(rows[0])) {
-        openTemplateUploadPreview(file.name, sheetName, rows);
+      var normalizedRows = normalizeBudgetUploadRows(rows);
+      if (normalizedRows) {
+        openTemplateUploadPreview(file.name, sheetName, normalizedRows);
       } else {
         openUploadPreviewModal(file.name, sheetName, rows);
       }
@@ -5633,6 +5634,53 @@ function handleBudgetUploadFile(e) {
   };
   reader.readAsArrayBuffer(file);
   e.target.value = '';
+}
+
+// 기존 부서별 예산편성 양식과 새 통합 양식을 모두 canonical 템플릿으로 변환한다.
+// canonical 순서: 정책, 단위, 세부사업, 목코드, 목명, 세목코드, 세목명,
+// 부기명(항목명), 산출기초, 올해 예산액(천원), 전년도 예산액(천원)
+function normalizeBudgetUploadRows(rows) {
+  if (!rows || !rows.length) return null;
+  if (isTemplateHeader(rows[0])) return rows;
+  var header = rows[0].map(function (h) { return String(h == null ? '' : h).trim(); });
+  var aliases = {
+    policy: ['정책', '정책사업명'],
+    unit: ['단위', '단위사업명'],
+    detail: ['세부사업', '세부사업명'],
+    mokCode: ['목코드', '편성목코드'],
+    mokName: ['목명', '편성목명'],
+    semokCode: ['세목코드', '통계목코드'],
+    semokName: ['세목명', '통계목명', '통계목(계정)'],
+    leaf: ['부기명(항목명)', '부기명', '사업명', '항목명', '세부사업명'],
+    calc: ['산출기초', '요구산출근거', '요구산출근거식'],
+    current: ['2027예산액(천원)', '2027년 예산액', '2027예산액', '요구액', '예산액', '본예산'],
+    prior: ['2026예산액(천원)', '2026년 예산액', '2026예산액', '전년도예산액', '전년도']
+  };
+  function findIndex(names) {
+    for (var i = 0; i < names.length; i++) {
+      var idx = header.indexOf(names[i]);
+      if (idx >= 0) return idx;
+    }
+    return -1;
+  }
+  var idx = {};
+  Object.keys(aliases).forEach(function (key) { idx[key] = findIndex(aliases[key]); });
+  // 최소한 정책/사업 계층과 올해 금액이 있어야 실제 예산 트리로 저장한다.
+  if (idx.policy < 0 || idx.detail < 0 || idx.current < 0) return null;
+  var outHeader = ['정책', '단위', '세부사업', '목코드', '목명', '세목코드', '세목명', '부기명(항목명)', '산출기초', '2027예산액(천원)', '2026예산액(천원)'];
+  var out = [outHeader];
+  rows.slice(1).forEach(function (row) {
+    function value(key) { return idx[key] >= 0 ? row[idx[key]] : ''; }
+    var leaf = value('leaf') || value('detail');
+    var mokName = value('mokName') || value('mokCode');
+    var calc = value('calc');
+    if (idx.calc >= 0 && aliases.calc.indexOf(header[idx.calc]) >= 0 && header[idx.calc] === '요구산출근거식') {
+      calc = calc ? String(calc).replace(/^=/, '') : '';
+    }
+    out.push([value('policy'), value('unit'), value('detail'), value('mokCode'), mokName,
+      value('semokCode'), value('semokName'), leaf, calc, value('current'), value('prior')]);
+  });
+  return out;
 }
 
 function openUploadPreviewModal(fileName, sheetName, rows) {
