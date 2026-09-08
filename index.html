@@ -2796,7 +2796,7 @@ table.summary tr.ov2-eb-section td {
               <path d="M12 4l0 12"></path>
             </svg>
           </button>
-          <input type="file" id="upload-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleBudgetUploadFile(event)">
+          <input type="file" id="upload-file-input" accept=".xlsx,.xls,.xlsm" style="display:none" onchange="handleBudgetUploadFile(event)">
           <div class="download-menu-wrap">
             <button type="button" class="action_has" id="export-btn" onclick="toggleDownloadMenu(event)" title="Download" aria-label="Download">
               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linejoin="round" stroke-linecap="round">
@@ -5656,7 +5656,10 @@ function normalizePublicInstitutionBudgetRows(rows) {
   rows.slice(1).forEach(function (r) {
     r = r || [];
     var b = clean(r[1]), c = clean(r[2]), d = clean(r[3]), e = clean(r[4]);
-    var j = clean(r[9]), calc = clean(r[10]);
+    var j = clean(r[9]);
+    // 산출근거 명칭은 J열, 실제 산출식은 K열이다. 일부 변환기/파일은
+    // 빈 셀을 보존하는 방식이 달라 L열에 값이 남을 수 있어 안전하게 보완한다.
+    var calc = clean(r[10]) || clean(r[11]);
     if (b) policy = stripPrefix(b, /^\[정책\]\s*/);
     if (c) unit = stripPrefix(c, /^\[단위\]\s*/);
     if (d) detail = stripPrefix(d, /^\[세부\]\s*/);
@@ -5672,8 +5675,11 @@ function normalizePublicInstitutionBudgetRows(rows) {
     }
     var leaf = j.replace(/^[◎○]\s*/, '').trim();
     if (!leaf || !/^[◎○]/.test(j)) return;
+    // M/H는 원 단위 금액이다. 수식 문자열이 넘어오는 경우에도 G열의
+    // 계산 결과가 있으면 당해연도 금액으로 사용할 수 있게 보완한다.
+    var currentRaw = (r[12] !== '' && r[12] != null) ? r[12] : r[6];
     out.push([policy, unit, detail, mokCode, mokName, semokCode, semokName,
-      leaf, calc, amountThousands(r[12]), amountThousands(r[7])]);
+      leaf, calc, amountThousands(currentRaw), amountThousands(r[7])]);
   });
   return out.length > 1 ? out : null;
 }
