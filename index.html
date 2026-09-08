@@ -5503,6 +5503,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     : node.level === '단위' ? node.name
     : node.level === '세부' ? node.name
     : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
+    : node.level === '부기명' ? node.name
     : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name));
   var cls = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목') ? node.level : 'leaf';
   var mokAttr = node._mokTag ? (' data-mok="' + escapeHtml(node._mokTag) + '"')
@@ -5673,7 +5674,7 @@ function normalizePublicInstitutionBudgetRows(rows) {
       semokCode = semok[1]; semokName = semok[2].trim();
       return;
     }
-    var leaf = j.replace(/^[◎○]\s*/, '').trim();
+    var leaf = j.trim();
     if (!leaf || !/^[◎○]/.test(j)) return;
     // M/H는 원 단위 금액이다. 수식 문자열이 넘어오는 경우에도 G열의
     // 계산 결과가 있으면 당해연도 금액으로 사용할 수 있게 보완한다.
@@ -5822,7 +5823,17 @@ function buildTemplateTree(dataRows) {
     var sNode = mNode._map[sKey];
     if (!sNode) { sNode = { level: '세목', code: semokCode || null, name: semokName, children: [], _map: {} }; mNode._map[sKey] = sNode; mNode.children.push(sNode); }
 
-    sNode.children.push({ level: 'leaf', name: leafName, calc: calc || null, amt26: amt26, amt25: amt25, children: [] });
+    var marker = leafName.charAt(0);
+    var displayName = leafName.replace(/^[◎○]\s*/, '').trim();
+    if (marker === '◎') {
+      var bookingNode = { level: '부기명', name: displayName, calc: calc || null, amt26: amt26, amt25: amt25, children: [] };
+      sNode.children.push(bookingNode);
+      sNode._lastBooking = bookingNode;
+    } else if (marker === '○' && sNode._lastBooking) {
+      sNode._lastBooking.children.push({ level: 'leaf', name: displayName, calc: calc || null, amt26: amt26, amt25: amt25, children: [] });
+    } else {
+      sNode.children.push({ level: 'leaf', name: displayName || leafName, calc: calc || null, amt26: amt26, amt25: amt25, children: [] });
+    }
   });
   return policies;
 }
@@ -5836,7 +5847,7 @@ function rollupTemplateTree(node) {
 }
 function templateTreeToPreviewHtml(nodes, depth, prevLabel) {
   return nodes.map(function (n) {
-    var label = (n.level === 'leaf') ? n.name : '[' + n.level + '] ' + (n.code ? n.code + ' ' : '') + n.name;
+    var label = (n.level === 'leaf' || n.level === '부기명') ? n.name : '[' + n.level + '] ' + (n.code ? n.code + ' ' : '') + n.name;
     var calcHtml = n.calc ? '<span class="ut-calc">' + escapeHtml(n.calc) + '</span>' : '';
     return '<div class="ut-row" style="padding-left:' + (depth * 18) + 'px">'
       + '<span class="ut-label">' + escapeHtml(label) + '</span>' + calcHtml
