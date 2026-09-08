@@ -5503,7 +5503,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     : node.level === '단위' ? node.name
     : node.level === '세부' ? node.name
     : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
-    : node.level === '부기명' ? node.name
+    : node.level === '부기명' ? bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name)
     : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name));
   var cls = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목') ? node.level : 'leaf';
   var mokAttr = node._mokTag ? (' data-mok="' + escapeHtml(node._mokTag) + '"')
