@@ -5496,13 +5496,16 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   budgetItemIndex[node.id] = node;
   var isNamedLevel = LEVEL_BASE_DEPTH.hasOwnProperty(node.level);
   var depth = isNamedLevel ? LEVEL_BASE_DEPTH[node.level] : (parentDepth + 1);
-  var leafDepth = isNamedLevel ? 0 : (parentLeafDepth || 0) + 1;
+  // 코드가 없는 하위 세목(예: 14 회의비 → 간담회비)은 실제 표시상 부기명과 같은 계층이다.
+  // 이를 일반 세목으로 처리하면 하위 기호가 한 단계 밀려 ○가 빠지고 자식부터 기호가 시작된다.
+  var isBulletSemok = node.level === '세목' && !node.code;
+  var leafDepth = (isNamedLevel && !isBulletSemok) ? 0 : (parentLeafDepth || 0) + 1;
   var nodePath = (parentPath ? parentPath + '>' : '') + node.level + ':' + node.name;
   var label = (node.level === '팀' ? node.name
     : node.level === '정책' ? node.name
     : node.level === '단위' ? node.name
     : node.level === '세부' ? node.name
-    : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
+    : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' + node.name : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name))
     : node.level === '부기명' ? bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name)
     : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name));
   var cls = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목') ? node.level : 'leaf';
