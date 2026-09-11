@@ -972,26 +972,37 @@ table.tree td.num { text-align: right; font-variant-numeric: tabular-nums; white
 table.tree td.num:last-child { text-align: center; }
 table.tree td.num.pct { text-align: center; }
 table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; position: relative; }
+table.tree td[data-field] { position: relative; }
 table.tree td[contenteditable="true"]:hover { background: rgba(198,241,53,.10); box-shadow: inset 0 0 0 1px rgba(198,241,53,.35); }
 table.tree td[contenteditable="true"]:focus { background: rgba(255,255,255,.08); outline: none; box-shadow: inset 0 0 0 1.5px var(--lime); }
 table.tree td.basis { color: rgba(255,255,255,.6); font-size: 15px; text-align: left; white-space: pre-line; }
-/* 편집 중인 셀 모서리에 나타나는 저장 확인 핀 아이콘 - 체크하면(저장 트리거) 라임으로 채워짐 */
-table.tree td[contenteditable="true"] .cell-check-btn {
+/* 편집 중인 셀 모서리에 나타나는 저장 확인 핀 아이콘 - 체크하면(저장 트리거) 라임으로 채워짐
+   산출기초/항목명 칸은 td 자체가 아니라 안쪽 span/input이 편집 가능한 구조라 td[data-field]도 같이 잡는다. */
+table.tree td[contenteditable="true"] .cell-check-btn,
+table.tree td[data-field] .cell-check-btn {
   display: none; position: absolute; top: -9px; right: -7px; width: 22px; height: 22px;
   align-items: center; justify-content: center; cursor: pointer; z-index: 5;
   border-radius: 8px; background: var(--bg-card); box-shadow: 0 1px 4px rgba(0,0,0,.4);
 }
-table.tree td[contenteditable="true"].cell-touched .cell-check-btn { display: flex; }
-table.tree td[contenteditable="true"] .cell-check-btn input { display: none; }
-table.tree td[contenteditable="true"] .cell-check-btn .pin {
+table.tree td[contenteditable="true"].cell-touched .cell-check-btn,
+table.tree td[data-field].cell-touched .cell-check-btn { display: flex; }
+table.tree td[contenteditable="true"] .cell-check-btn input,
+table.tree td[data-field] .cell-check-btn input { display: none; }
+table.tree td[contenteditable="true"] .cell-check-btn .pin,
+table.tree td[data-field] .cell-check-btn .pin {
   width: 11px; height: auto; transform: rotate(35deg); fill: none; stroke: #8a8f9a;
   transition: transform .15s ease, stroke .15s ease, fill .15s ease;
 }
 table.tree td[contenteditable="true"] .cell-check-btn .pin line,
-table.tree td[contenteditable="true"] .cell-check-btn .pin path { stroke: inherit; }
-table.tree td[contenteditable="true"] .cell-check-btn:hover .pin { transform: rotate(35deg) scale(1.15); stroke: var(--lime-dark); }
-table.tree td[contenteditable="true"] .cell-check-btn input:checked ~ .pin { fill: var(--lime); stroke: var(--lime-dark); }
-table.tree td[contenteditable="true"] .cell-check-btn input:checked ~ .pin path { stroke: #14161C; }
+table.tree td[contenteditable="true"] .cell-check-btn .pin path,
+table.tree td[data-field] .cell-check-btn .pin line,
+table.tree td[data-field] .cell-check-btn .pin path { stroke: inherit; }
+table.tree td[contenteditable="true"] .cell-check-btn:hover .pin,
+table.tree td[data-field] .cell-check-btn:hover .pin { transform: rotate(35deg) scale(1.15); stroke: var(--lime-dark); }
+table.tree td[contenteditable="true"] .cell-check-btn input:checked ~ .pin,
+table.tree td[data-field] .cell-check-btn input:checked ~ .pin { fill: var(--lime); stroke: var(--lime-dark); }
+table.tree td[contenteditable="true"] .cell-check-btn input:checked ~ .pin path,
+table.tree td[data-field] .cell-check-btn input:checked ~ .pin path { stroke: #14161C; }
 table.tree tr.row-edited td { background: rgba(22,146,79,.2); }
 table.tree tr.row-edited td[contenteditable="true"]:hover { background: rgba(22,146,79,.3); box-shadow: inset 0 0 0 1px rgba(22,146,79,.45); }
 table.tree tr.row-edited td:first-child::after { content: '\C218\C815\B428'; margin-left: 6px; font-size: 11px; font-weight: 700; color: #0ca30c; background: rgba(255,255,255,.1); border: 1px solid #0ca30c; border-radius: 20px; padding: 1px 7px; vertical-align: middle; }
@@ -1797,6 +1808,43 @@ table.tree tr.search-match td { color: #fff !important; }
 table.tree tr.search-dim { display: none; }
 table.tree tr.calc-mismatch td.basis { background: rgba(214,69,90,.22); }
 .mismatch-flag { color: var(--danger); margin-left: 5px; font-size: 13px; cursor: help; }
+/* 산출기초 숫자 인라인 편집(단가/인원/개월 등 각 숫자가 별도 input) */
+table.tree td.num.basis .calc-content { display: inline; }
+table.tree td.num.basis .calc-content.calc-content-empty { display: inline-block; min-width: 60px; min-height: 1em; }
+table.tree .calc-num-input {
+  font: inherit; color: inherit; background: rgba(255,255,255,.06); border: 1px solid transparent;
+  border-radius: 4px; padding: 0 3px; margin: 0 1px; text-align: right;
+}
+table.tree .calc-num-input:hover { border-color: rgba(255,255,255,.25); }
+table.tree .calc-num-input:focus { outline: none; border-color: var(--lime); background: rgba(59,130,246,.12); }
+.calc-live-badge { display: inline-block; margin-left: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.calc-live-badge:empty { display: none; }
+.calc-live-badge.calc-live-match { color: var(--success); }
+.calc-live-badge.calc-live-up { color: var(--danger); }
+.calc-live-badge.calc-live-down { color: var(--lime); }
+/* 항목명 인라인 편집 */
+table.tree td.name-cell .name-content {
+  display: inline; border-radius: 4px; padding: 0 2px;
+}
+table.tree td.name-cell .name-content:hover { background: rgba(255,255,255,.06); }
+table.tree td.name-cell .name-content:focus { outline: none; background: rgba(59,130,246,.12); box-shadow: 0 0 0 1px var(--lime); }
+table.tree td.name-cell { position: relative; }
+table.tree td.name-cell .cell-check-btn { position: static; margin-left: 4px; }
+/* 확인용 색 표시(하이라이트) - 이름 칸 맨 앞 작은 동그라미를 클릭하면 순서대로 색이 바뀐다 */
+.review-color-dot {
+  display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px;
+  vertical-align: middle; cursor: pointer; border: 1.5px solid rgba(255,255,255,.35); background: transparent;
+}
+.review-color-dot:hover { border-color: rgba(255,255,255,.7); transform: scale(1.15); }
+.review-color-dot.active { border-color: transparent; }
+.review-color-dot.c-red { background: var(--danger); }
+.review-color-dot.c-yellow { background: #E0B330; }
+.review-color-dot.c-green { background: var(--success); }
+.review-color-dot.c-blue { background: var(--lime); }
+table.tree tr.review-color-red td { background: rgba(214,69,90,.14); }
+table.tree tr.review-color-yellow td { background: rgba(224,179,48,.16); }
+table.tree tr.review-color-green td { background: rgba(22,146,79,.14); }
+table.tree tr.review-color-blue td { background: rgba(59,130,246,.14); }
 .error-cell { white-space: nowrap; }
 .error-cell-flag { display: inline-block; background: var(--danger-soft); color: var(--danger); border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 700; }
 table.tree tr.mismatch-only-hide { display: none; }
@@ -2995,7 +3043,7 @@ async function fetchRoundData(instId, business, round) {
 function buildTeamTrees(rows) {
   var byId = {};
   var yf = yearFields(state.selectedYear);
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, edited: !!r.edited, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, edited: !!r.edited, reviewColor: r.review_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -5511,6 +5559,129 @@ function checkCalcMismatch(node) {
   return null;
 }
 
+// 산출기초 칸 인라인 편집: 텍스트 전체를 하나의 contenteditable로 두지 않고,
+// 숫자 토큰마다 별도 <input>으로 쪼개서 "단가/인원/개월처럼 숫자만 바꾸면 자동 재계산"되게 한다.
+// 산출식이 없는(신규) 항목만 예외적으로 빈 contenteditable을 줘서 새로 자유롭게 입력할 수 있게 한다.
+function buildCalcContentHtml(calc) {
+  if (!calc) {
+    return '<span class="calc-content calc-content-empty" contenteditable="true" spellcheck="false" data-field="calc" oninput="onCalcContentInput(this)"></span>';
+  }
+  var html = '';
+  var re = /[\d,]+(?:\.\d+)?/g;
+  var last = 0, m;
+  while ((m = re.exec(calc))) {
+    html += escapeHtml(calc.slice(last, m.index));
+    var raw = m[0];
+    html += '<input type="text" inputmode="decimal" class="calc-num-input" value="' + escapeHtml(raw) + '" style="width:' + (raw.length + 1.5) + 'ch" oninput="onCalcContentInput(this)">';
+    last = re.lastIndex;
+  }
+  html += escapeHtml(calc.slice(last));
+  return '<span class="calc-content">' + html + '</span>';
+}
+// 산출기초 칸의 현재 편집 상태(숫자 input들 + 나머지 고정 텍스트)를 다시 하나의 문자열로 합친다.
+// 저장(saveBudgetCellEdit)과 실시간 미리보기(updateCalcLiveBadge) 둘 다 이 함수로 값을 읽는다.
+function readCalcCellText(td) {
+  if (!td) return '';
+  var content = td.querySelector('.calc-content');
+  if (!content) return '';
+  var out = '';
+  content.childNodes.forEach(function (n) {
+    if (n.nodeType === 3) out += n.textContent;
+    else if (n.tagName === 'INPUT') out += n.value;
+    else out += n.textContent;
+  });
+  return out.trim();
+}
+function onCalcContentInput(el) {
+  var td = el.closest('td[data-field="calc"]');
+  if (!td) return;
+  td.classList.add('cell-touched');
+  updateCalcLiveBadge(td);
+}
+function onNameContentInput(el) {
+  var td = el.closest('td.name-cell');
+  if (td) td.classList.add('cell-touched');
+}
+// 확인용 색 표시(하이라이트) - 산출기초/금액과 달리 검토 중 바로바로 켜고 끄는 용도라
+// 핀 체크 없이 클릭하는 즉시 저장한다. 순서: 없음 → 빨강 → 노랑 → 초록 → 파랑 → 없음.
+var REVIEW_COLOR_CYCLE = [null, 'red', 'yellow', 'green', 'blue'];
+async function cycleReviewColor(id, dotEl) {
+  var node = budgetItemIndex[id];
+  if (!node) return;
+  var idx = REVIEW_COLOR_CYCLE.indexOf(node.reviewColor || null);
+  var next = REVIEW_COLOR_CYCLE[(idx + 1) % REVIEW_COLOR_CYCLE.length];
+  var prev = node.reviewColor || null;
+  node.reviewColor = next; // 낙관적 업데이트: 먼저 화면부터 바꾸고, 실패하면 되돌린다.
+  var tr = dotEl.closest('tr');
+  REVIEW_COLOR_CYCLE.forEach(function (c) { if (c) tr.classList.remove('review-color-' + c); });
+  if (next) tr.classList.add('review-color-' + next);
+  dotEl.className = 'review-color-dot' + (next ? ' active c-' + next : '');
+
+  var { error } = await db.from('budget_items').update({ review_color: next }).eq('id', id);
+  if (error) {
+    node.reviewColor = prev;
+    REVIEW_COLOR_CYCLE.forEach(function (c) { if (c) tr.classList.remove('review-color-' + c); });
+    if (prev) tr.classList.add('review-color-' + prev);
+    dotEl.className = 'review-color-dot' + (prev ? ' active c-' + prev : '');
+    alert('색 표시 저장 실패: ' + error.message);
+  }
+}
+// 지금 입력 중인 산출식을 즉시 계산해서 "→ 얼마가 되는지, 지금 저장된 금액과 비교해 얼마나 달라지는지"를
+// 칸 옆에 작은 배지로 보여준다. 저장 전이라 상위 합계까지는 아직 안 바뀌지만, 이 leaf의 결과값만큼은
+// 저장 버튼을 누르기 전에 바로 확인할 수 있다.
+function updateCalcLiveBadge(td) {
+  var badge = td.querySelector('.calc-live-badge');
+  if (!badge) return;
+  var text = readCalcCellText(td);
+  var computed = parseCalcAmount(text);
+  if (computed == null) { badge.textContent = ''; badge.className = 'calc-live-badge'; return; }
+  var thousand = Math.round(computed / 1000);
+  var tr = td.closest('tr');
+  var amt26El = tr ? tr.querySelector('[data-field="amt26"]') : null;
+  var currentAmt = null;
+  if (amt26El) {
+    var clone = amt26El.cloneNode(true);
+    var btn = clone.querySelector('.cell-check-btn');
+    if (btn) btn.remove();
+    currentAmt = Number(clone.textContent.replace(/[^0-9.-]/g, ''));
+    if (isNaN(currentAmt)) currentAmt = null;
+  }
+  var cls = 'calc-live-badge';
+  var label = '→ ' + fmtWon(thousand) + '천원';
+  var actionable = false;
+  if (currentAmt != null) {
+    var diff = thousand - currentAmt;
+    if (diff === 0) { cls += ' calc-live-match'; }
+    else {
+      cls += diff > 0 ? ' calc-live-up' : ' calc-live-down';
+      label += ' (' + (diff > 0 ? '+' : '') + fmtWon(diff) + ') · 클릭해서 반영';
+      actionable = true;
+    }
+  }
+  badge.className = cls;
+  badge.textContent = label;
+  badge.onclick = actionable ? function () { applyCalcLiveToAmt(td); } : null;
+  badge.style.cursor = actionable ? 'pointer' : '';
+}
+// 산출식이 실제로 계산한 값을 예산액(amt26) 칸에 한 번에 반영한다(체크 저장 버튼은 그대로 둔 채
+// 표시 텍스트만 바꿔치기). 이후 저장 핀을 눌러야 DB에 실제로 반영된다 - 여기서는 화면 미리보기까지만.
+function applyCalcLiveToAmt(calcTd) {
+  var text = readCalcCellText(calcTd);
+  var computed = parseCalcAmount(text);
+  if (computed == null) return;
+  var thousand = Math.round(computed / 1000);
+  var tr = calcTd.closest('tr');
+  var amt26El = tr ? tr.querySelector('[data-field="amt26"]') : null;
+  if (!amt26El) return;
+  var btn = amt26El.querySelector('.cell-check-btn');
+  if (btn) btn.remove();
+  amt26El.textContent = fmtWon(thousand);
+  if (btn) amt26El.appendChild(btn);
+  amt26El.classList.add('cell-touched');
+  calcTd.classList.add('cell-touched');
+  updateCalcLiveBadge(calcTd);
+}
+
 var budgetItemIndex = {};
 function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, parentLeafDepth) {
   budgetItemIndex[node.id] = node;
@@ -5528,6 +5699,10 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' + node.name : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name))
     : node.level === '부기명' ? bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name)
     : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name));
+  // 이름 인라인 편집을 위해 라벨을 "정적 접두부(불릿·코드)"와 "편집 가능한 본문(node.name)"으로 분리한다.
+  var namePrefix = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부') ? ''
+    : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : bulletForLeafDepth(leafDepth))
+    : bulletForLeafDepth(leafDepth);
   var cls = (node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목') ? node.level : 'leaf';
   var mokAttr = node._mokTag ? (' data-mok="' + escapeHtml(node._mokTag) + '"')
     : (node._mokTagsSubtree && node._mokTagsSubtree.length ? (' data-mok-tags="' + escapeHtml(node._mokTagsSubtree.join(',')) + '"') : '');
@@ -5557,6 +5732,8 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   var isNew = (!node.amt25 || Number(node.amt25) === 0) && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
   var editedCls = node.edited ? ' row-edited' : '';
+  var reviewColorCls = node.reviewColor ? ' review-color-' + node.reviewColor : '';
+  var reviewDot = '<span class="review-color-dot' + (node.reviewColor ? ' active c-' + node.reviewColor : '') + '" onclick="cycleReviewColor(' + node.id + ', this)" title="확인용 색 표시(클릭하면 색이 순서대로 바뀜)"></span>';
   var cellCheckBtn = '<label class="cell-check-btn" title="눌러서 저장">'
     + '<input type="checkbox" onchange="saveBudgetCellEdit(' + node.id + ', this)">'
     + '<svg class="pin" viewBox="0 0 75 100" xmlns="http://www.w3.org/2000/svg">'
@@ -5565,9 +5742,11 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     + '</svg></label>';
   // 편성목(목) 이후부터는(세목·leaf) 들여쓰기를 더 늘리지 않고 그 자리에서 맞춘다 - 코드/불릿 표시로 이미 구분되니까
   var indentDepth = Math.min(depth, LEVEL_BASE_DEPTH['목']);
-  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
-    + '<td style="padding-left:' + (8 + indentDepth * 14) + 'px">' + arrowHtml + ' ' + escapeHtml(label) + mismatchIcon + '</td>'
-    + '<td class="num basis" contenteditable="true" spellcheck="false" data-field="calc">' + escapeHtml(stripCalcEquals(node.calc)) + cellCheckBtn + '</td>'
+  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
+    + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
+      + '<span class="name-content" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>'
+      + mismatchIcon + cellCheckBtn + '</td>'
+    + '<td class="num basis" data-field="calc">' + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
     + '<td class="num">' + (node.level === '팀' ? '' : fmtDiff(node.amt26, node.amt25)) + '</td>'
@@ -6139,7 +6318,9 @@ function filterTreeRows(query) {
 // 그 시점의 행(산출기초+2026예산액+2025예산액) 값이 한번에 저장되며 "수정됨"으로 영구 표시된다.
 (function () {
   document.addEventListener('input', function (e) {
-    var td = e.target.closest && e.target.closest('table.tree td[contenteditable="true"]');
+    // 산출기초 칸은 숫자마다 개별 <input>으로 쪼개져 있어(td 자체는 더 이상 contenteditable이 아님)
+    // data-field 속성으로도 같이 잡아준다.
+    var td = e.target.closest && e.target.closest('table.tree td[contenteditable="true"], table.tree td[data-field]');
     if (td) td.classList.add('cell-touched');
   });
 })();
@@ -6148,7 +6329,7 @@ async function saveBudgetCellEdit(id, btnEl) {
   var node = budgetItemIndex[id];
   if (!node) return;
   var tr = btnEl.closest('tr');
-  var calcEl = tr.querySelector('[data-field="calc"]');
+  var nameEl = tr.querySelector('[data-field="name"]');
   var amt26El = tr.querySelector('[data-field="amt26"]');
   var amt25El = tr.querySelector('[data-field="amt25"]');
 
@@ -6160,7 +6341,9 @@ async function saveBudgetCellEdit(id, btnEl) {
     return clone.textContent.trim();
   };
 
-  var rawCalc = stripBtnText(calcEl) || (node.calc || '');
+  var rawName = stripBtnText(nameEl);
+  var rawCalc = readCalcCellText(tr.querySelector('td[data-field="calc"]'));
+  if (!rawCalc) rawCalc = node.calc || '';
   var rawAmt26 = stripBtnText(amt26El);
   var rawAmt25 = stripBtnText(amt25El);
 
@@ -6173,8 +6356,10 @@ async function saveBudgetCellEdit(id, btnEl) {
   if (rawAmt25 === '' || rawAmt25 === '-') numAmt25 = 0;
   if (isNaN(numAmt25)) { alert((editYear - 1) + '년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
 
+  if (!rawName) { alert('항목명은 비워둘 수 없습니다.'); btnEl.checked = false; return; }
+
   var yf = yearFields(editYear);
-  var payload = { edited: true, calc: rawCalc || null };
+  var payload = { edited: true, calc: rawCalc || null, name: rawName };
   payload[yf.current] = numAmt26;
   payload[yf.prior] = numAmt25;
 
@@ -6187,15 +6372,33 @@ async function saveBudgetCellEdit(id, btnEl) {
     return;
   }
 
+  // 부모 합계가 이 행의 amt26/amt25에 이미 반영돼 있던 값을 그대로 쓰고 있으므로(자식 합 재계산이
+  // 화면상에서는 자동으로 일어나지 않는다), 델타만큼 조상 노드들의 캐시값에도 같이 더해서
+  // 저장 직후 화면의 상위 합계·증감·비율이 새로고침 없이 바로 맞게 보이도록 한다.
+  // (서버 쪽 trg_budget_items_rollup 트리거가 실제 DB의 부모 amt26도 같은 값으로 맞춰준다.)
+  var delta26 = numAmt26 - (Number(node.amt26) || 0);
+  var delta25 = numAmt25 - (Number(node.amt25) || 0);
+
   node.edited = true;
+  node.name = rawName;
   node.calc = payload.calc;
   node.amt26 = numAmt26;
   node.amt25 = numAmt25;
 
-  // 저장 완료: 이 행의 편집 체크 아이콘 표시 해제(다음 렌더링에서 자연히 사라짐)
-  tr.querySelectorAll('td[contenteditable="true"]').forEach(function (t) { t.classList.remove('cell-touched'); });
+  if (delta26 !== 0 || delta25 !== 0) {
+    var ancestor = budgetItemIndex[node._parent_id];
+    var guard = 0;
+    while (ancestor && guard++ < 20) {
+      ancestor.amt26 = (Number(ancestor.amt26) || 0) + delta26;
+      ancestor.amt25 = (Number(ancestor.amt25) || 0) + delta25;
+      ancestor = budgetItemIndex[ancestor._parent_id];
+    }
+  }
 
-  // 트리/요약/카드 화면 전체 재계산 (증감·비율·도넛차트 등에 즉시 반영)
+  // 저장 완료: 이 행의 편집 체크 아이콘 표시 해제(다음 렌더링에서 자연히 사라짐)
+  tr.querySelectorAll('td[contenteditable="true"], td[data-field]').forEach(function (t) { t.classList.remove('cell-touched'); });
+
+  // 트리/요약/카드 화면 전체 재계산 (증감·비율·도넛차트·상위 합계 등에 즉시 반영)
   renderDetail();
   renderSummary();
 }
