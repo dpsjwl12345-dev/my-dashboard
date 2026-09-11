@@ -1845,8 +1845,11 @@ table.tree tr.review-color-red td { background: rgba(214,69,90,.14); }
 table.tree tr.review-color-yellow td { background: rgba(224,179,48,.16); }
 table.tree tr.review-color-green td { background: rgba(22,146,79,.14); }
 table.tree tr.review-color-blue td { background: rgba(59,130,246,.14); }
-.error-cell { white-space: nowrap; }
-.error-cell-flag { display: inline-block; background: var(--danger-soft); color: var(--danger); border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 700; }
+/* 맨 끝 자유 메모 칸 - 항목명 칸과 같은 방식(인라인 contenteditable)으로 편집 */
+table.tree td.memo-cell { position: relative; white-space: pre-line; color: var(--text-soft); }
+table.tree td.memo-cell:hover { background: rgba(255,255,255,.06); }
+table.tree td.memo-cell:focus { outline: none; background: rgba(59,130,246,.12); box-shadow: inset 0 0 0 1px var(--lime); }
+table.tree td.memo-cell .cell-check-btn { position: static; margin-left: 4px; }
 table.tree tr.mismatch-only-hide { display: none; }
 table.tree tr.increase-only-hide { display: none; }
 table.tree tr.new-only-hide { display: none; }
@@ -2655,6 +2658,42 @@ table.summary tr.ov2-eb-section td {
 .ov-year-pill-label {
   color: #10182E;
 }
+
+/* 형광펜(하이라이터) 기능 */
+#hl-canvas {
+  position: absolute; top: 0; left: 0; z-index: 4500;
+  pointer-events: none;
+}
+#hl-canvas.hl-active { pointer-events: auto; cursor: crosshair; }
+#hl-canvas.hl-erase { pointer-events: auto; cursor: cell; }
+.hl-toolbar {
+  position: fixed; right: 22px; bottom: 22px; z-index: 4600;
+  display: flex; align-items: center; gap: 6px;
+  background: var(--sidebar-bg, #171A24); backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid var(--sidebar-border, rgba(255,255,255,.12));
+  border-radius: 999px; padding: 7px; box-shadow: 0 12px 30px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.2);
+}
+.hl-toolbar-toggle {
+  width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 19px;
+  background: rgba(255,255,255,.06); color: var(--navy-text); transition: background .15s, transform .15s;
+}
+.hl-toolbar-toggle:hover { background: rgba(255,255,255,.14); }
+.hl-toolbar-toggle.on { background: var(--lime); color: #fff; }
+.hl-toolbar-extra { display: flex; align-items: center; gap: 6px; overflow: hidden; max-width: 0; opacity: 0; transition: max-width .2s ease, opacity .15s ease; }
+.hl-toolbar.open .hl-toolbar-extra { max-width: 260px; opacity: 1; }
+.hl-color-dot {
+  width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; flex-shrink: 0;
+  padding: 0;
+}
+.hl-color-dot.selected { border-color: #fff; transform: scale(1.12); }
+.hl-tool-btn {
+  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  background: rgba(255,255,255,.06); color: var(--navy-text);
+}
+.hl-tool-btn:hover { background: rgba(255,255,255,.14); }
+.hl-tool-btn.on { background: rgba(214,69,90,.85); color: #fff; }
 </style>
 </head>
 <body>
@@ -2892,6 +2931,19 @@ table.summary tr.ov2-eb-section td {
   </main>
 </div>
 
+<canvas id="hl-canvas"></canvas>
+<div class="hl-toolbar" id="hl-toolbar">
+  <button type="button" class="hl-toolbar-toggle" id="hl-toggle-btn" onclick="hlToggleDraw()" title="형광펜">✏️</button>
+  <div class="hl-toolbar-extra" id="hl-toolbar-extra">
+    <button type="button" class="hl-color-dot selected" style="background:#F5D949" data-color="#F5D949" onclick="hlSetColor('#F5D949', this)" title="노랑"></button>
+    <button type="button" class="hl-color-dot" style="background:#6FE08A" data-color="#6FE08A" onclick="hlSetColor('#6FE08A', this)" title="초록"></button>
+    <button type="button" class="hl-color-dot" style="background:#7FB8FF" data-color="#7FB8FF" onclick="hlSetColor('#7FB8FF', this)" title="파랑"></button>
+    <button type="button" class="hl-color-dot" style="background:#FF9BC7" data-color="#FF9BC7" onclick="hlSetColor('#FF9BC7', this)" title="분홍"></button>
+    <button type="button" class="hl-tool-btn" id="hl-erase-btn" onclick="hlToggleErase()" title="지우개(선 클릭해서 지우기)">✖</button>
+    <button type="button" class="hl-tool-btn" onclick="hlClearScope()" title="이 화면 형광펜 전체 지우기">🗑</button>
+  </div>
+</div>
+
 <script src="./lib-db-client.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
@@ -3043,7 +3095,7 @@ async function fetchRoundData(instId, business, round) {
 function buildTeamTrees(rows) {
   var byId = {};
   var yf = yearFields(state.selectedYear);
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, edited: !!r.edited, reviewColor: r.review_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, edited: !!r.edited, reviewColor: r.review_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -5405,7 +5457,7 @@ function getTreeColLabels() {
     amtLabel = (ROUND_LABELS[round] || '') + '요구액';
     baseLabel = '기정액';
   }
-  return ['정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '증감액', '증감률', '오류'];
+  return ['정책·단위·세부사업·편성목·통계목·부기명', '산출기초', amtLabel, baseLabel, '증감액', '증감률', '메모'];
 }
 // 오류 칸 텍스트("⚠ 산출기초 불일치")가 잘리길래 앞 칸들을 전체적으로 조금씩 줄여서 오류 칸에 여유를 더 줬다.
 var DEFAULT_TREE_COL_WIDTHS = [27, 26, 9, 9, 8, 8, 13];
@@ -5726,8 +5778,8 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   var mismatchIcon = mismatchAmt != null
     ? '<span class="mismatch-flag" title="산출기초 계산값 ' + fmtWon(mismatchAmt) + '천원 ≠ 입력 금액 ' + fmtWon(node.amt26) + '천원">\u26A0</span>'
     : '';
-  // 오류 칸 - 지금은 산출기초 불일치만 표시. 인건비 지침 위반 등 다른 오류 유형은 검토 스킬 결과가 자동화되면 여기 추가한다.
-  var errorCellHtml = mismatchAmt != null ? '<span class="error-cell-flag">⚠ 산출기초 불일치</span>' : '';
+  // 산출기초 불일치 아이콘은 예전엔 맨 끝 "오류" 칸에 따로 표시했는데, 산출기초 칸 안에서 바로 보이는 게 더
+  // 직관적이라 이제 mismatchIcon을 산출기초 칸 앞에 붙인다(아래 렌더링부 참고). 맨 끝 칸은 자유 메모칸으로 바꿨다.
   var increasedAttr = (Number(node.amt26) || 0) > (Number(node.amt25) || 0) ? ' data-increased="1"' : '';
   var isNew = (!node.amt25 || Number(node.amt25) === 0) && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
@@ -5745,13 +5797,13 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
     + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
       + '<span class="name-content" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>'
-      + mismatchIcon + cellCheckBtn + '</td>'
-    + '<td class="num basis" data-field="calc">' + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
+      + cellCheckBtn + '</td>'
+    + '<td class="num basis" data-field="calc">' + mismatchIcon + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
     + '<td class="num">' + (node.level === '팀' ? '' : fmtDiff(node.amt26, node.amt25)) + '</td>'
     + '<td class="num pct">' + (node.level === '팀' ? '' : fmtPct(node.amt26, node.amt25)) + '</td>'
-    + '<td class="error-cell">' + errorCellHtml + '</td>'
+    + '<td class="memo-cell" contenteditable="true" spellcheck="false" data-field="memo">' + escapeHtml(node.memo || '') + cellCheckBtn + '</td>'
     + '</tr>');
   if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded, leafDepth); });
 }
@@ -6332,6 +6384,7 @@ async function saveBudgetCellEdit(id, btnEl) {
   var nameEl = tr.querySelector('[data-field="name"]');
   var amt26El = tr.querySelector('[data-field="amt26"]');
   var amt25El = tr.querySelector('[data-field="amt25"]');
+  var memoEl = tr.querySelector('[data-field="memo"]');
 
   var stripBtnText = function (el) {
     if (!el) return '';
@@ -6346,6 +6399,7 @@ async function saveBudgetCellEdit(id, btnEl) {
   if (!rawCalc) rawCalc = node.calc || '';
   var rawAmt26 = stripBtnText(amt26El);
   var rawAmt25 = stripBtnText(amt25El);
+  var rawMemo = stripBtnText(memoEl);
 
   var editYear = state.selectedYear || 2026;
   var numAmt26 = Number(rawAmt26.replace(/[^0-9.-]/g, ''));
@@ -6359,7 +6413,7 @@ async function saveBudgetCellEdit(id, btnEl) {
   if (!rawName) { alert('항목명은 비워둘 수 없습니다.'); btnEl.checked = false; return; }
 
   var yf = yearFields(editYear);
-  var payload = { edited: true, calc: rawCalc || null, name: rawName };
+  var payload = { edited: true, calc: rawCalc || null, name: rawName, memo: rawMemo || null };
   payload[yf.current] = numAmt26;
   payload[yf.prior] = numAmt25;
 
@@ -6382,6 +6436,7 @@ async function saveBudgetCellEdit(id, btnEl) {
   node.edited = true;
   node.name = rawName;
   node.calc = payload.calc;
+  node.memo = payload.memo;
   node.amt26 = numAmt26;
   node.amt25 = numAmt25;
 
@@ -6478,7 +6533,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
       + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
       + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
-      + '<td class="error-cell"></td>'
+      + '<td class="memo-cell"></td>'
       + '</tr>';
   }
   // 같은 편성목/세부사업(이름 기준)이 트리 여러 개(팀 여러 개)에 걸쳐 나타나도, 팀별로 따로 묶지 않고
@@ -6540,8 +6595,10 @@ function renderTeamTreesCombined(trees, totalLabel) {
     if (i === 0) {
       return '<th><span class="th-filter-label" onclick="toggleMokFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret"><svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="44" d="M416 128L192 384l-96-96"></path></svg></i>' + popover + '</span>' + handle + '</th>';
     }
-    if (i === treeColLabels.length - 1) {
-      return '<th><span class="th-filter-label err-filter-label" onclick="toggleErrFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret"><svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="44" d="M416 128L192 384l-96-96"></path></svg></i>' + errPopover + '</span></th>';
+    // 산출기초 불일치 아이콘이 이제 산출기초 칸 안에 바로 뜨니까, 그 필터도 맨 끝(예전 "오류") 칸이 아니라
+    // 산출기초 칸 헤더에 붙인다.
+    if (i === 1) {
+      return '<th><span class="th-filter-label err-filter-label" onclick="toggleErrFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret"><svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="44" d="M416 128L192 384l-96-96"></path></svg></i>' + errPopover + '</span>' + handle + '</th>';
     }
     return '<th>' + label + handle + '</th>';
   }).join('');
@@ -9333,6 +9390,14 @@ window.addEventListener('resize', function () {
 async function selectBudget(instKey, fund) {
   var inst = INSTITUTIONS.filter(function (i) { return i.key === instKey; })[0];
   nav.view = 'budget'; nav.instKey = instKey; nav.fund = fund;
+  // 기관별 예산서(통계목) 화면에 새로 들어갈 때마다 기본 연도를 2027년으로 고정한다
+  // (이전에 다른 기관에서 2026년을 보다 넘어와도 여기서 다시 2027년으로 맞춰준다).
+  state.selectedYear = 2027;
+  var yearLabelEl = document.getElementById('year-select-label');
+  if (yearLabelEl) yearLabelEl.textContent = '2027년';
+  document.querySelectorAll('.year-select-item').forEach(function (it) {
+    it.classList.toggle('selected', Number(it.getAttribute('data-year')) === 2027);
+  });
   // 아코디언: 어떤 경로로 들어오든(헤더 클릭/하위 항목 클릭) 이 기관만 펼치고 나머지는 닫는다.
   nav.expandedInst = {};
   nav.expandedInst[instKey] = true;
@@ -9753,7 +9818,176 @@ function goToBudget() {
   if (target) selectBudget(target.key, target.funds[0]);
 }
 
-loadInstitutions().then(function () { showDashboard(); });
+// ────────────────────────────────────────────────────────────────
+// 형광펜(하이라이터) 기능
+// 화면 전체(문서 크기)를 덮는 캔버스 하나에 자유곡선을 그려서 형광펜처럼 표시한다.
+// 라우터가 없는 단일 페이지라 "화면이 바뀌었는지"를 감지할 훅이 마땅치 않아서,
+// 주기적으로 현재 화면을 식별하는 키(scopeKey)를 다시 계산해 바뀌었으면 그 화면 몫의 선들로 바꿔치기한다.
+// 서버 저장은 하지 않고(세션 동안만 메모리에 보관) - 새로고침하면 사라지는 건 budgetdash-2027 쪽과 동일한 동작.
+var hlState = {
+  mode: 'off', // 'off' | 'draw' | 'erase'
+  color: '#F5D949',
+  strokes: [], // 현재 화면(scopeKey)의 선들
+  byScope: {}, // scopeKey -> strokes 배열
+  scopeKey: null,
+  drawingNow: false,
+  erasingNow: false,
+  lastDocW: 0,
+  lastDocH: 0
+};
+// 화면(뷰)마다 실제로 보이는 내용을 결정하는 상태값이 다르므로, 그 화면에 해당하는 값만 키에 넣는다.
+// (전역 state.dept/selectedYear 등은 다른 화면을 거치며 계속 남아있는 값이라, 무조건 다 넣으면
+// "대시보드로 돌아왔는데 마지막으로 봤던 기관의 부서/연도가 달라서" 같은 이유로 같은 화면인데도
+// 키가 달라져 형광펜이 사라진 것처럼 보이는 문제가 생긴다 - 그 화면과 무관한 값은 넣지 않는다.)
+function hlComputeScopeKey() {
+  var parts = [nav.view];
+  if (nav.view === 'budget') {
+    parts.push(nav.instKey, nav.fund, state.selectedId, state.selectedRound, state.selectedYear);
+    if (nav.fund === '위탁금') parts.push(state.dept);
+    var searchEl = document.getElementById('tree-search-input');
+    if (searchEl) parts.push('q:' + searchEl.value);
+    var mm = document.querySelector('.mismatch-only-checkbox');
+    if (mm) parts.push('mm:' + (mm.checked ? 1 : 0));
+    var inc = document.getElementById('increase-only-toggle');
+    if (inc) parts.push('inc:' + (inc.checked ? 1 : 0));
+    var nw = document.getElementById('new-only-toggle');
+    if (nw) parts.push('nw:' + (nw.checked ? 1 : 0));
+  } else if (nav.view === 'instOverview') {
+    parts.push(nav.instKey);
+  } else if (nav.view === 'settlement') {
+    parts.push(nav.instKey, nav.settleYear);
+  } else if (nav.view === 'laborcalc') {
+    if (typeof LC !== 'undefined' && LC && LC.view) parts.push(LC.view);
+  }
+  return parts.join('|');
+}
+function hlGetCanvas() { return document.getElementById('hl-canvas'); }
+function hlResizeCanvas() {
+  var c = hlGetCanvas();
+  if (!c) return;
+  var docW = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
+  var docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+  if (docW === hlState.lastDocW && docH === hlState.lastDocH) { hlRedraw(); return; }
+  hlState.lastDocW = docW; hlState.lastDocH = docH;
+  var dpr = window.devicePixelRatio || 1;
+  c.style.width = docW + 'px';
+  c.style.height = docH + 'px';
+  c.width = Math.round(docW * dpr);
+  c.height = Math.round(docH * dpr);
+  var ctx = c.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  hlRedraw();
+}
+function hlRedraw() {
+  var c = hlGetCanvas();
+  if (!c) return;
+  var ctx = c.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.restore();
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 16;
+  ctx.globalAlpha = 0.38;
+  hlState.strokes.forEach(function (s) {
+    if (!s.points || s.points.length < 2) return;
+    ctx.strokeStyle = s.color;
+    ctx.beginPath();
+    ctx.moveTo(s.points[0].x, s.points[0].y);
+    for (var i = 1; i < s.points.length; i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+    ctx.stroke();
+  });
+  ctx.globalAlpha = 1;
+}
+function hlScopeTick() {
+  var key = hlComputeScopeKey();
+  if (key !== hlState.scopeKey) {
+    if (hlState.scopeKey != null) hlState.byScope[hlState.scopeKey] = hlState.strokes;
+    hlState.scopeKey = key;
+    hlState.strokes = hlState.byScope[key] || [];
+  }
+  hlResizeCanvas();
+}
+function hlSyncToolbarUI() {
+  var toggle = document.getElementById('hl-toggle-btn');
+  var toolbar = document.getElementById('hl-toolbar');
+  var eraseBtn = document.getElementById('hl-erase-btn');
+  var canvas = hlGetCanvas();
+  if (toggle) toggle.classList.toggle('on', hlState.mode === 'draw');
+  if (toolbar) toolbar.classList.toggle('open', hlState.mode !== 'off');
+  if (eraseBtn) eraseBtn.classList.toggle('on', hlState.mode === 'erase');
+  if (canvas) {
+    canvas.classList.toggle('hl-active', hlState.mode === 'draw');
+    canvas.classList.toggle('hl-erase', hlState.mode === 'erase');
+  }
+}
+function hlToggleDraw() {
+  hlState.mode = (hlState.mode === 'draw') ? 'off' : 'draw';
+  hlSyncToolbarUI();
+}
+function hlToggleErase() {
+  hlState.mode = (hlState.mode === 'erase') ? 'off' : 'erase';
+  hlSyncToolbarUI();
+}
+function hlSetColor(color, btnEl) {
+  hlState.color = color;
+  document.querySelectorAll('.hl-color-dot').forEach(function (d) { d.classList.toggle('selected', d === btnEl); });
+}
+function hlClearScope() {
+  hlState.strokes = [];
+  hlState.byScope[hlState.scopeKey] = hlState.strokes;
+  hlRedraw();
+}
+function hlEraseNear(x, y) {
+  var threshold = 20;
+  var before = hlState.strokes.length;
+  hlState.strokes = hlState.strokes.filter(function (s) {
+    return !s.points.some(function (p) { return Math.hypot(p.x - x, p.y - y) < threshold; });
+  });
+  if (hlState.strokes.length !== before) {
+    hlState.byScope[hlState.scopeKey] = hlState.strokes;
+    hlRedraw();
+  }
+}
+function initHighlighter() {
+  var c = hlGetCanvas();
+  if (!c) return;
+  hlState.scopeKey = hlComputeScopeKey();
+  hlState.strokes = [];
+  hlResizeCanvas();
+  window.addEventListener('resize', hlResizeCanvas);
+  setInterval(hlScopeTick, 500);
+
+  c.addEventListener('pointerdown', function (e) {
+    if (hlState.mode === 'draw') {
+      hlState.drawingNow = true;
+      hlState.strokes.push({ color: hlState.color, points: [{ x: e.pageX, y: e.pageY }] });
+    } else if (hlState.mode === 'erase') {
+      hlState.erasingNow = true;
+      hlEraseNear(e.pageX, e.pageY);
+    }
+  });
+  window.addEventListener('pointermove', function (e) {
+    if (hlState.mode === 'draw' && hlState.drawingNow) {
+      var stroke = hlState.strokes[hlState.strokes.length - 1];
+      stroke.points.push({ x: e.pageX, y: e.pageY });
+      hlRedraw();
+    } else if (hlState.mode === 'erase' && hlState.erasingNow) {
+      hlEraseNear(e.pageX, e.pageY);
+    }
+  });
+  window.addEventListener('pointerup', function () {
+    if (hlState.drawingNow) {
+      hlState.byScope[hlState.scopeKey] = hlState.strokes;
+      hlState.drawingNow = false;
+    }
+    hlState.erasingNow = false;
+  });
+}
+
+loadInstitutions().then(function () { showDashboard(); initHighlighter(); });
 
 </script>
 </body>
