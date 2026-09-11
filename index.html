@@ -1812,10 +1812,10 @@ table.tree tr.calc-mismatch td.basis { background: rgba(214,69,90,.22); }
 table.tree td.num.basis .calc-content { display: inline; }
 table.tree td.num.basis .calc-content.calc-content-empty { display: inline-block; min-width: 60px; min-height: 1em; }
 table.tree .calc-num-input {
-  font: inherit; color: inherit; background: rgba(255,255,255,.06); border: 1px solid transparent;
-  border-radius: 4px; padding: 0 3px; margin: 0 1px; text-align: right;
+  font: inherit; color: inherit; background: transparent; border: 1px solid transparent;
+  border-radius: 4px; padding: 0; margin: 0; text-align: right;
 }
-table.tree .calc-num-input:hover { border-color: rgba(255,255,255,.25); }
+table.tree .calc-num-input:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.25); }
 table.tree .calc-num-input:focus { outline: none; border-color: var(--lime); background: rgba(59,130,246,.12); }
 .calc-live-badge { display: inline-block; margin-left: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .calc-live-badge:empty { display: none; }
@@ -5611,24 +5611,12 @@ function checkCalcMismatch(node) {
   return null;
 }
 
-// 산출기초 칸 인라인 편집: 텍스트 전체를 하나의 contenteditable로 두지 않고,
-// 숫자 토큰마다 별도 <input>으로 쪼개서 "단가/인원/개월처럼 숫자만 바꾸면 자동 재계산"되게 한다.
-// 산출식이 없는(신규) 항목만 예외적으로 빈 contenteditable을 줘서 새로 자유롭게 입력할 수 있게 한다.
+// 산출기초 칸 인라인 편집: 항목명/메모 칸과 동일하게 칸 전체를 하나의 contenteditable로 둔다.
+// (예전엔 숫자 토큰마다 별도 <input>으로 쪼개서 "숫자만 바꾸면 자동 재계산"되게 했었지만,
+//  실시간 재계산(updateCalcLiveBadge)은 어차피 readCalcCellText로 칸 전체 텍스트를 다시 파싱하는 방식이라
+//  굳이 토큰을 쪼갤 필요가 없었다. 토큰 분할은 편집만 불편하게 만들어서 전체 텍스트 편집 방식으로 되돌렸다.)
 function buildCalcContentHtml(calc) {
-  if (!calc) {
-    return '<span class="calc-content calc-content-empty" contenteditable="true" spellcheck="false" data-field="calc" oninput="onCalcContentInput(this)"></span>';
-  }
-  var html = '';
-  var re = /[\d,]+(?:\.\d+)?/g;
-  var last = 0, m;
-  while ((m = re.exec(calc))) {
-    html += escapeHtml(calc.slice(last, m.index));
-    var raw = m[0];
-    html += '<input type="text" inputmode="decimal" class="calc-num-input" value="' + escapeHtml(raw) + '" style="width:' + (raw.length + 1.5) + 'ch" oninput="onCalcContentInput(this)">';
-    last = re.lastIndex;
-  }
-  html += escapeHtml(calc.slice(last));
-  return '<span class="calc-content">' + html + '</span>';
+  return '<span class="calc-content" contenteditable="true" spellcheck="false" data-field="calc" oninput="onCalcContentInput(this)">' + escapeHtml(calc || '') + '</span>';
 }
 // 산출기초 칸의 현재 편집 상태(숫자 input들 + 나머지 고정 텍스트)를 다시 하나의 문자열로 합친다.
 // 저장(saveBudgetCellEdit)과 실시간 미리보기(updateCalcLiveBadge) 둘 다 이 함수로 값을 읽는다.
