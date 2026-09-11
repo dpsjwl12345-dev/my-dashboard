@@ -4245,10 +4245,11 @@ hscf: {
   hideIncomeTitle: true,
   org: {
     subtitle: '6본부 · 24팀 · 9관',
+    asOfDate: '2026.8.31',
     cards: [
       { tone: 'blue', iconKey: 'budget', label: '정원', value: '408명' },
-      { tone: 'purple', iconKey: 'settle', label: '현원', value: '386명' },
-      { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '94.6%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:94.6%;"></div></div>' },
+      { tone: 'purple', iconKey: 'settle', label: '현원', value: '391명' },
+      { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '95.8%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:95.8%;"></div></div>' },
       { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '16명' }
     ],
     note: '⚠️ 정원 내 부족 인원: 22명 · 현원(총계) 402명'
@@ -4256,45 +4257,46 @@ hscf: {
   personnelGroups: [
     { title: '정원 내 인력', rows: [
       { label: '임원', current: 1, capacity: 1, diff: 0 },
-      { label: '일반직', current: 259, capacity: 273, diff: -14 },
+      { label: '일반직', current: 262, capacity: 273, diff: -11 },
       { label: '무기계약직', current: 13, capacity: 14, diff: -1 },
       { label: '공무직', current: 113, capacity: 120, diff: -7 },
       { label: '기간제근로자', current: 16, capacity: null, diff: null, pctOverride: 45, sectionLabel: '정원 외 인력' }
     ] },
     { title: '직급별 현황', rows: [
       { label: '대표이사', current: 1, capacity: 1, diff: 0 },
-      { label: '2급', current: 0, capacity: 6, diff: -6 },
-      { label: '3급', current: 32, capacity: 34, diff: -2 },
+      { label: '2급', current: 6, capacity: 6, diff: 0 },
+      { label: '3급', current: 33, capacity: 34, diff: -1 },
       { label: '4급', current: 41, capacity: 46, diff: -5 },
       { label: '5급', current: 74, capacity: 79, diff: -5 },
-      { label: '6급', current: 104, capacity: 108, diff: -4 },
+      { label: '6급', current: 108, capacity: 108, diff: 0 },
       { label: '전문계약직(가급)', current: 6, capacity: null, diff: null },
       { label: '전문계약직(나급)', current: 2, capacity: null, diff: null }
     ], note: '전문계약직(가급·나급, 체육직)은 별도 정원 없이 현원만 운영', hoverOnly: true, hoverTarget: '일반직' }
   ],
   byDept: [
-    { label: '대표이사 직속', current: 11, capacity: 11, diff: 0, teams: 3, subTeams: [
+    { label: '대표이사 직속', current: 14, capacity: 14, diff: 0, teams: 4, subTeams: [
       { name: '감사', current: 4, capacity: 3 },
       { name: '문화정책', current: 3, capacity: 4 },
-      { name: '안전관리', current: 4, capacity: 4 }
+      { name: '안전관리', current: 4, capacity: 4 },
+      { name: '교육기획TF', current: 3, capacity: 3 }
     ] },
     { label: '경영기획본부', current: 77, capacity: 73, diff: 4, teams: 4, subTeams: [
       { name: '기획조정', current: 7, capacity: 7 },
-      { name: '경영지원', current: 24, capacity: 18 },
+      { name: '경영지원', current: 23, capacity: 18 },
       { name: '재무회계', current: 9, capacity: 8 },
-      { name: '시설체육운영', current: 37, capacity: 40 }
+      { name: '시설체육운영', current: 38, capacity: 40 }
     ] },
     { label: '예술의전당본부', current: 24, capacity: 33, diff: -9, teams: 4, subTeams: [
-      { name: '공연기획', current: 13, capacity: 12 },
-      { name: '무대기술', current: 5, capacity: 11 },
+      { name: '공연기획', current: 12, capacity: 12 },
+      { name: '무대기술', current: 6, capacity: 11 },
       { name: '시설운영', current: 6, capacity: 10 }
     ] },
-    { label: '예술진흥본부', current: 38, capacity: 47, diff: -9, teams: 3, subTeams: [
-      { name: '예술지원', current: 5, capacity: 6 },
+    { label: '예술진흥본부', current: 41, capacity: 47, diff: -6, teams: 3, subTeams: [
+      { name: '예술지원', current: 6, capacity: 6 },
       { name: '예술기반', current: 2, capacity: 5 },
-      { name: '공연기획', current: 12, capacity: 12 },
+      { name: '공연기획', current: 13, capacity: 12 },
       { name: '축제기획', current: 8, capacity: 11 },
-      { name: '무대기술', current: 11, capacity: 13 }
+      { name: '무대기술', current: 12, capacity: 13 }
     ] },
     { label: '문화진흥본부', current: 30, capacity: 32, diff: -2, teams: 5, subTeams: [
       { name: '문화사업', current: 6, capacity: 9 },
@@ -4306,14 +4308,14 @@ hscf: {
       { name: '관광기획전략', current: 7, capacity: 9 },
       { name: '관광콘텐츠', current: 6, capacity: 8 }
     ] },
-    { label: '도서관본부', current: 190, capacity: 195, diff: -5, teams: 3, gwan: 9, subTeams: [
-      { name: '운영', current: 6, capacity: 6 },
+    { label: '도서관본부', current: 191, capacity: 195, diff: -4, teams: 3, gwan: 9, subTeams: [
+      { name: '운영', current: 5, capacity: 6 },
       { name: '사업', current: 6, capacity: 5 },
       { name: '기술지원', current: 13, capacity: 12 },
-      { name: '병점', current: 21, capacity: 23 },
+      { name: '병점', current: 22, capacity: 23 },
       { name: '봉담', current: 17, capacity: 18 },
       { name: '삼괴', current: 17, capacity: 18 },
-      { name: '송산', current: 18, capacity: 20 },
+      { name: '송산', current: 19, capacity: 20 },
       { name: '태안', current: 23, capacity: 23 },
       { name: '중앙이음터', current: 24, capacity: 25 },
       { name: '왕배푸른숲', current: 19, capacity: 19 },
@@ -4507,12 +4509,12 @@ talent: {
   org: {
     subtitle: '5본부 · 1원 · 1전문위원 · 22팀',
     cards: [
-      { tone: 'blue', iconKey: 'budget', label: '정원', value: '170명' },
+      { tone: 'blue', iconKey: 'budget', label: '정원', value: '173명' },
       { tone: 'purple', iconKey: 'settle', label: '현원', value: '164명' },
-      { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '96.5%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:96.5%;"></div></div>' },
+      { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '94.8%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:94.8%;"></div></div>' },
       { tone: 'orange', iconKey: 'unused', label: '정원 외 인력', value: '32명' }
     ],
-    note: '⚠️ 정원 내 부족 인원: 6명'
+    note: '⚠️ 정원 내 부족 인원: 9명'
   },
   personnelGroups: [
     { title: '정원 내 인력', rows: [
@@ -4534,23 +4536,23 @@ talent: {
     ], note: '2~6급은 일반직, 나~마급은 계약직 직급 구분', hoverOnly: true, hoverTarget: '일반직' }
   ],
   byDept: [
-    { label: '대표이사 직속', current: 4, capacity: 4, diff: 0, teams: 1, committee: 1, subTeams: [
-      { name: '감사', current: 3, capacity: 3 },
+    { label: '대표이사 직속', current: 3, capacity: 4, diff: -1, teams: 1, committee: 1, subTeams: [
+      { name: '감사', current: 2, capacity: 3 },
       { name: '전문위원', current: 1, capacity: 1 }
     ] },
-    { label: '경영기획본부', current: 21, capacity: 21, diff: 0, teams: 3, subTeams: [
+    { label: '경영기획본부', current: 20, capacity: 21, diff: -1, teams: 3, subTeams: [
       { name: '정책기획' }, { name: '인사혁신' }, { name: '재무회계' }
     ] },
     { label: '장학본부', current: 29, capacity: 29, diff: 0, teams: 3, subTeams: [
       { name: '장학사업' }, { name: '동작나래관' }, { name: '도봉나래관' }
     ] },
-    { label: '교육협력지원본부', current: 18, capacity: 19, diff: -1, teams: 3, subTeams: [
+    { label: '교육협력지원본부', current: 19, capacity: 19, diff: 0, teams: 3, subTeams: [
       { name: '학교교육지원' }, { name: '지역교육' }, { name: '진로교육' }
     ] },
-    { label: '다원이음터본부', current: 45, capacity: 48, diff: -3, teams: 5, subTeams: [
+    { label: '다원이음터본부', current: 47, capacity: 51, diff: -4, teams: 5, subTeams: [
       { name: '다원운영' }, { name: '다원사업' }, { name: '동탄목동운영' }, { name: '동탄목동도서관' }, { name: '늘봄' }
     ] },
-    { label: '서연송린이음터본부', current: 42, capacity: 43, diff: -1, teams: 5, subTeams: [
+    { label: '서연송린이음터본부', current: 41, capacity: 43, diff: -2, teams: 5, subTeams: [
       { name: '서연운영' }, { name: '서연사업' }, { name: '동탄중앙' }, { name: '송린' }, { name: '호연' }
     ] },
     { label: '영재교육원', current: 5, capacity: 6, diff: -1, teams: 2, subTeams: [
@@ -4828,7 +4830,7 @@ function ov2ExecutionByFundTable(rows) {
 
 // "정현원 현황" 제목 줄 우측에 연도 아코디언(2026/2027)을 붙인 섹션 HTML을 만든다.
 // 2027년엔 아직 실제 데이터가 없어 클릭하면 같은 자리에 빈 상태만 보여준다.
-function ovPersonnelSectionHtml(personnelInnerHtml) {
+function ovPersonnelSectionHtml(personnelInnerHtml, asOfDate) {
   var yearSlot = document.getElementById('ov-year-acc-slot');
   if (yearSlot) {
     yearSlot.innerHTML = '<div class="ov-year-acc">'
@@ -4844,7 +4846,7 @@ function ovPersonnelSectionHtml(personnelInnerHtml) {
   }
   return '<div class="ov-personnel-section">'
     + '<div class="section-title-row">'
-    +   '<h2 class="section-heading section-heading-lg">정현원 현황</h2>'
+    +   '<h2 class="section-heading section-heading-lg">정현원 현황' + (asOfDate ? ' <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">(기준일: ' + escapeHtml(asOfDate) + ')</span>' : '') + '</h2>'
     + '</div>'
     + '<div class="ov-year-panel" data-year="2026">' + personnelInnerHtml + '</div>'
     + '<div class="ov-year-panel" data-year="2027" style="display:none;"><div class="summary-box"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
@@ -4912,7 +4914,8 @@ function renderOv2Overview(instKey) {
     : '';
 
   var orgHtml = ovPersonnelSectionHtml(
-    '<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + rankHtml
+    '<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + rankHtml,
+    d.org.asOfDate
   );
   var gradeHtml = '';
 
@@ -7643,8 +7646,8 @@ function lcFinalFilterBar() {
   }).join('');
   var LC_FINAL_BADGE_TONE = { bg: 'rgba(200,210,230,.12)', fg: 'var(--text-muted)' };
   var LC_FINAL_BADGES = {
-    hscf: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 408 · 현원 386 · 결원율 5.4%' },
-    talent: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 170 · 현원 164 · 결원율 3.5%(기준 이내)' },
+    hscf: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 408 · 현원 391 · 결원율 4.2%' },
+    talent: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 173 · 현원 164 · 결원율 5.2%(기준 이내)' },
     fc: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 19 · 현원 16 · 결원율 15.8%(기준 대폭 초과)' },
     corp: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 907 · 현원 787 · 결원율 13.2%(기준 대폭 초과)' },
     sports: { bg: LC_FINAL_BADGE_TONE.bg, fg: LC_FINAL_BADGE_TONE.fg, text: '정원 29 · 현원 28 · 결원율 3.4%(기준 이내)' },
