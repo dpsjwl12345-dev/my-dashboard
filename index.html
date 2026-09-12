@@ -3181,11 +3181,13 @@ async function loadInstitutions() {
 
   var timeoutPromise = new Promise(function(resolve) { setTimeout(function() { resolve(null); }, 5000); });
   var dbPromise = (async function() {
-    var { data: insts, error: e1 } = await db.from('institutions').select('*').order('sort_order');
-    if (e1) return null;
-    var { data: funds, error: e2 } = await db.from('institution_funds').select('*').order('sort_order');
-    if (e2) return null;
-    return { insts: insts, funds: funds };
+    // 첫 화면을 막는 두 쿼리다. 서로 의존이 없으므로 순차 await 하지 않고 같이 보낸다.
+    var boot = await Promise.all([
+      db.from('institutions').select('*').order('sort_order'),
+      db.from('institution_funds').select('*').order('sort_order')
+    ]);
+    if (boot[0].error || boot[1].error) return null;
+    return { insts: boot[0].data, funds: boot[1].data };
   })();
 
   var result = await Promise.race([dbPromise, timeoutPromise]);
