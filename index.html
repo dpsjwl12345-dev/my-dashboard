@@ -4,9 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>화성시 공기관 예산통합 대시보드</title>
-<link rel="stylesheet" as="style" crossorigin
+<!-- 사내망에서 cdn.jsdelivr.net / fonts.googleapis.com 이 차단되면 <link rel=stylesheet>가 렌더를 막아
+     연결이 끊길 때까지(수십 초) 화면이 백지로 남는다. media="print" -> onload 로 비차단 로드하고,
+     못 불러와도 아래 font-family 폴백(Malgun Gothic 등)으로 화면은 정상적으로 뜨게 한다. -->
+<link rel="stylesheet" as="style" crossorigin media="print" onload="this.media='all'"
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&display=swap" />
+<link rel="stylesheet" media="print" onload="this.media='all'"
+  href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&display=swap" />
 <style>
 @font-face {
   font-family: 'GmarketSans';
@@ -2930,7 +2934,24 @@ table.summary tr.ov2-eb-section td {
 </div>
 
 <script src="./lib-db-client.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+  // 엑셀 파싱 라이브러리는 업로드 기능을 실제로 쓸 때만 불러온다.
+  // 예전처럼 blocking <script>로 두면 사내망에서 cdn.jsdelivr.net 이 막혔을 때
+  // 연결이 끊길 때까지 뒤따르는 앱 스크립트가 실행되지 않아 대시보드 전체가 안 떴다.
+  var _xlsxPromise = null;
+  function loadXLSX() {
+    if (typeof XLSX !== 'undefined') return Promise.resolve(true);
+    if (_xlsxPromise) return _xlsxPromise;
+    _xlsxPromise = new Promise(function (resolve) {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.onload = function () { resolve(typeof XLSX !== 'undefined'); };
+      s.onerror = function () { _xlsxPromise = null; resolve(false); };
+      document.head.appendChild(s);
+    });
+    return _xlsxPromise;
+  }
+</script>
 <script>
   // ── 여기에 Supabase 프로젝트 정보를 넣으세요 ──
   var SUPABASE_URL = "https://my-dashboard-lilac-rho.vercel.app/api/svc";
@@ -3077,6 +3098,37 @@ async function fetchRoundData(instId, business, round) {
   return result;
 }
 
+// 회차별로 따로 부르면 (회차 3개 x 쿼리 2개 = 6회 직렬) 프록시 왕복이 그대로 누적된다.
+// 아직 캐시에 없는 회차만 모아 budget_items / card_teams 를 각각 in(...) 한 번으로 받아 캐시에 채운다.
+async function prefetchRoundsData(instId, business, rounds) {
+  var year = state.selectedYear;
+  var need = rounds.filter(function (r) {
+    return !roundDataCache[instId + '|' + business.id + '|' + r + '|' + year];
+  });
+  if (!need.length) return;
+  var res = await Promise.all([
+    db.from('budget_items').select('*')
+      .eq('institution_id', instId).eq('business_card', business.name).in('round', need)
+      .order('sort_order').order('id'),
+    db.from('card_teams').select('*')
+      .eq('card_id', business.id).in('round', need).eq('year', year).order('sort_order')
+  ]);
+  if (res[0].error) { showLoadError('회차별 예산 트리', res[0].error); return; }
+  if (res[1].error) { showLoadError('회차별 정현원', res[1].error); }
+  var itemsByRound = {}, teamsByRound = {};
+  need.forEach(function (r) { itemsByRound[r] = []; teamsByRound[r] = []; });
+  (res[0].data || []).forEach(function (row) { if (itemsByRound[row.round]) itemsByRound[row.round].push(row); });
+  (res[1].data || []).forEach(function (row) { if (teamsByRound[row.round]) teamsByRound[row.round].push(row); });
+  need.forEach(function (r) {
+    roundDataCache[instId + '|' + business.id + '|' + r + '|' + year] = {
+      trees: buildTeamTrees(itemsByRound[r]),
+      teams: teamsByRound[r].map(function (t) {
+        return { name: t.team_name, capacity: t.capacity, current: t.current, treeKey: t.team_root_budget_item_id };
+      })
+    };
+  });
+}
+
 function buildTeamTrees(rows) {
   var byId = {};
   var yf = yearFields(state.selectedYear);
@@ -3162,13 +3214,21 @@ async function loadInstBudgetData(inst) {
   var cacheKey = inst.key + '|' + state.selectedYear;
   if (instDataCache[cacheKey]) return instDataCache[cacheKey];
 
-  var items = await fetchAllRows('budget_items', inst.id, 'base');
+  // 아래 4개는 서로 의존관계가 없다. 순차로 await 하면 프록시 왕복(수백 ms)이 그대로 4번 쌓이므로 한 번에 보낸다.
+  var _res = await Promise.all([
+    fetchAllRows('budget_items', inst.id, 'base'),
+    db.from('business_cards').select('*').eq('institution_id', inst.id).order('sort_order'),
+    db.from('card_teams').select('*').eq('round', 'base').eq('year', state.selectedYear).order('sort_order'),
+    db.from('dept_enacted_amounts').select('*').eq('institution_id', inst.id)
+  ]);
+  var items = _res[0];
   var teamTrees = buildTeamTrees(items);
 
-  var { data: cards, error: e2 } = await db.from('business_cards').select('*').eq('institution_id', inst.id).order('sort_order');
+  var cards = _res[1].data, e2 = _res[1].error;
   if (e2) { showLoadError('본부/사업 카드', e2); return null; }
-  var { data: teams, error: e3 } = await db.from('card_teams').select('*').eq('round', 'base').eq('year', state.selectedYear).order('sort_order');
+  var teams = _res[2].data, e3 = _res[2].error;
   if (e3) { showLoadError('팀 정원현원', e3); return null; }
+  var enacted = _res[3].data, e4 = _res[3].error;
 
   var businesses = cards.map(function (c) {
     var myTeams = teams.filter(function (t) { return t.card_id === c.id; }).map(function (t) {
@@ -3191,7 +3251,6 @@ async function loadInstBudgetData(inst) {
   // business_card가 없으면 부서 전체 합계 한 줄, 있으면 사업(카드)별로 나눠서 보여준다 (예: 교육지원과는 경영기획본부/교육협력본부로 나눠 편성).
   var enactedAmounts = {};
   var enactedByCard = {};
-  var { data: enacted, error: e4 } = await db.from('dept_enacted_amounts').select('*').eq('institution_id', inst.id);
   if (!e4 && enacted) {
     enacted.forEach(function (row) {
       // round 값('base'/'supp1'.../'y25')만으로는 연도가 안 갈리니(2026 본예산과 2027 본예산이 둘 다 'base'),
@@ -5840,9 +5899,12 @@ function toggleNewOnly(checked) {
 // 2단계(추후): 기관별 컬럼 매핑 설정을 적용해 정책→단위→세부→목→세목→항목 트리로 변환 후
 //   budget_items에 실제 반영(각 회차는 덮어쓰지 않고 새 이력으로 추가)하는 로직을 여기에 연결한다.
 function handleBudgetUploadFile(e) {
-  var file = e.target.files && e.target.files[0];
+  var input = e.target;
+  var file = input.files && input.files[0];
+  input.value = '';
   if (!file) return;
-  if (typeof XLSX === 'undefined') { alert('엑셀 파싱 라이브러리를 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.'); return; }
+  loadXLSX().then(function (xlsxReady) {
+  if (!xlsxReady) { alert('엑셀 파싱 라이브러리를 불러오지 못했습니다. 사내망에서 cdn.jsdelivr.net 접속이 차단된 경우일 수 있습니다.'); return; }
 
   var reader = new FileReader();
   reader.onload = function (ev) {
@@ -5862,7 +5924,7 @@ function handleBudgetUploadFile(e) {
     }
   };
   reader.readAsArrayBuffer(file);
-  e.target.value = '';
+  });
 }
 
 function isPublicInstitutionBudgetSheet(rows) {
@@ -6915,6 +6977,7 @@ async function applyRound(round) {
   var inst = INSTITUTIONS.filter(function (i) { return i.key === nav.instKey; })[0];
   if (!inst) { state.roundData = { trees: {}, teams: [] }; renderDetail(); return; }
 
+  await prefetchRoundsData(inst.id, b, ROUND_SEQUENCE.slice(1, ROUND_SEQUENCE.indexOf(round) + 1));
   var data = await fetchRoundData(inst.id, b, round);
   // 불러오는 동안 다른 탭/회차를 눌렀으면 그 결과는 버린다.
   if (state.selectedId !== b.id || state.selectedRound !== round) return;
@@ -6929,6 +6992,8 @@ var ROUND_SEQUENCE = ['base', 'supp1', 'supp2', 'supp3'];
 async function computeCumulativeRoundTotal(inst, b, round) {
   var total = Number(b.amt) || 0;
   var idx = ROUND_SEQUENCE.indexOf(round);
+  if (idx < 1) return total;
+  await prefetchRoundsData(inst.id, b, ROUND_SEQUENCE.slice(1, idx + 1)); // 아래 루프가 전부 캐시 히트가 되도록 먼저 한 번에 받아둔다
   for (var i = 1; i <= idx; i++) {
     var rd = await fetchRoundData(inst.id, b, ROUND_SEQUENCE[i]);
     (rd.teams || []).forEach(function (t) {
