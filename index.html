@@ -1003,9 +1003,6 @@ table.tree td[contenteditable="true"] .cell-check-btn input:checked ~ .pin,
 table.tree td[data-field] .cell-check-btn input:checked ~ .pin { fill: var(--lime); stroke: var(--lime-dark); }
 table.tree td[contenteditable="true"] .cell-check-btn input:checked ~ .pin path,
 table.tree td[data-field] .cell-check-btn input:checked ~ .pin path { stroke: #14161C; }
-table.tree tr.row-edited td { background: rgba(22,146,79,.2); }
-table.tree tr.row-edited td[contenteditable="true"]:hover { background: rgba(22,146,79,.3); box-shadow: inset 0 0 0 1px rgba(22,146,79,.45); }
-table.tree tr.row-edited td:first-child::after { content: '\C218\C815\B428'; margin-left: 6px; font-size: 11px; font-weight: 700; color: #0ca30c; background: rgba(255,255,255,.1); border: 1px solid #0ca30c; border-radius: 20px; padding: 1px 7px; vertical-align: middle; }
 /* 엑셀 업로드 미리보기 모달 */
 .upload-modal-overlay { position: fixed; inset: 0; background: rgba(16,23,42,.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; }
 .upload-modal { background: var(--bg-card); border-radius: 16px; width: min(920px, 100%); max-height: 84vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(16,23,42,.35); overflow: hidden; }
@@ -1851,10 +1848,10 @@ table.tree td.memo-cell:hover { background: rgba(255,255,255,.06); }
 table.tree td.memo-cell:focus { outline: none; background: rgba(59,130,246,.12); box-shadow: inset 0 0 0 1px var(--lime); }
 table.tree td.memo-cell .cell-check-btn { position: static; margin-left: 4px; }
 table.tree tr.mismatch-only-hide { display: none; }
-table.tree tr.increase-only-hide { display: none; }
+table.tree tr.personnel-only-hide { display: none; }
 table.tree tr.new-only-hide { display: none; }
 .tree-filter-toggle { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--danger); flex: 0 0 auto; white-space: nowrap; }
-.tree-filter-toggle.increase { color: var(--success); }
+.tree-filter-toggle.personnel { color: var(--success); }
 .tree-filter-toggle.new { color: #5B6B8C; }
 .tree-filter-toggle input { accent-color: var(--navy-text); cursor: pointer; }
 .tree-filter-toggle label { cursor: pointer; }
@@ -2523,14 +2520,6 @@ tr.lvl-정책 td,
 tr.lvl-단위 td {
   color: #ffffff;
 }
-tr.row-edited td {
-  background: rgba(16,24,46,.6);
-  color: #ffffff;
-}
-tr.row-edited td[contenteditable="true"]:hover {
-  background: rgba(16,24,46,.8);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
-}
 .ov2-dept-card::before {
   background-color: rgba(198,241,53,.65) !important;
 }
@@ -2552,11 +2541,6 @@ tr.row-edited td[contenteditable="true"]:hover {
 }
 .settle-kpi-card .icon-badge svg {
   filter: none;
-}
-tr.row-edited td:first-child::after {
-  color: #ffffff;
-  border-color: #ffffff;
-  background: rgba(0,0,0,.2);
 }
 .dyt-card-header {
   background: rgba(255,255,255,.08);
@@ -5526,6 +5510,8 @@ function tagSubtree(node, tag, field) {
   node[field] = tag;
   (node.children || []).forEach(function (c) { tagSubtree(c, tag, field); });
 }
+// 인건비성 예산 필터에서 쓰는 목(統計目) 코드 — 101 인건비 / 107 퇴직급여 / 304 연금부담금 등
+var PERSONNEL_MOK_CODES = { '101': true, '107': true, '304': true };
 function tagMok(node, tag) { tagSubtree(node, tag, '_mokTag'); }
 function tagDetail(node, tag) { tagSubtree(node, tag, '_detailTag'); }
 // 자기 자신에게 태그가 없는 상위 행에도 하위에 어떤 태그들이 있는지 기록해둔다 -
@@ -5768,10 +5754,9 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     : '';
   // 산출기초 불일치 아이콘은 예전엔 맨 끝 "오류" 칸에 따로 표시했는데, 산출기초 칸 안에서 바로 보이는 게 더
   // 직관적이라 이제 mismatchIcon을 산출기초 칸 앞에 붙인다(아래 렌더링부 참고). 맨 끝 칸은 자유 메모칸으로 바꿨다.
-  var increasedAttr = (Number(node.amt26) || 0) > (Number(node.amt25) || 0) ? ' data-increased="1"' : '';
+  var personnelAttr = node._personnel ? ' data-personnel="1"' : '';
   var isNew = (!node.amt25 || Number(node.amt25) === 0) && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
-  var editedCls = node.edited ? ' row-edited' : '';
   var reviewColorCls = node.reviewColor ? ' review-color-' + node.reviewColor : '';
   var reviewDot = '<span class="review-color-dot' + (node.reviewColor ? ' active c-' + node.reviewColor : '') + '" onclick="cycleReviewColor(' + node.id + ', this)" title="확인용 색 표시(클릭하면 색이 순서대로 바뀜)"></span>';
   var cellCheckBtn = '<label class="cell-check-btn" title="눌러서 저장">'
@@ -5782,7 +5767,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     + '</svg></label>';
   // 편성목(목) 이후부터는(세목·leaf) 들여쓰기를 더 늘리지 않고 그 자리에서 맞춘다 - 코드/불릿 표시로 이미 구분되니까
   var indentDepth = Math.min(depth, LEVEL_BASE_DEPTH['목']);
-  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + editedCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + increasedAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
+  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + personnelAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
     + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
       + '<span class="name-content" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>'
       + cellCheckBtn + '</td>'
@@ -5815,19 +5800,19 @@ function toggleMismatchOnly(checked) {
   });
 }
 
-// 전년대비 증액(신규 편성 포함) 항목만 보기 토글
-function toggleIncreaseOnly(checked) {
+// 인건비성 예산(101 인건비 / 107 퇴직급여 / 304 연금부담금 등 목 하위) 항목만 보기 토글
+function togglePersonnelOnly(checked) {
   var rows = document.querySelectorAll('#detail table.tree tbody tr');
   rows.forEach(function (tr) {
     if (!checked) {
-      tr.classList.remove('increase-only-hide');
+      tr.classList.remove('personnel-only-hide');
       return;
     }
-    if (tr.getAttribute('data-increased') === '1') {
-      tr.classList.remove('increase-only-hide');
+    if (tr.getAttribute('data-personnel') === '1') {
+      tr.classList.remove('personnel-only-hide');
       tr.classList.remove('row-hidden-collapse');
     } else {
-      tr.classList.add('increase-only-hide');
+      tr.classList.add('personnel-only-hide');
     }
   });
 }
@@ -6537,6 +6522,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
       var key = (m.code || '') + '|' + nName;
       if (!mokDedup[key]) { mokDedup[key] = { code: m.code, name: nName, tag: instId + '_m' + ti + '_' + i }; mokOrder.push(key); }
       tagMok(m, mokDedup[key].tag);
+      if (PERSONNEL_MOK_CODES[m.code]) tagSubtree(m, true, '_personnel');
     });
     collectDetailList(tree).forEach(function (d, i) {
       var key = normName(d.name);
@@ -6827,7 +6813,7 @@ function renderDetail() {
     : '';
   var filterToggleHtml = (activeTeams && activeTeams.length)
     ? '<div class="tree-filter-toggle">' + '<input type="checkbox" id="mismatch-only-toggle" class="mismatch-only-checkbox" onchange="toggleMismatchOnly(this.checked)">' + '<label for="mismatch-only-toggle">\u26A0 산출기초 불일치만</label></div>'
-      + '<div class="tree-filter-toggle increase">' + '<input type="checkbox" id="increase-only-toggle" onchange="toggleIncreaseOnly(this.checked)">' + '<label for="increase-only-toggle">\u25B2 전년대비 증액만</label></div>'
+      + '<div class="tree-filter-toggle personnel">' + '<input type="checkbox" id="personnel-only-toggle" onchange="togglePersonnelOnly(this.checked)">' + '<label for="personnel-only-toggle">👥 인건비성 예산만</label></div>'
       + '<div class="tree-filter-toggle new">' + '<input type="checkbox" id="new-only-toggle" onchange="toggleNewOnly(this.checked)">' + '<label for="new-only-toggle">\uD83C\uDD95 신규사업만</label></div>'
     : '';
   var hasNoteClass = b.note ? ' has-note' : '';
@@ -9836,8 +9822,8 @@ function hlComputeScopeKey() {
     if (searchEl) parts.push('q:' + searchEl.value);
     var mm = document.querySelector('.mismatch-only-checkbox');
     if (mm) parts.push('mm:' + (mm.checked ? 1 : 0));
-    var inc = document.getElementById('increase-only-toggle');
-    if (inc) parts.push('inc:' + (inc.checked ? 1 : 0));
+    var pc = document.getElementById('personnel-only-toggle');
+    if (pc) parts.push('pc:' + (pc.checked ? 1 : 0));
     var nw = document.getElementById('new-only-toggle');
     if (nw) parts.push('nw:' + (nw.checked ? 1 : 0));
   } else if (nav.view === 'instOverview') {
