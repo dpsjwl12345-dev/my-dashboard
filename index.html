@@ -2017,6 +2017,7 @@ table.team-summary th, table.lines th { color: var(--text-soft); font-weight: 60
 table.team-summary td.num, table.lines td.num { text-align: right; font-variant-numeric: tabular-nums; }
 table.team-summary tr:last-child td, table.lines tr:last-child td { border-bottom: none; }
 
+.no-budget-note { margin: 0; padding: 18px 0; color: var(--text-soft); font-size: 16.5px; }
 .line-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .line-hdr h3 { font-size: 17px; margin: 0; color: var(--text-muted); font-weight: 600; }
 .btn-sm { border: 1px solid var(--border-strong); background: var(--bg-card); border-radius: var(--r); padding: 5px 12px; font-size: 15.5px; cursor: pointer; color: var(--text); }
@@ -6846,8 +6847,6 @@ function renderDetail() {
     + '</div>';
   var noteBtnHtml = '<div class="note-popover-wrap">' + noteToggleHtml + noteCountBadgeHtml + searchBoxHtml + notePopoverHtml + '</div>';
 
-  var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters">' + filterToggleHtml + '</div>' + noteBtnHtml + '</div>';
-
   var teamTreesHtml = '';
   if (activeTeams && activeTeams.length) {
     var trees = activeTeams.filter(function (t) { return t.treeKey && activeTrees[t.treeKey]; })
@@ -6859,6 +6858,16 @@ function renderDetail() {
     }
   }
 
+  // 선택한 연도에 예산서(트리)도 세부내역도 없는 카드는, business_cards.amt(연도 구분이 없는 캐시값)를
+  // 그대로 쓰면 다른 연도 금액이 그 연도 금액인 것처럼 잘못 노출된다(예: 2027년 화성FC 보조금에
+  // 2026년 값 1,000,000천원이 뜨던 문제). 이런 카드는 0천원 + "편성내역 없음"으로 표시한다.
+  var noBudgetForYear = !teamTreesHtml && !(b.lines && b.lines.length);
+  if (noBudgetForYear) {
+    amtLine = '<div class="detail-total-amt">0<span class="unit">천원</span></div>';
+  }
+
+  var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters">' + filterToggleHtml + '</div>' + noteBtnHtml + '</div>';
+
   var linesHtml = b.lines.length ? b.lines.map(function (l, i) {
     return '<tr>'
       + '<td contenteditable="true" onblur="editLine(' + b.id + ',' + i + ',\'account\',this.textContent)">' + escapeHtml(l.account) + '</td>'
@@ -6868,10 +6877,10 @@ function renderDetail() {
       + '<td class="del-btn" onclick="deleteLine(' + b.id + ',' + i + ')">삭제</td>'
       + '</tr>';
   }).join('') : '';
-  var linesTable = '<div class="line-hdr"><h3>세부내역 (목·항목명·산출기초)</h3><button class="btn-sm" onclick="addLine(' + b.id + ')">+ 항목 추가</button></div>'
-    + (b.lines.length
-      ? '<table class="lines"><thead><tr><th style="width:80px">목</th><th style="width:140px">항목명</th><th>산출기초</th><th style="width:110px;text-align:right">금액(천원)</th><th style="width:40px"></th></tr></thead><tbody>' + linesHtml + '</tbody></table>'
-      : '<p style="color:var(--text-soft); font-size:16.5px; padding:10px 0;">세부내역이 아직 입력되지 않았습니다. 엑셀 총액을 반영하려면 상단 총액을 직접 입력하거나, "+ 항목 추가"로 세부 항목을 넣으세요.</p>');
+  var linesTable = noBudgetForYear
+    ? '<p class="no-budget-note">편성내역 없음</p>'
+    : '<div class="line-hdr"><h3>세부내역 (목·항목명·산출기초)</h3><button class="btn-sm" onclick="addLine(' + b.id + ')">+ 항목 추가</button></div>'
+      + '<table class="lines"><thead><tr><th style="width:80px">목</th><th style="width:140px">항목명</th><th>산출기초</th><th style="width:110px;text-align:right">금액(천원)</th><th style="width:40px"></th></tr></thead><tbody>' + linesHtml + '</tbody></table>';
 
   el.innerHTML =
     '<div class="detail-inner">'
