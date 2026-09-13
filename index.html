@@ -7319,12 +7319,12 @@ var LC = {
   // months: 근무개월수(중도 입퇴사·승진 시 12에서 조정) — 기본급/초과근무/야간근무/대우수당에 공통 적용
   grades: [
     { id: 'ceo', name: '대표이사', count: 1, baseRate: 95793000, annual: true, months: 12, holidayRate: null, gradeAllowance: null, ordinaryRate: 8360200, treatmentRate: null, treatmentCount: 0, hasOvertime: false },
-    // 2급: 2026년 정원 6명·현원 0명(공석)이라 실제 예산서엔 산출식이 없음(인원 0이라 항목 자체가 생략됨). 정원표엔 있는 필수 직급이라 행은 유지하고, 단가는 3급·4급 간 격차 비율로 추정한 값 — 실제 발생 시 반드시 검증 필요.
-    { id: 'g2', name: '2급', count: 0, baseRate: 6088000, annual: false, months: 12, holidayRate: 6088000, gradeAllowance: 195000, ordinaryRate: 6885000, treatmentRate: 6088000, treatmentCount: 0, hasOvertime: true, estimated: true },
-    { id: 'g3', name: '3급', count: 14, baseRate: 4775000, annual: false, months: 12, holidayRate: 4775000, gradeAllowance: 185000, ordinaryRate: 5839600, treatmentRate: 4775000, treatmentCount: 14, hasOvertime: true },
+    // 2급: "총괄 현황"(기준일 2026.8.31) 출연금 재원 "대표이사 및 2급" 현원 5명 중 대표이사 1명을 뺀 4명 — 2027년 예산 검토 기초자료로 갱신.
+    { id: 'g2', name: '2급', count: 4, baseRate: 6088000, annual: false, months: 12, holidayRate: 6088000, gradeAllowance: 195000, ordinaryRate: 6885000, treatmentRate: 6088000, treatmentCount: 0, hasOvertime: true, estimated: true },
+    { id: 'g3', name: '3급', count: 15, baseRate: 4775000, annual: false, months: 12, holidayRate: 4775000, gradeAllowance: 185000, ordinaryRate: 5839600, treatmentRate: 4775000, treatmentCount: 14, hasOvertime: true },
     { id: 'g4', name: '4급', count: 9, baseRate: 3745000, annual: false, months: 12, holidayRate: 3745000, gradeAllowance: 180000, ordinaryRate: 4953000, treatmentRate: 3912400, treatmentCount: 11, hasOvertime: true },
-    { id: 'g5', name: '5급', count: 19, baseRate: 3231000, annual: false, months: 12, holidayRate: 3231000, gradeAllowance: 175000, ordinaryRate: 3922000, treatmentRate: 3231000, treatmentCount: 17, hasOvertime: true },
-    { id: 'g6', name: '6급', count: 28, baseRate: 2335000, annual: false, months: 12, holidayRate: 2435000, gradeAllowance: 175000, ordinaryRate: 2989000, treatmentRate: 2635000, treatmentCount: 30, hasOvertime: true }
+    { id: 'g5', name: '5급', count: 21, baseRate: 3231000, annual: false, months: 12, holidayRate: 3231000, gradeAllowance: 175000, ordinaryRate: 3922000, treatmentRate: 3231000, treatmentCount: 17, hasOvertime: true },
+    { id: 'g6', name: '6급', count: 40, baseRate: 2335000, annual: false, months: 12, holidayRate: 2435000, gradeAllowance: 175000, ordinaryRate: 2989000, treatmentRate: 2635000, treatmentCount: 30, hasOvertime: true }
   ],
   merit: [
     { label: '2년미만', pct: 10, rate: 2017000, count: 4 },
