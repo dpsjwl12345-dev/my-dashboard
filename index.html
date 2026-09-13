@@ -5627,50 +5627,102 @@ function toggleNode(e, path, level) {
   renderDetail();
 }
 
-// 산출기초("200,000원*8명*1회" 또는 "(800,000원×12월)+1,000,000원" 등)를 파싱해서 실제 계산 금액(원 단위)을 반환. 구조가 아니면 null(검증불가)
+// 산출기초("200,000원*8명*1회", "(2,626,810원*1.5/209*30시간)*3명*12월*70%" 등)를 엑셀 수식처럼 계산해
+// 실제 금액(원 단위)을 반환한다. 구조를 확신할 수 없으면 null(검증불가)을 반환해서 ⚠를 띄우지 않는다.
+//
+// 예전 구현은 "+/-로 항을 나누고 *로 다시 나눈 뒤 각 조각의 첫 숫자만 읽는" 방식이라
+// 나눗셈(/)과 괄호를 아예 처리하지 못했다. "1.5/209"를 1.5로 읽어버려서, 식이 멀쩡한데도
+// 산출기초 불일치(⚠)가 뜨는 오탐이 대량으로 발생했다. 토크나이저 + 재귀하강 파서로 바꾼다.
+// 숫자/괄호/연산자(+ - * / 및 × ÷ x X ⅹ 같은 표기 변형)와 백분율만 읽고, "원·명·개월" 같은
+// 단위어는 구분자로 무시한다. 단, 연산자 없이 숫자가 연달아 나오면(예: "1,000원 2명") 해석이
+// 모호하므로 null을 돌려준다 - 틀린 계산으로 ⚠를 띄우는 것보다 검증을 포기하는 게 낫다.
+function tokenizeCalc(calc) {
+  var s = String(calc).replace(/=\s*$/, '');
+  var tokens = [];
+  var i = 0;
+  while (i < s.length) {
+    var ch = s.charAt(i);
+    if (/[0-9]/.test(ch) || (ch === '.' && /[0-9]/.test(s.charAt(i + 1)))) {
+      var m = /^[0-9][0-9,]*(\.[0-9]+)?|^\.[0-9]+/.exec(s.slice(i));
+      if (!m) return null;
+      var num = parseFloat(m[0].replace(/,/g, ''));
+      if (isNaN(num)) return null;
+      i += m[0].length;
+      // 숫자 바로 뒤에 붙는 %는 100으로 나눈다("2.3%" -> 0.023)
+      var rest = s.slice(i);
+      var pm = /^\s*%/.exec(rest);
+      if (pm) { num = num / 100; i += pm[0].length; }
+      tokens.push({ t: 'n', v: num });
+      continue;
+    }
+    if ('+-'.indexOf(ch) !== -1) { tokens.push({ t: 'op', v: ch }); i++; continue; }
+    if ('*×ⅹxX'.indexOf(ch) !== -1) { tokens.push({ t: 'op', v: '*' }); i++; continue; }
+    if ('/÷'.indexOf(ch) !== -1) { tokens.push({ t: 'op', v: '/' }); i++; continue; }
+    if ('(（'.indexOf(ch) !== -1) { tokens.push({ t: '(' }); i++; continue; }
+    if (')）'.indexOf(ch) !== -1) { tokens.push({ t: ')' }); i++; continue; }
+    i++; // 단위어·공백 등 나머지는 구분자로 무시
+  }
+  // 연산자 없이 숫자(또는 닫는 괄호)가 연달아 오면 해석 불가
+  for (var k = 1; k < tokens.length; k++) {
+    var prev = tokens[k - 1], cur = tokens[k];
+    var prevEnds = prev.t === 'n' || prev.t === ')';
+    var curStarts = cur.t === 'n' || cur.t === '(';
+    if (prevEnds && curStarts) return null;
+  }
+  return tokens;
+}
 function parseCalcAmount(calc) {
   if (!calc) return null;
-
-  // "+"와 "-"로 항들을 분리하되, 부호 정보 유지
-  var termPattern = /([+\-]?)([^+\-]+)/g;
-  var match;
-  var terms = [];
-
-  while ((match = termPattern.exec(calc)) !== null) {
-    var sign = match[1] || '+';
-    var term = match[2].trim();
-    if (term) terms.push({ sign: sign, text: term });
-  }
-
-  var total = 0;
-  for (var ti = 0; ti < terms.length; ti++) {
-    var term = terms[ti];
-    var sign = term.sign === '-' ? -1 : 1;
-
-    // 각 항에서 곱셈 처리
-    var parts = term.text.split(/[*×xX]/).map(function (p) { return p.trim(); }).filter(Boolean);
-    if (parts.length < 1) return null;
-
-    var nums = [];
-    for (var i = 0; i < parts.length; i++) {
-      var part = parts[i].trim();
-      var isPercent = part.includes('%');
-      var m = part.match(/[\d,]+(\.\d+)?/);
-      if (!m) return null;
-      var n = parseFloat(m[0].replace(/,/g, ''));
-      if (isNaN(n)) return null;
-      // "70%" 같은 백분율은 100으로 나누기
-      if (isPercent) {
-        n = n / 100;
-      }
-      nums.push(n);
+  var tokens = tokenizeCalc(calc);
+  if (!tokens || !tokens.length) return null;
+  if (!tokens.some(function (t) { return t.t === 'n'; })) return null;
+  var pos = 0;
+  var failed = false;
+  function peek() { return tokens[pos]; }
+  function expr() {
+    var v = term();
+    if (failed) return 0;
+    while (peek() && peek().t === 'op' && (peek().v === '+' || peek().v === '-')) {
+      var op = tokens[pos++].v;
+      var r = term();
+      if (failed) return 0;
+      v = op === '+' ? v + r : v - r;
     }
-
-    var termResult = nums.reduce(function (a, b) { return a * b; }, 1);
-    total += sign * termResult;
+    return v;
   }
-
-  return total;
+  function term() {
+    var v = unary();
+    if (failed) return 0;
+    while (peek() && peek().t === 'op' && (peek().v === '*' || peek().v === '/')) {
+      var op = tokens[pos++].v;
+      var r = unary();
+      if (failed) return 0;
+      if (op === '/') {
+        if (!r) { failed = true; return 0; }
+        v = v / r;
+      } else v = v * r;
+    }
+    return v;
+  }
+  function unary() {
+    var t = peek();
+    if (!t) { failed = true; return 0; }
+    if (t.t === 'op' && (t.v === '+' || t.v === '-')) { pos++; var s = unary(); return t.v === '-' ? -s : s; }
+    if (t.t === 'n') { pos++; return t.v; }
+    if (t.t === '(') {
+      pos++;
+      var v = expr();
+      if (failed) return 0;
+      if (!peek() || peek().t !== ')') { failed = true; return 0; }
+      pos++;
+      return v;
+    }
+    failed = true; return 0;
+  }
+  var result = expr();
+  if (failed || pos !== tokens.length) return null;
+  if (!isFinite(result)) return null;
+  return result;
 }
 // 산출기초 표시용 - "60,000원×12개월=" 처럼 끝에 붙는 "=" 기호는 화면에 보여줄 필요가 없어 잘라낸다.
 // (계산 로직인 parseCalcAmount는 원본 calc를 그대로 받으므로 이 함수와 무관하게 동작한다.)
