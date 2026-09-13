@@ -4,52 +4,70 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>화성시 공기관 예산통합 대시보드</title>
-<!-- 사내망에서 cdn.jsdelivr.net / fonts.googleapis.com 이 차단되면 <link rel=stylesheet>가 렌더를 막아
-     연결이 끊길 때까지(수십 초) 화면이 백지로 남는다. media="print" -> onload 로 비차단 로드하고,
-     못 불러와도 아래 font-family 폴백(Malgun Gothic 등)으로 화면은 정상적으로 뜨게 한다. -->
-<link rel="stylesheet" as="style" crossorigin media="print" onload="this.media='all'"
-  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
-<link rel="stylesheet" media="print" onload="this.media='all'"
-  href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&display=swap" />
+<!-- 폰트를 전부 자체 호스팅한다(./fonts/). 예전에는 cdn.jsdelivr.net / fonts.googleapis.com 에서 받았는데,
+     사내망에서 해외 CDN 경로가 불안정(간헐적 패킷 유실/느린 회선)해서 "로딩만 계속되다 수십 번 시도 끝에
+     겨우 열리는" 증상이 있었다. 방화벽이 명시적으로 막은 게 아니라 그냥 그 경로 자체가 느린 것이라
+     비차단 로드(media=print)로도 폰트 자체가 계속 안 뜨는 문제는 안 없어진다 - 외부 요청을 아예 없애야
+     완전히 해결된다. Pretendard는 variable 폰트 1개 파일로 전체 굵기를 다 커버한다. -->
 <style>
 @font-face {
+  font-family: 'Pretendard';
+  src: url('./fonts/Pretendard.woff2') format('woff2');
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('./fonts/Oswald.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Oswald';
+  src: url('./fonts/Oswald.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: 'GmarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
+  src: url('./fonts/GmarketSansLight.woff') format('woff');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'GmarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+  src: url('./fonts/GmarketSansMedium.woff') format('woff');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'GmarketSans';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');
+  src: url('./fonts/GmarketSansBold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Isamanru';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+  src: url('./fonts/Isamanru.woff') format('woff');
   font-weight: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'HakgyoansimAllimjang';
-  src: url('https://cdn.jsdelivr.net/gh/fonts-archive/HakgyoansimAllimjang/HakgyoansimAllimjang-R.woff2') format('woff2'),
-       url('https://cdn.jsdelivr.net/gh/fonts-archive/HakgyoansimAllimjang/HakgyoansimAllimjang-R.woff') format('woff');
+  src: url('./fonts/HakgyoansimAllimjang.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'CucumberSalad';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2210-EF@1.0/EF_cucumbersalad.woff2') format('woff2');
+  src: url('./fonts/CucumberSalad.woff2') format('woff2');
   font-weight: normal;
   font-display: swap;
 }
@@ -2935,16 +2953,15 @@ table.summary tr.ov2-eb-section td {
 
 <script src="./lib-db-client.js"></script>
 <script>
-  // 엑셀 파싱 라이브러리는 업로드 기능을 실제로 쓸 때만 불러온다.
-  // 예전처럼 blocking <script>로 두면 사내망에서 cdn.jsdelivr.net 이 막혔을 때
-  // 연결이 끊길 때까지 뒤따르는 앱 스크립트가 실행되지 않아 대시보드 전체가 안 떴다.
+  // 엑셀 파싱 라이브러리는 업로드 기능을 실제로 쓸 때만 불러온다. 자체 호스팅(./vendor/)이라
+  // 사내망에서 외부 CDN 경로가 불안정해도 영향받지 않는다.
   var _xlsxPromise = null;
   function loadXLSX() {
     if (typeof XLSX !== 'undefined') return Promise.resolve(true);
     if (_xlsxPromise) return _xlsxPromise;
     _xlsxPromise = new Promise(function (resolve) {
       var s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+      s.src = './vendor/xlsx.full.min.js';
       s.onload = function () { resolve(typeof XLSX !== 'undefined'); };
       s.onerror = function () { _xlsxPromise = null; resolve(false); };
       document.head.appendChild(s);
@@ -5921,7 +5938,7 @@ function handleBudgetUploadFile(e) {
   input.value = '';
   if (!file) return;
   loadXLSX().then(function (xlsxReady) {
-  if (!xlsxReady) { alert('엑셀 파싱 라이브러리를 불러오지 못했습니다. 사내망에서 cdn.jsdelivr.net 접속이 차단된 경우일 수 있습니다.'); return; }
+  if (!xlsxReady) { alert('엑셀 파싱 라이브러리를 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.'); return; }
 
   var reader = new FileReader();
   reader.onload = function (ev) {
