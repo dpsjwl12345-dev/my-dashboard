@@ -998,16 +998,12 @@ table.tree td[data-field] { position: relative; }
 table.tree td[contenteditable="true"]:hover { background: rgba(198,241,53,.10); box-shadow: inset 0 0 0 1px rgba(198,241,53,.35); }
 table.tree td[contenteditable="true"]:focus { background: rgba(255,255,255,.08); outline: none; box-shadow: inset 0 0 0 1.5px var(--lime); }
 table.tree td.basis { color: rgba(255,255,255,.6); font-size: 15px; text-align: left; white-space: pre-line; }
-/* 편집 중인 셀 모서리에 나타나는 저장 확인 핀 아이콘 - 체크하면(저장 트리거) 라임으로 채워짐
+/* 예전엔 편집 중인 셀 모서리에 저장 확인 핀 아이콘이 나타나고 그걸 눌러야 저장됐는데,
+   화면에 "편집했다"는 티가 나는 게 싫다는 요청으로 이 배지를 완전히 숨기고 대신 셀에서
+   포커스가 빠져나갈 때(행 전체를 벗어날 때) 자동 저장하도록 바꿨다 - saveBudgetRow 참고.
    산출기초/항목명 칸은 td 자체가 아니라 안쪽 span/input이 편집 가능한 구조라 td[data-field]도 같이 잡는다. */
 table.tree td[contenteditable="true"] .cell-check-btn,
-table.tree td[data-field] .cell-check-btn {
-  display: none; position: absolute; top: -9px; right: -7px; width: 22px; height: 22px;
-  align-items: center; justify-content: center; cursor: pointer; z-index: 5;
-  border-radius: 8px; background: var(--bg-card); box-shadow: 0 1px 4px rgba(0,0,0,.4);
-}
-table.tree td[contenteditable="true"].cell-touched .cell-check-btn,
-table.tree td[data-field].cell-touched .cell-check-btn { display: flex; }
+table.tree td[data-field] .cell-check-btn { display: none !important; }
 table.tree td[contenteditable="true"] .cell-check-btn input,
 table.tree td[data-field] .cell-check-btn input { display: none; }
 table.tree td[contenteditable="true"] .cell-check-btn .pin,
@@ -6458,9 +6454,10 @@ function filterTreeRows(query) {
 }
 
 
-// 산출기초/2026예산액/2025예산액 셀은 blur만으로 자동 저장되지 않는다.
-// 셀을 편집(입력)하면 그 셀 모서리에 작은 체크 아이콘이 나타나고, 그 체크를 눌러야
-// 그 시점의 행(산출기초+2026예산액+2025예산액) 값이 한번에 저장되며 "수정됨"으로 영구 표시된다.
+// 산출기초/항목명/2026예산액/2025예산액/메모 칸을 편집하면 일단 'cell-touched' 표시만 내부적으로
+// 걸어두고(화면에는 안 보임), 포커스가 그 행 밖으로 완전히 빠져나가는 시점에 자동으로 저장한다.
+// 예전엔 셀 모서리에 저장 확인 핀 아이콘이 뜨고 그걸 직접 눌러야 저장됐는데, 편집한 티가 화면에
+// 남는 게 싫다는 요청으로 그 아이콘을 없애고 자동 저장으로 바꿨다.
 (function () {
   document.addEventListener('input', function (e) {
     // 산출기초 칸은 숫자마다 개별 <input>으로 쪼개져 있어(td 자체는 더 이상 contenteditable이 아님)
@@ -6468,12 +6465,36 @@ function filterTreeRows(query) {
     var td = e.target.closest && e.target.closest('table.tree td[contenteditable="true"], table.tree td[data-field]');
     if (td) td.classList.add('cell-touched');
   });
+  // focusout은 input과 달리 버블링되므로 document 레벨에서 한 번만 걸어도 모든 행을 잡는다.
+  // 셀에서 포커스가 빠질 때마다 매번 검사하되, 같은 행 안의 다른 칸으로 이동한 경우(탭 이동 등)에는
+  // 아직 그 행 편집이 끝난 게 아니므로 저장하지 않는다 - setTimeout으로 다음 포커스가 잡힌 뒤 확인한다.
+  document.addEventListener('focusout', function (e) {
+    var td = e.target.closest && e.target.closest('table.tree td[contenteditable="true"], table.tree td[data-field]');
+    if (!td) return;
+    var tr = td.closest('tr');
+    if (!tr) return;
+    setTimeout(function () {
+      if (tr.contains(document.activeElement)) return;
+      if (!tr.querySelector('.cell-touched')) return;
+      saveBudgetRow(tr);
+    }, 0);
+  });
 })();
 
+// 체크 아이콘을 누르는 옛 경로(현재는 화면에 숨겨져 있어 실질적으로 호출되지 않지만, 남아있는
+// 호출부와의 호환을 위해 유지) - id로 행을 찾아 saveBudgetRow에 위임한다.
 async function saveBudgetCellEdit(id, btnEl) {
+  var tr = btnEl ? btnEl.closest('tr') : document.querySelector('table.tree tr[data-id="' + id + '"]');
+  return saveBudgetRow(tr, btnEl);
+}
+
+// 네트워크가 불안정한 사내망에서도 일시적인 fetch 실패로 편집 내용이 그냥 유실되지 않도록,
+// 저장이 실패하면 잠깐 텀을 두고 최대 3번까지 자동으로 재시도한 뒤에만 사용자에게 알린다.
+async function saveBudgetRow(tr, btnEl) {
+  if (!tr || tr.dataset.saving === '1') return;
+  var id = Number(tr.dataset.id);
   var node = budgetItemIndex[id];
   if (!node) return;
-  var tr = btnEl.closest('tr');
   var nameEl = tr.querySelector('[data-field="name"]');
   var amt26El = tr.querySelector('[data-field="amt26"]');
   var amt25El = tr.querySelector('[data-field="amt25"]');
@@ -6497,13 +6518,13 @@ async function saveBudgetCellEdit(id, btnEl) {
   var editYear = state.selectedYear || 2026;
   var numAmt26 = Number(rawAmt26.replace(/[^0-9.-]/g, ''));
   if (rawAmt26 === '' || rawAmt26 === '-') numAmt26 = 0;
-  if (isNaN(numAmt26)) { alert(editYear + '년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
+  if (isNaN(numAmt26)) { alert(editYear + '년도 예산액은 숫자만 입력해주세요.'); return; }
 
   var numAmt25 = Number(rawAmt25.replace(/[^0-9.-]/g, ''));
   if (rawAmt25 === '' || rawAmt25 === '-') numAmt25 = 0;
-  if (isNaN(numAmt25)) { alert((editYear - 1) + '년도 예산액은 숫자만 입력해주세요.'); btnEl.checked = false; return; }
+  if (isNaN(numAmt25)) { alert((editYear - 1) + '년도 예산액은 숫자만 입력해주세요.'); return; }
 
-  if (!rawName) { alert('항목명은 비워둘 수 없습니다.'); btnEl.checked = false; return; }
+  if (!rawName) { alert('항목명은 비워둘 수 없습니다.'); return; }
 
   var yf = yearFields(editYear);
   // edited 플래그는 어디서도 화면에 표시되지 않는 죽은 값이라 더 이상 쓰지 않는다(관리자가 여러 번
@@ -6513,12 +6534,21 @@ async function saveBudgetCellEdit(id, btnEl) {
   payload[yf.current] = numAmt26;
   payload[yf.prior] = numAmt25;
 
-  btnEl.disabled = true;
-  var { error } = await db.from('budget_items').update(payload).eq('id', id);
+  tr.dataset.saving = '1';
+  if (btnEl) btnEl.disabled = true;
+  // 사내망 혼잡으로 저장 요청이 간헐적으로 fetch 자체에 실패하는 사례가 있어(요청이 서버에
+  // 닿지도 못하고 끊김), 짧은 텀을 두고 최대 3번까지 같은 저장을 자동 재시도한다.
+  var error = null;
+  for (var attempt = 1; attempt <= 3; attempt++) {
+    var res = await db.from('budget_items').update(payload).eq('id', id);
+    error = res.error;
+    if (!error) break;
+    if (attempt < 3) await new Promise(function (resolve) { setTimeout(resolve, attempt * 800); });
+  }
   if (error) {
-    btnEl.disabled = false;
-    btnEl.checked = false;
-    alert('저장 실패: ' + error.message);
+    tr.dataset.saving = '';
+    if (btnEl) btnEl.disabled = false;
+    alert('저장 실패(재시도 3회 모두 실패): ' + error.message + '\n네트워크가 불안정할 수 있습니다. 다시 시도해주세요.');
     return;
   }
 
@@ -6545,7 +6575,9 @@ async function saveBudgetCellEdit(id, btnEl) {
     }
   }
 
-  // 저장 완료: 이 행의 편집 체크 아이콘 표시 해제(다음 렌더링에서 자연히 사라짐)
+  // 저장 완료: 편집 중 표시(cell-touched)와 저장 진행 표시 해제(다음 렌더링에서 자연히 사라짐)
+  tr.dataset.saving = '';
+  if (btnEl) btnEl.disabled = false;
   tr.querySelectorAll('td[contenteditable="true"], td[data-field]').forEach(function (t) { t.classList.remove('cell-touched'); });
 
   // 트리/요약/카드 화면 전체 재계산 (증감·비율·도넛차트·상위 합계 등에 즉시 반영)
