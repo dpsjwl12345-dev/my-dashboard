@@ -5864,8 +5864,11 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     + '<td class="num basis" data-field="calc">' + mismatchIcon + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
     + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
-    + '<td class="num">' + (node.level === '팀' ? '' : fmtDiff(node.amt26, node.amt25)) + '</td>'
-    + '<td class="num pct">' + (node.level === '팀' ? '' : fmtPct(node.amt26, node.amt25)) + '</td>'
+    // 예전엔 팀(트리 루트) 행만 증감액·증감률 칸을 비워둔 탓에, 팀이 하나뿐인 사업은 예산서 맨 윗칸(총액)이,
+    // 합계 행이 붙는 사업은 두 번째 줄이 빈칸으로 나왔다. amt25는 buildTeamTrees의 rollupAmt가 자식 합으로
+    // 이미 채워주므로 다른 레벨과 똑같은 식으로 계산하면 된다 — 팀 행도 그냥 똑같이 채운다.
+    + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
+    + '<td class="num pct">' + fmtPct(node.amt26, node.amt25) + '</td>'
     + '<td class="memo-cell" contenteditable="true" spellcheck="false" data-field="memo">' + escapeHtml(node.memo || '') + cellCheckBtn + '</td>'
     + '</tr>');
   if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded, leafDepth); });
