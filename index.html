@@ -3164,7 +3164,7 @@ async function prefetchRoundsData(instId, business, rounds) {
 function buildTeamTrees(rows) {
   var byId = {};
   var yf = yearFields(state.selectedYear);
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, edited: !!r.edited, reviewColor: r.review_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -6249,7 +6249,7 @@ async function insertTemplateTree(roots, ctx) {
     var row = {
       institution_id: ctx.institution.id, fund_type: ctx.fundType, dept: ctx.dept || null, business_card: ctx.businessCard || null,
       parent_id: parentId, level: node.level, code: node.code || null, name: node.name,
-      calc: node.calc || null, sort_order: sortOrder, round: ctx.round, edited: false
+      calc: node.calc || null, sort_order: sortOrder, round: ctx.round
     };
     row[yf.current] = node.amt26 || 0;
     row[yf.prior] = node.amt25 || 0;
@@ -6506,7 +6506,10 @@ async function saveBudgetCellEdit(id, btnEl) {
   if (!rawName) { alert('항목명은 비워둘 수 없습니다.'); btnEl.checked = false; return; }
 
   var yf = yearFields(editYear);
-  var payload = { edited: true, calc: rawCalc || null, name: rawName, memo: rawMemo || null };
+  // edited 플래그는 어디서도 화면에 표시되지 않는 죽은 값이라 더 이상 쓰지 않는다(관리자가 여러 번
+  // 지적한 "편집 후 표시가 남는" 문제의 근원이었는데, 예전엔 엑셀 업로드 때마다 SQL로
+  // edited=false를 수동으로 되돌리는 임시방편만 반복했었다 - 애초에 안 쓰면 그럴 일이 없다).
+  var payload = { calc: rawCalc || null, name: rawName, memo: rawMemo || null };
   payload[yf.current] = numAmt26;
   payload[yf.prior] = numAmt25;
 
@@ -6526,7 +6529,6 @@ async function saveBudgetCellEdit(id, btnEl) {
   var delta26 = numAmt26 - (Number(node.amt26) || 0);
   var delta25 = numAmt25 - (Number(node.amt25) || 0);
 
-  node.edited = true;
   node.name = rawName;
   node.calc = payload.calc;
   node.memo = payload.memo;
