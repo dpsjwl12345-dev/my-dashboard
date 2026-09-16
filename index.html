@@ -1908,6 +1908,11 @@ table.lc-table tr.lc-ovr td.lc-rev { box-shadow: inset 3px 0 0 #E08A20; }
 .lc-note-tools button { padding: 2px 9px; border-radius: 999px; cursor: pointer; font-size: 12px;
   border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-muted); }
 .lc-note-tools button:hover { border-color: var(--danger); color: var(--danger); }
+.lc-note-gone { margin: 4px 0 10px; font-size: 12.5px; color: var(--text-muted); opacity: .75;
+  display: flex; align-items: center; gap: 8px; }
+.lc-note-gone button { padding: 2px 9px; border-radius: 999px; cursor: pointer; font-size: 12px;
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-muted); }
+.lc-note-gone button:hover { border-color: var(--accent); color: var(--accent); }
 table.lc-table-rev { table-layout: fixed; min-width: 900px; }
 table.lc-table-rev th:nth-child(1), table.lc-table-rev td:nth-child(1) { width: 14%; }
 table.lc-table-rev th:nth-child(2), table.lc-table-rev td:nth-child(2) { width: 22%; }
@@ -8377,11 +8382,14 @@ function lcEditableNotes(title, html) {
   return String(html).replace(/<p class="lc-hint"([^>]*)>([\s\S]*?)<\/p>/g, function (m, attrs, inner) {
     var key = LC.final.instKey + '|note|' + title + '|' + (i++);
     var ov = LC_OVR.map[key];
-    if (ov && ov.note != null) {
-      if (ov.note === '') return ''; // 통째로 지운 문단
-      inner = ov.note;
+    var k0 = escapeHtml(key);
+    if (ov && ov.note === '') {
+      // 통째로 지운 문단 — 되살릴 수 있게 얇은 자리표시만 남긴다.
+      return '<p class="lc-note-gone">설명 문단을 지웠습니다 '
+        + '<button type="button" onclick="lcRevertOverride(\'' + k0 + '\')">↺ 되살리기</button></p>';
     }
-    var k = escapeHtml(key);
+    if (ov && ov.note != null) inner = ov.note;
+    var k = k0;
     return '<p class="lc-hint lc-note-edit' + (ov ? ' lc-ovr-note' : '') + '"' + attrs
       + ' contenteditable="true" spellcheck="false" data-k="' + k + '"'
       + ' onblur="lcSaveNote(this)" onkeydown="lcNoteKey(event,this)">' + inner
