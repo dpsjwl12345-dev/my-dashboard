@@ -8841,17 +8841,32 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직금</summary>';
   out += lcFinalFundBlock('퇴직급여', '', [0, 0, 8],
-    '<p class="lc-hint" style="margin-top:0;"><b>107 퇴직급여 — ×8.33%(1/12), 전 부서 공통 산식(제60조① 부합)</b></p>'
+    // 요율·산식은 재원 구분과 무관하게 같지만, 예산서가 재원별로 편성되므로 대조를 위해 재원으로 끊는다.
+    '<p class="lc-hint" style="margin-top:0;"><b>107 퇴직급여 — 연보수총액÷12(=8.33%), 제60조① 1년당 30일분 평균임금에 부합</b></p>'
+    + lcFinalFundHead('출연금')
     + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
-      lcFinalRow(['① 경영기획본부(출연금) — 대표이사', { v: '8,676,400×1명×12월×8.33%', formula: true }, { v: '8,672,929', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['① 경영기획본부 — 일반직(22명 평균)·계약직(2명 평균)', { v: '3,732,280×22명 + 6,527,190×2명, ×12월×8.33%', formula: true }, { v: '95,126,474', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['① 경영기획본부 — 기간제 2명', { v: '1,310,012+2,620,024, ×12월×8.33%', formula: true }, { v: '3,928,464', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['② 교육지원과(위탁금) — 일반직(12명 평균)·계약직(10명 평균)', { v: '3,957,950×12명 + 3,166,600×10명, ×12월×8.33%', formula: true }, { v: '79,129,735', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['③ 도서관정책과(위탁금) — 일반직(20명 평균)', { v: '3,538,350×20명×12월×8.33%', formula: true }, { v: '70,738,693', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['③ 도서관정책과 — 공무직(도서관실무 12명)', { v: '2,620,024×12명×12월×8.33%', formula: true }, { v: '31,427,712', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['③ 도서관정책과 — 기간제(2명)', { v: '1,310,012×2명×12월×8.33%', formula: true }, { v: '2,618,976', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['③ 도서관정책과 — 보조금분 공무직(7명)', { v: '2,620,024×7명×12월×8.33%', formula: true }, { v: '18,332,832', formula: true }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">전체 소계 309,975천원. 요율(8.33%)·산식은 세 부서 전부 동일 — 재원(출연금·위탁금) 구분에 따른 차이 없음. 개별 단가(기본급) 검증이 아직 안 끝나 확인필요 유지.</p>'
+      lcFinalGroupRow('퇴직급여', 4, '일반직')
+      + lcFinalRow(['대표이사', { v: '8,676,400×1명×12월×8.33%', formula: true }, { v: '8,672,929', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['일반직(22명 평균)·계약직(2명 평균)', { v: '3,732,280×22명 + 6,527,190×2명, ×12월×8.33%', formula: true }, { v: '95,126,474', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('퇴직급여', 4, '기간제')
+      + lcFinalRow(['기간제 2명', { v: '1,310,012+2,620,024, ×12월×8.33%', formula: true }, { v: '3,928,464', formula: true }, { v: '확인필요', status: true }])
+    )
+    + lcFinalFundHead('위탁금(교육지원과)')
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('퇴직급여', 4, '일반직')
+      + lcFinalRow(['일반직(12명 평균)·계약직(10명 평균)', { v: '3,957,950×12명 + 3,166,600×10명, ×12월×8.33%', formula: true }, { v: '79,129,735', formula: true }, { v: '확인필요', status: true }])
+    )
+    + lcFinalFundHead('위탁금(도서관정책과)')
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('퇴직급여', 4, '일반직')
+      + lcFinalRow(['일반직(20명 평균)', { v: '3,538,350×20명×12월×8.33%', formula: true }, { v: '70,738,693', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('퇴직급여', 4, '무기계약직')
+      + lcFinalRow(['공무직(도서관실무 12명)', { v: '2,620,024×12명×12월×8.33%', formula: true }, { v: '31,427,712', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['공무직 (보조금분, 7명)', { v: '2,620,024×7명×12월×8.33%', formula: true }, { v: '18,332,832', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('퇴직급여', 4, '기간제')
+      + lcFinalRow(['기간제(2명)', { v: '1,310,012×2명×12월×8.33%', formula: true }, { v: '2,618,976', formula: true }, { v: '확인필요', status: true }])
+    )
+    + '<p class="lc-hint" style="margin-top:10px;">전체 소계 309,975천원. 요율·산식은 세 재원 전부 동일하다. 개별 단가(기본급) 검증이 끝나지 않아 확인필요를 유지한다.</p>'
   );
   out += '</details>';
 
@@ -8872,17 +8887,32 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금부담금', '', [0, 0, 8],
-    '<p class="lc-hint" style="margin-top:0;"><b>304 연금부담금 등(사회보험부담금) — ×11.75%, 전 부서 공통 요율</b></p>'
+    // 요율·산식은 재원 구분과 무관하게 같지만, 예산서가 재원별로 편성되므로 대조를 위해 재원으로 끊는다.
+    '<p class="lc-hint" style="margin-top:0;"><b>304 연금부담금 등(사회보험부담금) — ×11.75% 통합요율, 전 재원 동일</b></p>'
+    + lcFinalFundHead('출연금')
     + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
-      lcFinalRow(['① 경영기획본부(출연금) — 대표이사', { v: '8,676,400×1명×12월×11.75%', formula: true }, { v: '12,233,724', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['① 경영기획본부 — 일반직(22명 평균)·계약직(2명 평균)', { v: '3,732,280×22명 + 6,527,190×2명, ×12월×11.75%', formula: true }, { v: '134,182,002', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['① 경영기획본부 — 기간제 2명', { v: '1,310,012+2,620,024, ×12월×11.75%', formula: true }, { v: '5,541,351', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['② 교육지원과(위탁금) — 일반직(12명 평균)·계약직(10명 평균)', { v: '3,957,950×12명 + 3,166,600×10명, ×12월×11.75%', formula: true }, { v: '111,617,574', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['③ 도서관정책과(위탁금) — 일반직(20명 평균)', { v: '3,538,350×20명×12월×11.75%', formula: true }, { v: '99,781,470', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['③ 도서관정책과 — 공무직(도서관실무 12명)', { v: '2,620,024×12명×12월×11.75%', formula: true }, { v: '44,330,806', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['③ 도서관정책과 — 기간제(2명)', { v: '1,310,012×2명×12월×11.75%', formula: true }, { v: '3,694,234', formula: true }, { v: '확인필요', status: true }])
-      + lcFinalRow(['③ 도서관정책과 — 보조금분 공무직(7명)', { v: '2,620,024×7명×12월×11.75%', formula: true }, { v: '25,860,236', formula: true }, { v: '확인필요', status: true }]))
-    + '<p class="lc-hint" style="margin-top:8px;">전체 소계 437,241천원. 요율(11.75%) 자체가 2026년도 법정 사업주부담 합산요율과 맞는지 아직 확인 안 됨(오픈 이슈, 참고로 국민연금4.5%+건강보험3.545%+장기요양0.459%+고용보험1.05%+산재보험1.0%=10.554%는 2027년 기준이라 2026년 검증엔 직접 못 씀) — 재단 보수규정엔 이 목 조문이 없어 규정 대조 대상도 아님. 참고: 304는 총인건비 인상률 심사 제외 항목이라 101(인건비) 목과는 절대 합산하지 않음.</p>'
+      lcFinalGroupRow('연금부담금', 4, '일반직')
+      + lcFinalRow(['대표이사', { v: '8,676,400×1명×12월×11.75%', formula: true }, { v: '12,233,724', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['일반직(22명 평균)·계약직(2명 평균)', { v: '3,732,280×22명 + 6,527,190×2명, ×12월×11.75%', formula: true }, { v: '134,182,002', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('연금부담금', 4, '기간제')
+      + lcFinalRow(['기간제 2명', { v: '1,310,012+2,620,024, ×12월×11.75%', formula: true }, { v: '5,541,351', formula: true }, { v: '확인필요', status: true }])
+    )
+    + lcFinalFundHead('위탁금(교육지원과)')
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('연금부담금', 4, '일반직')
+      + lcFinalRow(['일반직(12명 평균)·계약직(10명 평균)', { v: '3,957,950×12명 + 3,166,600×10명, ×12월×11.75%', formula: true }, { v: '111,617,574', formula: true }, { v: '확인필요', status: true }])
+    )
+    + lcFinalFundHead('위탁금(도서관정책과)')
+    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '상태' }],
+      lcFinalGroupRow('연금부담금', 4, '일반직')
+      + lcFinalRow(['일반직(20명 평균)', { v: '3,538,350×20명×12월×11.75%', formula: true }, { v: '99,781,470', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('연금부담금', 4, '무기계약직')
+      + lcFinalRow(['공무직(도서관실무 12명)', { v: '2,620,024×12명×12월×11.75%', formula: true }, { v: '44,330,806', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['공무직 (보조금분, 7명)', { v: '2,620,024×7명×12월×11.75%', formula: true }, { v: '25,860,236', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalGroupRow('연금부담금', 4, '기간제')
+      + lcFinalRow(['기간제(2명)', { v: '1,310,012×2명×12월×11.75%', formula: true }, { v: '3,694,234', formula: true }, { v: '확인필요', status: true }])
+    )
+    + '<p class="lc-hint" style="margin-top:10px;">전체 소계 437,241천원. 국민연금·건강보험·장기요양·고용보험·산재보험이 항목별로 나뉘어 있지 않아 개별 검증이 불가하다 — 보험별로 분리 편성하고 2027년 확정 고시요율과 대조해야 한다.</p>'
   );
   out += '</details>';
   }
