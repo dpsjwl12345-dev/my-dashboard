@@ -1877,6 +1877,22 @@ table.lc-table tr.lc-grp.lc-emp-tmp th { border-left: 5px solid #E08A20; }
 .lc-emp-etc .lc-emp-tag { background: #8B5CF6; }
 .lc-emp-perm .lc-emp-tag { background: #16924F; }
 .lc-emp-tmp .lc-emp-tag { background: #E08A20; }
+/* 요구액 / 검토액 대조 표 — 두 묶음을 배경으로 가르고 차액에 부호색을 준다 */
+table.lc-table th.lc-req, table.lc-table td.lc-req { background: rgba(120,130,150,.07); }
+table.lc-table th.lc-rev, table.lc-table td.lc-rev { background: var(--accent-soft); }
+table.lc-table tr.lc-subtotal td.lc-req { background: rgba(120,130,150,.14); }
+table.lc-table td.lc-delta { font-weight: 800; font-variant-numeric: tabular-nums; }
+table.lc-table td.lc-delta-cut { color: var(--danger); }
+table.lc-table td.lc-delta-add { color: var(--accent-dark); }
+table.lc-table td.lc-delta-zero { color: var(--text-muted); }
+table.lc-table-rev { table-layout: fixed; min-width: 900px; }
+table.lc-table-rev th:nth-child(1), table.lc-table-rev td:nth-child(1) { width: 14%; }
+table.lc-table-rev th:nth-child(2), table.lc-table-rev td:nth-child(2) { width: 22%; }
+table.lc-table-rev th:nth-child(3), table.lc-table-rev td:nth-child(3) { width: 13%; }
+table.lc-table-rev th:nth-child(4), table.lc-table-rev td:nth-child(4) { width: 24%; }
+table.lc-table-rev th:nth-child(5), table.lc-table-rev td:nth-child(5) { width: 13%; }
+table.lc-table-rev th:nth-child(6), table.lc-table-rev td:nth-child(6) { width: 14%; }
+table.lc-table-rev td.lc-formula { white-space: normal; }
 
 /* ===== 예산 검토 결과 화면 ===== */
 #panel-review { min-height: 900px; }
@@ -8125,9 +8141,12 @@ function lcFinalPill(label, count, kind) {
   var bg = kind === 'good' ? 'var(--success-soft)' : kind === 'bad' ? 'var(--danger-soft)' : 'var(--dept-tour-bg)';
   return '<span style="display:inline-block;padding:3px 10px;border-radius:999px;background:' + bg + ';color:' + color + ';font-weight:700;font-size:12.5px;margin-right:6px;">' + label + ' ' + count + '</span>';
 }
-function lcFinalTable(headers, rowsHtml) {
-  return '<div style="overflow:auto;"><table class="lc-table"><thead><tr>'
-    + headers.map(function (h) { return '<th' + (h.formula ? ' class="lc-th-formula"' : '') + '>' + h.t + '</th>'; }).join('')
+function lcFinalTable(headers, rowsHtml, tableCls) {
+  return '<div style="overflow:auto;"><table class="lc-table' + (tableCls ? ' ' + tableCls : '') + '"><thead><tr>'
+    + headers.map(function (h) {
+      var cls = (h.formula ? 'lc-th-formula ' : '') + (h.cls || '');
+      return '<th' + (cls.trim() ? ' class="' + cls.trim() + '"' : '') + '>' + h.t + '</th>';
+    }).join('')
     + '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
 }
 function lcFinalRow(cells) {
@@ -8150,6 +8169,32 @@ function lcFinalGroupRow(label, colspan, empType) {
 // 재원(출연금 / 위탁금-부서) 구분 머리 — 표 위에서 재원이 바뀌는 지점을 크게 끊어 준다.
 function lcFinalFundHead(label) {
   return '<div class="lc-fund-head">' + escapeHtml(label) + '</div>';
+}
+// 이 화면의 목적은 "재단이 요구한 금액"과 "지침·보수규정·현원으로 우리가 다시 산출한 금액"을
+// 한 줄에서 맞대 보는 것이다. 예산서(내역서)에는 요구액이 남고, 여기에는 우리가 편성해 줄 금액을 둔다.
+// 요구 묶음과 검토 묶음은 배경색으로 갈라 두고, 차액은 부호로 표시한다. 단위는 전부 원.
+function lcFinalMoney(n) { return Number(n).toLocaleString('ko-KR'); }
+function lcFinalDeltaCell(diff) {
+  if (!diff) return '<td class="lc-delta lc-delta-zero">0</td>';
+  return '<td class="lc-delta ' + (diff < 0 ? 'lc-delta-cut' : 'lc-delta-add') + '">'
+    + (diff < 0 ? '△' : '+') + lcFinalMoney(Math.abs(diff)) + '</td>';
+}
+function lcFinalReviewHead() {
+  return [{ t: '구분' }, { t: '요구 산출근거', cls: 'lc-req' }, { t: '요구액(원)', cls: 'lc-req' },
+    { t: '검토 산출근거', cls: 'lc-rev' }, { t: '검토액(원)', cls: 'lc-rev' }, { t: '증감(원)' }];
+}
+function lcFinalReviewRow(label, reqCalc, reqAmt, revCalc, revAmt) {
+  return '<tr><td>' + escapeHtml(label) + '</td>'
+    + '<td class="lc-formula lc-req">' + escapeHtml(reqCalc) + '</td>'
+    + '<td class="lc-formula lc-req">' + lcFinalMoney(reqAmt) + '</td>'
+    + '<td class="lc-formula lc-rev">' + escapeHtml(revCalc) + '</td>'
+    + '<td class="lc-formula lc-rev">' + lcFinalMoney(revAmt) + '</td>'
+    + lcFinalDeltaCell(revAmt - reqAmt) + '</tr>';
+}
+function lcFinalReviewSum(label, reqTotal, revTotal) {
+  return '<tr class="lc-subtotal"><td>' + escapeHtml(label) + '</td><td class="lc-req"></td>'
+    + '<td class="lc-req">' + lcFinalMoney(reqTotal) + '</td><td class="lc-rev"></td>'
+    + '<td class="lc-rev">' + lcFinalMoney(revTotal) + '</td>' + lcFinalDeltaCell(revTotal - reqTotal) + '</tr>';
 }
 function lcFinalFundBlock(title, tag, counts, bodyHtml) {
   // 일치/불일치/확인필요 배지는 <summary> 제목 옆으로 옮겨졌으므로 여기서는 본문만 바로 렌더링한다.
@@ -8873,24 +8918,25 @@ function lcFinalSection() {
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>평가급</summary>';
   out += lcFinalFundBlock('평가급', '', [7, 0, 0],
     // 109 평가급은 위탁금 인력분까지 출연금(경영기획본부 운영경비) 한 곳에서 통합 편성한다.
-    // 지급대상은 보수규정 제55조① — 대표이사·일반직·전문계약직·일반계약직·무기계약직까지이고,
-    // 기간제는 제55조②에 따라 대표이사 재량이라 편성에 넣지 않았다.
-    // 상태칸은 2027년 요구인원 vs 재단 제출 현원(164명)의 대조 결과다.
+    // 검토액 산정 기준 — ① 인원: 재단 제출 현원 164명 ② 지급률: 2026년 경영평가 등급 통보문이
+    // 제출되지 않아 전년 확정 수준 110% 적용(기관장은 별도 평가체계라 요구대로 230% 인정)
+    // ③ 기준월액: 2027년 인상분 근거 미표기라 2026년 확정 단가 적용.
     lcFinalFundHead('출연금 (전 재단 인원분 통합 편성)')
-    + lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(원)', formula: true }, { t: '현원 대조' }],
-      lcFinalGroupRow('평가급', 4, '일반직')
-      + lcFinalRow(['기관장', { v: '7,900,000×1명×230%×6/12월', formula: true }, { v: '9,085,000', formula: true }, { v: '현원 1명 · 일치', status: true }])
-      + lcFinalRow(['3급', { v: '5,100,000×18명×130%', formula: true }, { v: '119,340,000', formula: true }, { v: '현원 16명 · +2명', status: true }])
-      + lcFinalRow(['4급', { v: '4,000,000×33명×130%', formula: true }, { v: '171,600,000', formula: true }, { v: '현원 25명 · +8명', status: true }])
-      + lcFinalRow(['5급 (라급 합산)', { v: '3,300,000×35명×130%', formula: true }, { v: '150,150,000', formula: true }, { v: '현원 5급44+라급1=45명 · △10명', status: true }])
-      + lcFinalRow(['6급 (마급 합산)', { v: '2,700,000×71명×130%', formula: true }, { v: '249,210,000', formula: true }, { v: '현원 6급43+마급28=71명 · 일치', status: true }])
-      + lcFinalGroupRow('평가급', 4, '기타직')
-      + lcFinalRow(['가급', { v: '6,700,000×5명×130%', formula: true }, { v: '43,550,000', formula: true }, { v: '현원 2급 5명 · 일치', status: true }])
-      + lcFinalRow(['나급', { v: '6,000,000×2명×130%', formula: true }, { v: '15,600,000', formula: true }, { v: '현원 1명 · +1명', status: true }])
-      + lcFinalGroupRow('평가급 (별도 행 없음 — 5급·6급 행에 합산 편성)', 4, '무기계약직')
-      + lcFinalRow(['라급·마급 29명', { v: '위 5급·6급 행에 포함', formula: true }, { v: '—', formula: true }, { v: '고용구분 분리 필요', status: true }])
-    )
-    + '<p class="lc-hint" style="margin-top:10px;"><b>합계 758,535천원 (2026년 590,720천원 대비 +167,815천원, +28.4%).</b> 증가 요인은 두 가지 — ① 지급률을 110%→<b>130%</b>로 올렸고, ② 기준월액을 3급 4,700,000→5,100,000(+8.5%)·가급 6,100,000→6,700,000(+9.8%)·5급 3,100,000→3,300,000(+6.5%)으로 올렸다. 지침 Ⅲ-3은 ‘다’등급 101~150% 범위를 정하므로 130% 자체는 범위 내지만, <b>전년 확정등급과 기준월액 상향 근거 제출이 필요</b>하다.<br><br><b>편성인원 165명 vs 현원 164명(+1명).</b> 6급·마급 71명은 현원(6급43+마급28)과 정확히 일치하나, 3급 +2·4급 +8·5급 △10으로 상위직급이 10명 늘고 5급이 10명 줄었다 — 승진 예정 반영으로 보이나 <b>단가가 높은 직급으로 옮긴 것이어서 승진계획 자료 대조가 필요</b>하다. 나급도 현원 1명인데 2명으로 편성됐다. 같은 예산서의 <b>기본급 편성인원(3급 19·4급 27·5급 33·6급 44)과도 또 달라</b>, 한 기관 안에서 인원 기준이 세 가지(현원/기본급/평가급)로 갈린다.<br><br>지급대상은 제55조①(대표이사·일반직·전문계약직·일반계약직·무기계약직)까지이며, <b>기간제는 제55조②상 대표이사 재량이라 미편성</b> — 규정 위반은 아니다. 다만 위탁금(교육지원과·도서관정책과) 인력분까지 출연금 한 목에서 통합 편성하므로 <b>재원별 부담 몫을 따로 확인</b>해야 한다.</p>'
+    + '<p class="lc-hint" style="margin:0 0 10px;"><b>검토 기준</b> — 인원은 현원 164명, 지급률은 전년 확정 110%(등급 통보문 미제출), 기준월액은 2026년 확정 단가. 기관장은 별도 평가체계라 요구대로 인정.</p>'
+    + lcFinalTable(lcFinalReviewHead(),
+      lcFinalGroupRow('평가급', 6, '일반직')
+      + lcFinalReviewRow('기관장', '7,900,000×1명×230%×6/12월', 9085000, '동일 (현원 1명 일치)', 9085000)
+      + lcFinalReviewRow('3급', '5,100,000×18명×130%', 119340000, '4,700,000×16명×110%', 82720000)
+      + lcFinalReviewRow('4급', '4,000,000×33명×130%', 171600000, '4,000,000×25명×110%', 110000000)
+      + lcFinalReviewRow('5급 (라급 합산)', '3,300,000×35명×130%', 150150000, '3,100,000×45명×110%', 153450000)
+      + lcFinalReviewRow('6급 (마급 합산)', '2,700,000×71명×130%', 249210000, '2,700,000×71명×110%', 210870000)
+      + lcFinalGroupRow('평가급', 6, '기타직')
+      + lcFinalReviewRow('가급', '6,700,000×5명×130%', 43550000, '6,100,000×5명×110%', 33550000)
+      + lcFinalReviewRow('나급', '6,000,000×2명×130%', 15600000, '6,000,000×1명×110%', 6600000)
+      + lcFinalGroupRow('평가급 — 5급·6급 행에 합산 편성 (별도 행 없음)', 6, '무기계약직')
+      + lcFinalReviewSum('소계', 758535000, 606275000),
+      'lc-table-rev')
+    + '<p class="lc-hint" style="margin-top:10px;"><b>검토 결과 △152,260천원.</b> 요구 758,535천원 → 검토 606,275천원.<br>· <b>지급률</b> 110%→130% 상향분은 2026년 경영평가 등급 통보문이 없어 인정하지 않았다. 지침 Ⅲ-3상 다등급이면 101~150% 범위라 130%도 가능하지만, 등급이 확정돼야 판단할 수 있다.<br>· <b>기준월액</b> 3급 4,700,000→5,100,000(+8.5%)·가급 6,100,000→6,700,000(+9.8%)·5급 3,100,000→3,300,000(+6.5%) 인상분은 산정근거가 표기되지 않아 2026년 단가로 되돌렸다.<br>· <b>인원</b>은 현원으로 맞췄다. 3급 18→16·4급 33→25·나급 2→1로 줄고, 5급은 35→45로 <b>오히려 10명 늘어 +3,300천원 증액</b>이다. 6급·마급 71명은 현원과 일치해 그대로 뒀다.<br>· 무기계약직 라급·마급은 예산서가 일반직 5급·6급 행에 합산해 편성했다. 지급대상은 제55조①상 무기계약직까지 맞으나 고용구분별 분리 표기가 필요하다. 기간제는 제55조②상 대표이사 재량이라 미편성이며 위반이 아니다.<br>· 위탁금(교육지원과·도서관정책과) 인력분까지 출연금 한 목에서 나가므로 <b>재원별 부담 몫</b>은 별도 확인이 필요하다.</p>'
   );
   out += '</details>';
 
