@@ -1885,6 +1885,29 @@ table.lc-table td.lc-delta { font-weight: 800; font-variant-numeric: tabular-num
 table.lc-table td.lc-delta-cut { color: var(--danger); }
 table.lc-table td.lc-delta-add { color: var(--accent-dark); }
 table.lc-table td.lc-delta-zero { color: var(--text-muted); }
+table.lc-table td.lc-edit { cursor: text; }
+table.lc-table td.lc-edit:hover { outline: 1px dashed var(--accent); outline-offset: -2px; }
+table.lc-table td.lc-edit:focus { outline: 2px solid var(--accent); outline-offset: -2px;
+  background: var(--surface); border-radius: 3px; }
+table.lc-table tr.lc-ovr td.lc-rev { box-shadow: inset 3px 0 0 #E08A20; }
+.lc-revert { margin-left: 6px; cursor: pointer; color: var(--text-muted); font-size: 13px; }
+.lc-revert:hover { color: var(--danger); }
+.lc-edit-bar { margin: 0 0 12px; padding: 9px 13px; border-radius: 9px; font-size: 13.5px;
+  line-height: 1.6; color: var(--text-soft); background: var(--bg-hover);
+  border: 1px dashed var(--border-strong); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.lc-edit-count { margin-left: auto; font-weight: 700; color: #E08A20; white-space: nowrap; }
+.lc-edit-count button { margin-left: 8px; padding: 3px 9px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-size: 12.5px; }
+.lc-edit-count button:hover { border-color: var(--danger); color: var(--danger); }
+.lc-note-edit { cursor: text; border-radius: 6px; padding: 6px 9px; margin-left: -9px; margin-right: -9px; }
+.lc-note-edit:hover { outline: 1px dashed var(--accent); outline-offset: -1px; }
+.lc-note-edit:focus { outline: 2px solid var(--accent); outline-offset: -1px; background: var(--surface); }
+.lc-note-edit.lc-ovr-note { box-shadow: inset 3px 0 0 #E08A20; }
+.lc-note-tools { display: none; gap: 6px; margin: -4px 0 10px; }
+.lc-note-edit:hover + .lc-note-tools, .lc-note-tools:hover { display: flex; }
+.lc-note-tools button { padding: 2px 9px; border-radius: 999px; cursor: pointer; font-size: 12px;
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-muted); }
+.lc-note-tools button:hover { border-color: var(--danger); color: var(--danger); }
 table.lc-table-rev { table-layout: fixed; min-width: 900px; }
 table.lc-table-rev th:nth-child(1), table.lc-table-rev td:nth-child(1) { width: 14%; }
 table.lc-table-rev th:nth-child(2), table.lc-table-rev td:nth-child(2) { width: 22%; }
@@ -8161,6 +8184,7 @@ function lcFinalRow(cells) {
 // 표에서도 한눈에 구분돼야 한다 — 구분마다 왼쪽 띠 색을 달리한다.
 var LC_EMP_CLASS = { '일반직': 'lc-emp-gen', '기타직': 'lc-emp-etc', '무기계약직': 'lc-emp-perm', '기간제': 'lc-emp-tmp' };
 function lcFinalGroupRow(label, colspan, empType) {
+  LC_CUR_GROUP = (empType || '') + '/' + label;
   var cls = LC_EMP_CLASS[empType] || '';
   return '<tr class="lc-grp ' + cls + '"><th colspan="' + colspan + '">'
     + (empType ? '<span class="lc-emp-tag">' + escapeHtml(empType) + '</span>' : '')
@@ -8168,11 +8192,138 @@ function lcFinalGroupRow(label, colspan, empType) {
 }
 // 재원(출연금 / 위탁금-부서) 구분 머리 — 표 위에서 재원이 바뀌는 지점을 크게 끊어 준다.
 function lcFinalFundHead(label) {
+  LC_CUR_FUND = label; LC_CUR_GROUP = '';
+  LC_SUM = { req: 0, rev: 0 };
   return '<div class="lc-fund-head">' + escapeHtml(label) + '</div>';
 }
 // 이 화면의 목적은 "재단이 요구한 금액"과 "지침·보수규정·현원으로 우리가 다시 산출한 금액"을
 // 한 줄에서 맞대 보는 것이다. 예산서(내역서)에는 요구액이 남고, 여기에는 우리가 편성해 줄 금액을 둔다.
 // 요구 묶음과 검토 묶음은 배경색으로 갈라 두고, 차액은 부호로 표시한다. 단위는 전부 원.
+// ── 기준값 화면의 검토액 직접 편집 ──────────────────────────────
+// 요구액은 예산서에서 온 값이라 잠가 두고, "검토 산출근거"와 "검토액" 두 칸만 고칠 수 있게 한다.
+// 고친 값은 calc_review_overrides에 행 단위로 저장되고, 화면은 항상 코드의 기본값 위에
+// 이 덮어쓰기를 얹어서 그린다 — 되돌리기를 누르면 저장분만 지워지고 기본값이 다시 나온다.
+var LC_OVR = { loaded: false, map: {} };
+var LC_BASE = {};
+var LC_CUR_FUND = '', LC_CUR_GROUP = '';
+var LC_SUM = { req: 0, rev: 0 };
+var LC_OVR_YEAR = 2027;
+
+async function lcLoadOverrides(force) {
+  if (LC_OVR.loaded && !force) return;
+  var res = await db.from('calc_review_overrides').select('*').eq('year', LC_OVR_YEAR);
+  if (res.error) { console.warn('검토액 불러오기 실패', res.error); return; }
+  LC_OVR.map = {};
+  (res.data || []).forEach(function (r) { LC_OVR.map[r.row_key] = r; });
+  LC_OVR.loaded = true;
+  renderLaborCalc();
+}
+
+function lcOvrKey(e, el) {
+  if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+  else if (e.key === 'Escape') { e.preventDefault(); el.blur(); renderLaborCalc(); }
+}
+
+async function lcSaveOverride(el) {
+  var tr = el.closest('tr'); if (!tr) return;
+  var key = el.getAttribute('data-k');
+  var calcEl = tr.querySelector('[data-f="rev_calc"]');
+  var amtEl = tr.querySelector('[data-f="rev_amt"]');
+  var revCalc = calcEl ? calcEl.textContent.trim() : '';
+  var n = amtEl ? Number(String(amtEl.textContent).replace(/[^0-9.\-]/g, '')) : NaN;
+  if (!isFinite(n)) { alert('검토액은 숫자로 입력해 주세요.'); renderLaborCalc(); return; }
+
+  var base = LC_BASE[key] || {};
+  var cur = LC_OVR.map[key];
+  // 기본값과 같아졌으면 덮어쓰기를 지운다 — 쓸데없는 행을 남기지 않는다.
+  if (revCalc === base.calc && n === base.amt) {
+    if (cur) await lcRevertOverride(key);
+    return;
+  }
+  if (cur && cur.rev_calc === revCalc && Number(cur.rev_amt) === n) return; // 바뀐 게 없음
+
+  var row = { inst_key: LC.final.instKey, year: LC_OVR_YEAR, row_key: key, rev_calc: revCalc, rev_amt: n };
+  LC_OVR.map[key] = row; // 낙관적 반영 — 소계·증감이 즉시 다시 계산된다
+  renderLaborCalc();
+  var res = await db.from('calc_review_overrides')
+    .upsert(row, { onConflict: 'inst_key,year,row_key' });
+  if (res.error) {
+    if (cur) LC_OVR.map[key] = cur; else delete LC_OVR.map[key];
+    renderLaborCalc();
+    alert('검토액 저장 실패: ' + res.error.message);
+  }
+}
+
+async function lcRevertOverride(key) {
+  var prev = LC_OVR.map[key];
+  delete LC_OVR.map[key];
+  renderLaborCalc();
+  var res = await db.from('calc_review_overrides').delete()
+    .eq('inst_key', LC.final.instKey).eq('year', LC_OVR_YEAR).eq('row_key', key);
+  if (res.error) {
+    if (prev) LC_OVR.map[key] = prev;
+    renderLaborCalc();
+    alert('되돌리기 실패: ' + res.error.message);
+  }
+}
+
+async function lcRevertAllOverrides() {
+  var keys = Object.keys(LC_OVR.map).filter(function (k) { return k.indexOf(LC.final.instKey + '|') === 0; });
+  if (!keys.length) return;
+  if (!confirm('이 기관에서 직접 고친 검토액 ' + keys.length + '건을 모두 기본값으로 되돌립니다.')) return;
+  var res = await db.from('calc_review_overrides').delete()
+    .eq('inst_key', LC.final.instKey).eq('year', LC_OVR_YEAR);
+  if (res.error) { alert('되돌리기 실패: ' + res.error.message); return; }
+  keys.forEach(function (k) { delete LC_OVR.map[k]; });
+  renderLaborCalc();
+}
+
+function lcNoteKey(e, el) {
+  if (e.key === 'Escape') { e.preventDefault(); el.blur(); renderLaborCalc(); }
+}
+
+async function lcSaveNote(el) {
+  var key = el.getAttribute('data-k');
+  var html = el.innerHTML.trim();
+  var cur = LC_OVR.map[key];
+  if (cur && cur.note === html) return;
+  if (!cur && !html) return;
+  var row = { inst_key: LC.final.instKey, year: LC_OVR_YEAR, row_key: key, note: html };
+  LC_OVR.map[key] = row;
+  var res = await db.from('calc_review_overrides')
+    .upsert(row, { onConflict: 'inst_key,year,row_key' });
+  if (res.error) {
+    if (cur) LC_OVR.map[key] = cur; else delete LC_OVR.map[key];
+    renderLaborCalc();
+    alert('설명 저장 실패: ' + res.error.message);
+  }
+}
+
+async function lcClearNote(key) {
+  if (!confirm('이 설명 문단을 화면에서 지웁니다. 되돌리기로 다시 살릴 수 있습니다.')) return;
+  var cur = LC_OVR.map[key];
+  var row = { inst_key: LC.final.instKey, year: LC_OVR_YEAR, row_key: key, note: '' };
+  LC_OVR.map[key] = row;
+  renderLaborCalc();
+  var res = await db.from('calc_review_overrides')
+    .upsert(row, { onConflict: 'inst_key,year,row_key' });
+  if (res.error) {
+    if (cur) LC_OVR.map[key] = cur; else delete LC_OVR.map[key];
+    renderLaborCalc();
+    alert('설명 지우기 실패: ' + res.error.message);
+  }
+}
+
+function lcOverrideBar() {
+  var n = Object.keys(LC_OVR.map).filter(function (k) { return k.indexOf(LC.final.instKey + '|') === 0; }).length;
+  return '<div class="lc-edit-bar">\u270e <b>검토 산출근거\u00b7검토액</b> 칸과 <b>설명 문단</b>은 직접 고칠 수 있습니다 \u2014 '
+    + '눌러서 고친 뒤 다른 곳을 클릭하면 저장되고, 소계\u00b7증감이 바로 다시 계산됩니다. '
+    + '설명 문단은 아래 \u201c이 설명 지우기\u201d로 통째로 없앨 수 있고, \u21ba로 되살립니다. '
+    + '요구액은 예산서 값이라 잠겨 있습니다.'
+    + (n ? '<span class="lc-edit-count">직접 고친 행 ' + n + '건<button type="button" onclick="lcRevertAllOverrides()">전체 되돌리기</button></span>' : '')
+    + '</div>';
+}
+
 function lcFinalMoney(n) { return Number(n).toLocaleString('ko-KR'); }
 function lcFinalDeltaCell(diff) {
   if (!diff) return '<td class="lc-delta lc-delta-zero">0</td>';
@@ -8185,21 +8336,58 @@ function lcFinalReviewHead(unit) {
     { t: '검토 산출근거', cls: 'lc-rev' }, { t: '검토액(' + u + ')', cls: 'lc-rev' }, { t: '증감(' + u + ')' }];
 }
 function lcFinalReviewRow(label, reqCalc, reqAmt, revCalc, revAmt) {
-  return '<tr><td>' + escapeHtml(label) + '</td>'
+  // 행 키 = 기관 | 재원 | 고용구분/항목 | 구분명. 표가 그 순서로 렌더되므로 렌더 도중
+  // 마지막 재원·묶음을 기억해 두었다가 붙이면 코드를 한 줄도 안 고치고 키가 생긴다.
+  var key = LC.final.instKey + '|' + LC_CUR_FUND + '|' + LC_CUR_GROUP + '|' + label;
+  LC_BASE[key] = { calc: revCalc, amt: revAmt };
+  var ov = LC_OVR.map[key];
+  if (ov) {
+    if (ov.rev_calc != null) revCalc = ov.rev_calc;
+    if (ov.rev_amt != null) revAmt = Number(ov.rev_amt);
+  }
+  LC_SUM.req += reqAmt; LC_SUM.rev += revAmt;
+  var k = escapeHtml(key);
+  var att = ' contenteditable="true" spellcheck="false" data-k="' + k + '"'
+    + ' onblur="lcSaveOverride(this)" onkeydown="lcOvrKey(event,this)"';
+  return '<tr' + (ov ? ' class="lc-ovr"' : '') + '><td>' + escapeHtml(label)
+    + (ov ? ' <span class="lc-revert" title="원래 검토액으로 되돌리기" onclick="lcRevertOverride(\'' + k + '\')">\u21ba</span>' : '')
+    + '</td>'
     + '<td class="lc-formula lc-req">' + escapeHtml(reqCalc) + '</td>'
     + '<td class="lc-formula lc-req">' + lcFinalMoney(reqAmt) + '</td>'
-    + '<td class="lc-formula lc-rev">' + escapeHtml(revCalc) + '</td>'
-    + '<td class="lc-formula lc-rev">' + lcFinalMoney(revAmt) + '</td>'
+    + '<td class="lc-formula lc-rev lc-edit" data-f="rev_calc"' + att + '>' + escapeHtml(revCalc) + '</td>'
+    + '<td class="lc-formula lc-rev lc-edit" data-f="rev_amt"' + att + '>' + lcFinalMoney(revAmt) + '</td>'
     + lcFinalDeltaCell(revAmt - reqAmt) + '</tr>';
 }
 function lcFinalReviewSum(label, reqTotal, revTotal) {
+  // 소계는 위에서 쌓은 실제 행 합계를 쓴다 — 검토액을 고치면 소계·증감이 바로 따라 움직인다.
+  if (LC_SUM.req || LC_SUM.rev) { reqTotal = LC_SUM.req; revTotal = LC_SUM.rev; }
+  LC_SUM = { req: 0, rev: 0 };
   return '<tr class="lc-subtotal"><td>' + escapeHtml(label) + '</td><td class="lc-req"></td>'
     + '<td class="lc-req">' + lcFinalMoney(reqTotal) + '</td><td class="lc-rev"></td>'
     + '<td class="lc-rev">' + lcFinalMoney(revTotal) + '</td>' + lcFinalDeltaCell(revTotal - reqTotal) + '</tr>';
 }
 function lcFinalFundBlock(title, tag, counts, bodyHtml) {
   // 일치/불일치/확인필요 배지는 <summary> 제목 옆으로 옮겨졌으므로 여기서는 본문만 바로 렌더링한다.
-  return '<div style="margin:18px 0 30px;">' + bodyHtml + '</div>';
+  // 본문 안의 설명 문단(.lc-hint)은 심사자가 직접 고치거나 통째로 지울 수 있어야 하므로,
+  // 여기서 한 번에 contenteditable로 감싸고 블록 제목 + 등장 순서로 키를 매긴다.
+  return '<div style="margin:18px 0 30px;">' + lcEditableNotes(title, bodyHtml) + '</div>';
+}
+function lcEditableNotes(title, html) {
+  var i = 0;
+  return String(html).replace(/<p class="lc-hint"([^>]*)>([\s\S]*?)<\/p>/g, function (m, attrs, inner) {
+    var key = LC.final.instKey + '|note|' + title + '|' + (i++);
+    var ov = LC_OVR.map[key];
+    if (ov && ov.note != null) {
+      if (ov.note === '') return ''; // 통째로 지운 문단
+      inner = ov.note;
+    }
+    var k = escapeHtml(key);
+    return '<p class="lc-hint lc-note-edit' + (ov ? ' lc-ovr-note' : '') + '"' + attrs
+      + ' contenteditable="true" spellcheck="false" data-k="' + k + '"'
+      + ' onblur="lcSaveNote(this)" onkeydown="lcNoteKey(event,this)">' + inner
+      + '</p><div class="lc-note-tools"><button type="button" onclick="lcClearNote(\'' + k + '\')">이 설명 지우기</button>'
+      + (ov ? '<button type="button" onclick="lcRevertOverride(\'' + k + '\')">\u21ba 원래대로</button>' : '') + '</div>';
+  });
 }
 var LC_FINAL_INSTS = [
   { key: 'hscf', label: '화성시문화관광재단', funds: [] },
@@ -8274,7 +8462,10 @@ function lcFinalSection() {
   var fundOk = function (fund) { return !f.fundType || f.fundType === fund; };
   var out = '';
 
+  LC_SUM = { req: 0, rev: 0 };  // 소계는 렌더할 때마다 새로 쌓는다
+  LC_BASE = {};
   out += lcFinalFilterBar();
+  out += lcOverrideBar();
 
   if (f.instKey === 'hscf' && f.rulesOpen) {
   var rtab = f.rulesTab || 'labor';
@@ -10004,6 +10195,7 @@ function showLaborCalc() {
   switchPanel('panel-laborcalc');
   document.querySelectorAll('.sidebar .side-item').forEach(function (n) { n.classList.remove('active'); });
   renderLaborCalc();
+  lcLoadOverrides();
 }
 
 // ============================================================
