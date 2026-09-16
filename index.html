@@ -1860,6 +1860,59 @@ table.tree tr.review-color-red td { background: rgba(214,69,90,.14); }
 table.tree tr.review-color-yellow td { background: rgba(224,179,48,.16); }
 table.tree tr.review-color-green td { background: rgba(22,146,79,.14); }
 table.tree tr.review-color-blue td { background: rgba(59,130,246,.14); }
+/* ===== 예산 검토 결과 화면 ===== */
+#panel-review { min-height: 900px; }
+.rv-wrap { padding: 4px 2px 40px; }
+.rv-h1 { font-size: 30px; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+.rv-total { margin-left: auto; font-size: 14px; font-weight: 700; color: var(--text-muted); }
+.rv-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 18px 0 14px; }
+.rv-card { text-align: left; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 14px 16px; cursor: pointer; box-shadow: var(--shadow-sm); transition: border-color .15s, transform .15s; }
+.rv-card:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+.rv-card.is-on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.rv-card-name { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+.rv-card-grades { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.rv-g { font-size: 12.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.rv-g-block { background: rgba(214,69,90,.14); color: var(--danger); }
+.rv-g-warn { background: rgba(224,179,48,.18); color: #9a7710; }
+.rv-g-plus { background: rgba(22,146,79,.14); color: var(--success); }
+.rv-card-amt { font-size: 13px; font-weight: 700; color: var(--danger); }
+.rv-card-req { font-size: 12.5px; color: var(--text-soft); margin-top: 2px; }
+.rv-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 4px 0 12px; }
+.rv-chip { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--bg);
+  color: var(--text); cursor: pointer; font-size: 13px; font-weight: 700; }
+.rv-chip.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.rv-chip.is-clear { border-style: dashed; color: var(--text-muted); }
+.rv-search { margin-left: auto; min-width: 200px; padding: 7px 12px; border-radius: 10px;
+  border: 1px solid var(--border-strong); background: var(--bg); color: var(--text); font-size: 13px; }
+.rv-table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.rv-table th { background: var(--accent-soft); color: var(--accent-dark); text-align: left; padding: 10px 12px;
+  font-weight: 700; white-space: nowrap; position: sticky; top: 0; z-index: 1; }
+.rv-table td { padding: 11px 12px; border-top: 1px solid var(--border); vertical-align: top; }
+.rv-row.rv-block td { background: rgba(214,69,90,.05); }
+.rv-row.rv-plus td { background: rgba(22,146,79,.05); }
+.rv-td-inst { font-weight: 700; white-space: nowrap; }
+.rv-fund { font-size: 11.5px; font-weight: 500; color: var(--text-soft); margin-top: 2px; }
+.rv-td-item { font-weight: 600; }
+.rv-calc { font-size: 11.5px; font-weight: 400; color: var(--text-soft); margin-top: 3px; word-break: break-all; }
+.rv-td-amt { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rv-td-memo { white-space: pre-line; line-height: 1.55; }
+.rv-head { font-weight: 700; }
+.rv-etc { color: var(--text-muted); font-size: 12.5px; margin-top: 3px; }
+.rv-req { color: var(--accent-dark); font-size: 12.5px; font-weight: 700; margin-top: 5px;
+  padding-top: 5px; border-top: 1px dashed var(--border-strong); }
+.rv-empty { padding: 40px; text-align: center; color: var(--text-muted); font-size: 14px; }
+.rv-count { text-align: right; font-size: 12.5px; color: var(--text-soft); margin-top: 8px; }
+@media (max-width: 760px) {
+  .rv-table, .rv-table thead, .rv-table tbody, .rv-table tr, .rv-table td { display: block; width: 100%; }
+  .rv-table thead { display: none; }
+  .rv-table tr { border-top: 1px solid var(--border); padding: 6px 0; }
+  .rv-table td { border: 0; padding: 4px 12px; }
+  .rv-td-amt { text-align: left; }
+}
+/* 산출기초 칸의 "※정정: ..." 구간 - 심사자가 바로잡은 산출식임을 원 산출식과 구분해 보여준다 */
+table.tree .calc-fix { color: var(--danger); font-weight: 700; }
 /* 맨 끝 자유 메모 칸 - 항목명 칸과 같은 방식(인라인 contenteditable)으로 편집 */
 table.tree td.memo-cell { position: relative; white-space: pre-line; color: var(--text-soft); }
 table.tree td.memo-cell:hover { background: rgba(255,255,255,.06); }
@@ -2749,6 +2802,13 @@ table.summary tr.ov2-eb-section td {
     <span class="circle"></span>
     <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path></svg>
   </button>
+
+  <button type="button" class="labor-box animated-button" onclick="showReview()" id="review-box" title="예산 검토 결과" aria-label="예산 검토 결과">
+    <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path></svg>
+    <span class="text">예산 검토 결과</span>
+    <span class="circle"></span>
+    <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path></svg>
+  </button>
   </div>
 
   <main class="main">
@@ -2782,6 +2842,10 @@ table.summary tr.ov2-eb-section td {
 
     <section class="panel" id="panel-laborcalc">
       <div id="laborcalc-body"></div>
+    </section>
+
+    <section class="panel" id="panel-review">
+      <div id="review-body"></div>
     </section>
 
     <section class="panel" id="panel-inst-overview">
@@ -5743,8 +5807,14 @@ function checkCalcMismatch(node) {
 // (예전엔 숫자 토큰마다 별도 <input>으로 쪼개서 "숫자만 바꾸면 자동 재계산"되게 했었지만,
 //  실시간 재계산(updateCalcLiveBadge)은 어차피 readCalcCellText로 칸 전체 텍스트를 다시 파싱하는 방식이라
 //  굳이 토큰을 쪼갤 필요가 없었다. 토큰 분할은 편집만 불편하게 만들어서 전체 텍스트 편집 방식으로 되돌렸다.)
+// 심사 중 정정한 산출식은 원 산출식 뒤에 "※정정: ..." 으로 덧붙이고 그 부분만 붉게 표시한다.
+// 편집은 칸 전체가 하나의 contenteditable이어야 하므로(readCalcCellText가 textContent를 통째로 읽는다)
+// 정정분도 같은 span 안에 두고 색만 입힌다 — 별도 요소로 빼면 편집·저장 경로가 깨진다.
 function buildCalcContentHtml(calc) {
-  return '<span class="calc-content" contenteditable="true" spellcheck="false" data-field="calc" oninput="onCalcContentInput(this)">' + escapeHtml(calc || '') + '</span>';
+  var raw = String(calc || ''), idx = raw.indexOf('※정정:');
+  var inner = idx < 0 ? escapeHtml(raw)
+    : escapeHtml(raw.slice(0, idx)) + '<span class="calc-fix">' + escapeHtml(raw.slice(idx)) + '</span>';
+  return '<span class="calc-content" contenteditable="true" spellcheck="false" data-field="calc" oninput="onCalcContentInput(this)">' + inner + '</span>';
 }
 // 산출기초 칸의 현재 편집 상태(숫자 input들 + 나머지 고정 텍스트)를 다시 하나의 문자열로 합친다.
 // 저장(saveBudgetCellEdit)과 실시간 미리보기(updateCalcLiveBadge) 둘 다 이 함수로 값을 읽는다.
@@ -9554,6 +9624,159 @@ function showLaborCalc() {
   renderLaborCalc();
 }
 
+// ============================================================
+// 예산 검토 결과 — budget_items.memo에 남긴 심사 의견을 한 화면에 모아 본다.
+// memo 첫 글자가 등급(⛔ 감액·시정 / ⚠ 확인필요 / ➕ 증액)이고, "[요청]" 줄이 재단에 요구할 자료다.
+// 감액액은 메모 본문의 "△숫자천원" 표기를 그대로 합산한다(표기를 통일해 둔 이유).
+// ============================================================
+var REVIEW = { rows: null, loading: false, inst: '', grade: '', q: '' };
+
+function reviewGrade(memo) {
+  var s = String(memo || '');
+  if (s.indexOf('⛔') === 0) return 'block';
+  if (s.indexOf('➕') === 0) return 'plus';
+  if (s.indexOf('⚠') === 0) return 'warn';
+  return 'info';
+}
+// "△1,234천원" / "△1,234천원(3건)" 형태에서 숫자만 뽑아 합산. 같은 금액이 여러 행에 반복 기재된
+// 경우(3건 합계 등)는 중복 합산되지 않도록 호출부에서 금액+문구 기준으로 1회만 센다.
+function reviewCutAmount(memo) {
+  var m = String(memo || '').match(/△\s*([0-9,]+)\s*천원/);
+  return m ? Number(m[1].replace(/,/g, '')) : 0;
+}
+function reviewPlusAmount(memo) {
+  var m = String(memo || '').match(/\+\s*([0-9,]+)\s*천원/);
+  return m ? Number(m[1].replace(/,/g, '')) : 0;
+}
+function reviewReqLines(memo) {
+  return String(memo || '').split('\n').filter(function (l) { return l.indexOf('[요청]') === 0; });
+}
+
+function showReview() {
+  nav.view = 'review'; nav.instKey = null; nav.fund = null;
+  switchPanel('panel-review');
+  document.querySelectorAll('.sidebar .side-item').forEach(function (n) { n.classList.remove('active'); });
+  renderReview();
+  if (!REVIEW.rows && !REVIEW.loading) loadReviewRows();
+}
+
+async function loadReviewRows() {
+  REVIEW.loading = true; renderReview();
+  try {
+    var res = await db.from('budget_items')
+      .select('id, institution_id, fund_type, dept, name, amt27, calc, memo, level, code')
+      .not('memo', 'is', null).eq('round', 'base').order('institution_id').limit(2000);
+    if (res.error) throw res.error;
+    REVIEW.rows = (res.data || []).filter(function (r) { return String(r.memo || '').trim(); });
+  } catch (e) {
+    REVIEW.rows = [];
+    console.error('[review] load failed', e);
+  }
+  REVIEW.loading = false; renderReview();
+}
+
+function reviewSetInst(v) { REVIEW.inst = v; renderReview(); }
+function reviewSetGrade(v) { REVIEW.grade = REVIEW.grade === v ? '' : v; renderReview(); }
+function reviewSetQuery(v) { REVIEW.q = v; renderReviewTable(); }
+
+function reviewInstName(id) {
+  var hit = (INSTITUTIONS || []).filter(function (i) { return String(i.id) === String(id); })[0];
+  return hit ? hit.name : ('기관' + id);
+}
+
+function reviewFiltered() {
+  var q = String(REVIEW.q || '').trim();
+  return (REVIEW.rows || []).filter(function (r) {
+    if (REVIEW.inst && String(r.institution_id) !== String(REVIEW.inst)) return false;
+    if (REVIEW.grade && reviewGrade(r.memo) !== REVIEW.grade) return false;
+    if (q && ((r.name || '') + ' ' + (r.memo || '') + ' ' + (r.calc || '')).indexOf(q) < 0) return false;
+    return true;
+  });
+}
+
+function renderReview() {
+  var body = document.getElementById('review-body');
+  if (!body) return;
+  if (REVIEW.loading) { body.innerHTML = '<div class="rv-wrap"><div class="rv-empty">검토 결과를 불러오는 중…</div></div>'; return; }
+  if (!REVIEW.rows) { body.innerHTML = '<div class="rv-wrap"><div class="rv-empty">검토 결과가 없습니다.</div></div>'; return; }
+
+  var all = REVIEW.rows;
+  var byInst = {};
+  all.forEach(function (r) {
+    var k = r.institution_id;
+    if (!byInst[k]) byInst[k] = { block: 0, warn: 0, plus: 0, cut: 0, add: 0, req: 0, seen: {} };
+    var g = reviewGrade(r.memo);
+    if (g === 'block') byInst[k].block++; else if (g === 'plus') byInst[k].plus++; else if (g === 'warn') byInst[k].warn++;
+    // 같은 지적을 여러 행에 나눠 적은 경우(예: "3건 합계 △108,894천원")를 중복 합산하지 않는다.
+    var cut = reviewCutAmount(r.memo);
+    if (cut) {
+      var key = cut + '|' + String(r.memo).split('\n')[0];
+      if (!byInst[k].seen[key]) { byInst[k].seen[key] = 1; byInst[k].cut += cut; }
+    }
+    byInst[k].add += reviewPlusAmount(r.memo);
+    byInst[k].req += reviewReqLines(r.memo).length ? 1 : 0;
+  });
+
+  var cards = Object.keys(byInst).map(function (k) {
+    var s = byInst[k];
+    return '<button type="button" class="rv-card' + (String(REVIEW.inst) === String(k) ? ' is-on' : '') + '" onclick="reviewSetInst(\'' + (String(REVIEW.inst) === String(k) ? '' : k) + '\')">'
+      + '<div class="rv-card-name">' + escapeHtml(reviewInstName(k)) + '</div>'
+      + '<div class="rv-card-grades"><span class="rv-g rv-g-block">⛔ ' + s.block + '</span><span class="rv-g rv-g-warn">⚠ ' + s.warn + '</span>'
+      + (s.plus ? '<span class="rv-g rv-g-plus">➕ ' + s.plus + '</span>' : '') + '</div>'
+      + '<div class="rv-card-amt">' + (s.cut ? '감액 △' + fmtWon(s.cut) + '천원' : '감액 확정액 없음')
+      + (s.add ? ' · 증액 +' + fmtWon(s.add) + '천원' : '') + '</div>'
+      + '<div class="rv-card-req">자료요구 ' + s.req + '건</div>'
+      + '</button>';
+  }).join('');
+
+  var totCut = Object.keys(byInst).reduce(function (a, k) { return a + byInst[k].cut; }, 0);
+  var totAdd = Object.keys(byInst).reduce(function (a, k) { return a + byInst[k].add; }, 0);
+  var totReq = Object.keys(byInst).reduce(function (a, k) { return a + byInst[k].req; }, 0);
+
+  body.innerHTML = '<div class="rv-wrap">'
+    + '<div class="section-title-row"><h1 class="rv-h1">예산 검토 결과</h1>'
+    + '<div class="rv-total">지적 ' + all.length + '건 · 감액 △' + fmtWon(totCut) + '천원'
+    + (totAdd ? ' · 증액 +' + fmtWon(totAdd) + '천원' : '') + ' · 자료요구 ' + totReq + '건</div></div>'
+    + '<div class="rv-cards">' + cards + '</div>'
+    + '<div class="rv-bar">'
+    + '<button type="button" class="rv-chip' + (REVIEW.grade === 'block' ? ' is-on' : '') + '" onclick="reviewSetGrade(\'block\')">⛔ 감액·시정</button>'
+    + '<button type="button" class="rv-chip' + (REVIEW.grade === 'warn' ? ' is-on' : '') + '" onclick="reviewSetGrade(\'warn\')">⚠ 확인필요</button>'
+    + '<button type="button" class="rv-chip' + (REVIEW.grade === 'plus' ? ' is-on' : '') + '" onclick="reviewSetGrade(\'plus\')">➕ 증액</button>'
+    + (REVIEW.inst ? '<button type="button" class="rv-chip is-clear" onclick="reviewSetInst(\'\')">기관 필터 해제</button>' : '')
+    + '<input type="text" class="rv-search" placeholder="항목·내용 검색" value="' + escapeHtml(REVIEW.q || '') + '" oninput="reviewSetQuery(this.value)">'
+    + '</div>'
+    + '<div id="review-table-slot"></div>'
+    + '</div>';
+  renderReviewTable();
+}
+
+function renderReviewTable() {
+  var slot = document.getElementById('review-table-slot');
+  if (!slot) return;
+  var rows = reviewFiltered();
+  if (!rows.length) { slot.innerHTML = '<div class="rv-empty">해당 조건의 지적사항이 없습니다.</div>'; return; }
+  var body = rows.map(function (r) {
+    var g = reviewGrade(r.memo);
+    var lines = String(r.memo || '').split('\n');
+    var head = lines[0] || '';
+    var rest = lines.slice(1);
+    var reqs = rest.filter(function (l) { return l.indexOf('[요청]') === 0; });
+    var etc = rest.filter(function (l) { return l.indexOf('[요청]') !== 0; });
+    return '<tr class="rv-row rv-' + g + '">'
+      + '<td class="rv-td-inst">' + escapeHtml(reviewInstName(r.institution_id)) + '<div class="rv-fund">' + escapeHtml(r.fund_type || '') + '</div></td>'
+      + '<td class="rv-td-item">' + escapeHtml(r.name || '') + (r.calc ? '<div class="rv-calc">' + escapeHtml(r.calc) + '</div>' : '') + '</td>'
+      + '<td class="rv-td-amt">' + (r.amt27 == null ? '-' : fmtWon(Number(r.amt27))) + '</td>'
+      + '<td class="rv-td-memo"><div class="rv-head">' + escapeHtml(head) + '</div>'
+      + (etc.length ? '<div class="rv-etc">' + escapeHtml(etc.join('\n')) + '</div>' : '')
+      + (reqs.length ? '<div class="rv-req">' + escapeHtml(reqs.join('\n')) + '</div>' : '')
+      + '</td></tr>';
+  }).join('');
+  slot.innerHTML = '<table class="rv-table"><thead><tr>'
+    + '<th style="width:130px;">기관</th><th style="width:220px;">항목</th><th style="width:90px;">요구액(천원)</th><th>검토 의견</th>'
+    + '</tr></thead><tbody>' + body + '</tbody></table>'
+    + '<div class="rv-count">' + rows.length + '건</div>';
+}
+
 function goToSettlement() {
   var target = INSTITUTIONS.filter(function (i) { return SETTLEMENT_DATA[i.key]; })[0] || INSTITUTIONS[0];
   if (target) selectSettlement(target.key);
@@ -10055,6 +10278,8 @@ function hlComputeScopeKey() {
     parts.push(nav.instKey, nav.settleYear);
   } else if (nav.view === 'laborcalc') {
     if (typeof LC !== 'undefined' && LC && LC.view) parts.push(LC.view);
+  } else if (nav.view === 'review') {
+    if (typeof REVIEW !== 'undefined' && REVIEW) parts.push(REVIEW.inst, REVIEW.grade, REVIEW.q);
   }
   return parts.join('|');
 }
