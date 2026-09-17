@@ -7497,7 +7497,7 @@ var LC = {
   guideCinemaOpen: {}, // 우측 상단 지침 리스트(01/02) 클릭 펼침 상태 — { '01': true/false, '02': true/false }
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 3.5, // 총인건비 인상률(%) — 2026년 실제 적용값. 2027년 확정되면 이 값을 바꾸면 전체 재계산됨.
-  quota: '', // 전년도 말 정원(일반직 및 무기계약직) — 인상률처럼 실제 확정되면 입력해 계산에 반영하는 모수. 빈칸이 기본값.
+  quota: '', // 예산편성 당시(2026.10.) 정원(일반직 및 무기계약직) — 지침 101-01③ — 인상률처럼 실제 확정되면 입력해 계산에 반영하는 모수. 빈칸이 기본값.
   treatmentPct: 4.1, // 대우공무원수당 요율(%) — 기존 lcGradeAmts 하드코딩 0.041을 편집 가능한 모수로 전환
   holidayPct: 60, // 명절휴가비 요율(%) — 기존 lcGradeAmts 하드코딩 0.6을 편집 가능한 모수로 전환
   mgmtAllow: { unit: 0, count: 0, months: 12 }, // 관리업무수당 — 기관 확정 단가 미반영 상태(0), 확정되면 단가만 입력
@@ -9729,7 +9729,7 @@ function lcFinalSection() {
       + lcFinalReviewRow('304 연금부담금', '1,165,392천원 \u00d7 10.861% (2026년 요율)', 126573, '2027년 법정요율 11.603% 적용', 135222)
       + lcFinalReviewSum('인건비성 경비 합계', 9371139, 8655221),
       'lc-table-rev')
-    + '<p class="lc-hint" style="margin-top:14px;"><b>검토 결과 \u25b3715,918천원 (요구 대비 7.64%).</b> 2027년 총액은 16,360,603천원으로 2026년 12,010,353천원 대비 +36.2%다. 인건비성 밖에서는 <b>특정업무경비가 월 120,000원</b>으로 지침 \u2162-2-(5) 공통필수항목 한도(월 80,000원)를 넘어 \u25b31,920천원(204 직무수행경비)이 별도 감액 대상이다.</p>'
+    + '<p class="lc-hint" style="margin-top:14px;"><b>검토 결과 \u25b3715,918천원 (요구 대비 7.64%).</b> 2027년 총액은 16,360,603천원으로 2026년 12,010,353천원 대비 +36.2%다. <b>특정업무경비 월 120,000원은 적정하다</b> \u2014 2027년도 지침 개정으로 공통필수\u00b7선택항목 한도가 월 80,000원에서 <b>월 120,000원</b>으로 상향(+50%)돼 앞서 지적한 \u25b31,920천원 감액은 철회한다.</p>'
     + lcFinalFundHead('101 인건비 \u2014 증감 724,567천원 내역')
     + lcFinalTable(lcFinalReviewHead('천원'),
       lcFinalGroupRow('101 인건비 증감 항목', 6, '성인선수단')
@@ -10258,7 +10258,7 @@ function renderLaborCalc() {
       + '<div class="lc-accordion-body">' + bodyHtml + '</div>'
       + '</div>';
   };
-  var section01 = '<div class="lc-section cat-general" style="border-left-color:var(--navy-text)"><h3>01 일반직 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">│ 전년도 말 정원 기준 편성 (현원이 정원보다 적은 경우 현원 기준 편성)</span></h3>'
+  var section01 = '<div class="lc-section cat-general" style="border-left-color:var(--navy-text)"><h3>01 일반직 보수 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">│ 예산편성 당시(2026.10.)의 정원과 현원 중 더 적은 인원 기준 — 현원&lt;정원이면 (정원−현원)×0.5 추가 편성</span></h3>'
     + lcAcc('기본급 <span class="lc-acc-sub" style="color:navy;">│ 호봉별 봉급액/기본연봉액</span>',
         gradesSubtotal,
         '<div class="lc-split-narrow">'
