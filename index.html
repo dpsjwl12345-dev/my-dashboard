@@ -9862,7 +9862,44 @@ function lcFinalSection() {
   // ===== 4. 화성시도시공사 =====
   if (f.instKey === 'corp') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>인건비</summary>';
+  // ---- 2027년도 본예산 요구액 검토 (기준 2026.9.) ----
+  // 위탁시설 9곳의 요구서 원본과 「요지」 정현원으로 인건비성 전량을 대조했다.
+  out += '<details class="lc-section" open style="border-left-color:var(--danger)"><summary>총액 검토 요약 (2027년 요구액)</summary>';
+  out += lcFinalFundBlock('총액 검토 2027', '', [0, 0, 0],
+    '<p class="lc-hint" style="margin-top:0;"><b>검토 기준</b> \u2014 요구서 원본 <b>9건</b>(경기타운\u00b7봉담\u00b7우정\u00b7반월\u00b7체육시설1부\u00b7체육시설2부\u00b7동탄\u00b7제부도\u00b7마리나\u00b7거점체력센터)과 각 요구서 「요지」의 정현원으로 인건비성 전량을 대조했다. 기관 정원 <b>176명 \u00b7 현원 152명</b>(결원율 13.64%).</p>'
+    + '<p class="lc-hint"><b>먼저 바로잡은 데이터</b> \u2014 같은 사업이 두 번 들어가 사업비가 2배가 된 루트 <b>7개(1,825행)</b>를 삭제하고, 요구서 「요지」의 2027년 총계와 맞는 쪽을 정본으로 확정했다. <b>동부권 체육시설</b>은 인건비 파트가 통째로 빠져 있어 1,234,222천원을 새로 넣었고(용역 전환이 아니었다), <b>동탄중앙어울림</b>은 산식과 금액이 맞지 않고 단가도 2026년 값이라 1,123,812천원으로 전면 교체했다. <b>거점체력센터</b>는 국비\u00b7시비 1:1 매칭(각 107,062천원)을 재원별로 나눠 214,124천원을 새로 넣었다.</p>'
+    + lcFinalTable(lcFinalReviewHead('천원'),
+      lcFinalGroupRow('과목별 총액 (위탁금)', 6, '')
+      + lcFinalReviewRow('101 인건비', '일반직 + 무기계약직 + 기간제 + 청원경찰', 8300531, '정현원 대조 \u2014 반월 3명분 확인 중, 1차 보류', 8300531)
+      + lcFinalReviewRow('107 퇴직급여', '연보수총액 \u00f7 12월', 727999, '산정방식 적정 \u2014 조정 없음', 727999)
+      + lcFinalReviewRow('109 평가급', '경영평가급 100% + 자체평가급 100%', 786477, '자체평가급 근거 미제출 \u2014 1차 보류', 786477)
+      + lcFinalReviewRow('304 연금부담금', '보수총액 \u00d7 10.927% (2026년 요율)', 996839, '2027년 법정요율 11.643% 적용', 1062293)
+      + lcFinalReviewSum('인건비성 경비 합계', 10811846, 10877293),
+      'lc-table-rev')
+    + '<p class="lc-hint" style="margin-top:14px;"><b>검토 결과 +65,454천원.</b> 확정 조정은 <b>4대보험 요율 정정 하나뿐</b>이고 나머지는 전부 보류다. 요율을 빼고 보면 요구액을 그대로 인정한 셈인데, 이는 단가\u00b7산식이 전 시설에 일관되게 적용돼 있고 인원도 「요지」 정현원과 맞기 때문이다.</p>'
+    + lcFinalFundHead('304 연금부담금 \u2014 요율 정정 내역')
+    + lcFinalTable([{ t: '항목' }, { t: '예산서 요율', formula: true }, { t: '요구액(천원)' }, { t: '2027년 요율', formula: true }, { t: '검토액(천원)' }],
+      lcFinalGroupRow('4대보험 사업주부담률', 5, '')
+      + lcFinalRow(['국민연금', { v: '4.75%', formula: true }, '434,404', { v: '5.0%', formula: true }, '457,267'])
+      + lcFinalRow(['건강보험', { v: '3.595%', formula: true }, '328,772', { v: '3.745%', formula: true }, '342,493'])
+      + lcFinalRow(['노인장기요양', { v: '건강보험료 \u00d7 6.57%', formula: true }, '21,614', { v: '건강보험료 \u00d7 14.74%', formula: true }, '50,484'])
+      + lcFinalRow(['고용보험(실업급여)', { v: '0.9%', formula: true }, '82,317', { v: '0.9%', formula: true }, '82,317'])
+      + lcFinalRow(['고용보험(고용안정)', { v: '0.65%', formula: true }, '59,456', { v: '0.65%', formula: true }, '59,456'])
+      + lcFinalRow(['산재보험', { v: '0.796 / 0.673 / 0.657%', formula: true }, '70,276', { v: '업종요율 유지', formula: true }, '70,276'])
+      + lcFinalRow([{ v: '합계', status: false }, { v: '10.927%', formula: true }, '996,839', { v: '11.643%', formula: true }, '1,062,293']))
+    + '<p class="lc-hint" style="margin-top:12px;"><b>단가는 전 시설이 같은 표를 쓴다.</b> 일반직 3급 68,461,584 \u00b7 4급 56,206,334 \u00b7 5급 46,935,372 \u00b7 6급 38,812,240원이 9개 시설 전부 동일하고, 무기계약직도 37,603,836원(시설관리\u00b7강사\u00b7의무)과 35,180,090원(사무보조\u00b7안내데스크) 두 갈래로 정리돼 있다. 다만 <b>인상률이 급수마다 다르다</b> \u2014 2급 +6.12% \u00b7 3급 +2.93% \u00b7 4급 +3.30% \u00b7 5급 +2.68% \u00b7 6급 +1.97% \u00b7 업무직 +0.58%이고, <b>사무보조\u00b7안내데스크만 -5.9% 인하</b>됐다. 제부도 업무직 39,043,836원과 전곡항 청원경찰 62,325,914원(일반직 5급보다 높다)도 근거가 필요하다.</p>'
+    + '<p class="lc-hint"><b>정현원은 반월 한 곳만 어긋난다.</b> 요구서 「요지」와 예산서 편성 인원이 경기타운(19)\u00b7봉담(22)\u00b7우정(16)\u00b7동부권(17)\u00b7서남부(13)\u00b7제부도(13)\u00b7전곡항(10)\u00b7동탄(17) 전부 일치하는데, <b>반월만 요지 17명(일반직4\u00b7무기11\u00b7기간제2) 대 예산서 18명(일반직5\u00b7무기13\u00b7기간제0)</b>이다. 향남복합문화센터는 정현원 배치가 없어 인건비성 0원이 정상이고, 거점체력센터는 봉담체육센터부가 운영한다.</p>'
+    + '<p class="lc-hint"><b>보류한 것과 그 이유</b><br>'
+    + '\u00b7 <b>통상임금에 경영평가급 75% 산입</b> \u2014 요구서에 \u300c[2027년 기준금액+평가급75%]=초과수당 및 연차수당 산출\u300d로 명시돼 전 사업장에 적용돼 있다. 경영평가급은 등급에 따라 지급률이 변동해 고정성이 없어 통상임금 산입에 다툼이 있다. 인정 여부에 따라 <b>초과근무수당\u00b7연차수당 전체가 연동</b>된다. [요청] 공사 보수규정 시행내규<br>'
+    + '\u00b7 <b>자체평가급을 경영평가급과 1:1로 편성</b> \u2014 지침 \u2162-3에 없는 항목이다. 경영평가급도 등급 표기 없이 100% 일괄이라 개인별 4등급 이상 차등\u00b7최고최저 50%p 이상\u00b7최고 20% 이내\u00b7최저 10% 이상 요건을 못 맞춘다. [요청] 이사회 의결\u00b7내부규정, 2026년 경영평가 등급 통보문<br>'
+    + '\u00b7 <b>반월 3명분</b> \u2014 요지 대비 일반직 +1\u00b7무기계약 +2. [요청] 직종별 정현원 명세<br>'
+    + '\u00b7 <b>거점체력센터 퇴직급여 14,349천원 시비 전액 부담</b> \u2014 인건비는 국비 90,495 \u00b7 시비 68,987로 국비가 더 큰데 퇴직급여는 시비만 낸다. 국비 교부조건상 대상 경비 제외면 정상이다<br>'
+    + '\u00b7 <b>요구서 자체 오류 2건</b> \u2014 거점체력센터 101-04(시비) 법정수당 3,770천원인데 내역 합은 4,310천원이고, 「요지」 합계와 본문 합계가 경기타운 \u25b31,200 \u00b7 봉담 \u25b31,200 \u00b7 우정 +240천원 어긋난다</p>'
+  );
+  out += '</details>';
+
+
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>인건비 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('보수(위탁금) — 화성종합경기타운', '', [0, 0, 11],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직 보수', 4)
@@ -9883,7 +9920,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>수당 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('수당(위탁금) — 화성종합경기타운', '', [0, 0, 9],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('01 일반직', 4)
@@ -9903,7 +9940,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직급여 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('퇴직급여(위탁금) — 화성종합경기타운', '', [0, 1, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['일반직', { v: '1,012,064,996÷12×1회', formula: true }, { v: '84,339' }, { v: '확인필요', status: true }])
@@ -9916,7 +9953,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>평가급</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>평가급 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('평가급(위탁금) — 화성종합경기타운', '', [0, 3, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직 — 경영평가급', 4)
@@ -9933,7 +9970,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>연금</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>연금 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('연금부담금(위탁금) — 화성종합경기타운', '', [0, 1, 11],
     lcFinalTable([{ t: '보험' }, { t: '요율' }, { t: '금액(천원)' }, { t: '상태' }],
       lcFinalRow(['국민연금', '4.5%', { v: '92,138' }, { v: '불일치', status: true }])
