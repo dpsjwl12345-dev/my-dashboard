@@ -8732,8 +8732,7 @@ function lcFinalSection() {
   // 기관 전체 총액에서 "얼마가 적정한가"만 먼저 확정해 둔다.
   out += '<details class="lc-section" open style="border-left-color:var(--accent)"><summary>인건비 산출 방법</summary>';
   out += lcFinalFundBlock('산출 방법', '', [0, 0, 0],
-    '<p class="lc-hint" style="margin-top:0;">재단이 제출한 <b>붙임1(재원별\u00b7직급별 현원)</b>과 <b>붙임2(인건비 산출 엑셀)</b>로 산식 체계를 복원했다. 아래 기준값과 산식만 있으면 <b>예산서의 모든 금액을 처음부터 다시 계산할 수 있다.</b> 실제로 16개 직급\u00b7재원 조합 전부가 예산서 단가와 10원 이내로 맞았다.</p>'
-    + lcFinalFundHead('\u2460 기본급 \u2014 산식 검증 완료')
+    lcFinalFundHead('\u2460 기본급 \u2014 산식 검증 완료')
     + '<p class="lc-hint"><b>일반직</b> = 2026년 공무원 봉급표[평균호봉 + 1호봉 승급] (선형보간) \u00d7 <b>1.035</b>(총인건비 인상률) \u00d7 인원 \u00d7 12월<br>직급 대응은 <b>재단 3급 = 공무원 6급</b>, 4급 = 7급, 5급 = 8급, 6급 = 9급이다. 평균호봉이 소수면 앞뒤 호봉을 선형보간한다.<br><b>계약직\u00b7공무직</b> = 현재 평균월급 \u00d7 1.035 \u00d7 인원 \u00d7 12월<br><b>기간제</b> = 화성시 생활임금 <b>12,750원</b> \u00d7 월 근로시간 \u00d7 지급개월 \u00d7 인원</p>'
     + lcFinalTable([{ t: '직급' }, { t: '산식', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '예산서 대조' }],
       lcFinalGroupRow('출연금 기준 \u2014 산식 검증 예시', 4, '일반직')
