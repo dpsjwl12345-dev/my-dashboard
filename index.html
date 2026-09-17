@@ -1893,6 +1893,10 @@ table.lc-table-fundcol th:nth-child(4), table.lc-table-fundcol td:nth-child(4) {
 table.lc-table-fundcol th:nth-child(3), table.lc-table-fundcol td:nth-child(3) { border-left: 1px solid rgba(255,255,255,.08); }
 table.lc-table-fundcol th:nth-child(5), table.lc-table-fundcol td:nth-child(5) { border-left: 1px solid rgba(59,130,246,.35); }
 table.lc-table td.lc-fund { white-space: nowrap; font-weight: 600; color: var(--text-soft); }
+/* 바로 위 행의 하위 내역 \u2014 들여쓰기와 꺾쇠로 종속 관계를 보인다 */
+table.lc-table td.lc-sub { padding-left: 30px; position: relative; }
+table.lc-table td.lc-sub::before { content: '\u21b3'; position: absolute; left: 12px;
+  color: var(--text-muted); font-weight: 400; }
 table.lc-table-rev th:nth-child(6), table.lc-table-rev td:nth-child(6) { border-left: 1px solid rgba(59,130,246,.35); }
 /* 헤더는 중앙정렬(기본값 유지), 금액 3칸(요구액·검토액·증감)만 우측정렬 */
 table.lc-table-rev tbody td:nth-child(3), table.lc-table-rev tbody td:nth-child(5), table.lc-table-rev tbody td:nth-child(6) { text-align: right; }
@@ -8309,10 +8313,17 @@ function lcFinalReviewRow(label, reqCalc, reqAmt, revCalc, revAmt) {
 }
 // 재원을 행 구분선(lcFinalGroupRow) 대신 2번째 열로 세운 변형.
 // 행 키는 lcFinalGroupRow('', n, 재원)이 만들던 것과 똑같이 두어 이미 저장된 검토액 수정이 살아 있게 한다.
+function lcFundCell(rowHtml, fund) {
+  // 첫 칸 바로 뒤에 재원 칸을 끼운다. 재원이 없는 행(합계\u00b7소계)은 빈 칸으로 열만 맞춘다.
+  return String(rowHtml).replace('</td>', '</td><td class="lc-fund">' + escapeHtml(fund || '') + '</td>');
+}
+function lcSubRow(rowHtml) {
+  // 첫 칸에 들여쓰기 표시를 달아 바로 위 행의 하위 내역임을 보인다.
+  return String(rowHtml).replace('<td>', '<td class="lc-sub">');
+}
 function lcFinalReviewRowFund(fund, label, reqCalc, reqAmt, revCalc, revAmt) {
   LC_CUR_GROUP = (fund || '') + '/';
-  return lcFinalReviewRow(label, reqCalc, reqAmt, revCalc, revAmt)
-    .replace('</td>', '</td><td class="lc-fund">' + escapeHtml(fund) + '</td>');
+  return lcFundCell(lcFinalReviewRow(label, reqCalc, reqAmt, revCalc, revAmt), fund);
 }
 function lcFinalReviewSum(label, reqTotal, revTotal) {
   // 소계는 위에서 쌓은 실제 행 합계를 쓴다 — 검토액을 고치면 소계·증감이 바로 따라 움직인다.
@@ -8655,25 +8666,29 @@ function lcFinalSection() {
   // ---- 2027년도 본예산 요구액 검토 (현원 391명 기준, 2026.8.31 기관현황) ----
   // 합계를 표 맨 위로 올리고, 요구(좌)/검토(우) 두 묶음을 색과 경계선으로 갈라 둔다.
   out += '<details class="lc-section" open style="border-left-color:var(--danger)"><summary>현원 391명 인건비 총액 검토</summary>';
-  var hscfRows = lcFinalGroupRow('출연금 + 위탁금', 6, '')
-    + lcFinalReviewRow('101 인건비', '보수 + 수당 전체 (정원 기준 편성)', 27228820, '재원\u00b7직급별 현원 대조 \u2014 결원 3건 조정', 26879426)
-    + lcFinalReviewRow('107 퇴직급여', '인건비 총액 \u00f7 12월', 2175852, '출연금 인상률 이중 적용 제외', 2153630)
-    + lcFinalReviewRow('109 평가급', '기관장 190% + 기관 110%', 1611141, '기준액\u00b7등급 근거 미제출 \u2014 1차 보류', 1611141)
-    + lcFinalReviewRow('304 연금부담금', '인건비 총액 \u00d7 법정요율', 3003422, '인건비 감액분 연동 (\u00d711.603%)', 2962882);
-  var hscfSum = lcFinalReviewSum('합계', 34019235, 33607079).replace('lc-subtotal', 'lc-subtotal lc-sumtop');
-  var hscfDetailRows = lcFinalReviewRowFund('출연금', '무기계약직 근로자 보수\n(세목 전체)', '2,437,570원×14명×12월 등 7개 항목', 581954, '현원 10명 (정원 14 · 결원 4)', 415679)
-    + lcFinalReviewRowFund('출연금', '일반직 4급\n(6개 항목)', '4,314,000원×103.9%×11명×12월 등', 808813, '현원 9명 (정원 11 · 결원 2)', 661757)
-    + lcFinalReviewRowFund('위탁금', '체육직 기본급\n(동탄복합문화센터)', '2,892,480원×103.9%×14명×12월', 504889, '현원 13명 (정원 14 · 결원 1)', 468826);
-  var hscfDetailSum = lcFinalReviewSum('감액 검토액', 1895656, 1546262)
-    .replace('lc-subtotal', 'lc-subtotal lc-sumtop')
-    .replace('</td>', '</td><td class="lc-fund"></td>');
-  var hscfDetailHead = lcFinalReviewHead('천원', '101 인건비 감액 검토 상세');
-  hscfDetailHead.splice(1, 0, { t: '재원' });
-  // 바로 위 표와 열 구성이 같으므로 머리글을 되풀이하지 않는다 — 제목 두 칸만 남기고 비운다.
-  hscfDetailHead.forEach(function (h, i) { if (i > 1) h.t = ''; });
+  // 재원을 구분 행이 아니라 열로 실었으므로 묶음 머리 행은 렌더하지 않는다.
+  // 다만 행 키(기관|재원|묶음|구분명)는 그대로 둬야 저장된 검토액 수정이 살아 있다.
+  LC_CUR_GROUP = '/출연금 + 위탁금';
+  var hscfRow101 = lcFundCell(lcFinalReviewRow('101 인건비', '보수 + 수당 전체 (정원 기준 편성)', 27228820, '재원\u00b7직급별 현원 대조 \u2014 결원 3건 조정', 26879426), '출연금\u00b7위탁금');
+  var hscfRowsRest = lcFundCell(lcFinalReviewRow('107 퇴직급여', '인건비 총액 \u00f7 12월', 2175852, '출연금 인상률 이중 적용 제외', 2153630), '출연금\u00b7위탁금')
+    + lcFundCell(lcFinalReviewRow('109 평가급', '기관장 190% + 기관 110%', 1611141, '기준액\u00b7등급 근거 미제출 \u2014 1차 보류', 1611141), '출연금\u00b7위탁금')
+    + lcFundCell(lcFinalReviewRow('304 연금부담금', '인건비 총액 \u00d7 법정요율', 3003422, '인건비 감액분 연동 (\u00d711.603%)', 2962882), '출연금\u00b7위탁금');
+  var hscfSum = lcFundCell(lcFinalReviewSum('합계', 34019235, 33607079)).replace('lc-subtotal', 'lc-subtotal lc-sumtop');
+  var hscfDetailRows = lcSubRow(lcFinalReviewRowFund('출연금', '무기계약직 근로자 보수\n(세목 전체)', '2,437,570원×14명×12월 등 7개 항목', 581954, '현원 10명 (정원 14 · 결원 4)', 415679))
+    + lcSubRow(lcFinalReviewRowFund('출연금', '일반직 4급\n(6개 항목)', '4,314,000원×103.9%×11명×12월 등', 808813, '현원 9명 (정원 11 · 결원 2)', 661757))
+    + lcSubRow(lcFinalReviewRowFund('위탁금', '체육직 기본급\n(동탄복합문화센터)', '2,892,480원×103.9%×14명×12월', 504889, '현원 13명 (정원 14 · 결원 1)', 468826));
+  var hscfDetailSum = lcSubRow(lcFundCell(lcFinalReviewSum('감액 검토액', 1895656, 1546262)));
+  var hscfHead = lcFinalReviewHead('천원');
+  hscfHead.splice(1, 0, { t: '재원' });
+  // 상세는 101 인건비 바로 아래에 같은 표로, 들여쓰기로 붙인다 \u2014 표를 나누면 열 너비가 서로 어긋난다.
   out += lcFinalFundBlock('총액 검토 2027', '', [0, 0, 0],
-    lcFinalTable(lcFinalReviewHead('천원'), hscfSum + hscfRows, 'lc-table-rev')
-    + lcFinalTable(hscfDetailHead, hscfDetailSum + hscfDetailRows, 'lc-table-rev lc-table-fundcol')
+    lcFinalTable(hscfHead,
+      hscfSum
+      + hscfRow101
+      + hscfDetailRows
+      + hscfDetailSum
+      + hscfRowsRest,
+      'lc-table-rev lc-table-fundcol')
   );
   out += '</details>';
 
