@@ -9715,7 +9715,46 @@ function lcFinalSection() {
   // ===== 3. 화성FC (사무국 인력운영비부터 순차 정리 — hscf/talent와 동일하게 카테고리별 <details>로 분리) =====
   if (f.instKey === 'fc') {
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>인건비</summary>';
+  // ---- 2027년도 본예산 요구액 검토 (기준 2026.9.) ----
+  // 규정집(2026.04.15.) 전문과 재단 제시 현원 20명으로 인건비성 말단행 63건을 전수 대조했다.
+  out += '<details class="lc-section" open style="border-left-color:var(--danger)"><summary>총액 검토 요약 (2027년 요구액)</summary>';
+  out += lcFinalFundBlock('총액 검토 2027', '', [0, 0, 0],
+    '<p class="lc-hint" style="margin-top:0;"><b>검토 기준</b> \u2014 현원 <b>20명</b>(대표이사(비상임)1 \u00b7 파견1 \u00b7 인턴3 \u00b7 사무국 16)과 <b>규정집(2026.04.15.)</b> 전문으로 2027년 요구서 인건비성 말단행 <b>63건</b>을 대조했다. 사무국 16명은 단장1\u00b72급1\u00b73급3\u00b74급2\u00b75급4\u00b76급5다.</p>'
+    + lcFinalTable(lcFinalReviewHead('천원'),
+      lcFinalGroupRow('과목별 총액 (출연금)', 6, '')
+      + lcFinalReviewRow('101 인건비', '사무국 18명 + 인턴 3명 + 선수단 + 유스', 9117424, '근거 없는 항목 부인 + 인상률 초과분 조정', 8392881)
+      + lcFinalReviewRow('107 퇴직급여', '1,106,624천원 \u00f7 12월 + DB형 수수료', 94060, '기준액 명세 미제출 \u2014 1차 보류', 94060)
+      + lcFinalReviewRow('109 평가급', '2~6급 16명 \u00d7 50%', 31700, '6급 대상인원 확인 중 \u2014 1차 보류', 31700)
+      + lcFinalReviewRow('304 연금부담금', '1,163,111천원 \u00d7 10.861% (2026년 요율)', 126320, '2027년 법정요율 11.603% 적용', 134959)
+      + lcFinalReviewSum('인건비성 경비 합계', 9369504, 8653600),
+      'lc-table-rev')
+    + '<p class="lc-hint" style="margin-top:14px;"><b>검토 결과 \u25b3715,904천원 (요구 대비 7.64%).</b> 2027년 총액은 16,360,603천원으로 2026년 11,050,000천원 대비 +48.1%다.</p>'
+    + lcFinalFundHead('101 인건비 \u2014 증감 724,543천원 내역')
+    + lcFinalTable(lcFinalReviewHead('천원'),
+      lcFinalGroupRow('101 인건비 증감 항목', 6, '성인선수단')
+      + lcFinalReviewRow('생활지원금(외국인 선수)', '38,600,000원 \u00d7 5명', 193000, '규정집 전문에 근거 없음 \u2014 전액 부인', 0)
+      + lcFinalReviewRow('코칭스태프 6명', '133,333,333원 \u00d7 6명 (2026년 대비 +59.2%)', 800000, '2026년 502,400 \u00d7 103% (사무국 적용 인상률)', 517472)
+      + lcFinalReviewRow('지원스태프 9명', '66,666,666원 \u00d7 9명 (2026년 대비 +52.0%)', 600000, '2026년 394,830 \u00d7 103%', 406675)
+      + lcFinalReviewRow('선수 연봉 37명', '5,500,000,000원 (산출근거 없음)', 5500000, '2026년 1인 142,857 \u00d7 103% \u00d7 37명', 5444286)
+      + lcFinalGroupRow('101 인건비 증감 항목', 6, '사무국')
+      + lcFinalReviewRow('인턴 (3개 항목)', '12,700원\u00d7209\u00d73명\u00d710월 등', 92113, '생활임금 12,750원 \u00b7 공정수당 정액 방식', 92137)
+      + lcFinalReviewSum('101 증감 소계', 7185113, 6460570),
+      'lc-table-rev')
+    + '<p class="lc-hint" style="margin-top:12px;"><b>규정상 문제가 아닌 것을 먼저 갈라 두었다.</b> 선수단 운영규정 제6조\u2461와 유소년 선수단 운영규정 제9조\u2460은 <b>코칭스태프\u00b7지원스태프\u00b7유스 지도자를 개인사업자 위임계약</b>으로 정한다. 근로자가 아니므로 이들에게 4대보험\u00b7퇴직급여를 편성하지 않은 것은 정상이고, 4대보험이 21명(사무국 18 + 인턴 3)인 것도 맞다. <b>대표이사는 비상임</b>이라 보수규정 제11조 단서에 따라 보수\u00b7평가급이 없고, <b>단장은 임원</b>이라 제55조\u2460 평가급 지급대상이 아니다.</p>'
+    + '<p class="lc-hint"><b>인원은 대체로 맞는다.</b> 선수 37명\u00b7코칭스태프 6명은 선수단 운영규정 [별표1] 정원과 정확히 일치하고, 지원스태프만 정원 10명 중 9명(테크니컬디렉터 누락)이다. 인턴 3명도 확인됐다. 남은 것은 <b>6급</b>으로, 정원([별표2])과 사무국 현원이 모두 5명인데 <b>7명으로 편성</b>돼 있다. 정원 기준으로 재산정하면 기본급\u00b7정근수당\u00b7명절휴가비\u00b7초과근무\u00b7연차 5개 항목이 273,453 \u2192 195,322천원(\u25b378,131)이 되지만, 조직 및 정원 규정 제6조\u2464\u2465가 휴직 6개월 이상\u00b7파견 1년 이상인 4~6급에 별도 정원을 인정하므로 <b>사유 확인 전까지 요구액을 유지</b>한다.</p>'
+    + '<p class="lc-hint"><b>금액 기준이 규정에 없는 영역이 인건비의 80%다.</b> 선수단 운영규정 [별표3]은 코칭\u00b7지원스태프를 \u300c당해 연도 예산의 범위 내에서 산정\u300d한다고만 적었고, 선수는 프로필\u00b7경력 환산 양식만 있을 뿐 등급별 연봉액표가 없다. 그래서 위 세 항목은 <b>사무국에 적용한 인상률 3%를 2026년 확정액에 적용</b>해 검토액을 잡았다. 통제 조항은 제5조\u2462 \u2014 선수단 구성의 기본계획(<b>선발 및 보수 등</b>)은 <b>시 담당부서 사전협의 + 이사회 의결</b> 사항이다.</p>'
+    + '<p class="lc-hint"><b>생활지원금 193,000천원은 근거가 없다.</b> 규정집 전문 389,983자를 검색해도 \u300c생활지원금\u300d이라는 용어 자체가 없다. 제14조 특별수당\u00b7상여금은 경기 중요도\u00b7리그 우승\u00b7페어플레이상 수상으로 한정돼 이에 해당하지 않는다. 지침 \u2165-1 원칙6(내부규정 근거 없는 급여\u00b7수당 신설 지급 금지) 저촉이다.</p>'
+    + '<p class="lc-hint"><b>승리수당 회당 12,000천원은 규정 범위 안이다.</b> [별표5]는 등급별 1인 정액(A 45분이상 출전\u00b7코칭스태프 500,000 / B 25~45분\u00b7분석관 300,000 / C 1~25분\u00b7의무\u00b7주무\u00b7통역\u00b7키트\u00b7스카우터 200,000 / D 엔트리 미출전 150,000)인데, 엔트리 18명과 스태프 전원을 최대로 잡으면 약 12,500천원/경기다. 다만 <b>16회는 2026년 10회 대비 +60%</b>이고, 별표5에 \u300c하부리그팀과 경기 시 미지급\u300d 규정이 있어 회수 근거는 남는다.</p>'
+    + '<p class="lc-hint"><b>산식 자체가 규정과 다른 것 두 건</b> \u2014 <b>연차수당</b>은 예산서가 \u300c연봉월액\u00d786%\u00f730일\u00d73일\u300d인데 제51조는 \u300c통상임금\u00f7209\u00d78시간\u00d7미사용일수\u300d다(규정대로면 5,727\u21926,990천원으로 증액되어 금액은 요구액을 유지하고 산식만 정정). <b>정근수당</b>은 급수별 정액률(3급30\u00b74급30\u00b75급25\u00b76급20%)로 편성했는데 제42조는 \u300c지방공무원 수당 등에 관한 규정\u300d 별표2 근속연수 구간별 지급률 준용이다.</p>'
+    + '<p class="lc-hint"><b>남은 확인</b><br>'
+    + '\u00b7 <b>6급 7명</b> \u2014 정원\u00b7현원 모두 5명. 휴직\u00b7파견 별도정원(제6조\u2464\u2465) 해당 여부<br>'
+    + '\u00b7 <b>3급 팀장 2명의 신분</b> \u2014 전문계약직 나급이면([별표3] 상당계급표상 3급 상당) 연봉제\u00b7정근수당 제외가 규정에 맞다. 일반직 3급이면 제20조 호봉제 대상이라 기준월액 5,683,500원(호봉제 3급 3,995,000원의 1.42배)도 근거가 없어진다<br>'
+    + '\u00b7 <b>2027년 요구서가 예산 트리에 두 번 등록</b> \u2014 루트 30210(목 이름이 코드로만 들어간 구버전) / 30527(정본). 말단 합계는 16,360,603천원으로 동일하므로 30210 삭제 대상</p>'
+  );
+  out += '</details>';
+
+
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>인건비 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('보수(출연금)', '', [27, 0, 2],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('일반직(연봉제: 1·2급 / 봉급제: 3~6급)', 4)
@@ -9759,7 +9798,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>수당</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>수당 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('수당(출연금)', '', [19, 0, 2],
     lcFinalTable([{ t: '세부' }, { t: '산식·기준', formula: true }, { t: '단가(원)' }, { t: '인원' }, { t: '상태' }],
       lcFinalGroupRow('초과근무수당(통상임금÷209×1.5×30시간×12월)', 5)
@@ -9795,7 +9834,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직급여</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직급여 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('퇴직급여(107목)', '', [2, 0, 0],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['퇴직연금 부담금', { v: '1,004,390,000÷12개월', formula: true }, { v: '83,700', formula: true }, { v: '일치', status: true }])
@@ -9804,7 +9843,7 @@ function lcFinalSection() {
   );
   out += '</details>';
 
-  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>평가급</summary>';
+  out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>평가급 (2026년도 대조 이력)</summary>';
   out += lcFinalFundBlock('평가급(109목)', '', [0, 0, 4],
     lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)' }, { t: '상태' }],
       lcFinalRow(['직원(3급,라급) 경영평가 평가급', { v: '산출식 없음', formula: true }, { v: '2,760' }, { v: '확인필요', status: true }])
