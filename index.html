@@ -1865,6 +1865,8 @@ table.tree tr.review-color-blue td { background: rgba(59,130,246,.14); }
   letter-spacing: -0.01em; color: var(--navy-text); background: rgba(59,130,246,.14);
   border-left: 6px solid #3B82F6; }
 .lc-fund-head:first-child { margin-top: 0; }
+/* 소제목 옆에 한 줄로 붙는 판정 요약 — 제목보다 한 단계 약하게 둔다 */
+.lc-fund-note { margin-left: 10px; font-size: 13px; font-weight: 600; color: var(--text-soft); letter-spacing: 0; }
 table.lc-table tr.lc-grp th { text-align: left; background: var(--surface-2); padding: 7px 10px;
   border-top: 2px solid var(--border-strong); font-weight: 700; }
 table.lc-table tr.lc-grp.lc-emp-gen th { border-left: 5px solid #3B82F6; }
@@ -1885,6 +1887,12 @@ table.lc-table tr.lc-subtotal td.lc-rev { background: rgba(59,130,246,.22); }
 /* 요구 묶음(2~3열)과 검토 묶음(4~5열)을 굵은 선으로 갈라 좌우를 한눈에 구분한다 */
 table.lc-table-rev th:nth-child(2), table.lc-table-rev td:nth-child(2) { border-left: 1px solid rgba(255,255,255,.08); }
 table.lc-table-rev th:nth-child(4), table.lc-table-rev td:nth-child(4) { border-left: 1px solid rgba(59,130,246,.35); }
+/* 재원(출연금/위탁금)을 열로 세운 표 — 열이 하나 밀리므로 묶음 구분선도 한 칸씩 옮긴다 */
+table.lc-table-fundcol th:nth-child(2), table.lc-table-fundcol td:nth-child(2),
+table.lc-table-fundcol th:nth-child(4), table.lc-table-fundcol td:nth-child(4) { border-left: none; }
+table.lc-table-fundcol th:nth-child(3), table.lc-table-fundcol td:nth-child(3) { border-left: 1px solid rgba(255,255,255,.08); }
+table.lc-table-fundcol th:nth-child(5), table.lc-table-fundcol td:nth-child(5) { border-left: 1px solid rgba(59,130,246,.35); }
+table.lc-table td.lc-fund { white-space: nowrap; font-weight: 600; color: var(--text-soft); }
 table.lc-table-rev th:nth-child(6), table.lc-table-rev td:nth-child(6) { border-left: 1px solid rgba(59,130,246,.35); }
 /* 헤더는 중앙정렬(기본값 유지), 금액 3칸(요구액·검토액·증감)만 우측정렬 */
 table.lc-table-rev tbody td:nth-child(3), table.lc-table-rev tbody td:nth-child(5), table.lc-table-rev tbody td:nth-child(6) { text-align: right; }
@@ -1901,13 +1909,6 @@ table.lc-table td.lc-edit:focus { outline: 2px solid var(--accent); outline-offs
 table.lc-table tr.lc-ovr td.lc-rev { box-shadow: inset 3px 0 0 #E08A20; }
 .lc-revert { margin-left: 6px; cursor: pointer; color: var(--text-muted); font-size: 13px; }
 .lc-revert:hover { color: var(--danger); }
-.lc-edit-bar { margin: 0 0 12px; padding: 9px 13px; border-radius: 9px; font-size: 13.5px;
-  line-height: 1.6; color: var(--text-soft); background: var(--bg-hover);
-  border: 1px dashed var(--border-strong); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.lc-edit-count { margin-left: auto; font-weight: 700; color: #E08A20; white-space: nowrap; }
-.lc-edit-count button { margin-left: 8px; padding: 3px 9px; border-radius: 999px; cursor: pointer;
-  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); font-size: 12.5px; }
-.lc-edit-count button:hover { border-color: var(--danger); color: var(--danger); }
 .lc-note-edit { cursor: text; border-radius: 6px; padding: 6px 9px; margin-left: -9px; margin-right: -9px; }
 .lc-note-edit:hover { outline: 1px dashed var(--accent); outline-offset: -1px; }
 .lc-note-edit:focus { outline: 2px solid var(--accent); outline-offset: -1px; background: var(--surface); }
@@ -8159,10 +8160,11 @@ function lcFinalGroupRow(label, colspan, empType) {
     + escapeHtml(label) + '</th></tr>';
 }
 // 재원(출연금 / 위탁금-부서) 구분 머리 — 표 위에서 재원이 바뀌는 지점을 크게 끊어 준다.
-function lcFinalFundHead(label) {
+function lcFinalFundHead(label, note) {
   LC_CUR_FUND = label; LC_CUR_GROUP = '';
   LC_SUM = { req: 0, rev: 0 };
-  return '<div class="lc-fund-head">' + escapeHtml(label) + '</div>';
+  return '<div class="lc-fund-head">' + escapeHtml(label)
+    + (note ? '<span class="lc-fund-note">' + escapeHtml(note) + '</span>' : '') + '</div>';
 }
 // 이 화면의 목적은 "재단이 요구한 금액"과 "지침·보수규정·현원으로 우리가 다시 산출한 금액"을
 // 한 줄에서 맞대 보는 것이다. 예산서(내역서)에는 요구액이 남고, 여기에는 우리가 편성해 줄 금액을 둔다.
@@ -8235,17 +8237,6 @@ async function lcRevertOverride(key) {
   }
 }
 
-async function lcRevertAllOverrides() {
-  var keys = Object.keys(LC_OVR.map).filter(function (k) { return k.indexOf(LC.final.instKey + '|') === 0; });
-  if (!keys.length) return;
-  if (!confirm('이 기관에서 직접 고친 검토액 ' + keys.length + '건을 모두 기본값으로 되돌립니다.')) return;
-  var res = await db.from('calc_review_overrides').delete()
-    .eq('inst_key', LC.final.instKey).eq('year', LC_OVR_YEAR);
-  if (res.error) { alert('되돌리기 실패: ' + res.error.message); return; }
-  keys.forEach(function (k) { delete LC_OVR.map[k]; });
-  renderLaborCalc();
-}
-
 function lcNoteKey(e, el) {
   if (e.key === 'Escape') { e.preventDefault(); el.blur(); renderLaborCalc(); }
 }
@@ -8282,23 +8273,15 @@ async function lcClearNote(key) {
   }
 }
 
-function lcOverrideBar() {
-  var n = Object.keys(LC_OVR.map).filter(function (k) { return k.indexOf(LC.final.instKey + '|') === 0; }).length;
-  if (!n) return '';
-  return '<div class="lc-edit-bar">'
-    + '<span class="lc-edit-count">직접 고친 행 ' + n + '건<button type="button" onclick="lcRevertAllOverrides()">전체 되돌리기</button></span>'
-    + '</div>';
-}
-
 function lcFinalMoney(n) { return Number(n).toLocaleString('ko-KR'); }
 function lcFinalDeltaCell(diff) {
   if (!diff) return '<td class="lc-delta lc-delta-zero">0</td>';
   return '<td class="lc-delta ' + (diff < 0 ? 'lc-delta-cut' : 'lc-delta-add') + '">'
     + (diff < 0 ? '△' : '+') + lcFinalMoney(Math.abs(diff)) + '</td>';
 }
-function lcFinalReviewHead(unit) {
+function lcFinalReviewHead(unit, firstCol) {
   var u = unit || '원';
-  return [{ t: '구분' }, { t: '요구 산출근거', cls: 'lc-req' }, { t: '요구액(' + u + ')', cls: 'lc-req' },
+  return [{ t: firstCol || '구분' }, { t: '요구 산출근거', cls: 'lc-req' }, { t: '요구액(' + u + ')', cls: 'lc-req' },
     { t: '검토 산출근거', cls: 'lc-rev' }, { t: '검토액(' + u + ')', cls: 'lc-rev' }, { t: '증감(' + u + ')' }];
 }
 function lcFinalReviewRow(label, reqCalc, reqAmt, revCalc, revAmt) {
@@ -8323,6 +8306,13 @@ function lcFinalReviewRow(label, reqCalc, reqAmt, revCalc, revAmt) {
     + '<td class="lc-formula lc-rev lc-edit" data-f="rev_calc"' + att + '>' + escapeHtml(revCalc) + '</td>'
     + '<td class="lc-formula lc-rev lc-edit" data-f="rev_amt"' + att + '>' + lcFinalMoney(revAmt) + '</td>'
     + lcFinalDeltaCell(revAmt - reqAmt) + '</tr>';
+}
+// 재원을 행 구분선(lcFinalGroupRow) 대신 2번째 열로 세운 변형.
+// 행 키는 lcFinalGroupRow('', n, 재원)이 만들던 것과 똑같이 두어 이미 저장된 검토액 수정이 살아 있게 한다.
+function lcFinalReviewRowFund(fund, label, reqCalc, reqAmt, revCalc, revAmt) {
+  LC_CUR_GROUP = (fund || '') + '/';
+  return lcFinalReviewRow(label, reqCalc, reqAmt, revCalc, revAmt)
+    .replace('</td>', '</td><td class="lc-fund">' + escapeHtml(fund) + '</td>');
 }
 function lcFinalReviewSum(label, reqTotal, revTotal) {
   // 소계는 위에서 쌓은 실제 행 합계를 쓴다 — 검토액을 고치면 소계·증감이 바로 따라 움직인다.
@@ -8434,7 +8424,6 @@ function lcFinalSection() {
   LC_SUM = { req: 0, rev: 0 };  // 소계는 렌더할 때마다 새로 쌓는다
   LC_BASE = {};
   out += lcFinalFilterBar();
-  out += lcOverrideBar();
 
   if (f.instKey === 'hscf' && f.rulesOpen) {
   var rtab = f.rulesTab || 'labor';
@@ -8672,19 +8661,23 @@ function lcFinalSection() {
     + lcFinalReviewRow('109 평가급', '기관장 190% + 기관 110%', 1611141, '기준액\u00b7등급 근거 미제출 \u2014 1차 보류', 1611141)
     + lcFinalReviewRow('304 연금부담금', '인건비 총액 \u00d7 법정요율', 3003422, '인건비 감액분 연동 (\u00d711.603%)', 2962882);
   var hscfSum = lcFinalReviewSum('합계', 34019235, 33607079).replace('lc-subtotal', 'lc-subtotal lc-sumtop');
-  var hscfDetailRows = lcFinalGroupRow('', 6, '출연금')
-    + lcFinalReviewRow('무기계약직 근로자 보수\n(세목 전체)', '2,437,570원×14명×12월 등 7개 항목', 581954, '현원 10명 (정원 14 · 결원 4)', 415679)
-    + lcFinalReviewRow('일반직 4급\n(6개 항목)', '4,314,000원×103.9%×11명×12월 등', 808813, '현원 9명 (정원 11 · 결원 2)', 661757)
-    + lcFinalGroupRow('', 6, '위탁금')
-    + lcFinalReviewRow('체육직 기본급\n(동탄복합문화센터)', '2,892,480원×103.9%×14명×12월', 504889, '현원 13명 (정원 14 · 결원 1)', 468826);
-  var hscfDetailSum = lcFinalReviewSum('증감 소계', 1895656, 1546262).replace('lc-subtotal', 'lc-subtotal lc-sumtop');
+  var hscfDetailRows = lcFinalReviewRowFund('출연금', '무기계약직 근로자 보수\n(세목 전체)', '2,437,570원×14명×12월 등 7개 항목', 581954, '현원 10명 (정원 14 · 결원 4)', 415679)
+    + lcFinalReviewRowFund('출연금', '일반직 4급\n(6개 항목)', '4,314,000원×103.9%×11명×12월 등', 808813, '현원 9명 (정원 11 · 결원 2)', 661757)
+    + lcFinalReviewRowFund('위탁금', '체육직 기본급\n(동탄복합문화센터)', '2,892,480원×103.9%×14명×12월', 504889, '현원 13명 (정원 14 · 결원 1)', 468826);
+  var hscfDetailSum = lcFinalReviewSum('감액 검토액', 1895656, 1546262)
+    .replace('lc-subtotal', 'lc-subtotal lc-sumtop')
+    .replace('</td>', '</td><td class="lc-fund"></td>');
+  var hscfDetailHead = lcFinalReviewHead('천원', '101 인건비 감액 검토 상세');
+  hscfDetailHead.splice(1, 0, { t: '재원' });
+  // 바로 위 표와 열 구성이 같으므로 머리글을 되풀이하지 않는다 — 제목 두 칸만 남기고 비운다.
+  hscfDetailHead.forEach(function (h, i) { if (i > 1) h.t = ''; });
   out += lcFinalFundBlock('총액 검토 2027', '', [0, 0, 0],
     lcFinalTable(lcFinalReviewHead('천원'), hscfSum + hscfRows, 'lc-table-rev')
-    + lcFinalTable(lcFinalReviewHead('천원'), hscfDetailSum + hscfDetailRows, 'lc-table-rev')
+    + lcFinalTable(hscfDetailHead, hscfDetailSum + hscfDetailRows, 'lc-table-rev lc-table-fundcol')
   );
   out += '</details>';
 
-  out += '<details class="lc-section" open style="border-left-color:var(--accent)"><summary>인건비 산출 방법 (2027년 검증)</summary>';
+  out += '<details class="lc-section" open style="border-left-color:var(--accent)"><summary>인건비 검토내역 (2027년 검증)</summary>';
   out += lcFinalFundBlock('산출 방법 2027', '', [0, 0, 0],
     lcFinalFundHead('\u2460 검증 완료 \u2014 규정과 10원 이내로 일치')
     + lcFinalTable([{ t: '구분' }, { t: '산식', formula: true }, { t: '2027 단가', formula: true }, { t: '상태' }],
@@ -8703,21 +8696,19 @@ function lcFinalSection() {
       + lcFinalRow(['장기요양', { v: '건강보험료 \u00d7 14.74%', formula: true }, { v: '14.74%', formula: true }, { v: '확인필요', status: true }])
       + lcFinalRow(['고용보험', { v: '실업급여 0.9% + 고용안정\u00b7직업능력개발 0.65%', formula: true }, { v: '1.55%', formula: true }, { v: '일치', status: true }])
       + lcFinalRow(['산재보험', { v: '업종요율 \u2014 0.756% / 0.726% 혼용', formula: true }, { v: '0.756%', formula: true }, { v: '확인필요', status: true }]))
-    + lcFinalFundHead('\u2461 확정 못한 것 \u2014 일반직 기준월액')
-    + '<p class="lc-hint">보수규정 제17조는 <b>재단 3급 = 공무원 6급</b>, 4급 = 7급, 5급 = 8급, 6급 = 9급 봉급표를 쓴다. 그런데 예산서 단가가 사업장마다 갈린다.</p>'
+    + '<p class="lc-hint" style="margin-top:12px;"><b>장기요양 14.74%만 유도 과정이 없다.</b> 건강보험은 <b>7.49%의 1/2</b>로 사업주부담 반쪽임을 밝혔는데, 장기요양은 산식 칸과 단가 칸이 같은 숫자여서 이 값이 어디서 나왔는지 표가 설명하지 못한다. 다음 세 가지를 확인하면 확정된다.<br>\u2460 재단 <b>붙임2(인건비 산출 엑셀)</b>의 장기요양 계산 셀 수식 \u2014 무엇에 곱했고 1/2을 어디에 넣었는지<br>\u2461 <b>보건복지부 장기요양위원회 고시</b>의 해당 연도 장기요양보험료율(건강보험료 대비 %) \u2014 2027년분이 확정된 요율인지, 이전 연도 요율을 끌어온 것인지<br>\u2462 <b>건강보험공단 4대보험 요율표</b> 해당 연도판 \u2014 산재 업종요율 0.756%\u00b70.726% 혼용 건도 같이 대조</p>'
+    + lcFinalFundHead('\u2461 확정 못한 것 \u2014 일반직 기준월액', '기간제\u00b7공무직은 지침 확인 완료, 일반직만 평균호봉 확인 필요')
     + lcFinalTable([{ t: '급수' }, { t: '사용된 기준월액(원)', formula: true }, { t: '종수' }, { t: '상태' }],
       lcFinalGroupRow('일반직 기준월액', 4, '')
       + lcFinalRow(['3급', { v: '4,775,000 / 5,127,260 / 4,555,410', formula: true }, '3종', { v: '확인필요', status: true }])
       + lcFinalRow(['4급', { v: '4,314,000 / 4,251,180 / 4,189,050 / 3,981,560 / 3,902,860 / 3,745,000', formula: true }, '6종', { v: '확인필요', status: true }])
       + lcFinalRow(['5급', { v: '3,849,000 / 3,665,600 / 3,436,080 / 3,327,000 / 3,231,000 / 2,922,710', formula: true }, '6종', { v: '확인필요', status: true }])
       + lcFinalRow(['6급', { v: '2,685,950 / 2,435,000 / 2,252,560 / 2,231,360', formula: true }, '4종', { v: '확인필요', status: true }]))
-    + lcFinalFundHead('\u2462 재원\u00b7직급별 정현원 (기준일 2026.8.31)')
+    + lcFinalFundHead('\u2462 재원\u00b7직급별 정현원 (기준일 2026.8.31)', '기간제는 일반 31명\u00b7단시간 141명(출연금 13\u00b750 / 위탁금 18\u00b791), 시설체육운영팀은 체육직 정원 14명\u00b7현원 13명 외가 공무직 정현원')
     + lcFinalTable([{ t: '구분' }, { t: '대표이사\u00b72급' }, { t: '3급' }, { t: '4급' }, { t: '5급' }, { t: '6급' }, { t: '무기직' }, { t: '계' }],
-      lcFinalGroupRow('정원 / 현원', 8, '')
+      lcFinalRow(['총계', '7 / 7', '34 / 33', '46 / 41', '79 / 74', '108 / 108', '134 / 128', '408 / 391'])
       + lcFinalRow(['출연금', '5 / 5', '14 / 15', { v: '11 / 9', status: true }, '20 / 21', '36 / 40', { v: '14 / 10', status: true }, '100 / 100'])
-      + lcFinalRow(['위탁금', '2 / 2', '20 / 18', '35 / 32', '59 / 53', '72 / 68', '120 / 118', { v: '308 / 291', status: true }])
-      + lcFinalRow(['총계', '7 / 7', '34 / 33', '46 / 41', '79 / 74', '108 / 108', '134 / 128', '408 / 391']))
-    + '<p class="lc-hint" style="margin-top:10px;">기간제는 별도로 일반 31명\u00b7단시간 141명(출연금 13\u00b750 / 위탁금 18\u00b791)이다. 시설체육운영팀은 체육직 정원 14명\u00b7현원 13명 외가 공무직 정현원이다.</p>'
+      + lcFinalRow(['위탁금', '2 / 2', '20 / 18', '35 / 32', '59 / 53', '72 / 68', '120 / 118', { v: '308 / 291', status: true }]))
   );
   out += '</details>';
 
