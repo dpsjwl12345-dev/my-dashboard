@@ -2466,7 +2466,7 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
   justify-content: space-around;
   gap: 4px;
   height: 50px;
-  width: 500px;
+  width: 560px;
   margin-bottom: 20px;
 }
 .filter-switch input { display: none; }
@@ -2501,9 +2501,10 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
   padding: 0 4px;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   color: rgba(255,255,255,.6);
+  white-space: nowrap;
 }
-label[for="lc-opt-retire"] { flex: 1.4; }
-label[for="lc-opt-final"] { flex: 1.4; }
+/* 글자 수가 많은 탭에 폭을 더 준다 */
+label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] { flex: 1.4; }
 #lc-opt-labor:checked + label[for="lc-opt-labor"],
 #lc-opt-retire:checked + label[for="lc-opt-retire"],
 #lc-opt-eval:checked + label[for="lc-opt-eval"],
