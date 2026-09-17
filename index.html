@@ -8321,11 +8321,9 @@ async function lcClearNote(key) {
 
 function lcOverrideBar() {
   var n = Object.keys(LC_OVR.map).filter(function (k) { return k.indexOf(LC.final.instKey + '|') === 0; }).length;
-  return '<div class="lc-edit-bar">\u270e <b>검토 산출근거\u00b7검토액</b> 칸과 <b>설명 문단</b>은 직접 고칠 수 있습니다 \u2014 '
-    + '눌러서 고친 뒤 다른 곳을 클릭하면 저장되고, 소계\u00b7증감이 바로 다시 계산됩니다. '
-    + '설명 문단은 아래 \u201c이 설명 지우기\u201d로 통째로 없앨 수 있고, \u21ba로 되살립니다. '
-    + '요구액은 예산서 값이라 잠겨 있습니다.'
-    + (n ? '<span class="lc-edit-count">직접 고친 행 ' + n + '건<button type="button" onclick="lcRevertAllOverrides()">전체 되돌리기</button></span>' : '')
+  if (!n) return '';
+  return '<div class="lc-edit-bar">'
+    + '<span class="lc-edit-count">직접 고친 행 ' + n + '건<button type="button" onclick="lcRevertAllOverrides()">전체 되돌리기</button></span>'
     + '</div>';
 }
 
