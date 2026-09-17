@@ -2503,6 +2503,7 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
   color: rgba(255,255,255,.6);
 }
 label[for="lc-opt-retire"] { flex: 1.4; }
+label[for="lc-opt-final"] { flex: 1.4; }
 #lc-opt-labor:checked + label[for="lc-opt-labor"],
 #lc-opt-retire:checked + label[for="lc-opt-retire"],
 #lc-opt-eval:checked + label[for="lc-opt-eval"],
@@ -8730,6 +8731,40 @@ function lcFinalSection() {
 
   // 총액 검토 요약 — 행 단위 인원 대조는 재원별 현원 배치표가 없어 불가하므로,
   // 기관 전체 총액에서 "얼마가 적정한가"만 먼저 확정해 둔다.
+  // 101 인건비 증감 내역을 별도 표로 두지 않고 101 행 바로 아래에 들여쓰기로 붙인다.
+  // 소계가 LC_SUM을 비우므로 합계\u00b7소계를 만드는 차례가 어긋나지 않도록 미리 조립해 둔다.
+  var tlRow101 = lcFinalReviewRow('101 인건비', '보수 + 수당 전체', 9998846, '붙임1 현원 대조 + 근거 없는 수당 부인 + 생활임금 정정', 9801560);
+  var tlRowsRest = lcFinalReviewRow('107 퇴직급여', '통상임금 \u00d7 13%', 1157212, '재단귀속 3개 재원 13% 인정 \u00b7 도서관 2개 재원만 8.33%', 1054903)
+    + lcFinalReviewRow('109 평가급', '기준월액 \u00d7 165명 \u00d7 130%', 758535, '2026년 단가 \u00d7 붙임1 현원 \u00d7 110%', 626515)
+    + lcFinalReviewRow('304 연금부담금', '통상임금 \u00d7 11.75%', 1017592, '요율 동일 \u2014 1차 인정', 1017592);
+  var tlSum = lcFinalReviewSum('인건비성 경비 합계', 12932185, 12500570);
+  var tlDetail = lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '기본급 (장학관 마급)', '2,484,000\u00d711명\u00d712월', 327888, '\u00d79명 (현원 라1\u00b7마9)', 268272)
+    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '정액급식비 (장학관 라~마급)', '160,000\u00d712명\u00d712월', 23040, '\u00d710명 (현원)', 19200)
+    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '직급보조비 (장학관 라~마급)', '175,000\u00d712명\u00d712월', 25200, '\u00d710명 (현원)', 21000)
+    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '연가보상비 (장학관 마급)', '2,819,000\u00f7209\u00d78시간\u00d711명\u00d710일', 11870, '\u00d79명 (현원)', 9712)
+    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '보전수당', '317,470\u00d7대상인원\u00d712월', 108894, '제40조\u2462 14종에 없는 명칭 \u2014 부인', 0)
+    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '명절휴가비', '550,000\u00d7대상인원\u00d72회', 29150, '제40조\u2462 지급대상 아님 \u2014 부인', 0)
+    + lcFinalReviewRowTag('기간제', '101 인건비 증감 항목', '기본급', '12,540원 (2026 생활임금) 기준', 598277, '12,750원 (2027 생활임금, 붙임2)', 608297)
+    + lcFinalReviewRowTag('기간제', '101 인건비 증감 항목', '연가보상비\u00b7초과근무수당', '12,540원 기준', 32924, '12,750원 기준', 33476);
+  var tlDetailSum = lcSubRow(lcFinalReviewSum('감액 검토액', 1157243, 959957));
+  out += '<details class="lc-section" open style="border-left-color:var(--danger)"><summary>총액 검토 요약</summary>';
+  out += lcFinalFundBlock('총액 검토', '', [0, 0, 0],
+    '<p class="lc-hint" style="margin-top:0;"><b>검토 기준</b> \u2014 재단 제출 현원 <b>164명</b>(기관장1 · 2급5 · 3급16 · 4급25 · 5급44 · 6급43 · 무기계약직 30). 단가는 규정에 명시된 것만 바로잡고, 인원은 현원으로 맞춘다. 중앙\u00b7송린도서관 개관 증원분은 개관계획 확정을 전제로 요구액을 인정한다.</p>'
+    + lcFinalTable(lcFinalReviewHead('천원'),
+      lcFinalGroupRow('과목별 총액', 6, '')
+      + tlRow101
+      + tlDetail
+      + tlDetailSum
+      + tlRowsRest
+      + tlSum,
+      'lc-table-rev')
+    + '<p class="lc-hint" style="margin-top:14px;"><b>검토 결과 \u25b3431,615천원 (요구 대비 3.3%).</b></p>'
+    + '<p class="lc-hint" style="margin-top:12px;"><b>기본급 인원은 네 재원 모두 현원과 맞았다.</b> 붙임1 재원별\u00b7직급별 현원과 행 단위로 대조한 결과 일반직\u00b7기타직\u00b7공무직 모두 일치하고, 휴\u00b7복직자를 별도 행으로 뺀 것과 신규도서관 개관 인력(중앙 9개월\u00b7송린 5개월)까지 붙임1과 같다. 앞서 현원 164명을 직급별로 잘못 대응시켜 계산했던 <b>\u300c3급\u25b33\u00b74급\u25b32\u00b75급+11\u00b76급\u25b31\u300d 및 기본급 \u25b3148,012천원은 철회</b>한다.</p>'
+    + '<p class="lc-hint"><b>결원 2명은 감액이 아니라 목 이체 대상이다.</b> 대표이사(정원1\u00b7현원0) 101,544천원과 기타직 가급 1명(정원4\u00b7현원3) 77,667천원은 지침 \u2162-1에 따라 인건비가 아니라 <b>801 봉급예비비</b>로 편성해야 한다. 총액은 그대로다.</p>'
+    + '<p class="lc-hint"><b>아직 확정하지 못한 것</b><br>\u00b7 <b>정근수당가산금 최고 구간 100,000원(20년 이상)</b> \u2014 \u300c지방공무원보수업무 등 처리지침\u300d은 20~25년 110,000원\u00b725년 이상 130,000원이다. [요청] 근속연수별 대상인원<br>\u00b7 <b>붙임2는 계약직 라\u00b7마급\u00b7공무직 정액급식비를 0원</b>으로 두었는데 예산서에는 편성돼 있다 \u2014 확인 필요<br>\u00b7 <b>퇴직급여 부족금이 왜 생겼는지</b> \u2014 예산 편성 후 미불입인지 예산 자체가 부족했는지. [요청] 연도별 예산액 대 실제 불입액 대비표, 전용\u00b7불용 내역<br>\u00b7 <b>도서관 위탁금 퇴직급여 13%</b> \u2014 사유서 대상에서 빠져 있다. [요청] 적용 근거<br>\u00b7 <b>2026년 경영평가 등급 통보문</b>과 평가급 기준월액 산정근거<br>\u00b7 <b>대표이사 임용 예정시기</b> \u2014 평가급은 6/12월, 기본급은 12월 전액으로 어긋난다<br>\u00b7 도서관 주말기간제가 붙임1은 중앙 5명인데 예산서는 4명이다<br>\u00b7 연금부담금은 통상임금이 과세표준이므로 위 감액 확정 시 <b>약 \u25b320,100천원이 연동 감액</b>된다</p>'
+  );
+  out += '</details>';
+
   out += '<details class="lc-section" open style="border-left-color:var(--accent)"><summary>인건비 산출 방법</summary>';
   out += lcFinalFundBlock('산출 방법', '', [0, 0, 0],
     lcFinalFundHead('\u2460 기본급 \u2014 산식 검증 완료')
@@ -8772,78 +8807,78 @@ function lcFinalSection() {
       + lcFinalRow(['퇴직급여', { v: '통상임금 × 인원 × 12월 × 8.33%  (2027년은 미적립분 해소로 13% 요구)', formula: true }])
       + lcFinalRow(['연금부담금', { v: '통상임금 × 인원 × 12월 × 11.75%  (4대보험 사업자부담 통합요율)', formula: true }])
       + lcFinalRow(['평가급', { v: '기준월액 × 인원 × 지급률  (기관장 230% / 직원 110%)', formula: true }]))
-    + lcFinalFundHead('\u2463 재원별 산출 모수 \u2014 이 값만 넣으면 전액이 나온다')
-    + lcFinalTable([{ t: '구분' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
-      lcFinalGroupRow('출연금 · 경영기획본부', 5, '일반직')
+    + lcFinalFundHead('\u2463 검토 내역')
+    + lcFinalTable([{ t: '출연금' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
+      lcFinalGroupRow('경영기획본부', 5, '일반직')
       + lcFinalRow(['3급', '4명', { v: '14.78 \u2192 15.78', formula: true }, { v: '4,193,830.0', formula: true }, { v: '43.75%', formula: true }])
       + lcFinalRow(['4급', '8명', { v: '9.33 \u2192 10.33', formula: true }, { v: '3,277,150.0', formula: true }, { v: '36.25%', formula: true }])
       + lcFinalRow(['5급', '4명', { v: '5.64 \u2192 6.64', formula: true }, { v: '2,568,030.0', formula: true }, { v: '22.50%', formula: true }])
       + lcFinalRow(['6급', '5명', { v: '2.94 \u2192 3.94', formula: true }, { v: '2,269,180.0', formula: true }, { v: '10.00%', formula: true }])
-      + lcFinalGroupRow('출연금 · 경영기획본부', 5, '기타직')
+      + lcFinalGroupRow('경영기획본부', 5, '기타직')
       + lcFinalRow(['계약직 가급', '1명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '6,472,270', formula: true }, '-'])
       + lcFinalRow(['계약직 나급', '1명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '6,361,000', formula: true }, '-'])
       + lcFinalRow(['정근가산금 대상', '30천 6.83 · 50천 9 · 60천 3 · 80천 0 · 100천 0명', '-', '-', '-'])
       + lcFinalRow(['가족수당 대상', '배우자 7.83 · 형제자매 0 · 첫째 5.83 · 둘째 2 · 셋째이상 2명', '-', '-', '-'])
       + lcFinalRow(['특수업무수당', '기술자격·전산직 각 1명 50,000원 / 특정업무수행경비 14명 120,000원', '-', '-', '-']))
-    + lcFinalTable([{ t: '구분' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
-      lcFinalGroupRow('출연금 · 교육협력지원본부', 5, '일반직')
+    + lcFinalTable([{ t: '출연금' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
+      lcFinalGroupRow('교육협력지원본부', 5, '일반직')
       + lcFinalRow(['3급', '3명', { v: '14.78 \u2192 15.78', formula: true }, { v: '4,193,830.0', formula: true }, { v: '43.33%', formula: true }])
       + lcFinalRow(['4급', '2명', { v: '9.33 \u2192 10.33', formula: true }, { v: '3,277,150.0', formula: true }, { v: '47.50%', formula: true }])
       + lcFinalRow(['5급', '4명', { v: '5.64 \u2192 6.64', formula: true }, { v: '2,568,030.0', formula: true }, { v: '28.75%', formula: true }])
       + lcFinalRow(['6급', '9명', { v: '2.94 \u2192 3.94', formula: true }, { v: '2,269,180.0', formula: true }, { v: '16.67%', formula: true }])
-      + lcFinalGroupRow('출연금 · 교육협력지원본부', 5, '기타직')
+      + lcFinalGroupRow('교육협력지원본부', 5, '기타직')
       + lcFinalRow(['계약직 가급', '1명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '6,472,270', formula: true }, '-'])
       + lcFinalRow(['정근가산금 대상', '30천 8.58 · 50천 5.5 · 60천 2 · 80천 0 · 100천 0명', '-', '-', '-'])
       + lcFinalRow(['가족수당 대상', '배우자 5.58 · 형제자매 0 · 첫째 4.58 · 둘째 3 · 셋째이상 0명', '-', '-', '-'])
       + lcFinalRow(['특수업무수당', '없음', '-', '-', '-']))
-    + lcFinalTable([{ t: '구분' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
-      lcFinalGroupRow('출연금 · 영재교육원', 5, '일반직')
+    + lcFinalTable([{ t: '출연금' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
+      lcFinalGroupRow('영재교육원', 5, '일반직')
       + lcFinalRow(['3급', '1명', { v: '14.78 \u2192 15.78', formula: true }, { v: '4,193,830.0', formula: true }, { v: '40.00%', formula: true }])
       + lcFinalRow(['4급', '2명', { v: '9.33 \u2192 10.33', formula: true }, { v: '3,277,150.0', formula: true }, { v: '32.50%', formula: true }])
       + lcFinalRow(['6급', '1명', { v: '2.94 \u2192 3.94', formula: true }, { v: '2,269,180.0', formula: true }, { v: '0.00%', formula: true }])
-      + lcFinalGroupRow('출연금 · 영재교육원', 5, '기타직')
+      + lcFinalGroupRow('영재교육원', 5, '기타직')
       + lcFinalRow(['계약직 가급', '1명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '6,472,270', formula: true }, '-'])
       + lcFinalRow(['계약직 나급', '1명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '5,300,820', formula: true }, '-'])
       + lcFinalRow(['정근가산금 대상', '30천 0 · 50천 3 · 60천 0 · 80천 0 · 100천 0명', '-', '-', '-'])
       + lcFinalRow(['가족수당 대상', '배우자 2 · 형제자매 0 · 첫째 2 · 둘째 2 · 셋째이상 0명', '-', '-', '-'])
       + lcFinalRow(['특수업무수당', '없음', '-', '-', '-']))
-    + lcFinalTable([{ t: '구분' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
-      lcFinalGroupRow('출연금 · 장학본부(장학사업팀)', 5, '일반직')
+    + lcFinalTable([{ t: '출연금' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
+      lcFinalGroupRow('장학본부(장학사업팀)', 5, '일반직')
       + lcFinalRow(['3급', '1명', { v: '14.78 \u2192 15.78', formula: true }, { v: '4,193,830.0', formula: true }, { v: '50.00%', formula: true }])
       + lcFinalRow(['4급', '1명', { v: '9.33 \u2192 10.33', formula: true }, { v: '3,277,150.0', formula: true }, { v: '45.00%', formula: true }])
       + lcFinalRow(['5급', '2명', { v: '5.64 \u2192 6.64', formula: true }, { v: '2,568,030.0', formula: true }, { v: '22.50%', formula: true }])
       + lcFinalRow(['6급', '3명', { v: '2.94 \u2192 3.94', formula: true }, { v: '2,269,180.0', formula: true }, { v: '16.67%', formula: true }])
-      + lcFinalGroupRow('출연금 · 장학본부(장학사업팀)', 5, '기타직')
+      + lcFinalGroupRow('장학본부(장학사업팀)', 5, '기타직')
       + lcFinalRow(['계약직 가급', '1명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '6,472,270', formula: true }, '-'])
       + lcFinalRow(['정근가산금 대상', '30천 4 · 50천 1.5 · 60천 1 · 80천 0 · 100천 0명', '-', '-', '-'])
       + lcFinalRow(['가족수당 대상', '배우자 3.5 · 형제자매 0 · 첫째 0.5 · 둘째 0.5 · 셋째이상 0명', '-', '-', '-'])
       + lcFinalRow(['특수업무수당', '없음', '-', '-', '-']))
-    + lcFinalTable([{ t: '구분' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
-      lcFinalGroupRow('위탁금(교육지원과) · 장학관', 5, '일반직')
+    + lcFinalTable([{ t: '위탁금' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
+      lcFinalGroupRow('장학관', 5, '일반직')
       + lcFinalRow(['3급', '2명', { v: '16.50 \u2192 17.50', formula: true }, { v: '4,341,310.0', formula: true }, { v: '50.00%', formula: true }])
       + lcFinalRow(['4급', '3명', { v: '12.30 \u2192 13.30', formula: true }, { v: '3,572,880.0', formula: true }, { v: '48.33%', formula: true }])
       + lcFinalRow(['5급', '4명', { v: '11.50 \u2192 12.50', formula: true }, { v: '3,138,530.0', formula: true }, { v: '32.50%', formula: true }])
       + lcFinalRow(['6급', '2명', { v: '3.00 \u2192 4.00', formula: true }, { v: '2,270,790.0', formula: true }, { v: '10.00%', formula: true }])
-      + lcFinalGroupRow('위탁금(교육지원과) · 장학관', 5, '기타직')
+      + lcFinalGroupRow('장학관', 5, '기타직')
       + lcFinalRow(['계약직 라급', '1명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '3,217,080', formula: true }, '-'])
       + lcFinalRow(['계약직 마급', '9명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '2,499,720', formula: true }, '-'])
       + lcFinalRow(['정근가산금 대상', '30천 2 · 50천 3 · 60천 4 · 80천 0 · 100천 1명', '-', '-', '-'])
       + lcFinalRow(['가족수당 대상', '배우자 11 · 형제자매 0 · 첫째 2 · 둘째 1 · 셋째이상 0명', '-', '-', '-'])
       + lcFinalRow(['특수업무수당', '없음', '-', '-', '-']))
-    + lcFinalTable([{ t: '구분' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
-      lcFinalGroupRow('위탁금(문화예술·평생학습) · 이음터', 5, '일반직')
+    + lcFinalTable([{ t: '위탁금' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
+      lcFinalGroupRow('이음터', 5, '일반직')
       + lcFinalRow(['3급', '6명', { v: '14.50 \u2192 15.50', formula: true }, { v: '4,168,410.0', formula: true }, { v: '48.33%', formula: true }])
       + lcFinalRow(['4급', '13명', { v: '9.23 \u2192 10.23', formula: true }, { v: '3,266,790.0', formula: true }, { v: '36.15%', formula: true }])
       + lcFinalRow(['5급', '15명', { v: '7.27 \u2192 8.27', formula: true }, { v: '2,741,540.0', formula: true }, { v: '29.67%', formula: true }])
       + lcFinalRow(['6급', '15명', { v: '2.70 \u2192 3.70', formula: true }, { v: '2,262,720.0', formula: true }, { v: '13.75%', formula: true }])
-      + lcFinalGroupRow('위탁금(문화예술·평생학습) · 이음터', 5, '기타직')
+      + lcFinalGroupRow('이음터', 5, '기타직')
       + lcFinalRow(['계약직 가급', '2명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '6,472,260', formula: true }, '-'])
       + lcFinalRow(['계약직 마급', '2명', { v: '현재 평균월급 \u00d7 1.035', formula: true }, { v: '2,625,680', formula: true }, '-'])
       + lcFinalRow(['정근가산금 대상', '30천 16.67 · 50천 22.58 · 60천 7 · 80천 0 · 100천 0명', '-', '-', '-'])
       + lcFinalRow(['가족수당 대상', '배우자 23.25 · 형제자매 0 · 첫째 13.42 · 둘째 8.58 · 셋째이상 3명', '-', '-', '-'])
       + lcFinalRow(['특수업무수당', '없음', '-', '-', '-']))
-    + lcFinalTable([{ t: '구분' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
-      lcFinalGroupRow('위탁금(도서관정책과) · 도서관', 5, '일반직')
+    + lcFinalTable([{ t: '위탁금' }, { t: '인원' }, { t: '평균호봉 → 적용호봉', formula: true }, { t: '2027 평균기본급(원)', formula: true }, { t: '정근수당률', formula: true }],
+      lcFinalGroupRow('도서관', 5, '일반직')
       + lcFinalRow(['3급', '2명', { v: '14.50 \u2192 15.50', formula: true }, { v: '4,168,410.0', formula: true }, { v: '25.00%', formula: true }])
       + lcFinalRow(['4급', '4명', { v: '8.25 \u2192 9.25', formula: true }, { v: '3,160,530.0', formula: true }, { v: '21.25%', formula: true }])
       + lcFinalRow(['5급', '6명', { v: '3.50 \u2192 4.50', formula: true }, { v: '2,384,800.0', formula: true }, { v: '21.00%', formula: true }])
@@ -8851,7 +8886,7 @@ function lcFinalSection() {
       + lcFinalRow(['정근가산금 대상', '30천 18.1 · 50천 6.98 · 60천 0 · 80천 0 · 100천 0명', '-', '-', '-'])
       + lcFinalRow(['가족수당 대상', '배우자 23.17 · 형제자매 1.56 · 첫째 17.21 · 둘째 12.53 · 셋째이상 0명', '-', '-', '-'])
       + lcFinalRow(['특수업무수당', '사서수당 3급2·4급4·5급5·6급8명 각 30,000원', '-', '-', '-']))
-    + lcFinalFundHead('\u2464 붙임2 모델과 예산서가 어긋나는 곳')
+    + lcFinalFundHead('\u2464 추가 확인 필요')
     + lcFinalTable([{ t: '구분' }, { t: '붙임2 산출 엑셀', formula: true }, { t: '예산서 요구액', formula: true }, { t: '비고' }],
       lcFinalGroupRow('모수 대조', 4, '')
       + lcFinalRow(['연가보상일수', { v: '3일', formula: true }, { v: '10일 (도서관은 9~10일)', formula: true }, '차이 3.3배'])
@@ -8861,40 +8896,6 @@ function lcFinalSection() {
       + lcFinalRow(['기간제 전 항목', { v: '미산출 (공란)', formula: true }, { v: '598,277천원 편성', formula: true }, '엑셀에 기간제 행이 비어 있음'])
       + lcFinalRow(['도서관 공무직', { v: '0명', formula: true }, { v: '12명 + 신규 15명', formula: true }, '엑셀에 공무직이 0으로 설정됨']))
     + '<p class="lc-hint" style="margin-top:12px;"><b>붙임2 합계 7,334,538천원 대 예산서 9,998,846천원 \u2014 2,664,308천원이 어긋난다.</b> 엑셀에 기간제\u00b7공무직\u00b7신규도서관 인력이 빠진 것이 큰 몫이지만, <b>연가보상일수(3일 대 10일)와 월 초과근무시간(10시간 대 15시간)</b>만으로도 재원마다 수천만원씩 벌어진다. 경영기획본부만 봐도 연가보상비가 엑셀 10,505천원 대 예산서 39,225천원, 초과근무수당이 66,698천원 대 113,996천원이다.<br><b>[요청] 연가보상일수와 월 초과근무시간을 어느 쪽으로 확정할지, 그 근거(전년도 실적 근태자료)를 제출받아야 한다.</b> 같은 재단이 낸 두 자료가 이만큼 다르면 어느 쪽도 그대로 인정할 수 없다.</p>'
-  );
-  out += '</details>';
-
-  // 101 인건비 증감 내역을 별도 표로 두지 않고 101 행 바로 아래에 들여쓰기로 붙인다.
-  // 소계가 LC_SUM을 비우므로 합계\u00b7소계를 만드는 차례가 어긋나지 않도록 미리 조립해 둔다.
-  var tlRow101 = lcFinalReviewRow('101 인건비', '보수 + 수당 전체', 9998846, '붙임1 현원 대조 + 근거 없는 수당 부인 + 생활임금 정정', 9801560);
-  var tlRowsRest = lcFinalReviewRow('107 퇴직급여', '통상임금 \u00d7 13%', 1157212, '재단귀속 3개 재원 13% 인정 \u00b7 도서관 2개 재원만 8.33%', 1054903)
-    + lcFinalReviewRow('109 평가급', '기준월액 \u00d7 165명 \u00d7 130%', 758535, '2026년 단가 \u00d7 붙임1 현원 \u00d7 110%', 626515)
-    + lcFinalReviewRow('304 연금부담금', '통상임금 \u00d7 11.75%', 1017592, '요율 동일 \u2014 1차 인정', 1017592);
-  var tlSum = lcFinalReviewSum('인건비성 경비 합계', 12932185, 12500570);
-  var tlDetail = lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '기본급 (장학관 마급)', '2,484,000\u00d711명\u00d712월', 327888, '\u00d79명 (현원 라1\u00b7마9)', 268272)
-    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '정액급식비 (장학관 라~마급)', '160,000\u00d712명\u00d712월', 23040, '\u00d710명 (현원)', 19200)
-    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '직급보조비 (장학관 라~마급)', '175,000\u00d712명\u00d712월', 25200, '\u00d710명 (현원)', 21000)
-    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '연가보상비 (장학관 마급)', '2,819,000\u00f7209\u00d78시간\u00d711명\u00d710일', 11870, '\u00d79명 (현원)', 9712)
-    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '보전수당', '317,470\u00d7대상인원\u00d712월', 108894, '제40조\u2462 14종에 없는 명칭 \u2014 부인', 0)
-    + lcFinalReviewRowTag('무기계약직', '101 인건비 증감 항목', '명절휴가비', '550,000\u00d7대상인원\u00d72회', 29150, '제40조\u2462 지급대상 아님 \u2014 부인', 0)
-    + lcFinalReviewRowTag('기간제', '101 인건비 증감 항목', '기본급', '12,540원 (2026 생활임금) 기준', 598277, '12,750원 (2027 생활임금, 붙임2)', 608297)
-    + lcFinalReviewRowTag('기간제', '101 인건비 증감 항목', '연가보상비\u00b7초과근무수당', '12,540원 기준', 32924, '12,750원 기준', 33476);
-  var tlDetailSum = lcSubRow(lcFinalReviewSum('감액 검토액', 1157243, 959957));
-  out += '<details class="lc-section" open style="border-left-color:var(--danger)"><summary>총액 검토 요약</summary>';
-  out += lcFinalFundBlock('총액 검토', '', [0, 0, 0],
-    '<p class="lc-hint" style="margin-top:0;"><b>검토 기준</b> \u2014 재단 제출 현원 <b>164명</b>(기관장1 · 2급5 · 3급16 · 4급25 · 5급44 · 6급43 · 무기계약직 30). 단가는 규정에 명시된 것만 바로잡고, 인원은 현원으로 맞춘다. 중앙\u00b7송린도서관 개관 증원분은 개관계획 확정을 전제로 요구액을 인정한다.</p>'
-    + lcFinalTable(lcFinalReviewHead('천원'),
-      lcFinalGroupRow('과목별 총액', 6, '')
-      + tlRow101
-      + tlDetail
-      + tlDetailSum
-      + tlRowsRest
-      + tlSum,
-      'lc-table-rev')
-    + '<p class="lc-hint" style="margin-top:14px;"><b>검토 결과 \u25b3431,615천원 (요구 대비 3.3%).</b></p>'
-    + '<p class="lc-hint" style="margin-top:12px;"><b>기본급 인원은 네 재원 모두 현원과 맞았다.</b> 붙임1 재원별\u00b7직급별 현원과 행 단위로 대조한 결과 일반직\u00b7기타직\u00b7공무직 모두 일치하고, 휴\u00b7복직자를 별도 행으로 뺀 것과 신규도서관 개관 인력(중앙 9개월\u00b7송린 5개월)까지 붙임1과 같다. 앞서 현원 164명을 직급별로 잘못 대응시켜 계산했던 <b>\u300c3급\u25b33\u00b74급\u25b32\u00b75급+11\u00b76급\u25b31\u300d 및 기본급 \u25b3148,012천원은 철회</b>한다.</p>'
-    + '<p class="lc-hint"><b>결원 2명은 감액이 아니라 목 이체 대상이다.</b> 대표이사(정원1\u00b7현원0) 101,544천원과 기타직 가급 1명(정원4\u00b7현원3) 77,667천원은 지침 \u2162-1에 따라 인건비가 아니라 <b>801 봉급예비비</b>로 편성해야 한다. 총액은 그대로다.</p>'
-    + '<p class="lc-hint"><b>아직 확정하지 못한 것</b><br>\u00b7 <b>정근수당가산금 최고 구간 100,000원(20년 이상)</b> \u2014 \u300c지방공무원보수업무 등 처리지침\u300d은 20~25년 110,000원\u00b725년 이상 130,000원이다. [요청] 근속연수별 대상인원<br>\u00b7 <b>붙임2는 계약직 라\u00b7마급\u00b7공무직 정액급식비를 0원</b>으로 두었는데 예산서에는 편성돼 있다 \u2014 확인 필요<br>\u00b7 <b>퇴직급여 부족금이 왜 생겼는지</b> \u2014 예산 편성 후 미불입인지 예산 자체가 부족했는지. [요청] 연도별 예산액 대 실제 불입액 대비표, 전용\u00b7불용 내역<br>\u00b7 <b>도서관 위탁금 퇴직급여 13%</b> \u2014 사유서 대상에서 빠져 있다. [요청] 적용 근거<br>\u00b7 <b>2026년 경영평가 등급 통보문</b>과 평가급 기준월액 산정근거<br>\u00b7 <b>대표이사 임용 예정시기</b> \u2014 평가급은 6/12월, 기본급은 12월 전액으로 어긋난다<br>\u00b7 도서관 주말기간제가 붙임1은 중앙 5명인데 예산서는 4명이다<br>\u00b7 연금부담금은 통상임금이 과세표준이므로 위 감액 확정 시 <b>약 \u25b320,100천원이 연동 감액</b>된다</p>'
   );
   out += '</details>';
 
@@ -10093,6 +10094,8 @@ function renderLaborCalc() {
     + '</ol></div></div>';
 
   var toggleHtml = '<div id="firstFilter" class="filter-switch">'
+    + '<input ' + (LC.view === 'final' ? 'checked' : '') + ' id="lc-opt-final" name="lc-options" type="radio" onchange="lcSetView(\'final\')" />'
+    + '<label class="option" for="lc-opt-final">2027년 검토</label>'
     + '<input ' + (LC.view === 'labor' ? 'checked' : '') + ' id="lc-opt-labor" name="lc-options" type="radio" onchange="lcSetView(\'labor\')" />'
     + '<label class="option" for="lc-opt-labor">101 보수</label>'
     + '<input ' + (LC.view === 'retire' ? 'checked' : '') + ' id="lc-opt-retire" name="lc-options" type="radio" onchange="lcSetView(\'retire\')" />'
@@ -10101,8 +10104,6 @@ function renderLaborCalc() {
     + '<label class="option" for="lc-opt-eval">109 평가급</label>'
     + '<input ' + (LC.view === 'pension' ? 'checked' : '') + ' id="lc-opt-pension" name="lc-options" type="radio" onchange="lcSetView(\'pension\')" />'
     + '<label class="option" for="lc-opt-pension">304 연금</label>'
-    + '<input ' + (LC.view === 'final' ? 'checked' : '') + ' id="lc-opt-final" name="lc-options" type="radio" onchange="lcSetView(\'final\')" />'
-    + '<label class="option" for="lc-opt-final">기준값</label>'
     + '<span class="background"></span>'
     + '</div>';
 
