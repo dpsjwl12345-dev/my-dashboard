@@ -3352,7 +3352,12 @@ async function loadInstBudgetData(inst) {
   if (e3) { showLoadError('팀 정원현원', e3); return null; }
   var enacted = _res[3].data, e4 = _res[3].error;
 
-  var businesses = cards.map(function (c) {
+  // 카드 목록도 연도로 거른다 — teams는 이미 state.selectedYear로 필터된 상태라,
+  // 그 해에 연결된 트리가 하나도 없는 카드는 그 연도 예산서에 존재하지 않는 카드다.
+  // (예: 2026용 카드 5개가 2027 탭에 같이 뜨던 문제)
+  var businesses = cards.filter(function (c) {
+    return teams.some(function (t) { return t.card_id === c.id; });
+  }).map(function (c) {
     var myTeams = teams.filter(function (t) { return t.card_id === c.id; }).map(function (t) {
       return { name: t.team_name, capacity: t.capacity, current: t.current, treeKey: t.team_root_budget_item_id };
     });
