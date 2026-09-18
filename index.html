@@ -10116,6 +10116,21 @@ function renderLaborCalc() {
         + '<tr><td>야간근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×0.5/209×8h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">단가×0.5/209×8h×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3NightworkAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
+    + '<div style="margin-top:14px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);">'
+    + '<div style="font-weight:700;margin-bottom:6px;">공무직근로자 관리규정 [별표3] 기본급표 \u2014 2027년</div>'
+    + '<div class="lc-hint" style="margin-bottom:10px;"><b>당해연도 정부고시 최저임금 \u00d7 승급단계별 가산율 \u00d7 월소정근로시간 209시간</b>. 일반직(3~6급)과 달리 전년도가 아니라 <b>당해연도 최저임금</b>을 쓴다 \u2014 최저임금은 매년 8월 초 익년도분이 확정되므로 편성 시점에 이미 반영할 수 있기 때문이다. 2027년 최저임금 <b>10,700원</b> 기준.</div>'
+    + lcFinalTable([{ t: '승급단계' }, { t: '근무년차' }, { t: '산식', formula: true }, { t: '2027 기본급', formula: true }, { t: '예산서 대조' }],
+      + lcFinalRow(['1단계', '1년차', { v: '10,700 \u00d7 103% \u00d7 209', formula: true }, { v: '2,303,400원', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['2단계', '3년차', { v: '10,700 \u00d7 105% \u00d7 209', formula: true }, { v: '2,348,120원', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['3단계', '5년차', { v: '10,700 \u00d7 107% \u00d7 209', formula: true }, { v: '2,392,850원', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['4단계', '8년차', { v: '10,700 \u00d7 109% \u00d7 209', formula: true }, { v: '2,437,570원', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['5단계', '11년차', { v: '10,700 \u00d7 111% \u00d7 209', formula: true }, { v: '2,482,300원', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['6단계', '14년차', { v: '10,700 \u00d7 113% \u00d7 209', formula: true }, { v: '2,527,019원', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['7단계', '17년차', { v: '10,700 \u00d7 115% \u00d7 209', formula: true }, { v: '2,571,745원', formula: true }, { v: '확인필요', status: true }])
+      + lcFinalRow(['8단계 <b>(상한)</b>', '20년차', { v: '10,700 \u00d7 117% \u00d7 209', formula: true }, { v: '2,616,480원', formula: true }, { v: '일치', status: true }])
+      + lcFinalRow(['기간제(대체인력)', '\u2014', { v: '10,700 \u00d7 100% \u00d7 209 (가산율 없음)', formula: true }, { v: '2,236,300원', formula: true }, { v: '일치', status: true }]))
+    + '<p class="lc-hint" style="margin:12px 0 0;">\u00b7 <b>8단계(117%)가 최고 구간이고 그 위는 없다.</b> 2027년 상한 <b>2,616,480원</b>(2026년은 최저임금 10,320원 기준 2,523,517원)<br>\u00b7 [별표2]의 <b>가급\u00b7나급은 직무 내용 구분</b>(가급=문화예술\u00b7행정업무지원 / 나급=감시\u00b7단속적 업무)일 뿐 <b>별도 기본급표가 아니다</b> \u2014 가급\u00b7나급 모두 위 8단계표 하나를 그대로 적용해야 한다<br>\u00b7 <b>2026년 위반 확인</b>(동탄복합문화센터 시설체육운영팀) \u2014 공무직 <b>가급 2,696,850원</b>(상한 +6.9%) \u00b7 <b>나급 3,185,790원</b>(상한 +26.2%)으로 8단계 어느 구간에도 해당하지 않았다. <b>2027년 요구서에 같은 단가가 남아 있는지 확인 필요</b><br>\u00b7 6\u00b77단계는 예산서에 등장하지 않아 대조하지 못했다 \u2014 해당 근무년차 인원이 있는지 확인 필요<br>\u00b7 [요청] <b>공무직 승급단계별 인원 명세</b>(1~8단계 각 몇 명)</p>'
+    + '</div>'
     + '</div>';
 
   var o4 = LC.other04;
