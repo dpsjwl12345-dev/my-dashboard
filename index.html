@@ -8418,7 +8418,7 @@ function lcFinalFilterBar() {
   };
   var badge = LC_FINAL_BADGES[f.instKey];
   var badgeHtml = badge ? '<span class="lc-cat-tag lc-final-badge" style="margin-left:10px;background:' + badge.bg + ';color:' + badge.fg + ';">' + badge.text + '</span>' : '';
-  var LC_FOLDER_LABELS = { hscf: '화성시문화관광재단보수규정', talent: '화성시인재육성재단보수규정', fc: '화성FC보수및수당규정', corp: '화성도시공사보수규정' };
+  var LC_FOLDER_LABELS = { hscf: '화성시문화관광재단보수규정', talent: '화성시인재육성재단보수규정', fc: '화성FC보수및수당규정', corp: '화성도시공사보수규정', sports: '화성시체육회사무국운영규정', disabledsports: '화성시장애인체육회사무국운영규정' };
   var folderHtml = LC_FOLDER_LABELS[f.instKey]
     ? '<button type="button" class="lc-folder-btn' + (f.rulesOpen ? ' is-open' : '') + '" onclick="lcFinalToggleRules()">'
       + '<span class="lc-folder-label">' + LC_FOLDER_LABELS[f.instKey] + '</span>'
@@ -8659,6 +8659,104 @@ function lcFinalSection() {
   }
   out += '<div style="margin:0 0 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);">'
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + rtabBtn('eval', '평가급') + '</div>'
+    + '<div class="lc-rules-table">' + rtabTable + '</div>'
+    + '</div>';
+  }
+
+  // 화성시체육회 \u2014 「사무국 운영규정」(제정 2021.8.19. \u00b7 최종개정 2026.1.13.)
+  // 보수규정이 따로 없고 사무국 운영규정 제5장(급여)\u00b7제7장(퇴직금)이 보수 근거다.
+  if (f.instKey === 'sports' && f.rulesOpen) {
+  var rtab = f.rulesTab || 'labor';
+  var rtabBtn = function (key, label) {
+    var active = rtab === key;
+    return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13.5px;font-weight:700;">' + label + '</button>';
+  };
+  var rtabTable;
+  if (rtab === 'retire') {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalRow(['퇴직급여금(제52조)', '만 1년 이상 근속자 퇴직 시 지급. [별표4] 지급율 적용 \u2014 <b>퇴직 전 3개월 평균임금 \u00d7 근속년수</b>. 퇴직급여금\u00b7퇴직연금은 <b>월 급여 총액의 1/12을 매월 적립</b>'])
+      + lcFinalRow(['평균임금 산정(제52조\u2462)', '퇴직 전 최근 3개월간 지급된 보수\u00b7성과급 등 일체를 3으로 나눈 금액. 근로기준법상 통상임금보다 낮으면 통상임금을 평균임금으로 본다'])
+      + lcFinalRow(['퇴직연금(제52조\u2463\u00b7\u2465)', '「근로자퇴직급여 보장법」에 따르되 <b>가입 희망자에 한하여</b> 실시. 퇴사 시 퇴직급여금과 차액이 생기면 보상'])
+      + lcFinalRow(['근속년수 계산(제53조)', '임명월~퇴직월, 만 12개월=1년. 정직\u00b7직위해제\u00b7휴직기간은 50%로 계산(업무상 질병\u00b7부상 휴직 제외). 출산휴가\u00b7육아휴직\u00b7가족돌봄휴직은 근무연한에 통산. <b>(구)화성시체육회\u00b7(구)화성시생활체육회 근무기간 포함</b>(부칙 2022.2.9.)'])
+      + lcFinalRow(['지급제한(제54조)', '금고 이상 형 확정 또는 파면 퇴직 시 <b>50%</b>만 지급. 감사\u00b7수사\u00b7재판 계류 중 미결 상태 퇴직은 확정 시까지 50% 지급 유보'])
+      + lcFinalRow(['지급일(제55조)', '퇴직일부터 14일 이내']));
+  } else {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalGroupRow('직제\u00b7직렬', 2)
+      + lcFinalRow(['직렬 분류(제9조)', '일반직(<b>5~9급</b>) / 계약직 \u2014 사무차장(본회 일반직 임명 시에는 일반직), 생활체육지도자(무기계약직), 정원 범위 내 전문가'])
+      + lcFinalRow(['상근 임원(제9조의1)', '사무국장'])
+      + lcFinalRow(['직제표([별표2], 2026.1.13. 개정)', '<b>정원 29명</b> \u2014 사무국장 1(5급상당\u00b7상근임원) \u00b7 사무차장 1(6급상당\u00b7계약직) \u00b7 과장 4(6~7급) \u00b7 대리\u00b7주임\u00b7사원 14(6~9급) \u00b7 생활체육지도자 9(무기계약직). 기구는 경영지원\u00b7체육육성\u00b7대회운영\u00b7소통협력\u00b7체육지원\u00b7시설운영 6과'])
+      + lcFinalGroupRow('기본급', 2)
+      + lcFinalRow(['급여 구분(제28조)', '연봉제 대상자를 제외한 직원의 급여는 <b>「지방공무원 보수규정」\u00b7「지방공무원 수당 등에 관한 규정」 준용</b>. 단 초과근무수당\u00b7연차보상비는 「근로기준법」 준용 \u2014 기본급 / 상여수당(정근수당\u00b7정근수당가산금\u00b7성과상여금) / 가계보전수당(가족수당) / 초과근무수당 / 실비변상(정액급식비\u00b7직급보조비\u00b7명절휴가비\u00b7연차보상비) / 기타수당'])
+      + lcFinalRow(['연봉제(제29조\u2461)', '<b>사무국장\u00b7사무차장</b>에 적용. 연봉 및 연봉한계액은 「지방공무원 보수규정」의 <b>임기제공무원 연봉</b> 준용(사무차장은 계약직인 경우만)'])
+      + lcFinalRow(['기본급\u00b7급여계산(제30조\u00b7제34조)', '「지방공무원 보수규정」 준용. 발령일 기준, 실제 근무일수에 따라 일할 지급'])
+      + lcFinalRow(['초임금(제31조)', '직급별 최저호봉. 동일\u00b7유사 경력이 있으면 [별표3] 경력환산율표(갑 100% / 을 80% / 병 50%)로 환산호봉 가산'])
+      + lcFinalRow(['승진 시 호봉 획정(제46조)', '승진 전 호봉보다 <b>1호봉 감</b>하여 획정(승진 전이 1호봉이면 제외)'])
+      + lcFinalRow(['지급일(제32조)', '매월 20일(공휴일이면 전일)'])
+      + lcFinalGroupRow('수당\u00b7실비변상', 2)
+      + lcFinalRow(['정근수당(제35조)\u00b7가산금(제36조)', '예산 범위 내에서 「지방공무원 보수규정」\u00b7「수당규정」에 따라 매년 <b>1월\u00b77월</b> 봉급지급일 지급'])
+      + lcFinalRow(['성과상여금(제37조)', '근무성적 평정 내규를 바탕으로 지급기준\u00b7범위\u00b7방법은 「지방공무원 보수규정」\u00b7「수당규정」 준용'])
+      + lcFinalRow(['가족수당(제38조)', '「지방공무원 보수규정」\u00b7「수당규정」에 따라 예산 범위 내 지급'])
+      + lcFinalRow(['초과근무수당(제40조)', '<b>「근로기준법」 제56조</b> 적용 \u2014 시간외\u00b7야간\u00b7휴일근무수당. 제20조에 따라 <b>보상휴가로 갈음 가능</b>(1시간 단위 승인, 다음 달 보수지급일까지 사용)'])
+      + lcFinalRow(['실비변상(제41조)', '정액급식비 \u00b7 직급보조비 \u00b7 명절휴가비 \u00b7 <b>연차보상비 = 통상임금 \u00d7 잔여 연차일수</b>'])
+      + lcFinalGroupRow('감액\u00b7제외', 2)
+      + lcFinalRow(['봉급 감액(제33조\u00b7제42조)', '연차\u00b7병가\u00b7공가\u00b7특별휴가를 제외한 결근 1일당 <b>봉급일액의 2/3</b> 감액'])
+      + lcFinalRow(['휴직 중 급여(제43조)', '장기요양 휴직은 봉급 <b>70%</b>. 공무상 질병 휴직은 전액'])
+      + lcFinalRow(['직위해제 급여(제44조)', '봉급 <b>80%</b>. 징계의결 요구 중\u00b7형사기소로 직위해제된 자가 3개월이 지나도 직위를 못 받으면 그 후 <b>50%</b>'])
+      + lcFinalRow(['수당 지급 제외(제48조)', '결근 1일당 정액급식비\u00b7직급보조비 일액 공제(무급휴가\u00b7무단결근은 미지급). 정직\u00b7직위해제\u00b7휴직으로 근무하지 않은 달은 정액급식비\u00b7직급보조비\u00b7명절휴가비\u00b7연차보상비 미지급(감봉기간은 1/10 감액)'])
+      + lcFinalRow(['여비(제56조)', '「화성시 지방공무원 여비 조례」 준용']));
+  }
+  out += '<div style="margin:0 0 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);">'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + '</div>'
+    + '<div class="lc-rules-table">' + rtabTable + '</div>'
+    + '</div>';
+  }
+
+  // 화성시장애인체육회 \u2014 「사무국 운영규정」(제정 2019.3.8. \u00b7 최종개정 2025.2.5.)
+  if (f.instKey === 'disabledsports' && f.rulesOpen) {
+  var rtab = f.rulesTab || 'labor';
+  var rtabBtn = function (key, label) {
+    var active = rtab === key;
+    return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13.5px;font-weight:700;">' + label + '</button>';
+  };
+  var rtabTable;
+  if (rtab === 'retire') {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalRow(['퇴직급여금(제52조)', '만 1년 이상 근속자 퇴직 시 지급. 평균임금에 [별표5] 퇴직급여 지급율 적용. 퇴직급여금\u00b7퇴직연금은 <b>월 급여 총액의 1/12을 매월 적립</b>'])
+      + lcFinalRow(['평균임금 산정(제52조\u2462)', '퇴직 전 최근 3개월간 지급된 보수\u00b7성과급 등 일체를 3으로 나눈 금액. 통상임금보다 낮으면 통상임금을 평균임금으로 본다'])
+      + lcFinalRow(['퇴직연금(제52조\u2463\u00b7\u2465)', '「근로자퇴직급여 보장법」에 따르되 <b>가입 희망자에 한하여</b> 실시. 퇴사 시 차액 발생하면 보상'])
+      + lcFinalRow(['근속년수 계산(제53조)', '임명월~퇴직월, 만 12개월=1년. 정직\u00b7직위해제\u00b7휴직기간은 50%(업무상 질병\u00b7부상 휴직 제외). 출산휴가\u00b7육아휴직\u00b7가족돌봄휴직은 통산'])
+      + lcFinalRow(['지급제한(제54조)', '금고 이상 형 확정 또는 파면 퇴직 시 <b>50%</b>. 미결 상태 퇴직은 확정 시까지 50% 유보'])
+      + lcFinalRow(['지급일(제55조)', '퇴직일부터 14일 이내']));
+  } else {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalGroupRow('직제\u00b7직렬', 2)
+      + lcFinalRow(['적용범위(제1조의1)', '일반직 \u00b7 계약직 \u00b7 기술직 \u00b7 무기계약직 \u00b7 기간제근로자 전원'])
+      + lcFinalRow(['직렬 분류(제9조)', '일반직(차장\u00b7과장\u00b7대리\u00b7주임) \u00b7 기술직 \u2014 <b>6~9급</b> / 계약직 \u2014 사무국장, 전문가, 반다비체육센터 운영 기간제 인력 / 무기계약직 \u2014 장애인생활체육지도자'])
+      + lcFinalRow(['기구(제10조)', '경영기획과 \u00b7 체육지원과 \u00b7 반다비체육센터'])
+      + lcFinalGroupRow('기본급', 2)
+      + lcFinalRow(['급여 구분(제28조)', '연봉제 대상자를 제외한 <b>일반직\u00b7기술직</b>의 급여는 <b>「지방공무원 보수규정」 준용</b>. 단 초과근무수당\u00b7연가보상비는 「근로기준법」 적용 \u2014 기본급 / 상여수당(정근수당\u00b7정근수당가산금\u00b7성과상여금) / 가계보전수당(가족수당) / 초과근무수당 / 실비변상(정액급식비\u00b7직급보조비\u00b7명절휴가비\u00b7연가보상비) / 기타수당'])
+      + lcFinalRow(['연봉제(제29조)', '<b>계약직은 연봉</b>으로 지급. 사무국장 연봉액 책정\u00b7지급방법은 「지방공무원 보수규정」 준용. <b>사무국장 외 계약직\u00b7기간제근로자 연봉은 화성시 담당 주무부서와 협의하여 결정</b>'])
+      + lcFinalRow(['기본급\u00b7급여계산(제30조\u00b7제34조)', '일반직\u00b7기술직은 「지방공무원 보수규정」 준용. 발령일 기준 일할 지급'])
+      + lcFinalRow(['초임금(제31조)', '직급별 최저호봉. 동일\u00b7유사 경력이 있으면 [별표4] 경력환산호봉 가산'])
+      + lcFinalRow(['승진 시 호봉 획정(제46조)', '승진 전 호봉보다 <b>1호봉 감</b>하여 획정'])
+      + lcFinalRow(['지급일(제32조)', '매월 20일(공휴일이면 전일)'])
+      + lcFinalGroupRow('수당\u00b7실비변상', 2)
+      + lcFinalRow(['정근수당(제35조)\u00b7가산금(제36조)', '<b>일반직\u00b7기술직</b> 대상, 예산 범위 내에서 공무원 지급기준에 따라 매년 <b>1월\u00b77월</b> 지급'])
+      + lcFinalRow(['성과상여금(제37조)', '근무성적 평정 내규를 바탕으로 지급기준\u00b7범위\u00b7방법은 공무원 보수규정 준용'])
+      + lcFinalRow(['가족수당(제38조)', '「지방공무원 수당 등에 관한 규정」에 따라 예산 범위 내 지급'])
+      + lcFinalRow(['초과근무수당(제40조)', '예산 범위 안에서 시간외\u00b7야간\u00b7휴일근무수당 지급'])
+      + lcFinalRow(['실비변상(제41조)', '공무원 보수규정 준용 \u2014 정액급식비 \u00b7 직급보조비 \u00b7 명절휴가비 \u00b7 연가보상비(연가보상비는 「근로기준법」 적용)'])
+      + lcFinalGroupRow('감액\u00b7제외', 2)
+      + lcFinalRow(['봉급 감액(제33조\u00b7제42조)', '연가\u00b7병가\u00b7공가\u00b7특별휴가를 제외한 결근 1일당 <b>봉급일액의 2/3</b> 감액'])
+      + lcFinalRow(['휴직 중 급여(제43조)', '장기요양 휴직은 봉급 <b>70%</b>. 공무상 질병 휴직은 전액'])
+      + lcFinalRow(['직위해제 급여(제44조)', '봉급 <b>80%</b>. 3개월이 지나도 직위를 못 받으면 그 후 <b>50%</b>'])
+      + lcFinalRow(['수당 지급 제외(제48조\u2460~\u2461)', '결근 1일당 정액급식비\u00b7직급보조비 일액 공제. 정직\u00b7직위해제\u00b7휴직으로 근무하지 않은 달은 정액급식비\u00b7직급보조비\u00b7명절휴가비\u00b7연가보상비 미지급(감봉기간은 1/10 감액)'])
+      + lcFinalRow(['연봉제 대상자 수당 제외(제48조\u2464)', '<b>정근수당(가산금\u00b7추가가산금)\u00b7정액급식비\u00b7명절휴가비\u00b7직급보조비\u00b7위험근무수당\u00b7특수업무수당 미지급</b> \u2014 사무국장 등 계약직이 해당'])
+      + lcFinalRow(['여비(제56조)', '「공무원 여비규정」 준용']));
+  }
+  out += '<div style="margin:0 0 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);">'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + '</div>'
     + '<div class="lc-rules-table">' + rtabTable + '</div>'
     + '</div>';
   }
