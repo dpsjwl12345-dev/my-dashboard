@@ -10237,7 +10237,13 @@ function renderLaborCalc() {
     + '<li>최고-최저 지급률 격차 제한: 최고 등급(S등급) 지급률과 최저 등급(C등급) 지급률 간의 격차는 최소 50%p 이상이어야 합니다.</li>'
     + '<li>등급별 인원 강제 배분 비율:<ul style="margin:4px 0 0 0;padding-left:20px;"><li>최고 등급(S등급): 전체 배분 인원의 20% 이내로 제한합니다.</li><li>최저 등급(C등급): 전체 배분 인원의 10% 이상으로 의무 배분해야 합니다.</li></ul></li>'
     + '<li>특정 등급 집중 방지: 어느 하나의 특정 등급 인원 비율이 전체 배분 인원의 50%를 초과할 수 없습니다.</li>'
-    + '</ol></div></div>';
+    + '</ol></div>'
+    + '<div style="margin-top:14px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);">'
+    + '<div style="font-weight:700;margin-bottom:6px;">경영평가등급별 지급률 결정범위 (지침 \u2162-3-(1))</div>'
+    + '<div class="lc-hint" style="margin-bottom:10px;">위 \u300c지급 등급 수 최소 요건\u300d은 <b>개인별 배분</b> 기준이고, 아래 표는 <b>기관 경영평가 등급</b>에 따른 지급률 범위다 \u2014 축이 다르니 섞어 읽지 않는다. 기준연도는 <b>2025년</b>.</div>'
+    + '<div style="overflow:auto;"><table class="lc-table"><thead><tr><th>경영평가등급</th><th>지급률 결정범위</th><th class="lc-th-formula">비고</th></tr></thead><tbody><tr><td>가</td><td>201 ~ 300%</td><td class="lc-formula"></td></tr><tr><td style="color:var(--accent);font-weight:700;">나</td><td style="color:var(--accent);font-weight:700;">151 ~ 200%</td><td class="lc-formula">요구서 <b>기관장 190%</b>가 이 범위</td></tr><tr><td style="color:var(--accent);font-weight:700;">다</td><td style="color:var(--accent);font-weight:700;">101 ~ 150%</td><td class="lc-formula">요구서 <b>직원 110%</b>가 이 범위</td></tr><tr><td>라</td><td>10 ~ 100%</td><td class="lc-formula"></td></tr><tr><td>마</td><td>0%</td><td class="lc-formula">미지급</td></tr></tbody></table></div>'
+    + '<p class="lc-hint" style="margin:12px 0 0;">\u00b7 <b>지급액 = 연봉(보수)월액 \u00d7 지급률</b>. 지급시기는 평가결과 확정\u00b7통보일로부터 3월 이내<br>\u00b7 <b>적용대상</b>은 정관상 정원 포함 <b>정규직원</b>(임금피크제 신규채용 별도정원 포함). 무기계약근로자\u00b7계약직\u00b7기간제\u00b7청원경찰은 관련성\u00b7기여도를 종합 고려해 지급 여부를 결정한다<br>\u00b7 <b>나눠먹기식 배분 금지</b> \u2014 위반하면 <b>다음연도 성과급 예산편성이 금지</b>된다<br>\u00b7 <b>등급 통보문이 없으면 190%도 110%도 입증되지 않는다.</b> 190%는 나등급, 110%는 다등급 범위 안에 들어오므로 숫자 자체가 범위 밖인 것은 아니다 \u2014 쟁점은 \u2460 어느 등급인지 근거가 없다는 것과 \u2461 <b>전 직원 110% 일괄</b>이면 위 개인별 배분 요건 네 가지를 모두 못 맞춘다는 것이다<br>\u00b7 [요청] 2026년 경영평가 등급 통보문 \u00b7 평가급 기준월액 산정근거 \u00b7 개인별 차등 지급기준(등급별 인원\u00b7지급률 배분표)</p>'
+    + '</div></div>';
 
   var toggleHtml = '<div id="firstFilter" class="filter-switch">'
     + '<input ' + (LC.view === 'final' ? 'checked' : '') + ' id="lc-opt-final" name="lc-options" type="radio" onchange="lcSetView(\'final\')" />'
