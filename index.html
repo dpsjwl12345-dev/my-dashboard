@@ -7477,9 +7477,6 @@ var LC = {
   guideCinemaOpen: {}, // 우측 상단 지침 리스트(01/02) 클릭 펼침 상태 — { '01': true/false, '02': true/false }
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
   raise: 4.9, // 2027년도 총인건비 인상률(%) — 지자체 통보 기준. 요구서 단가는 103.9%(3.9%)를 썼다.
-  // 총인건비 편성한도 = 전년도 총인건비 + (전년도 총인건비 × 인상률) − 총인건비 위배 금액
-  // 단위 천원. 기본값은 문화관광재단 출연금 101 인건비(2026년 5,412,073 / 2027년 요구 6,837,233).
-  tw: { base: 5412073, violation: 0, request: 6837233 },
   quota: '', // 예산편성 당시(2026.10.) 정원(일반직 및 무기계약직) — 지침 101-01③ — 인상률처럼 실제 확정되면 입력해 계산에 반영하는 모수. 빈칸이 기본값.
   treatmentPct: 4.1, // 대우공무원수당 요율(%) — 기존 lcGradeAmts 하드코딩 0.041을 편집 가능한 모수로 전환
   holidayPct: 60, // 명절휴가비 요율(%) — 기존 lcGradeAmts 하드코딩 0.6을 편집 가능한 모수로 전환
@@ -7587,57 +7584,6 @@ var LC = {
 var HSCF_ORG_HEADCOUNT = { capacity: 408, current: 391, shortage: 17 }; // 2026.8.31 기관현황 기준
 
 function lcRaiseMul() { return 1 + (Number(LC.raise) || 0) / 100; }
-function lcTotalWageBox() {
-  var limit = lcTwLimit();
-  var req = Number(LC.tw.request) || 0;
-  var gap = req - limit;
-  var over = gap > 0;
-  var gapTxt = (over ? '초과 +' : '여유 ') + fmtWon(Math.abs(gap)) + '천원';
-  var gapColor = over ? 'var(--danger)' : 'var(--accent)';
-  return '<div class="lc-section" style="border-left-color:#7C5CBF;margin-top:12px;">'
-    + '<h3>총인건비 편성한도 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">\u2502 지침 \u2162-1 \u2014 지자체장이 통보한 인상률 범위 내에서 편성했는지 확인</span></h3>'
-    + '<div class="lc-raise-row" style="margin-bottom:12px;flex-wrap:wrap;">'
-      + '전년도(2026) 총인건비 ' + lcNumInputWide('tw.base', 150)
-      + ' + (전년도 \u00d7 인상률 ' + lcNumInput('raise', 60) + '%)'
-      + ' \u2212 위배금액 ' + lcNumInputWide('tw.violation', 110)
-      + ' = <input type="text" class="lc-result-box" style="width:130px;display:inline-block;" value="' + fmtWon(limit) + '천원" readonly tabindex="-1">'
-    + '</div>'
-    + '<div class="lc-raise-row" style="margin-bottom:14px;flex-wrap:wrap;">'
-      + '2027년 요구액 ' + lcNumInputWide('tw.request', 150)
-      + ' \u2212 편성한도 ' + fmtWon(limit)
-      + ' = <b style="color:' + gapColor + ';font-size:16px;">' + gapTxt + '</b>'
-    + '</div>'
-    + '<div style="padding:14px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);">'
-    + '<div style="font-weight:700;margin-bottom:6px;">총인건비 범위 (2027년도 지침 개정)</div>'
-    + '<p class="lc-hint" style="margin:0 0 10px;">계정과목\u00b7명목에 무관하게 <b>정규직 정원</b>의 「소득세법」상 근로소득에 해당하는 모든 예산항목. <b>사장\u00b7상임임원 \u00b7 정원 외 직원(비정규직) \u00b7 한시적으로 정원을 초과하는 현원은 제외</b>(2027년도 신설).</p>'
-    + '<div style="font-weight:700;margin-bottom:6px;">인상률 산정 시 제외 \u2014 이 화면에서 걸리는 것</div>'
-    + lcFinalTable([{ t: '항목' }, { t: '2027 요구(천원)' }, { t: '근거' }],
-      lcFinalRow(['기관장(대표이사) 보수', '101,937', '\u2460 기관장 인건비'])
-      + lcFinalRow(['가족수당 (01\u00b702\u00b703 합)', '78,960', '\u2465 가족수당'])
-      + lcFinalRow(['04 기간제근로자등보수', '340,081', '정원 외 비정규직 \u2014 총인건비 범위 밖'])
-      + lcFinalRow(['생활임금보전수당(기간제)', '20,972', '\u2469 최저임금\u00b7생활임금 도입\u00b7인상 증가분 (2027년도 확대)'])
-      + lcFinalRow(['비정규직 공정수당', '20,840', '정원 외 비정규직 \u2014 2027년도 신설 항목'])
-      + lcFinalRow(['업무대행수당', '28,800', '\u2467 대행업무수당'])
-      + lcFinalRow([{ v: '101 인건비에서 차감 소계', status: false }, { v: '<b>591,590</b>', status: false }, '차감 후 6,245,643천원'])
-      + lcFinalGroupRow('101 목 밖이라 애초에 총인건비 인상률과 무관', 3, '')
-      + lcFinalRow(['107 퇴직급여', '591,991', '\u2461 퇴직급여충당금'])
-      + lcFinalRow(['109 평가급', '1,611,141', '\u2463 평가급\u00b7성과금'])
-      + lcFinalRow(['304 연금부담금등', '793,328', '\u2468 4대보험 사업자부담분']))
-    + '<div style="font-weight:700;margin:14px 0 6px;">2027년도 개정 \u2014 한도 판단에 직접 영향</div>'
-    + '<ul class="lc-hint" style="margin:0;padding-left:20px;line-height:1.9;">'
-    + '<li><b>한시적 초과 현원 제외(신설)</b> \u2014 휴직자 대체충원\u00b7복직 등으로 한시적으로 정원을 초과하는 현원은 정원 개념에 넣지 않는다. <b>출연금 3급 +1 \u00b7 5급 +1 \u00b7 6급 +4가 여기 해당하는지부터 확인</b>해야 한다.</li>'
-    + '<li><b>전년도 미집행액 이월 허용(신설)</b> \u2014 2026년도 총인건비 한도 중 미집행액만큼 2027년도에 <b>한도 외로 증액 편성\u00b7집행</b>할 수 있다. 기관이 초과분을 이걸로 설명할 수 있으므로 <b>[요청] 2026년도 총인건비 예산 대비 집행액</b>. 단 2027년에 재차 미집행하면 2028년 반복 증액은 불가하고 2028년도 인상률 적용대상에서도 빠진다.</li>'
-    + '<li><b>생활임금 인상분 제외 확대</b> \u2014 종전 최저임금만 제외였으나 생활임금 도입\u00b7인상에 따른 증가분까지 제외(당해연도 인상률이 총인건비 정책 인상률을 초과하는 부분에 한함).</li>'
-    + '<li><b>비정규직 적정임금</b> \u2014 최저임금의 118%(2027년 10,700 \u00d7 1.18 = <b>12,626원</b>)와 생활임금 중 높은 쪽. 화성시 생활임금 <b>12,750원</b>이 더 높아 생활임금 지급이 맞다.</li>'
-    + '</ul>'
-    + '<p class="lc-hint" style="margin:12px 0 0;">\u00b7 인상률 <b>3.9%</b>는 2027년 요구서가 실제로 쓴 값(103.9%)이다. 2026년은 103.5%였다. <b>[요청] 지자체장이 통보한 2027년도 총인건비 인상률</b> \u2014 이게 확정돼야 한도가 확정된다.<br>\u00b7 위 표의 차감액은 <b>2027년 요구액 기준</b>이다. 한도와 맞대려면 <b>2026년 총인건비도 같은 기준으로 차감한 값</b>이어야 한다 \u2014 <b>[요청] 2026년도 총인건비 산정내역서</b>.</p>'
-    + '</div></div>';
-}
-// 총인건비 편성한도 = 전년도 총인건비 + (전년도 총인건비 \u00d7 인상률) \u2212 총인건비 위배 금액
-function lcTwLimit() {
-  var b = Number(LC.tw.base) || 0, v = Number(LC.tw.violation) || 0;
-  return Math.round(b + b * (Number(LC.raise) || 0) / 100 - v);
-}
 function lcRound(n) { return Math.round(n / 1000); } // 원 -> 천원
 
 function lcGradeAmts(g) {
@@ -10366,7 +10312,7 @@ function renderLaborCalc() {
   var laborSectionMap = { pay: section01, other02: section02, other03: section03, other04: section04 };
   var laborSubDesc = { pay: '정원 내 정규직 1-6급 체계', other02: '정원 범위 내 전문 임기제 직원(가~마급 체계)', other03: '정원 내 무기계약직(공무직 등)', other04: '정원 외의 계약직, 출산대체직 등 비정규직' };
   var laborDescHtml = laborSubDesc[LC.laborSub] ? '<p id="lc-subtab-desc" class="lc-subtab-desc">' + laborSubDesc[LC.laborSub] + '</p>' : '';
-  var laborHtml = laborSubToggle + laborDescHtml + lcTotalWageBox() + laborSectionMap[LC.laborSub];
+  var laborHtml = laborSubToggle + laborDescHtml + laborSectionMap[LC.laborSub];
   var viewHtml = LC.view === 'retire' ? section06
     : LC.view === 'eval' ? section07
     : LC.view === 'pension' ? section05
