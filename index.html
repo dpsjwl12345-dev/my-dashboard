@@ -8672,7 +8672,29 @@ function lcFinalSection() {
     return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13.5px;font-weight:700;">' + label + '</button>';
   };
   var rtabTable;
-  if (rtab === 'retire') {
+  if (rtab === 'welfare') {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalGroupRow('근거\u00b7적용', 2)
+      + lcFinalRow(['근거(제1조)', '「화성시체육회 복리후생규정」 제20조에 따른 <b>맞춤형 복지제도 시행내규</b> (제정 2021.8.19. \u00b7 개정 2025.11.21.)'])
+      + lcFinalRow(['적용대상(제4조)', '사무국장\u00b7직원(임직원) 전원. 다만 \u2460 휴직 중인 직원 \u2461 국외파견 등으로 국내에 거주하지 않는 직원 \u2462 직위해제\u00b7정직 처분기간이 만료되지 않은 직원 \u2463 회장이 후생복지운영위원회 심의를 거쳐 정하는 직원은 적용을 배제\u00b7제한할 수 있다'])
+      + lcFinalRow(['적용기간(제5조)', '매년 1월 1일 ~ 12월 31일'])
+      + lcFinalGroupRow('복지점수', 2)
+      + lcFinalRow(['부여기준(제6조\u2460)', '<b>「화성시 공무원 후생복지에 관한 조례」\u00b7같은 조례 시행규칙 준용</b> \u2014 기본 복지점수(균등 배분) + 변동 복지점수(근속연수\u00b7부양가족 수에 따라 차등)'])
+      + lcFinalRow(['근무연수\u00b7부양가족(제6조\u2461\u00b7\u2462)', '근무연수는 「사무국운영규정」제35조 계산방식 준용(생활체육지도자는 근속수당 근무연수 방식). 부양가족 범위는 같은 규정 제38조(가족수당) 준용'])
+      + lcFinalRow(['확정 시점(제6조\u2463)', '매년 <b>1월 1일 기준</b>으로 정하고 소수점 이하는 절사. 적용기간 중 부양가족 수가 늘거나 줄어도 변경하지 않는다(시행규칙 제1항제4호 복지점수만 기간 중 변경 가능)'])
+      + lcFinalRow(['환산단가(제3조5호\u00b7제7조\u2464)', '<b>복지점수 1점 = 1,000원</b>. 다만 예산편성에 따라 1점당 지급액을 별도로 정할 수 있다'])
+      + lcFinalRow(['이월\u00b7환금 금지(제7조\u2461)', '<b>당해연도 내에 사용</b>해야 하고, 남은 점수는 다음 연도로 이월하거나 금전으로 청구할 수 없다'])
+      + lcFinalRow(['중도 부여\u00b7정산(제7조\u2462\u00b7\u2463)', '연도 중 신규채용\u00b7파견복귀는 사유가 생긴 달의 <b>1일 기준 월 단위</b> 계산. 면직\u00b7해임\u00b7파면\u00b7해외파견\u00b7퇴직 정산은 사유가 생긴 달의 <b>말일 기준 월 단위</b>(매월 1일자는 제외)'])
+      + lcFinalGroupRow('복지항목', 2)
+      + lcFinalRow(['필수기본항목(제9조\u2461)', '전 직원 의무 선택 \u2014 <b>종합건강검진 및 생명\u00b7상해\u00b7의료비 보장보험</b>'])
+      + lcFinalRow(['선택기본항목(제9조\u2463~\u2465)', '회장이 정책적으로 설정. 기간 내 선택하지 않으면 최저수준 선택으로 처리. <b>적용기간 중 변경 불가이고 사용 여부와 관계없이 복지점수가 소진</b>된다'])
+      + lcFinalRow(['자율항목(제10조)', '건강관리\u00b7자기계발\u00b7여가활용\u00b7가정친화 \u2014 개인별 복지점수 범위 내에서 연중 수시 선택'])
+      + lcFinalRow(['예산 구조(제12조\u2461)', '<b>기본항목은 개인별 복지점수와 별도로 주관부서 예산에서 의무 실시</b>하고, 자율항목만 개인별 복지점수 범위 안에서 사용한다 \u2014 예산서에서 두 갈래가 구분돼 있는지 확인 필요'])
+      + lcFinalGroupRow('검토 포인트', 2)
+      + lcFinalRow([{ v: '복지포인트 편성 산출근거', status: false }, '예산서 수당 항목의 <b>복지포인트 35,000,000원 \u00d7 1명</b>은 내규와 맞지 않는다. 1점=1,000원이므로 35,000천원이면 <b>35,000점</b>이고, 정원 29명으로 나누면 1인당 약 1,207점(120만원) 수준이다. 전 직원분 총액을 \u300c1명\u300d으로 표기한 것인지 특정 1명 지급인지 원자료 대조가 필요하다'])
+      + lcFinalRow([{ v: '지침 대조', status: false }, '지침 \u2162-2-(2) \u2014 선택적복지비 운영기관은 <b>의료비지원을 통합 운영</b>해야 하고 과도한 증액이 금지된다. 필수기본항목에 생명\u00b7상해\u00b7의료비 보장보험이 들어 있으므로, 별도 의료비 지원이 중복 편성됐는지 확인 대상'])
+      + lcFinalRow([{ v: '점수 산정 근거', status: false }, '[요청] 개인별 복지점수 산정표(기본점수 \u00b7 근속점수 \u00b7 부양가족점수) 및 「화성시 공무원 후생복지에 관한 조례 시행규칙」 해당 연도 점수표']));
+  } else if (rtab === 'retire') {
     rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
       lcFinalRow(['퇴직급여금(제52조)', '만 1년 이상 근속자 퇴직 시 지급. [별표4] 지급율 적용 \u2014 <b>퇴직 전 3개월 평균임금 \u00d7 근속년수</b>. 퇴직급여금\u00b7퇴직연금은 <b>월 급여 총액의 1/12을 매월 적립</b>'])
       + lcFinalRow(['평균임금 산정(제52조\u2462)', '퇴직 전 최근 3개월간 지급된 보수\u00b7성과급 등 일체를 3으로 나눈 금액. 근로기준법상 통상임금보다 낮으면 통상임금을 평균임금으로 본다'])
@@ -8707,7 +8729,7 @@ function lcFinalSection() {
       + lcFinalRow(['여비(제56조)', '「화성시 지방공무원 여비 조례」 준용']));
   }
   out += '<div style="margin:0 0 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);">'
-    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + '</div>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + rtabBtn('welfare', '복리후생') + '</div>'
     + '<div class="lc-rules-table">' + rtabTable + '</div>'
     + '</div>';
   }
