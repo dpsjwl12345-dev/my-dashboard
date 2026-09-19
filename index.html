@@ -7552,7 +7552,6 @@ var LC = {
   final: { instKey: 'hscf', fundType: '', rawOpen: false, rulesOpen: false, rulesTab: 'labor' }, // 기준값 (최종) 탭 상단 고정 필터: instKey(기관) | fundType(''=전체, '출연금'|'위탁금') | rawOpen(원자료 아코디언 열림 상태) | rulesOpen(보수규정 서류함 클릭 시 열림 상태) | rulesTab(보수규정 내부 챕터탭: 'labor'인건비|'retire'퇴직금|'eval'평가급)
   guideCinemaOpen: {}, // 우측 상단 지침 리스트(01/02) 클릭 펼침 상태 — { '01': true/false, '02': true/false }
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
-  violation: { pay: 0, other02: 0, other03: 0 }, // 01 일반직/02 기타직/03 무기계약직 섹션 우측 "합계 − 위배금액 = 편성액" 줄의 위배금액 — 총인건비 인상률 한도 위배분을 검토자가 직접 입력하는 값(자동계산 아님)
   raise: 4.9, // 2027년도 총인건비 인상률(%) — 지자체 통보 기준. 요구서 단가는 103.9%(3.9%)를 썼다.
   quota: '', // 예산편성 당시(2026.10.) 정원(일반직 및 무기계약직) — 지침 101-01③ — 인상률처럼 실제 확정되면 입력해 계산에 반영하는 모수. 빈칸이 기본값.
   treatmentPct: 4.1, // 대우공무원수당 요율(%) — 기존 lcGradeAmts 하드코딩 0.041을 편집 가능한 모수로 전환
@@ -10086,16 +10085,12 @@ function renderLaborCalc() {
       + '<div class="lc-accordion-body">' + bodyHtml + '</div>'
       + '</div>';
   };
-  // 01/02/03 섹션 제목 우측 "합계 − 위배금액 = 편성액" 줄 — 위배금액은 검토자가 직접 입력(자동계산 아님).
+  // 01/02/03 섹션 제목 우측 합계 줄.
+  // 예전에는 "합계 − 위배금액 = 편성액"으로 늘어놓았는데, 위배금액은 검토자가 직접
+  // 적어 넣는 값이라 화면만 복잡해져 합계만 남긴다.
   var lcCompTotalRow = function (key, totalAmt) {
-    var v = LC.violation[key] || 0; // 입력값은 천원 단위(표시 라벨과 동일) — totalAmt(원 단위)와 맞추려면 ×1000
-    var enacted = totalAmt - v * 1000;
     return '<div class="lc-comp-total">'
       + '<span class="lc-comp-box"><span class="lc-comp-label">합계</span>' + lcResultBox(fmtWon(lcRound(totalAmt)) + '천원') + '</span>'
-      + '<span class="lc-comp-op">−</span>'
-      + '<span class="lc-comp-box"><span class="lc-comp-label">위배금액</span><input type="text" class="lc-comp-input" value="' + fmtWon(v) + '" onchange="lcSet(\'violation.' + key + '\',this.value)"><span class="lc-comp-unit">천원</span></span>'
-      + '<span class="lc-comp-op">=</span>'
-      + '<span class="lc-comp-box"><span class="lc-comp-label">편성액</span>' + lcResultBox(fmtWon(lcRound(enacted)) + '천원') + '</span>'
       + '</div>';
   };
   var allowanceTotal01 = lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal() + lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal() + lcOvertimeTotal() + lcNightWorkTotal() + lcHolidayWorkTotal() + lcLeaveCompTotal() + familyTotalAmt + lcChildAllowTotal() + lcBirthGrantTotal() + lcProxyTotal();
