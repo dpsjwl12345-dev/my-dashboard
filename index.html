@@ -2359,6 +2359,11 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   transition: max-height .5s cubic-bezier(.25,1,.5,1), opacity .3s ease;
 }
 .lc-guide-cinema-item.is-open .lc-guide-cinema-body { max-height: 620px; opacity: 1; padding: 4px 6px 18px; overflow-y: auto; }
+/* 개정사항을 모달로 여는 경우: 펼침 내용이 드롭다운처럼 띄워서 자기 스크롤을
+   따로 가지면 모달 스크롤과 겹쳐 두 개가 생긴다. 모달 안에서는 그냥 아래로
+   밀려나게 해 모달 하나만 스크롤되게 한다. */
+.upload-modal .lc-guide-cinema-body { position: static; box-shadow: none; border: none; border-radius: 0; }
+.upload-modal .lc-guide-cinema-item.is-open .lc-guide-cinema-body { max-height: none; overflow: visible; border-top: 1px solid var(--border); }
 .lc-top-row .lc-raise-row { margin-bottom: 0; }
 /* 101 보수 화면 상단 — 인상률은 심사의 기준값이라 크게 보인다 */
 .lc-raise-big { padding: 8px 18px; gap: 8px; border: 1.5px solid var(--accent);
