@@ -926,6 +926,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .dept-yearly-table td.dyt-num, .dept-yearly-table th.dyt-num { text-align: right; font-variant-numeric: tabular-nums; }
 .dept-yearly-table td.dyt-num:not(.no-data) { color: #2C4A75; font-weight: 700; }
 .dept-yearly-table td.dyt-num.no-data { color: var(--text-soft); font-weight: 500; }
+.dept-yearly-table td.dyt-num.dyt-num-req { color: var(--warning-dark); font-weight: 600; font-style: italic; }
 .dept-yearly-table tbody tr { border-bottom: 1px solid var(--border); }
 .dept-yearly-table tbody tr:last-child { border-bottom: none; }
 .dept-yearly-table td.dyt-name-col { font-weight: 700; color: var(--accent-dark); font-size: 16px; white-space: normal; word-break: keep-all; line-height: 1.3; }
@@ -3415,6 +3416,30 @@ function getDeptEnactedCards(dept, fundType) {
   var key = dept + '|' + fundType;
   return cache.enactedByCard[key] || null;
 }
+// 편성현황 표의 부기명(dept_enacted_amounts.business_card)과 예산요구 트리의 세부 항목명은
+// 공백 표기가 서로 달라(예: "장애인종목별 출전지원" vs "장애인 종목별 출전 지원") 그대로 비교하면 안 맞는다.
+function normalizeItemName(s) { return String(s || '').replace(/\s+/g, ''); }
+var reqAmountsByNameCache = {};
+// 부서·재원의 사업카드(business_cards)별 "세부" 트리 항목의 2027년 요구액(amt27)을 항목명 기준으로 모아 반환한다.
+// dept_enacted_amounts에 2027년 확정 편성액이 아직 없는 항목을 참고용으로 채우는 데만 쓴다(확정치 아님).
+async function fetchDeptRequestAmountsByName(instId, dept, fundType) {
+  var cardNames = filteredBusinesses().map(function (b) { return b.name; });
+  if (!cardNames.length) return {};
+  var cacheKey = instId + '|' + dept + '|' + fundType + '|' + state.selectedYear;
+  if (reqAmountsByNameCache[cacheKey]) return reqAmountsByNameCache[cacheKey];
+  var yf = yearFields(state.selectedYear);
+  var { data, error } = await db.from('budget_items').select('name,' + yf.current)
+    .eq('institution_id', instId).eq('dept', dept).eq('fund_type', fundType)
+    .eq('round', 'base').eq('level', '세부').in('business_card', cardNames);
+  if (error || !data) return {};
+  var map = {};
+  data.forEach(function (r) {
+    var amt = Number(r[yf.current]) || 0;
+    if (amt) map[normalizeItemName(r.name)] = amt;
+  });
+  reqAmountsByNameCache[cacheKey] = map;
+  return map;
+}
 // 부서 카드 상단에 보여줄 "현재 예산액" — 요구액(budget_items 트리)이 아니라 실제 편성액 중 가장 최근 회차(3회>2회>1회>본예산) 값을 쓴다.
 // 현재 선택된 연도부터 확인하고, 없으면 2026년(가장 최근에 실제 편성이 끝난 연도)으로 내려가서 찾는다.
 // 사업(카드)별로 나눠 편성된 부서는 카드마다 각자의 최신 회차 값을 더해서 합산한다. 편성액이 하나도 입력 안 된 부서는 null(호출부에서 요구액으로 대체).
@@ -3599,11 +3624,15 @@ function renderDeptTabs() {
           var isChild = /^\s*ㅇ/.test(card.name);
           var displayName = isChild ? card.name.replace(/^\s+/, '') : card.name;
           var y25 = card.rounds['y25|2025'] || 0, y26 = card.rounds['base|2026'] || 0, y27 = card.rounds['base|2027'] || 0;
+          // 2027년 확정 편성액이 아직 없으면 예산요구액(트리 기준)으로 참고 표시할 수 있도록 이름표를 달아둔다(아래 비동기 패치).
+          var y27Cell = y27 > 0
+            ? '<td class="dyt-num">' + fmtWon(Math.round(y27 / 1000)) + '</td>'
+            : '<td class="dyt-num no-data" data-req-name="' + escapeHtml(displayName) + '">-</td>';
           return '<tr class="' + (isChild ? 'child' : '') + '">'
             + '<td class="dyt-name-col">' + escapeHtml(displayName) + '</td>'
             + '<td class="dyt-num' + (y25 > 0 ? '' : ' no-data') + '">' + (y25 > 0 ? fmtWon(Math.round(y25 / 1000)) : '-') + '</td>'
             + '<td class="dyt-num' + (y26 > 0 ? '' : ' no-data') + '">' + (y26 > 0 ? fmtWon(Math.round(y26 / 1000)) : '-') + '</td>'
-            + '<td class="dyt-num' + (y27 > 0 ? '' : ' no-data') + '">' + (y27 > 0 ? fmtWon(Math.round(y27 / 1000)) : '-') + '</td>'
+            + y27Cell
             + '</tr>';
         }).join('');
         // 부기명이 2개 이상이면(출연금 포함) 합계 행을 표 맨 위에 같이 보여준다.
@@ -3619,13 +3648,38 @@ function renderDeptTabs() {
             totalBase += c.rounds['base|2026'] || 0;
             totalY27 += c.rounds['base|2027'] || 0;
           });
+          // 2027년 확정 편성액 합계가 아직 없으면(대부분 이 상태) 사업카드 예산요구액 합계로 대신 채운다 -
+          // 이 값은 상단 "2027년 최종예산 요구액" 헤더와 항상 같은 소스(business_cards.amt)라 서로 일치한다.
+          var totalY27Display = totalY27 || filteredBusinesses().reduce(function (s, b) { return s + (b.amt || 0); }, 0);
+          var totalY27Cls = totalY27 > 0 ? '' : (totalY27Display > 0 ? ' dyt-num-req' : ' no-data');
           totalRowHtml = '<tr class="dyt-total"><td class="dyt-name-col">합계</td>'
-            + [totalY25, totalBase, totalY27].map(function (amt) {
+            + [totalY25, totalBase].map(function (amt) {
               return '<td class="dyt-num' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</td>';
             }).join('')
+            + '<td class="dyt-num' + totalY27Cls + '">' + (totalY27Display > 0 ? fmtWon(Math.round(totalY27Display / 1000)) : '-') + '</td>'
             + '</tr>';
         }
         yearlyPanelEl.innerHTML = '<table class="dept-yearly-table">' + headHtml + '<tbody>' + totalRowHtml + bodyHtml + '</tbody></table>';
+        // 항목별 2027 확정 편성액이 없는 칸은 예산요구액(budget_items 트리, 세부 항목명 기준)으로 채운다 - 참고용(확정치 아님)이라 dyt-num-req로 다르게 표시.
+        (function () {
+          var instKeyAtCall = nav.instKey, deptAtCall = state.dept, fundAtCall = state.fund;
+          var inst = INSTITUTIONS.filter(function (i) { return i.key === instKeyAtCall; })[0];
+          var panelAtCall = yearlyPanelEl;
+          if (!inst) return;
+          fetchDeptRequestAmountsByName(inst.id, deptAtCall, fundAtCall).then(function (map) {
+            if (nav.instKey !== instKeyAtCall || state.dept !== deptAtCall || state.fund !== fundAtCall) return;
+            var cells = panelAtCall.querySelectorAll('td[data-req-name]');
+            cells.forEach(function (td) {
+              var amt = map[normalizeItemName(td.getAttribute('data-req-name'))];
+              if (amt) {
+                td.textContent = fmtWon(Math.round(amt / 1000));
+                td.classList.remove('no-data');
+                td.classList.add('dyt-num-req');
+                td.title = '2027년 예산요구액(확정 편성 전 참고값)';
+              }
+            });
+          });
+        })();
       } else {
         // 2026년(본예산~3회추경)은 편성액을 직접 입력해둔 값만 보여준다 - 요구액 트리 합계로 대체(fallback) 표시하지 않는다
         // (요구액 ≠ 편성액이라 잘못된 숫자를 보여줄 수 있음). 2025년은 이미 마감된 과거 연도라 그 구분이 없으므로 기존 집계값을 그대로 쓴다.
@@ -4595,16 +4649,16 @@ hscf: {
     ] }
   ],
   revenueItems: [
-    { label: '위탁사업수익', y26: 48069238, y25: 44574745 },
-    { label: '자치단체출연금수익', y26: 14382623, y25: 12849409 },
-    { label: '순세계잉여금', y26: 2813371, y25: 3035801 },
-    { label: '보조금수익', y26: 483779, y25: 665900 },
-    { label: '기부금수익', y26: 100000, y25: 114000 }
+    { label: '위탁사업수익', y26: 48069238, y25: 44574745, y27: 48069238 },
+    { label: '자치단체출연금수익', y26: 14382623, y25: 12849409, y27: 14382623 },
+    { label: '순세계잉여금', y26: 2813371, y25: 3035801, y27: 2813371 },
+    { label: '보조금수익', y26: 483779, y25: 665900, y27: 483779 },
+    { label: '기부금수익', y26: 100000, y25: 114000, y27: 100000 }
   ],
   budgetCompare: [
-    { label: '인건비', y26: 22785497, y25: 22215443 },
-    { label: '운영경비', y26: 7034082, y25: 5633501 },
-    { label: '사업비', y26: 36029432, y25: 33390911 }
+    { label: '인건비', y26: 22785497, y25: 22215443, y27: 22785497 },
+    { label: '운영경비', y26: 7034082, y25: 5633501, y27: 7034082 },
+    { label: '사업비', y26: 36029432, y25: 33390911, y27: 36029432 }
   ],
   expenseBreakdown: {
     columns: ['출연금', '위탁사업비'],
@@ -4726,22 +4780,22 @@ corp: {
     ] }
   ],
   revenueItems: [
-    { label: '위탁사업수익', y26: 116463923, y25: 173084807 },
-    { label: '자본금수익', y26: 40000000, y25: 0 },
-    { label: '기타자본적수입', y26: 16262284, y25: 2531238 },
-    { label: '자치단체보조금수입', y26: 6280226, y25: 2780211 },
-    { label: '기타영업외수익', y26: 4555255, y25: 4068000 },
-    { label: '이자수익', y26: 3000000, y25: 900000 },
-    { label: '임대사업수익', y26: 1968000, y25: 2317320 },
-    { label: '용지 및 주택판매수익', y26: 1041670, y25: 900000 },
-    { label: '기타영업수익', y26: 944400, y25: 800000 },
-    { label: '보증금회수입', y26: 552504, y25: 1300000 },
-    { label: '기타비유동부채수입', y26: 0, y25: 200000 }
+    { label: '위탁사업수익', y26: 116463923, y25: 173084807, y27: 116463923 },
+    { label: '자본금수익', y26: 40000000, y25: 0, y27: 40000000 },
+    { label: '기타자본적수입', y26: 16262284, y25: 2531238, y27: 16262284 },
+    { label: '자치단체보조금수입', y26: 6280226, y25: 2780211, y27: 6280226 },
+    { label: '기타영업외수익', y26: 4555255, y25: 4068000, y27: 4555255 },
+    { label: '이자수익', y26: 3000000, y25: 900000, y27: 3000000 },
+    { label: '임대사업수익', y26: 1968000, y25: 2317320, y27: 1968000 },
+    { label: '용지 및 주택판매수익', y26: 1041670, y25: 900000, y27: 1041670 },
+    { label: '기타영업수익', y26: 944400, y25: 800000, y27: 944400 },
+    { label: '보증금회수입', y26: 552504, y25: 1300000, y27: 552504 },
+    { label: '기타비유동부채수입', y26: 0, y25: 200000, y27: 0 }
   ],
   budgetCompare: [
-    { label: '인건비', y26: 47007945, y25: 45928227 },
-    { label: '운영경비', y26: 99002996, y25: 85373365 },
-    { label: '사업비', y26: 5057321, y25: 57579984 }
+    { label: '인건비', y26: 47007945, y25: 45928227, y27: 47007945 },
+    { label: '운영경비', y26: 99002996, y25: 85373365, y27: 99002996 },
+    { label: '사업비', y26: 5057321, y25: 57579984, y27: 5057321 }
   ],
   expenseBreakdown: {
     columns: ['전출금', '위탁사업비'],
@@ -4832,19 +4886,19 @@ talent: {
     ] }
   ],
   revenueItems: [
-    { label: '위탁사업수익', y26: 16346536, y25: 15249150 },
-    { label: '자치단체출연금수익', y26: 9871907, y25: 9512650 },
-    { label: '순세계잉여금', y26: 2014249, y25: 2095027 },
-    { label: '기타자본적수입', y26: 1009275, y25: 1041865 },
-    { label: '보조금수익', y26: 320860, y25: 718722 },
-    { label: '출연금이자수익', y26: 269812, y25: 269186 },
-    { label: '기부금수익', y26: 132308, y25: 211064 },
-    { label: '기타영업외수익', y26: 16981, y25: 44333 }
+    { label: '위탁사업수익', y26: 16346536, y25: 15249150, y27: 16346536 },
+    { label: '자치단체출연금수익', y26: 9871907, y25: 9512650, y27: 9871907 },
+    { label: '순세계잉여금', y26: 2014249, y25: 2095027, y27: 2014249 },
+    { label: '기타자본적수입', y26: 1009275, y25: 1041865, y27: 1009275 },
+    { label: '보조금수익', y26: 320860, y25: 718722, y27: 320860 },
+    { label: '출연금이자수익', y26: 269812, y25: 269186, y27: 269812 },
+    { label: '기부금수익', y26: 132308, y25: 211064, y27: 132308 },
+    { label: '기타영업외수익', y26: 16981, y25: 44333, y27: 16981 }
   ],
   budgetCompare: [
-    { label: '인건비', y26: 10396295, y25: 8830152 },
-    { label: '운영경비', y26: 13516210, y25: 10614537 },
-    { label: '사업비', y26: 6069423, y25: 9697307 }
+    { label: '인건비', y26: 10396295, y25: 8830152, y27: 10396295 },
+    { label: '운영경비', y26: 13516210, y25: 10614537, y27: 13516210 },
+    { label: '사업비', y26: 6069423, y25: 9697307, y27: 6069423 }
   ],
   expenseBreakdown: {
     columns: ['출연금', '위탁사업비'],
@@ -4927,25 +4981,25 @@ fc: {
     { label: '사회공헌팀', current: 3 }
   ],
   revenueItems: [
-    { label: '출연금', y26: 10050353, y25: 6095154 },
-    { label: '보조금', y26: 1122000, y25: 1000000 },
-    { label: '자체수입금', y26: 1661037, y25: 1566289 }
+    { label: '출연금', y26: 10050353, y25: 6095154, y27: 10050353 },
+    { label: '보조금', y26: 1122000, y25: 1000000, y27: 1122000 },
+    { label: '자체수입금', y26: 1661037, y25: 1566289, y27: 1661037 }
   ],
   revenueDetailTitle: '자체수입금 세부내역',
   revenueDetail: [
-    { label: '상품 등 판매수익', y26: 160000, y25: 0 },
-    { label: '입장료수익', y26: 300000, y25: 300000 },
-    { label: '기부금수익', y26: 130000, y25: 0 },
-    { label: '광고료수익', y26: 290000, y25: 420000 },
-    { label: '기타영업수익', y26: 20000, y25: 30000 },
-    { label: '예금이자수익', y26: 60000, y25: 40000 },
-    { label: '기타영업외수익', y26: 0, y25: 30000 },
-    { label: '순세계잉여금', y26: 701037, y25: 0 }
+    { label: '상품 등 판매수익', y26: 160000, y25: 0, y27: 160000 },
+    { label: '입장료수익', y26: 300000, y25: 300000, y27: 300000 },
+    { label: '기부금수익', y26: 130000, y25: 0, y27: 130000 },
+    { label: '광고료수익', y26: 290000, y25: 420000, y27: 290000 },
+    { label: '기타영업수익', y26: 20000, y25: 30000, y27: 20000 },
+    { label: '예금이자수익', y26: 60000, y25: 40000, y27: 60000 },
+    { label: '기타영업외수익', y26: 0, y25: 30000, y27: 0 },
+    { label: '순세계잉여금', y26: 701037, y25: 0, y27: 701037 }
   ],
   budgetCompare: [
-    { label: '인건비', y26: 1144280, y25: 862000 },
-    { label: '운영경비', y26: 739410, y25: 389000 },
-    { label: '사업비', y26: 10949700, y25: 7410000 }
+    { label: '인건비', y26: 1144280, y25: 862000, y27: 1144280 },
+    { label: '운영경비', y26: 739410, y25: 389000, y27: 739410 },
+    { label: '사업비', y26: 10949700, y25: 7410000, y27: 10949700 }
   ],
   expenseBreakdown: {
     columns: ['출연금', '위탁사업비'],
