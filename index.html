@@ -2393,7 +2393,8 @@ table.lc-table { width: 100%; border-collapse: collapse; font-size: 15.5px; min-
 table.lc-table th, table.lc-table td { padding: 8px 9px; border-bottom: 1px solid var(--border); text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.lc-table th { color: var(--navy-text); font-weight: 800; font-size: 15.5px; background: var(--bg-hover); text-align: center; }
 table.lc-table td:first-child { text-align: left; color: var(--navy-text); font-weight: 600; white-space: pre-line; }
-table.lc-table th:first-child { text-align: center; color: var(--navy-text); font-weight: 800; white-space: normal; }
+table.lc-table th:first-child { text-align: left; color: var(--navy-text); font-weight: 800; white-space: normal; }
+table.lc-table th.lc-th-money, table.lc-table td.lc-money { text-align: right; }
 table.lc-table tr.lc-subtotal td { font-weight: 700; background: var(--accent-soft); color: var(--accent-dark); }
 .lc-pair { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; }
 table.lc-table-5col { table-layout: fixed; }
@@ -8236,11 +8237,14 @@ function lcFinalTable(headers, rowsHtml, tableCls) {
     + '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
 }
 function lcFinalRow(cells) {
+  // 금액처럼 숫자만 들어있는 칸은 오른쪽으로 맞춘다 — 가운데 정렬이면 자릿수가
+  // 다른 금액끼리 끝자리가 어긋나 보이고, 머리글과도 따로 논다.
+  var isMoney = function (v) { return typeof v === 'string' && /^[0-9,.\u2212-]+$/.test(v.trim()) && /[0-9]/.test(v); };
   return '<tr>' + cells.map(function (c) {
     if (c && c.formula) return '<td class="lc-formula">' + c.v + '</td>';
     if (c && c.status) return '<td>' + lcFinalBadge(c.v) + '</td>';
-    if (c && typeof c === 'object') return '<td>' + c.v + '</td>';
-    return '<td>' + c + '</td>';
+    if (c && typeof c === 'object') return '<td' + (isMoney(c.v) ? ' class="lc-money"' : '') + '>' + c.v + '</td>';
+    return '<td' + (isMoney(c) ? ' class="lc-money"' : '') + '>' + c + '</td>';
   }).join('') + '</tr>';
 }
 // 고용구분(일반직·기타직·무기계약직·기간제)은 보수규정 제40조②③④가 지급 가능 수당을 다르게 정하므로
@@ -9820,7 +9824,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>인건비</summary>';
   out += lcFinalFundBlock('인건비(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 3],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalRow(['사무국장(1명, 현재 결원)', { v: '연간 보수총액(단가 미상)', formula: true }, { v: '84,591' }, { v: '확인필요', status: true }])
       + lcFinalRow(['사무차장(1명)', { v: '연간 보수총액(단가 미상)', formula: true }, { v: '70,165' }, { v: '확인필요', status: true }])
       + lcFinalRow(['일반직(18명)', { v: '18명 합계(단가 미상, 참고: 1인당 평균 49,571천원)', formula: true }, { v: '892,284' }, { v: '확인필요', status: true }]))
@@ -9829,7 +9833,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 3],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalRow(['휴일·연장·야간근로수당', { v: '40,000원×20명×12시간×12개월', formula: true }, { v: '115,200' }, { v: '확인필요', status: true }])
       + lcFinalRow(['연차수당(연가보상비)', { v: '180,000원×20명×10일', formula: true }, { v: '36,000' }, { v: '확인필요', status: true }])
       + lcFinalRow(['복지포인트', { v: '35,000,000원×1명', formula: true }, { v: '35,000' }, { v: '확인필요', status: true }]))
@@ -9839,7 +9843,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>상여금</summary>';
   out += lcFinalFundBlock('상여금(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalRow(['성과상여금', { v: '60,000,000원×1식', formula: true }, { v: '60,000' }, { v: '확인필요', status: true }]))
     + '<p class="lc-hint" style="margin-top:8px;">전 직원 대상 총액(1식)으로만 편성돼 있어 개인별·직급별 차등 지급 기준(지급률·등급)은 원자료 대조 전까지 확인필요입니다.</p>'
   );
@@ -9847,7 +9851,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalRow(['퇴직급여(사업주 적립분)', { v: '10,000,000원×12개월', formula: true }, { v: '120,000' }, { v: '확인필요', status: true }]))
     + '<p class="lc-hint" style="margin-top:8px;">월 정액(10,000천원) 적립 방식으로 편성돼 있어 도시공사처럼 &ldquo;연간보수총액÷12×1회&rdquo; 산정식과 결과적으로 비슷하나, 인원별 배분 없이 총액만 있어 기준액 자체가 맞는지는 확인필요입니다.</p>'
   );
@@ -9855,7 +9859,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금부담금 등(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalRow(['연금부담금 등(사업주부담금)', { v: '10,000,000원×12개월(건강보험·국민연금·고용보험·산재보험 합산)', formula: true }, { v: '120,000' }, { v: '확인필요', status: true }]))
     + '<p class="lc-hint" style="margin-top:8px;">도시공사·재단은 4대보험을 보험별로 나눠 편성하는데, 화성시체육회는 &ldquo;연금부담금 등&rdquo; 한 목으로 합산 편성돼 있어 보험별 요율 대조가 불가능한 상태입니다. 인건비(1,413,240)+연금부담금(120,000)=세부사업 총액 중 인건비 관련분 1,533,240천원으로, 위 5개 섹션 합계(1,047,040+186,200+60,000+120,000+120,000=1,533,240)와 정확히 일치함을 확인했습니다.</p>'
   );
@@ -9867,7 +9871,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>인건비</summary>';
   out += lcFinalFundBlock('인건비(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 7],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회 - 정원(현원) 7(6) - 경영기획과(3), 체육지원과(3)', 4)
       + lcFinalRow(['사무국장', { v: '(기본급)69,326,400+(수당)4,680,000=74,006,400', formula: true }, { v: '74,006' }, { v: '확인필요', status: true }])
       + lcFinalRow(['과장', { v: '(기본급)44,996,900+(수당)13,689,600=58,686,500', formula: true }, { v: '58,687' }, { v: '확인필요', status: true }])
@@ -9893,7 +9897,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 5],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
       + lcFinalRow(['연가보상비(7명)', { v: '5,026,500×1년=5,026,500(개인별상이)', formula: true }, { v: '5,027' }, { v: '확인필요', status: true }])
       + lcFinalRow(['초과근무수당(6명)', { v: '34,632,000×1년=34,632,000(개인별상이)', formula: true }, { v: '34,632' }, { v: '확인필요', status: true }])
@@ -9915,7 +9919,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>상여금</summary>';
   out += lcFinalFundBlock('상여금(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
       + lcFinalRow(['성과상여금(6명)', { v: '18,200,000×1회=18,200,000(개인별상이)', formula: true }, { v: '18,200' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('반다비체육센터 운영', 4)
@@ -9925,7 +9929,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
       + lcFinalRow(['퇴직적립금(7명)', { v: '26,269,200×1년=26,269,200(개인별상이)', formula: true }, { v: '26,269' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('반다비체육센터 운영', 4)
@@ -9936,7 +9940,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
       + lcFinalRow(['법정부담금(7명)', { v: '30,000,000×1년=30,000,000(개인별상이, 4대보험 사업주부담분 추정)', formula: true }, { v: '30,000' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('반다비체육센터 운영', 4)
