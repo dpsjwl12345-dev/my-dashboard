@@ -252,6 +252,15 @@ table.summary td.diff.down { color: #4A5578; }
 .ov2-dept-col { display: flex; flex-direction: column; min-width: 0; }
 .ov2-person-col { display: flex; flex-direction: column; min-width: 0; }
 .ov-affiliate-section { margin-top: 18px; }
+.settle-kpi-card .kpi-hover {
+  max-height: 0; opacity: 0; margin: 0; padding-top: 0; overflow: hidden;
+  border-top: 1px dashed transparent;
+  font-size: 11.5px; line-height: 1.5; color: var(--text-muted); white-space: normal; word-break: keep-all;
+  transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease, padding-top .3s ease, border-color .3s ease;
+}
+.settle-kpi-card:hover .kpi-hover {
+  max-height: 200px; opacity: 1; margin-top: 6px; padding-top: 6px; border-top-color: var(--border);
+}
 .fund-personnel-section { margin-top: 4px; }
 .fund-personnel-section .summary-box { margin-bottom: 0; }
 .ov-affiliate-section .summary-box { margin-bottom: 0; }
@@ -4414,7 +4423,7 @@ sports: {
     title: '가맹단체 현황',
     cards: [
       { tone: 'blue', iconKey: 'budget', label: '가맹단체', value: '51개',
-        extra: '정회원 37개 · 준회원 8개 · 인정단체 6개' }
+        hover: '정회원 37개, 준회원 8개, 인정단체 6개' }
     ]
   },
   fundPersonnel: {
@@ -5333,7 +5342,7 @@ function renderOv2Overview(instKey) {
   if (d.affiliates) {
     var af = d.affiliates;
     var afCardsHtml = af.cards.map(function (c) {
-      return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null);
+      return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null, c.hover || null);
     }).join('');
     var afGroupHtml = af.group
       ? '<div class="summary-box"><h3>' + escapeHtml(af.group.title) + '</h3>' + buildPersonRankBar(af.group.rows, af.group.unit)
@@ -10899,13 +10908,15 @@ function renderSettlementTotalRow(rows) {
     + '<td class="num settle-col-rate">' + rate + '%</td></tr>';
 }
 
-function settleKpiCard(tone, iconKey, label, valueHtml, subHtml) {
+function settleKpiCard(tone, iconKey, label, valueHtml, subHtml, hoverHtml) {
   var iconCls = iconKey === 'shortage' ? ' icon-shortage' : '';
   var toneCls = tone ? ' tone-' + tone : '';
   return '<div class="settle-kpi-card' + toneCls + '">'
     + '<div class="kpi-body"><div class="label">' + label + '</div>'
     + '<div class="value">' + valueHtml + '</div>'
     + (subHtml ? '<div class="sub">' + subHtml + '</div>' : '')
+    // 소관별 정현원 카드처럼, 상세 내용은 평소엔 접어두고 커서를 올리면 펼친다.
+    + (hoverHtml ? '<p class="kpi-hover">' + hoverHtml + '</p>' : '')
     + '</div>'
     + '<div class="icon-badge' + iconCls + '">' + SETTLE_KPI_ICONS[iconKey] + '</div>'
     + '</div>';
