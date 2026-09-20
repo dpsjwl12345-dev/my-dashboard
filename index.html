@@ -3571,7 +3571,19 @@ function renderDeptTabs() {
   var fillEl = document.getElementById('dept-select-fill');
   if (amtEl) {
     var deptBiz = filteredBusinesses();
-    var requestedTotal = deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
+    // 2027년은 추경이 없고 카드의 b.amt(2025년 기준값)도 쓸 수 없으므로,
+    // 그 해 예산 트리 합계(사업별 요구액)를 그대로 더해 최종 요구액으로 쓴다.
+    var yearTreeTotal = 0, yearTreeHas = false;
+    deptBiz.forEach(function (b) {
+      (b.teams || []).forEach(function (t) {
+        var node = TEAM_TREES[t.treeKey];
+        if (node) { yearTreeTotal += Number(node.amt26) || 0; yearTreeHas = true; }
+      });
+    });
+    var useTreeTotal = (state.selectedYear === 2027) && yearTreeHas;
+    var requestedTotal = useTreeTotal
+      ? yearTreeTotal
+      : deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
     // 우상단(시 편성액)과 분리해서, 업로드/다운로드 버튼 옆(재단 자체 영역)에 재단이 실제로 요구한 금액 합계를 따로 보여준다.
     // 표시 라벨은 "본예산 요구액"이지만 실제 값은 최종 회차(3회 추경)까지 누적한 합계여야 하므로,
     // 우선 본예산만으로 즉시 그려두고, 각 사업카드의 회차별 증분을 비동기로 더해 갱신한다.
@@ -3580,6 +3592,7 @@ function renderDeptTabs() {
       ? ((state.selectedYear || 2026) + '년 최종예산 요구액 <span class="drt-box"><span class="drt-live-dot"></span>' + fmtWon(requestedTotal) + '천원</span>')
       : '';
     (function () {
+      if (useTreeTotal) return; // 트리 합계를 쓴 해는 추경 누적으로 덮어쓰지 않는다
       var instKeyAtCall = nav.instKey, deptAtCall = state.dept, fundAtCall = state.fund;
       var inst = INSTITUTIONS.filter(function (i) { return i.key === instKeyAtCall; })[0];
       if (!inst || !deptBiz.length) return;
