@@ -7020,20 +7020,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
   var instId = 'tt' + (treeInstanceCounter++);
   var rows = [];
   var totalRowHtml = '';
-  var totalRowText = totalLabel ? (totalLabel + ' 합계') : '합계';
-  if (trees.length > 1 || (trees.length === 1 && totalLabel)) {
-    var sumAmt26 = trees.reduce(function (s, t) { return s + (t.amt26 || 0); }, 0);
-    var sumAmt25 = trees.reduce(function (s, t) { return s + (t.amt25 || 0); }, 0);
-    totalRowHtml = '<tr class="lvl-합계">'
-      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> ' + escapeHtml(totalRowText) + '</td>'
-      + '<td class="num basis"></td>'
-      + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
-      + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
-      + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
-      + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
-      + '<td class="memo-cell"></td>'
-      + '</tr>';
-  }
+  // 표 맨 위 합계 행은 표시하지 않는다.
   // 같은 편성목/세부사업(이름 기준)이 트리 여러 개(팀 여러 개)에 걸쳐 나타나도, 팀별로 따로 묶지 않고
   // 전체를 합쳐 "세부사업"/"통계목" 두 목록으로만 보여준다 - 체크박스 하나로 해당 이름 전체가 같이 필터링된다.
   // 이름 끝에 공백이 붙었는지("연금부담금 등"/"연금부담금 등 ") 같은 사소한 표기 차이 때문에
