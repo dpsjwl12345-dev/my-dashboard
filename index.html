@@ -250,20 +250,6 @@ table.summary td.diff.down { color: #4A5578; }
 @media (max-width: 1400px) { .ov2-kpi-row4 { grid-template-columns: repeat(2, 1fr); } }
 .ov2-personnel-combo { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); align-items: stretch; }
 .ov2-dept-col { display: flex; flex-direction: column; min-width: 0; }
-.ov2-person-col { display: flex; flex-direction: column; min-width: 0; }
-.ov-affiliate-section { margin-top: 18px; }
-.settle-kpi-card .kpi-hover {
-  max-height: 0; opacity: 0; margin: 0; padding-top: 0; overflow: hidden;
-  border-top: 1px dashed transparent;
-  font-size: 11.5px; line-height: 1.5; color: var(--text-muted); white-space: normal; word-break: keep-all;
-  transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease, padding-top .3s ease, border-color .3s ease;
-}
-.settle-kpi-card:hover .kpi-hover {
-  max-height: 200px; opacity: 1; margin-top: 6px; padding-top: 6px; border-top-color: var(--border);
-}
-.fund-personnel-section { margin-top: 4px; }
-.fund-personnel-section .summary-box { margin-bottom: 0; }
-.ov-affiliate-section .summary-box { margin-bottom: 0; }
 .ov2-dept-box { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
 .ov2-subhead { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); margin: 0 0 10px; }
 .settle-kpi-card { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-radius: 16px; padding: 11px 14px; position: relative; overflow: hidden; background: var(--bg-hover); box-shadow: none; transition: transform .15s; }
@@ -2335,8 +2321,8 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .lc-section-title-row h3 { margin: 0; }
 .lc-comp-total { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 0 auto; }
 .lc-comp-box { display: flex; align-items: center; gap: 6px; }
-.lc-comp-box input.lc-result-box { width: 150px; height: 38px; font-size: 18px; font-weight: 500; background: var(--bg-hover); }
-.lc-comp-label { font-size: 16px; font-weight: 700; color: var(--text-muted); white-space: nowrap; }
+.lc-comp-box input.lc-result-box { width: 120px; font-weight: 700; background: var(--bg-hover); }
+.lc-comp-label { font-size: 13px; font-weight: 700; color: var(--text-muted); white-space: nowrap; }
 .lc-comp-op { font-size: 17px; font-weight: 800; color: var(--text-muted); }
 .lc-comp-input { width: 90px; padding: 4px 8px; border: 1px solid var(--border-strong); border-radius: 5px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
 .lc-comp-unit { font-size: 13px; color: var(--text-muted); }
@@ -2373,11 +2359,6 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   transition: max-height .5s cubic-bezier(.25,1,.5,1), opacity .3s ease;
 }
 .lc-guide-cinema-item.is-open .lc-guide-cinema-body { max-height: 620px; opacity: 1; padding: 4px 6px 18px; overflow-y: auto; }
-/* 개정사항을 모달로 여는 경우: 펼침 내용이 드롭다운처럼 띄워서 자기 스크롤을
-   따로 가지면 모달 스크롤과 겹쳐 두 개가 생긴다. 모달 안에서는 그냥 아래로
-   밀려나게 해 모달 하나만 스크롤되게 한다. */
-.upload-modal .lc-guide-cinema-body { position: static; box-shadow: none; border: none; border-radius: 0; }
-.upload-modal .lc-guide-cinema-item.is-open .lc-guide-cinema-body { max-height: none; overflow: visible; border-top: 1px solid var(--border); }
 .lc-top-row .lc-raise-row { margin-bottom: 0; }
 /* 101 보수 화면 상단 — 인상률은 심사의 기준값이라 크게 보인다 */
 .lc-raise-big { padding: 8px 18px; gap: 8px; border: 1.5px solid var(--accent);
@@ -2389,7 +2370,7 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
   color: var(--warning); background: var(--surface); }
 .lc-raise-big .lc-raise-pct { font-size: 16px; font-weight: 800; color: #fff; }
 .lc-raise-stack { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 12px; }
-.lc-raise-formula { font-size: 17px; font-weight: 600; letter-spacing: -0.01em;
+.lc-raise-formula { font-size: 12.5px; font-weight: 600; letter-spacing: -0.01em;
   color: var(--text-muted); text-align: center; white-space: nowrap; }
 .lc-raise-formula b { color: var(--warning); font-weight: 800; }
 .lc-subtoggle-row .lc-raise-row { margin-bottom: 0; }
@@ -2412,8 +2393,7 @@ table.lc-table { width: 100%; border-collapse: collapse; font-size: 15.5px; min-
 table.lc-table th, table.lc-table td { padding: 8px 9px; border-bottom: 1px solid var(--border); text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.lc-table th { color: var(--navy-text); font-weight: 800; font-size: 15.5px; background: var(--bg-hover); text-align: center; }
 table.lc-table td:first-child { text-align: left; color: var(--navy-text); font-weight: 600; white-space: pre-line; }
-table.lc-table th:first-child { text-align: left; color: var(--navy-text); font-weight: 800; white-space: normal; }
-table.lc-table th.lc-th-money, table.lc-table td.lc-money { text-align: right; }
+table.lc-table th:first-child { text-align: center; color: var(--navy-text); font-weight: 800; white-space: normal; }
 table.lc-table tr.lc-subtotal td { font-weight: 700; background: var(--accent-soft); color: var(--accent-dark); }
 .lc-pair { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; }
 table.lc-table-5col { table-layout: fixed; }
@@ -2453,7 +2433,7 @@ table.lc-table-6col th:nth-child(6), table.lc-table-6col td:nth-child(6) { width
 table.lc-table input { width: 64px; padding: 4px 6px; border: 1px solid var(--border-strong); border-radius: 5px; text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; }
 input.lc-result-box { text-align: right; }
 table.lc-table input.lc-result-box { width: 110px; font-weight: 700; background: var(--bg-hover); cursor: default; }
-.lc-accordion-head input.lc-result-box { height: 44px; padding: 0 14px; font-size: 18px; }
+.lc-accordion-head input.lc-result-box { height: 44px; padding: 0 14px; font-size: 20px; }
 .lc-detail-toggle { margin: 8px 0 0; }
 .lc-detail-toggle summary { cursor: pointer; font-size: 13px; color: var(--text-muted); font-weight: 600; padding: 2px 0; list-style: none; }
 .lc-detail-toggle summary::-webkit-details-marker { display: none; }
@@ -3571,19 +3551,7 @@ function renderDeptTabs() {
   var fillEl = document.getElementById('dept-select-fill');
   if (amtEl) {
     var deptBiz = filteredBusinesses();
-    // 2027년은 추경이 없고 카드의 b.amt(2025년 기준값)도 쓸 수 없으므로,
-    // 그 해 예산 트리 합계(사업별 요구액)를 그대로 더해 최종 요구액으로 쓴다.
-    var yearTreeTotal = 0, yearTreeHas = false;
-    deptBiz.forEach(function (b) {
-      (b.teams || []).forEach(function (t) {
-        var node = TEAM_TREES[t.treeKey];
-        if (node) { yearTreeTotal += Number(node.amt26) || 0; yearTreeHas = true; }
-      });
-    });
-    var useTreeTotal = (state.selectedYear === 2027) && yearTreeHas;
-    var requestedTotal = useTreeTotal
-      ? yearTreeTotal
-      : deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
+    var requestedTotal = deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
     // 우상단(시 편성액)과 분리해서, 업로드/다운로드 버튼 옆(재단 자체 영역)에 재단이 실제로 요구한 금액 합계를 따로 보여준다.
     // 표시 라벨은 "본예산 요구액"이지만 실제 값은 최종 회차(3회 추경)까지 누적한 합계여야 하므로,
     // 우선 본예산만으로 즉시 그려두고, 각 사업카드의 회차별 증분을 비동기로 더해 갱신한다.
@@ -3592,7 +3560,6 @@ function renderDeptTabs() {
       ? ((state.selectedYear || 2026) + '년 최종예산 요구액 <span class="drt-box"><span class="drt-live-dot"></span>' + fmtWon(requestedTotal) + '천원</span>')
       : '';
     (function () {
-      if (useTreeTotal) return; // 트리 합계를 쓴 해는 추경 누적으로 덮어쓰지 않는다
       var instKeyAtCall = nav.instKey, deptAtCall = state.dept, fundAtCall = state.fund;
       var inst = INSTITUTIONS.filter(function (i) { return i.key === instKeyAtCall; })[0];
       if (!inst || !deptBiz.length) return;
@@ -4191,7 +4158,7 @@ function buildIncomeProportionBar(rows, total26) {
     + '</div>';
 }
 
-function buildPersonRankBar(rows, unit) {
+function buildPersonRankBar(rows) {
   var total = rows.reduce(function (a, r) { return a + (r.current || 0); }, 0);
   var actualPcts = rows.map(function (r) { return total ? (r.current / total * 100) : 0; });
   // 실제 비중대로면 가급·나급처럼 인원이 적은 구간은 너무 좁아 라벨이 안 들어가므로,
@@ -4208,8 +4175,7 @@ function buildPersonRankBar(rows, unit) {
       flexIdx.forEach(function (i) { pcts[i] -= overBudget * (pcts[i] / flexSum); });
     }
   }
-  var unitTxt = unit || '명';
-  var valTxt = function (r) { return (r.capacity != null) ? (r.capacity + '(' + r.current + ')') : (r.current + unitTxt); };
+  var valTxt = function (r) { return (r.capacity != null) ? (r.capacity + '(' + r.current + ')') : (r.current + '명'); };
   // "전문계약직(가급)"처럼 긴 이름은 좁은 구간에서 잘리므로, 괄호가 있으면 괄호 안쪽만 짧게 보여주고
   // 전체 이름은 title 툴팁으로 확인하게 한다.
   var shortLabel = function (label) {
@@ -4432,34 +4398,6 @@ sports: {
     { label: '시설운영과', current: 2, subTeams: [ { name: '과장', current: 1 }, { name: '사무원', current: 1 } ] },
     { label: '소통협력과', current: 12, subTeams: [ { name: '과장', current: 1 }, { name: '사무원', current: 2 }, { name: '지도자', current: 9 } ] }
   ],
-  affiliates: {
-    title: '가맹단체 현황',
-    cards: [
-      { tone: 'blue', iconKey: 'budget', label: '가맹단체', value: '51개',
-        hover: '정회원 37개, 준회원 8개, 인정단체 6개' }
-    ]
-  },
-  fundPersonnel: {
-    '민간단체법정운영보조': {
-      title: '정현원 현황',
-      subtitle: '민간단체법정운영보조 인건비 대상',
-      cards: [
-        { tone: 'blue', iconKey: 'budget', label: '정원', value: '20명' },
-        { tone: 'purple', iconKey: 'settle', label: '현원', value: '19명' },
-        { tone: 'mint', iconKey: 'rate', label: '정원내 충원율', value: '95.0%', extra: '<div class="settle-rate-bar"><div class="fill" style="width:95%;"></div></div>' }
-      ],
-      group: {
-        title: '직급별 현황',
-        rows: [
-          { label: '결원(사무국장)', current: 1, tone: 'danger' },
-          { label: '사무차장', current: 1 },
-          { label: '과장', current: 5 },
-          { label: '사무원', current: 13 }
-        ]
-      },
-      note: '사무국 전체 정원 29명·현원 28명 중 생활체육지도자 9명 제외 — 지도자 인건비는 「생활체육지도자 배치」(국·도비 매칭 및 자체) 사업에서 편성'
-    }
-  },
   revenueItems: [
     { label: '시비보조금 등', y26: 8550475, y25: 9193918 },
     { label: '체육진흥기금', y26: 351500, y25: 313900 },
@@ -4608,31 +4546,6 @@ dsports: {
     { label: '체육지원과', current: 3, subTeams: [ { name: '사무원', current: 3 } ] },
     { label: '반다비체육센터', current: 15, subTeams: [ { name: '차장', current: 1 }, { name: '사무원', current: 3 }, { name: '계약직', current: 11 } ] }
   ],
-  affiliates: {
-    title: '가맹단체 현황',
-    cards: [
-      { tone: 'blue', iconKey: 'budget', label: '가맹단체', value: '16개' }
-    ]
-  },
-  fundPersonnel: {
-    '민간단체법정운영보조': {
-      title: '정현원 현황',
-      subtitle: '민간단체법정운영보조 인건비 대상',
-      cards: [
-        { tone: 'blue', iconKey: 'budget', label: '정원', value: '7명' },
-        { tone: 'purple', iconKey: 'settle', label: '현원', value: '6명' }
-      ],
-      group: {
-        title: '직급별 현황',
-        rows: [
-          { label: '결원(사무국장)', current: 1, tone: 'danger' },
-          { label: '과장', current: 1 },
-          { label: '사무원', current: 5 }
-        ]
-      },
-      note: '사무국 전체 정원 17명·현원 27명 중 ① 반다비체육센터 15명(차장1·사무원3·계약직11)은 민간위탁금 「화성 반다비체육센터 운영」에서, ② 장애인생활체육지도자 6명은 「장애인생활체육지도자 배치」 사업에서 인건비를 편성하므로 제외'
-    }
-  },
   budgetCompare: [
     { label: '시보조금', y26: 1378706, y25: 1240857 },
     { label: '위탁금', y26: 1790304, y25: 0 },
@@ -5350,28 +5263,8 @@ function renderOv2Overview(instKey) {
   var gradeHtml = '';
 
   // 3) 소관별 정현원 - 정현원 현황과 나란히 배치해 높이를 맞추고 전체 섹션 높이를 줄임
-  // 3-1) 가맹단체 현황 — 정현원 현황과 같은 형식(KPI 카드 + 비중 막대)으로 좌측 열 아래 공백에 배치
-  var affiliatesHtml = '';
-  if (d.affiliates) {
-    var af = d.affiliates;
-    var afCardsHtml = af.cards.map(function (c) {
-      return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null, c.hover || null);
-    }).join('');
-    var afGroupHtml = af.group
-      ? '<div class="summary-box"><h3>' + escapeHtml(af.group.title) + '</h3>' + buildPersonRankBar(af.group.rows, af.group.unit)
-        + (af.group.note ? '<p class="ov2-pbar-note">' + escapeHtml(af.group.note) + '</p>' : '') + '</div>'
-      : '';
-    affiliatesHtml = '<div class="ov-affiliate-section">'
-      + '<div class="section-title-row"><h2 class="section-heading section-heading-lg">' + escapeHtml(af.title || '가맹단체 현황') + '</h2></div>'
-      + '<div class="ov-year-panel" data-year="2026">'
-      +   '<div class="settle-kpi-grid ov2-kpi-row4">' + afCardsHtml + '</div>' + afGroupHtml
-      + '</div>'
-      + '<div class="ov-year-panel" data-year="2027" style="display:none;"><div class="summary-box"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
-      + '</div>';
-  }
-
   var deptPersonHtml = '<div class="ov2-two-col ov2-personnel-combo">'
-    + '<div class="ov2-person-col">' + orgHtml + affiliatesHtml + '</div>'
+    + orgHtml
     + '<div class="ov2-dept-col"><div class="section-title-row"><h2 class="section-heading section-heading-lg">소관별 정현원</h2></div>'
     +   '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2026">' + ov2PersonnelVBarList(d.byDept) + '</div>' + '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
     + '</div>';
@@ -6302,18 +6195,8 @@ function isPublicInstitutionBudgetSheet(rows) {
 }
 
 function normalizePublicInstitutionBudgetRows(rows) {
-  var out = [['정책', '단위', '세부사업', '목코드', '목명', '세목코드', '세목명', '부기명(항목명)', '산출기초', '2027예산액(천원)', '2026예산액(천원)', '세목전년도액(천원)']];
+  var out = [['정책', '단위', '세부사업', '목코드', '목명', '세목코드', '세목명', '부기명(항목명)', '산출기초', '2027예산액(천원)', '2026예산액(천원)']];
   var policy = '', unit = '', detail = '', mokCode = '', mokName = '', semokCode = '', semokName = '';
-  // 전년도(2026) 금액은 ◎/○ 부기명 행에는 없고 목·세목 행(H열)에만 있다.
-  // 그래서 목·세목 행을 만날 때 그 값을 담아뒀다가 그 아래 부기명 행에 함께 실어보낸다.
-  // (세목이 없는 목은 목 값이 그대로 쓰이고, 세목이 있으면 세목 값이 덮어쓴다.)
-  // 계층 행(정책/단위/세부/목/세목)은 자기 금액(G=올해, H=전년도)을 그대로 갖고 있다.
-  // 부기명(◎/○) 행에는 전년도 금액이 없고, 2027엔 사라졌지만 2026 금액만 남은 사업도 있어서
-  // 계층 행을 '자기금액 행(__SELF__)'으로 따로 내보내 노드에 직접 싣는다.
-  var pushSelf = function (levelKey, r2) {
-    out.push([policy, unit, detail, mokCode, mokName, semokCode, semokName,
-      '', '', 0, 0, '__SELF__', amountThousands(r2[6]), amountThousands(r2[7]), levelKey]);
-  };
   var clean = function (v) { return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); };
   var stripPrefix = function (v, re) { return clean(v).replace(re, '').trim(); };
   var amountThousands = function (v) {
@@ -6327,20 +6210,17 @@ function normalizePublicInstitutionBudgetRows(rows) {
     // 산출근거 명칭은 J열, 실제 산출식은 K열이다. 일부 변환기/파일은
     // 빈 셀을 보존하는 방식이 달라 L열에 값이 남을 수 있어 안전하게 보완한다.
     var calc = clean(r[10]) || clean(r[11]);
-    if (b) { policy = stripPrefix(b, /^\[정책\]\s*/); unit = ''; detail = ''; mokCode = ''; mokName = ''; semokCode = ''; semokName = ''; pushSelf('정책', r); }
-    if (c) { unit = stripPrefix(c, /^\[단위\]\s*/); detail = ''; mokCode = ''; mokName = ''; semokCode = ''; semokName = ''; pushSelf('단위', r); }
-    if (d) { detail = stripPrefix(d, /^\[세부\]\s*/); mokCode = ''; mokName = ''; semokCode = ''; semokName = ''; pushSelf('세부', r); }
+    if (b) policy = stripPrefix(b, /^\[정책\]\s*/);
+    if (c) unit = stripPrefix(c, /^\[단위\]\s*/);
+    if (d) detail = stripPrefix(d, /^\[세부\]\s*/);
     if (e) {
       var mok = e.match(/^(\S+)\s*(.*)$/);
       mokCode = mok ? mok[1] : '';
       mokName = mok ? (mok[2] || mok[1]) : e;
-      semokCode = ''; semokName = '';
-      pushSelf('목', r);
     }
     var semok = j.match(/^(\d+)\s+(.+)$/);
     if (semok) {
       semokCode = semok[1]; semokName = semok[2].trim();
-      pushSelf('세목', r);
       return;
     }
     var leaf = j.trim();
@@ -6470,40 +6350,27 @@ function buildTemplateTree(dataRows) {
     var calc = String(r[8] || '').trim();
     var amt26 = parseTemplateAmt(r[9]);
     var amt25 = parseTemplateAmt(r[10]);
-    var isSelf = String(r[11] || '') === '__SELF__';
-    var self26 = parseTemplateAmt(r[12]);
-    var self25 = parseTemplateAmt(r[13]);
-    var selfLevel = String(r[14] || '');
-    if (!isSelf && !policy && !unit && !detail && !mokName && !semokName && !leafName) return; // 빈 행 스킵
-
-    // 자기금액 행은 해당 레벨까지만 노드를 만든다(그 아래 빈 이름 노드가 생기지 않게).
-    var LEVEL_DEPTH = { '정책': 1, '단위': 2, '세부': 3, '목': 4, '세목': 5 };
-    var needDepth = isSelf ? (LEVEL_DEPTH[selfLevel] || 5) : 5;
+    if (!policy && !unit && !detail && !mokName && !semokName && !leafName) return; // 빈 행 스킵
 
     var pKey = policy;
     var pNode = policyMap[pKey];
     if (!pNode) { pNode = { level: '정책', name: policy, children: [], _map: {} }; policyMap[pKey] = pNode; policies.push(pNode); }
-    if (isSelf && needDepth === 1) { pNode.amt26Self = self26; pNode.amt25Self = self25; return; }
 
     var uKey = unit;
     var uNode = pNode._map[uKey];
     if (!uNode) { uNode = { level: '단위', name: unit, children: [], _map: {} }; pNode._map[uKey] = uNode; pNode.children.push(uNode); }
-    if (isSelf && needDepth === 2) { uNode.amt26Self = self26; uNode.amt25Self = self25; return; }
 
     var dKey = detail;
     var dNode = uNode._map[dKey];
     if (!dNode) { dNode = { level: '세부', name: detail, children: [], _map: {} }; uNode._map[dKey] = dNode; uNode.children.push(dNode); }
-    if (isSelf && needDepth === 3) { dNode.amt26Self = self26; dNode.amt25Self = self25; return; }
 
     var mKey = mokCode + '|' + mokName;
     var mNode = dNode._map[mKey];
     if (!mNode) { mNode = { level: '목', code: mokCode || null, name: mokName, children: [], _map: {} }; dNode._map[mKey] = mNode; dNode.children.push(mNode); }
-    if (isSelf && needDepth === 4) { mNode.amt26Self = self26; mNode.amt25Self = self25; return; }
 
     var sKey = semokCode + '|' + semokName;
     var sNode = mNode._map[sKey];
     if (!sNode) { sNode = { level: '세목', code: semokCode || null, name: semokName, children: [], _map: {} }; mNode._map[sKey] = sNode; mNode.children.push(sNode); }
-    if (isSelf) { sNode.amt26Self = self26; sNode.amt25Self = self25; return; }
 
     var marker = leafName.charAt(0);
     var displayName = leafName.replace(/^[◎○]\s*/, '').trim();
@@ -6521,19 +6388,11 @@ function buildTemplateTree(dataRows) {
 }
 // 상위 노드(정책/단위/세부/목/세목)의 예산액을 하위 leaf 합계로 채운다(위쪽 노드는 직접 입력값이 없으므로).
 function rollupTemplateTree(node) {
-  if (!node.children || !node.children.length) {
-    // 하위 항목이 아예 없는 계층 행(예: 2027엔 없어지고 2026 금액만 남은 사업)은 자기금액을 쓴다.
-    if (!node.amt26 && node.amt26Self) node.amt26 = node.amt26Self;
-    if (!node.amt25 && node.amt25Self) node.amt25 = node.amt25Self;
-    return { amt26: node.amt26 || 0, amt25: node.amt25 || 0 };
-  }
+  if (!node.children || !node.children.length) return { amt26: node.amt26 || 0, amt25: node.amt25 || 0 };
   var sum26 = 0, sum25 = 0;
   node.children.forEach(function (c) { var r = rollupTemplateTree(c); sum26 += r.amt26; sum25 += r.amt25; });
-  // 계층 행(정책/단위/세부/목/세목)은 엑셀에 자기 금액이 찍혀 있으므로 그 값을 신뢰한다.
-  // (하위 세목 합이 상위 행 금액과 어긋나는 파일이 있어, 상위 행 값을 기준으로 맞춘다.)
-  node.amt26 = (node.amt26Self != null && node.amt26Self !== 0) ? node.amt26Self : sum26;
-  node.amt25 = (node.amt25Self != null && node.amt25Self !== 0) ? node.amt25Self : sum25;
-  return { amt26: node.amt26, amt25: node.amt25 };
+  node.amt26 = sum26; node.amt25 = sum25;
+  return { amt26: sum26, amt25: sum25 };
 }
 function templateTreeToPreviewHtml(nodes, depth, prevLabel) {
   return nodes.map(function (n) {
@@ -7033,7 +6892,20 @@ function renderTeamTreesCombined(trees, totalLabel) {
   var instId = 'tt' + (treeInstanceCounter++);
   var rows = [];
   var totalRowHtml = '';
-  // 표 맨 위 합계 행은 표시하지 않는다.
+  var totalRowText = totalLabel ? (totalLabel + ' 합계') : '합계';
+  if (trees.length > 1 || (trees.length === 1 && totalLabel)) {
+    var sumAmt26 = trees.reduce(function (s, t) { return s + (t.amt26 || 0); }, 0);
+    var sumAmt25 = trees.reduce(function (s, t) { return s + (t.amt25 || 0); }, 0);
+    totalRowHtml = '<tr class="lvl-합계">'
+      + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> ' + escapeHtml(totalRowText) + '</td>'
+      + '<td class="num basis"></td>'
+      + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
+      + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
+      + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
+      + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
+      + '<td class="memo-cell"></td>'
+      + '</tr>';
+  }
   // 같은 편성목/세부사업(이름 기준)이 트리 여러 개(팀 여러 개)에 걸쳐 나타나도, 팀별로 따로 묶지 않고
   // 전체를 합쳐 "세부사업"/"통계목" 두 목록으로만 보여준다 - 체크박스 하나로 해당 이름 전체가 같이 필터링된다.
   // 이름 끝에 공백이 붙었는지("연금부담금 등"/"연금부담금 등 ") 같은 사소한 표기 차이 때문에
@@ -7227,27 +7099,6 @@ var LIBRARY_BRANCHES = {
   '화성예술의전당': ['공연기획팀', '무대기술팀', '운영지원팀']
 };
 
-// 통계목(민간단체법정운영보조 등) 화면에서 세부사업을 고르면, 그 사업의 인건비가 실제로 담당하는
-// 인원만 뽑아 기관 현황과 같은 형식(KPI 카드 + 직급별 비중 막대)으로 보여준다.
-function fundPersonnelHtml(instKey, fund) {
-  var d = (typeof OV2_DATA !== 'undefined') ? OV2_DATA[instKey] : null;
-  var fp = d && d.fundPersonnel && d.fundPersonnel[fund];
-  if (!fp) return '';
-  var cardsHtml = fp.cards.map(function (c) {
-    return settleKpiCard(c.tone, c.iconKey, c.label, c.value, c.extra || null);
-  }).join('');
-  var groupHtml = fp.group
-    ? '<div class="summary-box"><h3>' + escapeHtml(fp.group.title) + '</h3>' + buildPersonRankBar(fp.group.rows, fp.group.unit)
-      + (fp.note ? '<p class="ov2-pbar-note">' + escapeHtml(fp.note) + '</p>' : '') + '</div>'
-    : '';
-  return '<div class="fund-personnel-section">'
-    + '<div class="section-title-row"><h2 class="section-heading section-heading-lg">' + escapeHtml(fp.title || '정현원 현황')
-    +   (fp.subtitle ? ' <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">(' + escapeHtml(fp.subtitle) + ')</span>' : '')
-    + '</h2></div>'
-    + '<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + groupHtml
-    + '</div>';
-}
-
 function renderDetail() {
   var b = getBusiness(state.selectedId);
   var el = document.getElementById('detail');
@@ -7327,7 +7178,7 @@ function renderDetail() {
   // 부서/사업 탭만 고른 상태에서는 정현원 + 회차 탭(본예산~3회추경)까지만 보여주고,
   // 그 아래 예산서(금액·트리)는 회차 탭을 하나 골라야 나오게 한다.
   if (!state.selectedRound) {
-    el.innerHTML = fundPersonnelHtml(nav.instKey, nav.fund);
+    el.innerHTML = '';
     return;
   }
 
@@ -7701,6 +7552,7 @@ var LC = {
   final: { instKey: 'hscf', fundType: '', rawOpen: false, rulesOpen: false, rulesTab: 'labor' }, // 기준값 (최종) 탭 상단 고정 필터: instKey(기관) | fundType(''=전체, '출연금'|'위탁금') | rawOpen(원자료 아코디언 열림 상태) | rulesOpen(보수규정 서류함 클릭 시 열림 상태) | rulesTab(보수규정 내부 챕터탭: 'labor'인건비|'retire'퇴직금|'eval'평가급)
   guideCinemaOpen: {}, // 우측 상단 지침 리스트(01/02) 클릭 펼침 상태 — { '01': true/false, '02': true/false }
   laborSub: 'pay', // 인건비 탭 내부 서브탭: 'pay'(01보수) | 'other02'(기타직보수) | 'other03'(무기계약직보수) | 'other04'(기간제근로자보수)
+  violation: { pay: 0, other02: 0, other03: 0 }, // 01 일반직/02 기타직/03 무기계약직 섹션 우측 "합계 − 위배금액 = 편성액" 줄의 위배금액 — 총인건비 인상률 한도 위배분을 검토자가 직접 입력하는 값(자동계산 아님)
   raise: 4.9, // 2027년도 총인건비 인상률(%) — 지자체 통보 기준. 요구서 단가는 103.9%(3.9%)를 썼다.
   quota: '', // 예산편성 당시(2026.10.) 정원(일반직 및 무기계약직) — 지침 101-01③ — 인상률처럼 실제 확정되면 입력해 계산에 반영하는 모수. 빈칸이 기본값.
   treatmentPct: 4.1, // 대우공무원수당 요율(%) — 기존 lcGradeAmts 하드코딩 0.041을 편집 가능한 모수로 전환
@@ -8385,14 +8237,11 @@ function lcFinalTable(headers, rowsHtml, tableCls) {
     + '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
 }
 function lcFinalRow(cells) {
-  // 금액처럼 숫자만 들어있는 칸은 오른쪽으로 맞춘다 — 가운데 정렬이면 자릿수가
-  // 다른 금액끼리 끝자리가 어긋나 보이고, 머리글과도 따로 논다.
-  var isMoney = function (v) { return typeof v === 'string' && /^[0-9,.\u2212-]+$/.test(v.trim()) && /[0-9]/.test(v); };
   return '<tr>' + cells.map(function (c) {
     if (c && c.formula) return '<td class="lc-formula">' + c.v + '</td>';
     if (c && c.status) return '<td>' + lcFinalBadge(c.v) + '</td>';
-    if (c && typeof c === 'object') return '<td' + (isMoney(c.v) ? ' class="lc-money"' : '') + '>' + c.v + '</td>';
-    return '<td' + (isMoney(c) ? ' class="lc-money"' : '') + '>' + c + '</td>';
+    if (c && typeof c === 'object') return '<td>' + c.v + '</td>';
+    return '<td>' + c + '</td>';
   }).join('') + '</tr>';
 }
 // 고용구분(일반직·기타직·무기계약직·기간제)은 보수규정 제40조②③④가 지급 가능 수당을 다르게 정하므로
@@ -9972,7 +9821,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>인건비</summary>';
   out += lcFinalFundBlock('인건비(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 3],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['사무국장(1명, 현재 결원)', { v: '연간 보수총액(단가 미상)', formula: true }, { v: '84,591' }, { v: '확인필요', status: true }])
       + lcFinalRow(['사무차장(1명)', { v: '연간 보수총액(단가 미상)', formula: true }, { v: '70,165' }, { v: '확인필요', status: true }])
       + lcFinalRow(['일반직(18명)', { v: '18명 합계(단가 미상, 참고: 1인당 평균 49,571천원)', formula: true }, { v: '892,284' }, { v: '확인필요', status: true }]))
@@ -9981,7 +9830,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 3],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['휴일·연장·야간근로수당', { v: '40,000원×20명×12시간×12개월', formula: true }, { v: '115,200' }, { v: '확인필요', status: true }])
       + lcFinalRow(['연차수당(연가보상비)', { v: '180,000원×20명×10일', formula: true }, { v: '36,000' }, { v: '확인필요', status: true }])
       + lcFinalRow(['복지포인트', { v: '35,000,000원×1명', formula: true }, { v: '35,000' }, { v: '확인필요', status: true }]))
@@ -9991,7 +9840,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>상여금</summary>';
   out += lcFinalFundBlock('상여금(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['성과상여금', { v: '60,000,000원×1식', formula: true }, { v: '60,000' }, { v: '확인필요', status: true }]))
     + '<p class="lc-hint" style="margin-top:8px;">전 직원 대상 총액(1식)으로만 편성돼 있어 개인별·직급별 차등 지급 기준(지급률·등급)은 원자료 대조 전까지 확인필요입니다.</p>'
   );
@@ -9999,7 +9848,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['퇴직급여(사업주 적립분)', { v: '10,000,000원×12개월', formula: true }, { v: '120,000' }, { v: '확인필요', status: true }]))
     + '<p class="lc-hint" style="margin-top:8px;">월 정액(10,000천원) 적립 방식으로 편성돼 있어 도시공사처럼 &ldquo;연간보수총액÷12×1회&rdquo; 산정식과 결과적으로 비슷하나, 인원별 배분 없이 총액만 있어 기준액 자체가 맞는지는 확인필요입니다.</p>'
   );
@@ -10007,7 +9856,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금부담금 등(민간단체법정운영보조) — 화성시 체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalRow(['연금부담금 등(사업주부담금)', { v: '10,000,000원×12개월(건강보험·국민연금·고용보험·산재보험 합산)', formula: true }, { v: '120,000' }, { v: '확인필요', status: true }]))
     + '<p class="lc-hint" style="margin-top:8px;">도시공사·재단은 4대보험을 보험별로 나눠 편성하는데, 화성시체육회는 &ldquo;연금부담금 등&rdquo; 한 목으로 합산 편성돼 있어 보험별 요율 대조가 불가능한 상태입니다. 인건비(1,413,240)+연금부담금(120,000)=세부사업 총액 중 인건비 관련분 1,533,240천원으로, 위 5개 섹션 합계(1,047,040+186,200+60,000+120,000+120,000=1,533,240)와 정확히 일치함을 확인했습니다.</p>'
   );
@@ -10019,7 +9868,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>인건비</summary>';
   out += lcFinalFundBlock('인건비(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 7],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회 - 정원(현원) 7(6) - 경영기획과(3), 체육지원과(3)', 4)
       + lcFinalRow(['사무국장', { v: '(기본급)69,326,400+(수당)4,680,000=74,006,400', formula: true }, { v: '74,006' }, { v: '확인필요', status: true }])
       + lcFinalRow(['과장', { v: '(기본급)44,996,900+(수당)13,689,600=58,686,500', formula: true }, { v: '58,687' }, { v: '확인필요', status: true }])
@@ -10045,7 +9894,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>수당</summary>';
   out += lcFinalFundBlock('수당(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 5],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
       + lcFinalRow(['연가보상비(7명)', { v: '5,026,500×1년=5,026,500(개인별상이)', formula: true }, { v: '5,027' }, { v: '확인필요', status: true }])
       + lcFinalRow(['초과근무수당(6명)', { v: '34,632,000×1년=34,632,000(개인별상이)', formula: true }, { v: '34,632' }, { v: '확인필요', status: true }])
@@ -10067,7 +9916,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>상여금</summary>';
   out += lcFinalFundBlock('상여금(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
       + lcFinalRow(['성과상여금(6명)', { v: '18,200,000×1회=18,200,000(개인별상이)', formula: true }, { v: '18,200' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('반다비체육센터 운영', 4)
@@ -10077,7 +9926,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>퇴직급여</summary>';
   out += lcFinalFundBlock('퇴직급여(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
       + lcFinalRow(['퇴직적립금(7명)', { v: '26,269,200×1년=26,269,200(개인별상이)', formula: true }, { v: '26,269' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('반다비체육센터 운영', 4)
@@ -10088,7 +9937,7 @@ function lcFinalSection() {
 
   out += '<details class="lc-section" style="border-left-color:var(--navy-text)"><summary>연금</summary>';
   out += lcFinalFundBlock('연금(장애인단체법정운영보조) — 화성시장애인체육회 운영', '', [0, 0, 1],
-    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', cls: 'lc-th-money' }, { t: '상태' }],
+    lcFinalTable([{ t: '구분' }, { t: '산출근거', formula: true }, { t: '금액(천원)', formula: true }, { t: '상태' }],
       lcFinalGroupRow('장애인체육회', 4)
       + lcFinalRow(['법정부담금(7명)', { v: '30,000,000×1년=30,000,000(개인별상이, 4대보험 사업주부담분 추정)', formula: true }, { v: '30,000' }, { v: '확인필요', status: true }])
       + lcFinalGroupRow('반다비체육센터 운영', 4)
@@ -10237,12 +10086,16 @@ function renderLaborCalc() {
       + '<div class="lc-accordion-body">' + bodyHtml + '</div>'
       + '</div>';
   };
-  // 01/02/03 섹션 제목 우측 합계 줄.
-  // 예전에는 "합계 − 위배금액 = 편성액"으로 늘어놓았는데, 위배금액은 검토자가 직접
-  // 적어 넣는 값이라 화면만 복잡해져 합계만 남긴다.
+  // 01/02/03 섹션 제목 우측 "합계 − 위배금액 = 편성액" 줄 — 위배금액은 검토자가 직접 입력(자동계산 아님).
   var lcCompTotalRow = function (key, totalAmt) {
+    var v = LC.violation[key] || 0; // 입력값은 천원 단위(표시 라벨과 동일) — totalAmt(원 단위)와 맞추려면 ×1000
+    var enacted = totalAmt - v * 1000;
     return '<div class="lc-comp-total">'
       + '<span class="lc-comp-box"><span class="lc-comp-label">합계</span>' + lcResultBox(fmtWon(lcRound(totalAmt)) + '천원') + '</span>'
+      + '<span class="lc-comp-op">−</span>'
+      + '<span class="lc-comp-box"><span class="lc-comp-label">위배금액</span><input type="text" class="lc-comp-input" value="' + fmtWon(v) + '" onchange="lcSet(\'violation.' + key + '\',this.value)"><span class="lc-comp-unit">천원</span></span>'
+      + '<span class="lc-comp-op">=</span>'
+      + '<span class="lc-comp-box"><span class="lc-comp-label">편성액</span>' + lcResultBox(fmtWon(lcRound(enacted)) + '천원') + '</span>'
       + '</div>';
   };
   var allowanceTotal01 = lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal() + lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal() + lcOvertimeTotal() + lcNightWorkTotal() + lcHolidayWorkTotal() + lcLeaveCompTotal() + familyTotalAmt + lcChildAllowTotal() + lcBirthGrantTotal() + lcProxyTotal();
@@ -10908,15 +10761,13 @@ function renderSettlementTotalRow(rows) {
     + '<td class="num settle-col-rate">' + rate + '%</td></tr>';
 }
 
-function settleKpiCard(tone, iconKey, label, valueHtml, subHtml, hoverHtml) {
+function settleKpiCard(tone, iconKey, label, valueHtml, subHtml) {
   var iconCls = iconKey === 'shortage' ? ' icon-shortage' : '';
   var toneCls = tone ? ' tone-' + tone : '';
   return '<div class="settle-kpi-card' + toneCls + '">'
     + '<div class="kpi-body"><div class="label">' + label + '</div>'
     + '<div class="value">' + valueHtml + '</div>'
     + (subHtml ? '<div class="sub">' + subHtml + '</div>' : '')
-    // 소관별 정현원 카드처럼, 상세 내용은 평소엔 접어두고 커서를 올리면 펼친다.
-    + (hoverHtml ? '<p class="kpi-hover">' + hoverHtml + '</p>' : '')
     + '</div>'
     + '<div class="icon-badge' + iconCls + '">' + SETTLE_KPI_ICONS[iconKey] + '</div>'
     + '</div>';
