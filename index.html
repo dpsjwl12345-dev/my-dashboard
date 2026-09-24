@@ -1056,6 +1056,7 @@ tr.lvl-팀 td:first-child { color: var(--lime); }
 tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: rgba(255,255,255,.08); color: #E8B84B; border-top: 1.5px solid rgba(255,255,255,.28); }
 tr.lvl-합계 td.basis, tr.lvl-합계 td.num, tr.lvl-합계 td.num span { color: #E8B84B !important; }
 tr.lvl-합계 td:first-child { text-align: center; }
+tr.top-total td.num, tr.top-total td.num span { color: #E8B84B !important; }
 tr.lvl-정책 td { font-weight: 700; color: rgba(255,255,255,.92); }
 tr.lvl-단위 td { font-weight: 600; color: rgba(255,255,255,.85); }
 tr.lvl-세부 td { font-weight: 500; color: rgba(255,255,255,.62); }
@@ -6936,6 +6937,10 @@ function renderTeamTreesCombined(trees, totalLabel) {
     computeSubtreeDetailTags(tree);
     renderTreeRows(tree, rows, 0, '', true);
   });
+  // 팀이 하나뿐이라 별도 합계 행이 없는 표는 맨 윗줄(팀 행)이 곧 합계다 — 합계 행과 같은 금색으로 금액을 강조한다.
+  if (!totalRowHtml && rows.length && rows[0].indexOf('<tr class="lvl-팀') === 0) {
+    rows[0] = rows[0].replace('<tr class="lvl-팀', '<tr class="lvl-팀 top-total');
+  }
   // 200번대 나왔다가 400번대 나오는 식으로 뒤섞이지 않게, 목코드 숫자 순으로 정렬해서 보여준다.
   var mokOrderSorted = mokOrder.slice().sort(function (a, b) {
     var ca = parseInt((mokDedup[a].code || '').replace(/[^0-9]/g, ''), 10);
