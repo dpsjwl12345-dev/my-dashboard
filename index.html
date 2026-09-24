@@ -3547,6 +3547,21 @@ function renderDeptTabs() {
     })();
     // 우상단 금액은 요구액이 아니라 실제 편성액(가장 최근 회차)을 보여준다 — 입력된 편성액이 없는 부서는 기존대로 요구액 합계를 쓴다.
     var enactedTotal = getDeptLatestEnactedTotal(state.dept, state.fund);
+    // 출연금을 여러 부서가 나눠 편성하는 기관(예: 문화관광재단 - 문화예술과·관광진흥과)은 부서 하나가 아니라
+    // 재원 전체를 보여줘야 하므로, 라벨을 "출연금"으로 바꾸고 금액도 모든 부서 편성액 합계로 쓴다.
+    if (state.fund === '출연금') {
+      var fcache = instDataCache[nav.instKey + '|' + state.selectedYear];
+      var fundDepts = {};
+      if (fcache && fcache.enactedByCard) Object.keys(fcache.enactedByCard).forEach(function (k) { var pp = k.split('|'); if (pp[1] === '출연금') fundDepts[pp[0]] = 1; });
+      if (fcache && fcache.enactedAmounts) Object.keys(fcache.enactedAmounts).forEach(function (k) { var pp = k.split('|'); if (pp[1] === '출연금') fundDepts[pp[0]] = 1; });
+      var fundDeptList = Object.keys(fundDepts);
+      if (fundDeptList.length > 1) {
+        labelEl.textContent = '출연금';
+        var fundTotal = 0, anyFund = false;
+        fundDeptList.forEach(function (d) { var v = getDeptLatestEnactedTotal(d, '출연금'); if (v != null) { fundTotal += v; anyFund = true; } });
+        if (anyFund) enactedTotal = fundTotal;
+      }
+    }
     var total = enactedTotal != null ? enactedTotal : requestedTotal;
     amtEl.textContent = total ? (fmtWon(Math.round(total / 1000)) + '백만원') : '';
 
