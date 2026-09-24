@@ -3352,7 +3352,7 @@ async function loadInstBudgetData(inst) {
     var myTeams = teams.filter(function (t) { return t.card_id === c.id; }).map(function (t) {
       return { name: t.team_name, capacity: t.capacity, current: t.current, treeKey: t.team_root_budget_item_id };
     });
-    return { id: c.id, dept: c.dept, fundType: c.fund_type, name: c.name, amt: c.amt, amt25: c.amt25, note: c.note,
+    return { id: c.id, dept: c.dept, fundType: c.fund_type, name: c.name, yearNames: c.year_names || null, amt: c.amt, amt25: c.amt25, note: c.note,
       laborCost: c.labor_cost, laborCost25: c.labor_cost25,
       adminCost: c.admin_cost, adminCost25: c.admin_cost25,
       programCost: c.program_cost, programCost25: c.program_cost25,
@@ -5627,7 +5627,8 @@ function renderCards() {
   el.innerHTML = list.map(function (b) {
     var sel = b.id === state.selectedId ? ' selected' : '';
     return '<button type="button" class="org-tab' + sel + '" onclick="selectCard(' + b.id + ')">'
-      + '<span class="org-tab-name">' + escapeHtml(b.name) + '</span>'
+      // 탭 표시 이름은 연도별로 다를 수 있다(예: 2027 동탄목동이음터에 다올 편입). 내부 매칭은 계속 b.name 기준.
+      + '<span class="org-tab-name">' + escapeHtml((b.yearNames && b.yearNames[String(state.selectedYear)]) || b.name) + '</span>'
       + '</button>';
   }).join('')
     + '<button type="button" id="tabScrollLeft" class="tab-scroll-btn left" onclick="scrollTabs(-1)" style="display:none;">\u2039</button>'
