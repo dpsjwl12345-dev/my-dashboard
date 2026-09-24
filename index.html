@@ -3515,7 +3515,8 @@ function renderDeptTabs() {
   var menuEl = document.getElementById('dept-select-menu');
   if (!labelEl || !menuEl) return;
 
-  labelEl.textContent = state.dept;
+  // 우상단 배지 라벨은 부서명 대신 재원(출연금/위탁금)으로 표시한다 — 부서는 좌측 사이드바에서 이미 보인다.
+  labelEl.textContent = state.fund || state.dept;
 
   var amtEl = document.getElementById('dept-select-amt');
   var pctWrapEl = document.getElementById('dept-select-pct');
@@ -3556,7 +3557,6 @@ function renderDeptTabs() {
       if (fcache && fcache.enactedAmounts) Object.keys(fcache.enactedAmounts).forEach(function (k) { var pp = k.split('|'); if (pp[1] === '출연금') fundDepts[pp[0]] = 1; });
       var fundDeptList = Object.keys(fundDepts);
       if (fundDeptList.length > 1) {
-        labelEl.textContent = '출연금';
         var fundTotal = 0, anyFund = false;
         fundDeptList.forEach(function (d) { var v = getDeptLatestEnactedTotal(d, '출연금'); if (v != null) { fundTotal += v; anyFund = true; } });
         if (anyFund) enactedTotal = fundTotal;
