@@ -929,6 +929,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
 .dept-yearly-table td.dyt-num.dyt-num-req { color: var(--warning-dark); font-weight: 600; font-style: italic; }
 .dept-yearly-table tbody tr { border-bottom: 1px solid var(--border); }
 .dept-yearly-table tbody tr:last-child { border-bottom: none; }
+.dept-yearly-table td.dyt-dept-col { font-weight: 600; color: #5B6373; font-size: 14px; white-space: nowrap; padding-right: 14px; }
 .dept-yearly-table td.dyt-name-col { font-weight: 700; color: var(--accent-dark); font-size: 16px; white-space: normal; word-break: keep-all; line-height: 1.3; }
 .dept-yearly-table tr.child td.dyt-name-col { font-weight: 600; color: #5B6373; padding-left: 26px; }
 .dept-yearly-table tr.dyt-total td { font-weight: 800; color: var(--accent-dark); border-top: none; border-bottom: 2px solid var(--border); }
@@ -3605,9 +3606,22 @@ function renderDeptTabs() {
         }).join('') + '</div>';
       };
 
-      var enactedCards = getDeptEnactedCards(state.dept, state.fund);
+      var enactedCards = (getDeptEnactedCards(state.dept, state.fund) || []).map(function (c) { return Object.assign({ dept: state.dept }, c); });
+      // 출연금은 한 기관에 여러 부서(예: 문화관광재단 - 문화예술과·관광진흥과)가 나눠 편성하므로,
+      // 지금 보고 있는 부서를 첫 행으로 두고 같은 기관·같은 재원의 다른 부서 편성 행도 이어서 보여준다.
+      var multiDept = false;
+      if (state.fund === '출연금') {
+        var ecache = instDataCache[nav.instKey + '|' + state.selectedYear];
+        if (ecache && ecache.enactedByCard) {
+          Object.keys(ecache.enactedByCard).forEach(function (k) {
+            var parts = k.split('|');
+            if (parts[1] !== state.fund || parts[0] === state.dept) return;
+            ecache.enactedByCard[k].forEach(function (c) { enactedCards.push(Object.assign({ dept: parts[0] }, c)); multiDept = true; });
+          });
+        }
+      }
       if (enactedCards && enactedCards.length) {
-        var headHtml = '<thead><tr><th>부기명</th><th class="dyt-num">2025</th><th class="dyt-num">2026</th><th class="dyt-num">2027</th></tr></thead>';
+        var headHtml = '<thead><tr><th>부서</th><th>부기명</th><th class="dyt-num">2025</th><th class="dyt-num">2026</th><th class="dyt-num">2027</th></tr></thead>';
         var bodyHtml = enactedCards.map(function (card) {
           var isChild = /^\s*ㅇ/.test(card.name);
           var displayName = isChild ? card.name.replace(/^\s+/, '') : card.name;
@@ -3615,8 +3629,11 @@ function renderDeptTabs() {
           // 2027년 확정 편성액이 아직 없으면 예산요구액(트리 기준)으로 참고 표시할 수 있도록 이름표를 달아둔다(아래 비동기 패치).
           var y27Cell = y27 > 0
             ? '<td class="dyt-num">' + fmtWon(Math.round(y27 / 1000)) + '</td>'
-            : '<td class="dyt-num no-data" data-req-name="' + escapeHtml(displayName) + '">-</td>';
+            : (card.dept === state.dept
+              ? '<td class="dyt-num no-data" data-req-name="' + escapeHtml(displayName) + '">-</td>'
+              : '<td class="dyt-num no-data">-</td>');
           return '<tr class="' + (isChild ? 'child' : '') + '">'
+            + '<td class="dyt-dept-col">' + escapeHtml(card.dept || '') + '</td>'
             + '<td class="dyt-name-col">' + escapeHtml(displayName) + '</td>'
             + '<td class="dyt-num' + (y25 > 0 ? '' : ' no-data') + '">' + (y25 > 0 ? fmtWon(Math.round(y25 / 1000)) : '-') + '</td>'
             + '<td class="dyt-num' + (y26 > 0 ? '' : ' no-data') + '">' + (y26 > 0 ? fmtWon(Math.round(y26 / 1000)) : '-') + '</td>'
@@ -3625,7 +3642,7 @@ function renderDeptTabs() {
         }).join('');
         // 부기명이 2개 이상이면(출연금 포함) 합계 행을 표 맨 위에 같이 보여준다.
         // 단, fc 체육진흥과 출연금은 예외로 합계를 표시하지 않는다.
-        var showTotal = enactedCards.length > 1
+        var showTotal = enactedCards.length > 1 && !multiDept
           && !(nav.instKey === 'fc' && state.dept === '체육진흥과' && state.fund === '출연금');
         var totalRowHtml = '';
         if (showTotal) {
@@ -3640,7 +3657,7 @@ function renderDeptTabs() {
           // 이 값은 상단 "2027년 최종예산 요구액" 헤더와 항상 같은 소스(business_cards.amt)라 서로 일치한다.
           var totalY27Display = totalY27 || filteredBusinesses().reduce(function (s, b) { return s + (b.amt || 0); }, 0);
           var totalY27Cls = totalY27 > 0 ? '' : (totalY27Display > 0 ? ' dyt-num-req' : ' no-data');
-          totalRowHtml = '<tr class="dyt-total"><td class="dyt-name-col">합계</td>'
+          totalRowHtml = '<tr class="dyt-total"><td class="dyt-dept-col"></td><td class="dyt-name-col">합계</td>'
             + [totalY25, totalBase].map(function (amt) {
               return '<td class="dyt-num' + (amt > 0 ? '' : ' no-data') + '">' + (amt > 0 ? fmtWon(Math.round(amt / 1000)) : '-') + '</td>';
             }).join('')
