@@ -3254,13 +3254,18 @@ function buildTeamTrees(rows) {
   // 자식이 아예 없는 최말단 항목(진짜로 편성 안 해서 0원인 경우)은 건드리지 않는다.
   function rollupAmt(node) {
     if (!node.children.length) return;
-    var sum26 = 0, sum25 = 0, has25 = false;
+    var sum26 = 0, sum25 = 0, has25 = false, missing25 = false;
     node.children.forEach(function (c) {
       rollupAmt(c);
       sum26 += Number(c.amt26) || 0;
-      if (c.amt25 != null) { sum25 += Number(c.amt25) || 0; has25 = true; }
+      if (c.amt25 != null) { sum25 += Number(c.amt25) || 0; has25 = true; } else { missing25 = true; }
     });
     if (!node.amt26) node.amt26 = sum26;
+    // 세목 아래 부기명 묶음(◎)의 전년도 값이 비어 있으면(NULL = 원본에서 확인 안 됨) 하위 합계로 채우지 않는다.
+    // 전년도에 있다가 올해 빠진 항목이 있으면 하위 합계가 실제 전년도 금액보다 작아서 틀린 정보가 된다.
+    // (DB 트리거 budget_items_rollup_one도 같은 규칙)
+    var upper = node.level === '팀' || node.level === '정책' || node.level === '단위' || node.level === '세부' || node.level === '목' || node.level === '세목';
+    if (node.amt25 == null && !upper) return;
     if (!node.amt25 && has25) node.amt25 = sum25;
   }
   roots.forEach(rollupAmt);
@@ -5644,13 +5649,16 @@ function stripLeadingMarker(name) {
 }
 
 function fmtDiff(amt26, amt25) {
-  if (amt25 == null) amt25 = 0;
+  // 전년도 값이 아예 없는(null) 부기명 줄은 "신규"가 아니라 "확인 안 됨"이라 증감을 비워 둔다.
+  // 0은 실제로 전년도 0원이라는 뜻이라 지금처럼 전액 증가로 보여준다.
+  if (amt25 == null) return '';
   var d = (amt26 || 0) - amt25;
   if (d === 0) return '-';
   var sign = d > 0 ? '' : '△ ';
   return sign + fmtWon(Math.abs(d));
 }
 function fmtPct(amt26, amt25) {
+  if (amt25 == null) return '';
   if (!amt25) return amt26 ? '<span style="color:var(--navy-text)">신규</span>' : '0';
   var d = amt26 - amt25;
   return Math.round(d / amt25 * 100);
@@ -6037,7 +6045,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   // 산출기초 불일치 아이콘은 예전엔 맨 끝 "오류" 칸에 따로 표시했는데, 산출기초 칸 안에서 바로 보이는 게 더
   // 직관적이라 이제 mismatchIcon을 산출기초 칸 앞에 붙인다(아래 렌더링부 참고). 맨 끝 칸은 자유 메모칸으로 바꿨다.
   var personnelAttr = node._personnel ? ' data-personnel="1"' : '';
-  var isNew = (!node.amt25 || Number(node.amt25) === 0) && (Number(node.amt26) || 0) > 0;
+  var isNew = node.amt25 != null && Number(node.amt25) === 0 && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
   var reviewColorCls = node.reviewColor ? ' review-color-' + node.reviewColor : '';
   var reviewDot = '<span class="review-color-dot' + (node.reviewColor ? ' active c-' + node.reviewColor : '') + '" onclick="cycleReviewColor(' + node.id + ', this)" title="확인용 색 표시(클릭하면 색이 순서대로 바뀜)"></span>';
