@@ -7056,18 +7056,50 @@ function toggleMokFilter(instId, e) {
   }
 }
 // 세부사업/통계목 체크박스 목록에서 이름으로 검색해서 안 맞는 항목은 숨긴다 - 검색어가 있으면 아코디언도 자동으로 펼친다.
+// 체크박스를 눌러야만 표에 반영되던 기존 방식과 별개로, 검색어 자체만으로도 표 행이 바로 걸러지도록 함께 적용한다.
 function filterMokPopSearch(instId, query) {
   var pop = document.getElementById('mokpop-' + instId);
   if (!pop) return;
   var q = query.trim().toLowerCase();
+  var matchedMokTags = [], matchedDetailTags = [];
   pop.querySelectorAll('.mokf-acc').forEach(function (acc) {
     var anyMatch = false;
     acc.querySelectorAll('.mok-filter-item').forEach(function (item) {
       var match = !q || item.textContent.toLowerCase().indexOf(q) !== -1;
       item.style.display = match ? '' : 'none';
-      if (match) anyMatch = true;
+      if (match) {
+        anyMatch = true;
+        if (q) {
+          var mokCb = item.querySelector('input[data-mok-tag]');
+          if (mokCb) matchedMokTags.push(mokCb.getAttribute('data-mok-tag'));
+          var detailCb = item.querySelector('input[data-detail-tag]');
+          if (detailCb) matchedDetailTags.push(detailCb.getAttribute('data-detail-tag'));
+        }
+      }
     });
     if (q) acc.classList.toggle('open', anyMatch);
+  });
+
+  var container = document.getElementById('treecontainer-' + instId);
+  if (!container) return;
+  if (!q) {
+    // 검색어를 지우면 검색 기준 숨김을 풀고 체크박스 상태(전체선택/전체해제 등) 기준으로 되돌린다.
+    applyMokFilter(instId);
+    return;
+  }
+  container.querySelectorAll('tbody tr').forEach(function (row) {
+    var ownMok = row.getAttribute('data-mok');
+    var ownDetail = row.getAttribute('data-detail');
+    var ok = (ownMok && matchedMokTags.indexOf(ownMok) !== -1) || (ownDetail && matchedDetailTags.indexOf(ownDetail) !== -1);
+    if (!ok) {
+      var mokTagsStr = row.getAttribute('data-mok-tags');
+      if (mokTagsStr && mokTagsStr.split(',').some(function (t) { return matchedMokTags.indexOf(t) !== -1; })) ok = true;
+    }
+    if (!ok) {
+      var detailTagsStr = row.getAttribute('data-detail-tags');
+      if (detailTagsStr && detailTagsStr.split(',').some(function (t) { return matchedDetailTags.indexOf(t) !== -1; })) ok = true;
+    }
+    row.classList.toggle('mok-hidden', !ok);
   });
 }
 function closeMokFilter(instId) {
