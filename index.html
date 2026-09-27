@@ -6994,7 +6994,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
 
   var treeColLabels = getTreeColLabels();
   var colgroup = '<colgroup>' + treeColLabels.map(function (_, i) { return '<col class="tcol-' + i + '">'; }).join('') + '</colgroup>';
-  var popover = '<div id="mokpop-' + instId + '" class="mok-filter-popover" style="display:none">'
+  var popover = '<div id="mokpop-' + instId + '" class="mok-filter-popover" style="display:none" onclick="event.stopPropagation()">'
     + '<input type="text" class="mok-filter-search" placeholder="세부사업·통계목 검색" oninput="filterMokPopSearch(\'' + instId + '\', this.value)">'
     + '<div class="mok-filter-actions"><button onclick="setAllMokFilter(\'' + instId + '\', true)">전체선택</button><button onclick="setAllMokFilter(\'' + instId + '\', false)">전체해제</button><button class="mok-filter-confirm" onclick="closeMokFilter(\'' + instId + '\')">확인</button></div>'
     + groupsHtml + '</div>';
