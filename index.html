@@ -10222,7 +10222,7 @@ function renderLaborCalc() {
             + '</tbody></table>'
             + '<h3 style="margin-top:14px;font-size:16px;">11. 연가보상비</h3>'
             + '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>일 통상임금(원)</th><th>인원(명)</th><th>예측일수</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td>연가보상비</td><td>' + lcNumInput('leaveComp.unit', 110, true) + '</td><td>' + lcNumInput('leaveComp.count', 50, true) + '</td><td>' + lcNumInput('leaveComp.days', 40, true) + '</td><td class="lc-formula">일 통상임금×인원×예측일수</td><td>' + lcResultBox(lcLeaveCompTotal() ? fmtWon(lcRound(lcLeaveCompTotal())) : '') + '</td></tr>'
+            + '<tr><td>연가보상비</td><td>' + lcNumInput('leaveComp.unit', 110, true) + '</td><td>' + lcNumInput('leaveComp.count', 50, true) + '</td><td>' + lcNumInput('leaveComp.days', 40, true) + '</td><td class="lc-formula">통상임금÷209시간×8시간×인원×연차 유급휴가 미사용일수</td><td>' + lcResultBox(lcLeaveCompTotal() ? fmtWon(lcRound(lcLeaveCompTotal())) : '') + '</td></tr>'
             + '</tbody></table>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('정책형 수당', familyTotalAmt + lcChildAllowTotal() + lcBirthGrantTotal() + lcProxyTotal(),
