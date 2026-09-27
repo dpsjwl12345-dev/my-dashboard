@@ -1057,6 +1057,11 @@ tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: rgba(255,255,2
 tr.lvl-합계 td.basis, tr.lvl-합계 td.num, tr.lvl-합계 td.num span { color: #E8B84B !important; }
 tr.lvl-합계 td:first-child { text-align: center; }
 tr.top-total td.num, tr.top-total td.num span { color: #E8B84B !important; }
+/* 사업명 글자색만 강조 (배경은 안 건드림) - review-color(확인용 배경 표시)와 별개 */
+.name-content.name-color-blue { color: #3B82F6; }
+.name-content.name-color-red { color: #EF4444; }
+.name-content.name-color-green { color: #22C55E; }
+.name-content.name-color-yellow { color: #EAB308; }
 tr.lvl-정책 td { font-weight: 700; color: rgba(255,255,255,.92); }
 tr.lvl-단위 td { font-weight: 600; color: rgba(255,255,255,.85); }
 tr.lvl-세부 td { font-weight: 500; color: rgba(255,255,255,.62); }
@@ -3238,7 +3243,7 @@ async function prefetchRoundsData(instId, business, rounds) {
 function buildTeamTrees(rows) {
   var byId = {};
   var yf = yearFields(state.selectedYear);
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, nameColor: r.name_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -6033,7 +6038,7 @@ function applyCalcLiveToAmt(calcTd) {
 }
 
 var budgetItemIndex = {};
-function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, parentLeafDepth) {
+function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, parentLeafDepth, skipSelf) {
   budgetItemIndex[node.id] = node;
   var isNamedLevel = LEVEL_BASE_DEPTH.hasOwnProperty(node.level);
   var depth = isNamedLevel ? LEVEL_BASE_DEPTH[node.level] : (parentDepth + 1);
@@ -6091,20 +6096,22 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     + '</svg></label>';
   // 편성목(목) 이후부터는(세목·leaf) 들여쓰기를 더 늘리지 않고 그 자리에서 맞춘다 - 코드/불릿 표시로 이미 구분되니까
   var indentDepth = Math.min(depth, LEVEL_BASE_DEPTH['목']);
-  out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + personnelAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
-    + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
-      + '<span class="name-content" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>'
-      + cellCheckBtn + '</td>'
-    + '<td class="num basis" data-field="calc">' + mismatchIcon + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
-    + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
-    + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
-    // 예전엔 팀(트리 루트) 행만 증감액·증감률 칸을 비워둔 탓에, 팀이 하나뿐인 사업은 예산서 맨 윗칸(총액)이,
-    // 합계 행이 붙는 사업은 두 번째 줄이 빈칸으로 나왔다. amt25는 buildTeamTrees의 rollupAmt가 자식 합으로
-    // 이미 채워주므로 다른 레벨과 똑같은 식으로 계산하면 된다 — 팀 행도 그냥 똑같이 채운다.
-    + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
-    + '<td class="num pct">' + fmtPct(node.amt26, node.amt25) + '</td>'
-    + '<td class="memo-cell" contenteditable="true" spellcheck="false" data-field="memo">' + escapeHtml(node.memo || '') + cellCheckBtn + '</td>'
-    + '</tr>');
+  if (!skipSelf) {
+    out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + personnelAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
+      + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
+        + '<span class="name-content' + (node.nameColor ? ' name-color-' + node.nameColor : '') + '" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>'
+        + cellCheckBtn + '</td>'
+      + '<td class="num basis" data-field="calc">' + mismatchIcon + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
+      + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
+      + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
+      // 예전엔 팀(트리 루트) 행만 증감액·증감률 칸을 비워둔 탓에, 팀이 하나뿐인 사업은 예산서 맨 윗칸(총액)이,
+      // 합계 행이 붙는 사업은 두 번째 줄이 빈칸으로 나왔다. amt25는 buildTeamTrees의 rollupAmt가 자식 합으로
+      // 이미 채워주므로 다른 레벨과 똑같은 식으로 계산하면 된다 — 팀 행도 그냥 똑같이 채운다.
+      + '<td class="num">' + fmtDiff(node.amt26, node.amt25) + '</td>'
+      + '<td class="num pct">' + fmtPct(node.amt26, node.amt25) + '</td>'
+      + '<td class="memo-cell" contenteditable="true" spellcheck="false" data-field="memo">' + escapeHtml(node.memo || '') + cellCheckBtn + '</td>'
+      + '</tr>');
+  }
   if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded, leafDepth); });
 }
 
@@ -6936,11 +6943,17 @@ function renderTeamTreesCombined(trees, totalLabel) {
     });
     computeSubtreeMokTags(tree);
     computeSubtreeDetailTags(tree);
-    renderTreeRows(tree, rows, 0, '', true);
+    // 화성시체육회·화성시장애인체육회의 민간사업보조(경상/행사) 트리는 팀(트리 루트) 행 이름이
+    // 기관명 그대로라 정책 행과 완전히 같은 줄이 중복으로 보인다 - 그 첫 줄만 감춘다.
+    var curInst = (typeof INSTITUTIONS !== 'undefined' && typeof nav !== 'undefined') ? INSTITUTIONS.filter(function (i) { return i.key === nav.instKey; })[0] : null;
+    var skipTeamNameRow = !!(curInst && typeof nav !== 'undefined' && nav.fund === '민간사업보조'
+      && (nav.instKey === 'sports' || nav.instKey === 'dsports')
+      && tree.level === '팀' && normName(tree.name) === normName(curInst.name));
+    renderTreeRows(tree, rows, 0, '', true, 0, skipTeamNameRow);
   });
-  // 팀이 하나뿐이라 별도 합계 행이 없는 표는 맨 윗줄(팀 행)이 곧 합계다 — 합계 행과 같은 금색으로 금액을 강조한다.
-  if (!totalRowHtml && rows.length && rows[0].indexOf('<tr class="lvl-팀') === 0) {
-    rows[0] = rows[0].replace('<tr class="lvl-팀', '<tr class="lvl-팀 top-total');
+  // 팀이 하나뿐이라 별도 합계 행이 없는 표는 맨 윗줄이 곧 합계다 — 합계 행과 같은 금색으로 금액을 강조한다.
+  if (!totalRowHtml && rows.length) {
+    rows[0] = rows[0].replace(/^(<tr class="lvl-[^ "]+)/, '$1 top-total');
   }
   // 200번대 나왔다가 400번대 나오는 식으로 뒤섞이지 않게, 목코드 숫자 순으로 정렬해서 보여준다.
   var mokOrderSorted = mokOrder.slice().sort(function (a, b) {
