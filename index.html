@@ -10118,9 +10118,11 @@ function renderLaborCalc() {
   }).join('');
   var meritRows = LC.merit.map(function (m, i) {
     var amt = m.rate * r * m.count * 2 * (m.pct / 100);
-    return '<tr><td>' + m.label + ' (' + m.pct + '%)</td>'
+    return '<tr><td>' + m.label + '</td>'
       + '<td>' + lcNumInput('merit.' + i + '.rate', 90, true) + '</td>'
       + '<td>' + lcNumInput('merit.' + i + '.count', 50) + '</td>'
+      + '<td>' + lcNumInput('merit.' + i + '.pct', 50) + '%</td>'
+      + '<td>2회</td>'
       + '<td class="lc-formula">' + fmtWon(m.rate) + '원×' + r.toFixed(3) + '×' + m.count + '명×2회×' + m.pct + '%</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
@@ -10199,7 +10201,7 @@ function renderLaborCalc() {
             + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th>요율</th><th>횟수</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + holidayGradeRows + '</tbody></table>'
             + '</details>'
             + '<details class="lc-detail-toggle"><summary>정근수당 근속연수 구간별 상세</summary>'
-            + '<table class="lc-table"><thead><tr><th>구간</th><th>평균단가(원)</th><th>인원(명)</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritTotal(), 4) + meritRows + '</tbody></table>'
+            + '<table class="lc-table"><thead><tr><th>구간</th><th>평균단가(원)</th><th>인원(명)</th><th>요율</th><th>횟수</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritTotal(), 6) + meritRows + '</tbody></table>'
             + '</details>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('직급형 수당', lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal(),
