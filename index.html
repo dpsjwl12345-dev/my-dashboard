@@ -10111,6 +10111,8 @@ function renderLaborCalc() {
     return '<tr><td>' + g.name + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.holidayRate', 110, true) + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.count', 50, true) + '</td>'
+      + '<td>' + lcNumInput('holidayPct', 50) + '%</td>'
+      + '<td>2회</td>'
       + '<td class="lc-formula">' + fmtWon(g.holidayRate) + '원×' + r.toFixed(3) + '×' + g.count + '명×2회×' + LC.holidayPct + '%</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
@@ -10194,7 +10196,7 @@ function renderLaborCalc() {
             + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + treatmentGradeRows + '</tbody></table>'
             + '</details>'
             + '<details class="lc-detail-toggle"><summary>명절휴가비 직급별 상세</summary>'
-            + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + holidayGradeRows + '</tbody></table>'
+            + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th>요율</th><th>횟수</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + holidayGradeRows + '</tbody></table>'
             + '</details>'
             + '<details class="lc-detail-toggle"><summary>정근수당 근속연수 구간별 상세</summary>'
             + '<table class="lc-table"><thead><tr><th>구간</th><th>평균단가(원)</th><th>인원(명)</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('합계', lcMeritTotal(), 4) + meritRows + '</tbody></table>'
