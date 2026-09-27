@@ -10115,7 +10115,7 @@ function renderLaborCalc() {
   var meritRows = LC.merit.map(function (m, i) {
     var amt = m.rate * r * m.count * 2 * (m.pct / 100);
     return '<tr><td>' + m.label + ' (' + m.pct + '%)</td>'
-      + '<td>' + fmtWon(m.rate) + '</td>'
+      + '<td>' + lcNumInput('merit.' + i + '.rate', 90, true) + '</td>'
       + '<td>' + lcNumInput('merit.' + i + '.count', 50) + '</td>'
       + '<td class="lc-formula">단가×인상률×인원×2월×' + m.pct + '%</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
@@ -10186,7 +10186,7 @@ function renderLaborCalc() {
             + '<tr><td><span style="font-size:16px;">1. 대우공무원수당</span></td><td style="text-align:left;">' + lcNumInput('treatmentPct', 55) + '%</td><td>' + lcNumInput('treatmentInfo.count', 55, true) + '</td><td>' + lcNumInput('treatmentInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×요율×대상인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcTreatmentTotal()))) + '</td></tr>'
             + '<tr><td><span style="font-size:16px;">2. 명절휴가비</span></td><td style="text-align:left;">' + lcNumInput('holidayPct', 55) + '%</td><td>' + lcNumInput('holidayInfo.count', 55, true) + '</td><td>' + lcNumInput('holidayInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×인원×2회×요율(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcHolidayTotal()))) + '</td></tr>'
             + '<tr><td><span style="font-size:16px;">3. 관리업무수당</span></td><td style="text-align:left;">' + lcNumInput('mgmtAllow.unit', 55, true) + '</td><td>' + lcNumInput('mgmtAllow.count', 50, true) + '</td><td>' + lcNumInput('mgmtAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcMgmtAllowTotal() ? fmtWon(lcRound(lcMgmtAllowTotal())) : '') + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">4. 정근수당</span></td><td></td><td></td><td></td><td class="lc-formula">단가×인상률×인원×2회×구간별요율(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritTotal()))) + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">4. 정근수당 (1, 7월 연2회 지급)</span></td><td></td><td></td><td></td><td class="lc-formula">단가×인상률×인원×2회×구간별요율(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritTotal()))) + '</td></tr>'
             + '</tbody></table>'
             + '<details class="lc-detail-toggle"><summary>대우공무원수당 직급별 상세</summary>'
             + '<table class="lc-table"><thead><tr><th>직급</th><th>단가(원)</th><th>인원(명)</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + treatmentGradeRows + '</tbody></table>'
