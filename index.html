@@ -7680,7 +7680,9 @@ var LC = {
   overtime: { unit: 15000, count: 50, hours: 10, months: 12 },
   nightWork: { unit: 15000, count: 20, hours: 8, months: 12 },
   holidayWork: { unit: 15000, count: 10, hours: 8, months: 12 },
-  leaveComp: { unit: 120000, count: 30, days: 10 },
+  // 실제 연차수당(연가보상비)은 직급마다 통상임금이 달라 단일 단가로 대표할 수 없다.
+  // 확정된 값이 없으므로 임의 추정치를 넣는 대신 비워둔다 - 확정되면 단가·인원·일수만 입력.
+  leaveComp: { unit: 0, count: 0, days: 0 },
   family: [
     { label: '배우자', unit: 40000, count: 42, months: 12 },
     { label: '부양가족', unit: 20000, count: 17, months: 12 },
@@ -10100,7 +10102,7 @@ function renderLaborCalc() {
     return '<tr><td>' + g.name + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.treatmentRate', 110, true) + '</td>'
       + '<td>' + lcNumInput('grades.' + gi + '.treatmentCount', 50, true) + '</td>'
-      + '<td class="lc-formula">단가×인상률×요율×인원×개월</td>'
+      + '<td class="lc-formula">' + fmtWon(g.treatmentRate) + '원×' + r.toFixed(3) + '×' + LC.treatmentPct + '%×' + g.treatmentCount + '명×' + g.months + '월</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var holidayGradeRows = LC.grades.map(function (g, gi) {
@@ -10135,7 +10137,7 @@ function renderLaborCalc() {
       + '<td>' + lcNumInput('family.' + i + '.unit', 60, true) + '</td>'
       + '<td>' + lcNumInput('family.' + i + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('family.' + i + '.months', 60) + '</td>'
-      + '<td class="lc-formula">단가×인원×개월</td>'
+      + '<td class="lc-formula">' + fmtWon(f.unit) + '원×' + f.count + '명×' + f.months + '월</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var specialRows = LC.special.map(function (sp, i) {
@@ -10144,7 +10146,7 @@ function renderLaborCalc() {
       + '<td>' + fmtWon(sp.unit) + '</td>'
       + '<td>' + lcNumInput('special.' + i + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('special.' + i + '.months', 60) + '</td>'
-      + '<td class="lc-formula">단가×인원×개월</td>'
+      + '<td class="lc-formula">' + fmtWon(sp.unit) + '원×' + sp.count + '명×' + sp.months + '월</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
 
@@ -10183,9 +10185,9 @@ function renderLaborCalc() {
     + lcAcc('수당 <span class="lc-acc-sub" style="color:navy;">│ 15종</span>', allowanceTotal01,
         lcAcc('기본급 연동형 수당', lcTreatmentTotal() + lcHolidayTotal() + lcMgmtAllowTotal() + lcMeritTotal(),
             '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td><span style="font-size:16px;">1. 대우공무원수당</span></td><td style="text-align:left;">' + lcNumInput('treatmentPct', 55) + '%</td><td>' + lcNumInput('treatmentInfo.count', 55, true) + '</td><td>' + lcNumInput('treatmentInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×요율×대상인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcTreatmentTotal()))) + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">1. 대우공무원수당</span></td><td style="text-align:left;">' + lcNumInput('treatmentPct', 55) + '%</td><td>' + lcNumInput('treatmentInfo.count', 55, true) + '</td><td>' + lcNumInput('treatmentInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×' + LC.treatmentPct + '%×대상인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcTreatmentTotal()))) + '</td></tr>'
             + '<tr><td><span style="font-size:16px;">2. 명절휴가비</span></td><td style="text-align:left;">' + lcNumInput('holidayPct', 55) + '%</td><td>' + lcNumInput('holidayInfo.count', 55, true) + '</td><td>' + lcNumInput('holidayInfo.months', 45) + '</td><td class="lc-formula">단가×인상률×인원×2회×' + LC.holidayPct + '%(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcHolidayTotal()))) + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">3. 관리업무수당</span></td><td style="text-align:left;">' + lcNumInput('mgmtAllow.unit', 55, true) + '</td><td>' + lcNumInput('mgmtAllow.count', 50, true) + '</td><td>' + lcNumInput('mgmtAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcMgmtAllowTotal() ? fmtWon(lcRound(lcMgmtAllowTotal())) : '') + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">3. 관리업무수당</span></td><td style="text-align:left;">' + lcNumInput('mgmtAllow.unit', 55, true) + '</td><td>' + lcNumInput('mgmtAllow.count', 50, true) + '</td><td>' + lcNumInput('mgmtAllow.months', 50) + '</td><td class="lc-formula">' + (LC.mgmtAllow.unit && LC.mgmtAllow.count ? fmtWon(LC.mgmtAllow.unit) + '원×' + LC.mgmtAllow.count + '명×' + LC.mgmtAllow.months + '월' : '단가×인원×개월') + '</td><td>' + lcResultBox(lcMgmtAllowTotal() ? fmtWon(lcRound(lcMgmtAllowTotal())) : '') + '</td></tr>'
             + '<tr><td><span style="font-size:16px;">4. 정근수당 (1, 7월 연2회 지급)</span></td><td></td><td></td><td></td><td class="lc-formula">단가×인상률×인원×2회×구간별요율(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritTotal()))) + '</td></tr>'
             + '</tbody></table>'
             + '<details class="lc-detail-toggle"><summary>대우공무원수당 직급별 상세</summary>'
@@ -10201,7 +10203,7 @@ function renderLaborCalc() {
         + lcAcc('직급형 수당', lcGradeAllowTotal() + lcTechAllowTotal() + lcMeritBonusTotal(),
             '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>요율/단가</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
             + '<tr><td><span style="font-size:16px;">5. 직급보조비</span></td><td>' + lcNumInput('gradeAllowInfo.unit', 110, true) + '</td><td>' + lcNumInput('gradeAllowInfo.count', 55, true) + '</td><td>' + lcNumInput('gradeAllowInfo.months', 45) + '</td><td class="lc-formula">고시단가×인원×개월(직급별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcGradeAllowTotal()))) + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">6. 기술수당</span></td><td>' + lcNumInput('techAllow.unit', 110, true) + '</td><td>' + lcNumInput('techAllow.count', 50, true) + '</td><td>' + lcNumInput('techAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcTechAllowTotal() ? fmtWon(lcRound(lcTechAllowTotal())) : '') + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">6. 기술수당</span></td><td>' + lcNumInput('techAllow.unit', 110, true) + '</td><td>' + lcNumInput('techAllow.count', 50, true) + '</td><td>' + lcNumInput('techAllow.months', 50) + '</td><td class="lc-formula">' + (LC.techAllow.unit && LC.techAllow.count ? fmtWon(LC.techAllow.unit) + '원×' + LC.techAllow.count + '명×' + LC.techAllow.months + '월' : '단가×인원×개월') + '</td><td>' + lcResultBox(lcTechAllowTotal() ? fmtWon(lcRound(lcTechAllowTotal())) : '') + '</td></tr>'
             + '<tr><td><span style="font-size:16px;">7. 정근수당가산금 (매월 지급)</span></td><td></td><td></td><td></td><td class="lc-formula">단가×인원×개월(구간별 합산)</td><td>' + lcResultBox(fmtWon(lcRound(lcMeritBonusTotal()))) + '</td></tr>'
             + '</tbody></table>'
             + '<details class="lc-detail-toggle"><summary>정근수당가산금 근속연수 구간별 상세</summary>'
@@ -10216,15 +10218,15 @@ function renderLaborCalc() {
             + '</tbody></table>'
             + '<h3 style="margin-top:14px;font-size:16px;">11. 연가보상비</h3>'
             + '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>일 통상임금(원)</th><th>인원(명)</th><th>예측일수</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td>연가보상비</td><td>' + lcNumInput('leaveComp.unit', 110, true) + '</td><td>' + lcNumInput('leaveComp.count', 50, true) + '</td><td>' + lcNumInput('leaveComp.days', 40) + '</td><td class="lc-formula">' + fmtWon(LC.leaveComp.unit) + '원×' + LC.leaveComp.count + '명×' + LC.leaveComp.days + '일</td><td>' + lcResultBox(lcLeaveCompTotal() ? fmtWon(lcRound(lcLeaveCompTotal())) : '') + '</td></tr>'
+            + '<tr><td>연가보상비</td><td>' + lcNumInput('leaveComp.unit', 110, true) + '</td><td>' + lcNumInput('leaveComp.count', 50, true) + '</td><td>' + lcNumInput('leaveComp.days', 40, true) + '</td><td class="lc-formula">' + (LC.leaveComp.unit && LC.leaveComp.count ? fmtWon(LC.leaveComp.unit) + '원×' + LC.leaveComp.count + '명×' + LC.leaveComp.days + '일' : '단가×인원×일수') + '</td><td>' + lcResultBox(lcLeaveCompTotal() ? fmtWon(lcRound(lcLeaveCompTotal())) : '') + '</td></tr>'
             + '</tbody></table>',
             'var(--bg-hover)', 'var(--text)')
         + lcAcc('정책형 수당', familyTotalAmt + lcChildAllowTotal() + lcBirthGrantTotal() + lcProxyTotal(),
             '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>월정액(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>' + lcSubtotalRow('<span style="font-size:16px;">12. 가족수당</span>', familyTotalAmt, 5) + familyRows + '</tbody></table>'
             + '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월/회</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-            + '<tr><td><span style="font-size:16px;">13. 자녀수당</span></td><td>' + lcNumInput('childAllow.unit', 110, true) + '</td><td>' + lcNumInput('childAllow.count', 50, true) + '</td><td>' + lcNumInput('childAllow.months', 50) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(lcChildAllowTotal() ? fmtWon(lcRound(lcChildAllowTotal())) : '') + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">14. 출산축하금</span></td><td>' + lcNumInput('birthGrant.unit', 110, true) + '</td><td>' + lcNumInput('birthGrant.count', 50, true) + '</td><td>' + lcNumInput('birthGrant.months', 50) + '</td><td class="lc-formula">단가×인원×개월(1회성은 개월=1)</td><td>' + lcResultBox(lcBirthGrantTotal() ? fmtWon(lcRound(lcBirthGrantTotal())) : '') + '</td></tr>'
-            + '<tr><td><span style="font-size:16px;">15. 대행업무수당</span></td><td>' + lcNumInput('proxy.unit', 110, true) + '</td><td>' + lcNumInput('proxy.count', 50) + '</td><td>' + lcNumInput('proxy.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(lcProxyTotal()))) + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">13. 자녀수당</span></td><td>' + lcNumInput('childAllow.unit', 110, true) + '</td><td>' + lcNumInput('childAllow.count', 50, true) + '</td><td>' + lcNumInput('childAllow.months', 50) + '</td><td class="lc-formula">' + fmtWon(LC.childAllow.unit) + '원×' + LC.childAllow.count + '명×' + LC.childAllow.months + '월</td><td>' + lcResultBox(lcChildAllowTotal() ? fmtWon(lcRound(lcChildAllowTotal())) : '') + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">14. 출산축하금</span></td><td>' + lcNumInput('birthGrant.unit', 110, true) + '</td><td>' + lcNumInput('birthGrant.count', 50, true) + '</td><td>' + lcNumInput('birthGrant.months', 50) + '</td><td class="lc-formula">' + fmtWon(LC.birthGrant.unit) + '원×' + LC.birthGrant.count + '명×' + LC.birthGrant.months + '월(1회성은 개월=1)</td><td>' + lcResultBox(lcBirthGrantTotal() ? fmtWon(lcRound(lcBirthGrantTotal())) : '') + '</td></tr>'
+            + '<tr><td><span style="font-size:16px;">15. 대행업무수당</span></td><td>' + lcNumInput('proxy.unit', 110, true) + '</td><td>' + lcNumInput('proxy.count', 50) + '</td><td>' + lcNumInput('proxy.months', 60) + '</td><td class="lc-formula">' + fmtWon(LC.proxy.unit) + '원×' + LC.proxy.count + '명×' + LC.proxy.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(lcProxyTotal()))) + '</td></tr>'
             + '</tbody></table>',
             'var(--bg-hover)', 'var(--text)'),
         'var(--bg-hover)', 'var(--text)')
@@ -10234,11 +10236,13 @@ function renderLaborCalc() {
   var lc02 = lc02Total(), lc03 = lc03Total(), lc04 = lc04Total();
   var other02GradeRows = LC.other02.grades.map(function (g, gi) {
     var amt = lc02GradeAmt(g);
+    var gr02 = g.statutory ? 1 : lcRaiseMul();
+    var formulaTxt02 = fmtWon(g.baseRate) + '원' + (g.statutory ? '' : '×' + gr02.toFixed(3)) + '×' + g.count + '명×(' + g.months + '÷12)';
     return '<tr><td>' + g.name + (g.note ? ' <span class="lc-hint" style="margin:0;font-weight:400;display:inline;">(' + g.note + ')</span>' : '') + '</td>'
       + '<td>' + lcNumInput('other02.grades.' + gi + '.baseRate', 150) + '원</td>'
       + '<td>' + lcNumInput('other02.grades.' + gi + '.count', 50) + '</td>'
       + '<td>' + lcNumInput('other02.grades.' + gi + '.months', 60) + '</td>'
-      + '<td class="lc-formula">' + (g.statutory ? '단가×인원×(개월÷12)' : '단가×인상률×인원×(개월÷12)') + '</td>'
+      + '<td class="lc-formula">' + formulaTxt02 + '</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var o2FamilySpouseAmt = LC.other02.familySpouseUnit * LC.other02.familySpouseCount * LC.other02.familySpouseMonths;
@@ -10255,10 +10259,10 @@ function renderLaborCalc() {
     + lcAcc('수당', o2AllowanceTotal,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o2AllowanceTotal, 5)
-        + '<tr><td>가족수당(배우자)</td><td>' + lcNumInput('other02.familySpouseUnit', 100) + '</td><td>' + lcNumInput('other02.familySpouseCount', 50) + '</td><td>' + lcNumInput('other02.familySpouseMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilySpouseAmt))) + '</td></tr>'
-        + '<tr><td>가족수당(자녀)</td><td>' + lcNumInput('other02.familyChildUnit', 100) + '</td><td>' + lcNumInput('other02.familyChildCount', 50) + '</td><td>' + lcNumInput('other02.familyChildMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilyChildAmt))) + '</td></tr>'
-        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other02.annualLeaveRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other02.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o2AnnualLeaveAmt))) + '</td></tr>'
-        + '<tr><td>정액급식비</td><td>' + lcNumInput('other02.mealUnit', 100) + '</td><td>' + lcNumInput('other02.mealCount', 50) + '</td><td>' + lcNumInput('other02.mealMonths', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o2MealAmt))) + '</td></tr>'
+        + '<tr><td>가족수당(배우자)</td><td>' + lcNumInput('other02.familySpouseUnit', 100) + '</td><td>' + lcNumInput('other02.familySpouseCount', 50) + '</td><td>' + lcNumInput('other02.familySpouseMonths', 60) + '</td><td class="lc-formula">' + fmtWon(LC.other02.familySpouseUnit) + '원×' + LC.other02.familySpouseCount + '명×' + LC.other02.familySpouseMonths + '월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilySpouseAmt))) + '</td></tr>'
+        + '<tr><td>가족수당(자녀)</td><td>' + lcNumInput('other02.familyChildUnit', 100) + '</td><td>' + lcNumInput('other02.familyChildCount', 50) + '</td><td>' + lcNumInput('other02.familyChildMonths', 60) + '</td><td class="lc-formula">' + fmtWon(LC.other02.familyChildUnit) + '원×' + LC.other02.familyChildCount + '명×' + LC.other02.familyChildMonths + '월</td><td>' + lcResultBox(fmtWon(lcRound(o2FamilyChildAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other02.annualLeaveRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other02.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">' + fmtWon(LC.other02.annualLeaveRate) + '원×8÷209×10일×' + LC.other02.annualLeaveCount + '명</td><td>' + lcResultBox(fmtWon(lcRound(o2AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>정액급식비</td><td>' + lcNumInput('other02.mealUnit', 100) + '</td><td>' + lcNumInput('other02.mealCount', 50) + '</td><td>' + lcNumInput('other02.mealMonths', 60) + '</td><td class="lc-formula">' + fmtWon(LC.other02.mealUnit) + '원×' + LC.other02.mealCount + '명×' + LC.other02.mealMonths + '월</td><td>' + lcResultBox(fmtWon(lcRound(o2MealAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + '</div>';
@@ -10278,25 +10282,25 @@ function renderLaborCalc() {
   var section03 = '<div class="lc-section cat-permanent" style="border-left-color:var(--navy-text)"><div class="lc-section-title-row"><h3>03 무기계약근로자 보수</h3>' + lcCompTotalRow('other03', o3BaseAmt + o3BenefitTotal + o3AllowanceTotal) + '</div>'
     + lcAcc('기본급 <span class="lc-acc-sub" style="color:navy;">│ 공무직 관리 규정 및 호봉·급여 테이블에 따라 매월 고정적으로 지급하는 기본급</span>', o3BaseAmt,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td>기본급</td><td>' + lcNumInput('other03.baseRate', 110) + '원</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3BaseAmt))) + '</td></tr>'
+        + '<tr><td>기본급</td><td>' + lcNumInput('other03.baseRate', 110) + '원</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">' + fmtWon(o3.baseRate) + '원×' + o3.count + '명×' + o3.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(o3BaseAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('<span style="color:var(--danger);">법정필수처우개선비(의무)</span>', o3BenefitTotal,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>개월/회</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;">(현원×3,280,000원)</span>', o3BenefitTotal, 5)
-        + '<tr><td>정액급식비</td><td>' + lcNumInput('other03.mealUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3MealAmt))) + '</td></tr>'
-        + '<tr><td>명절상여금</td><td>' + lcNumInput('other03.holidayUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.holidayTimes', 40) + '</td><td class="lc-formula">단가×인원×횟수(설날, 추석)</td><td>' + lcResultBox(fmtWon(lcRound(o3HolidayAmt))) + '</td></tr>'
-        + '<tr><td>복지포인트</td><td>' + lcNumInput('other03.welfarePointUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>1회</td><td class="lc-formula">연간 정액×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3WelfarePointAmt))) + '</td></tr>'
+        + '<tr><td>정액급식비</td><td>' + lcNumInput('other03.mealUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">' + fmtWon(o3.mealUnit) + '원×' + o3.count + '명×' + o3.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(o3MealAmt))) + '</td></tr>'
+        + '<tr><td>명절상여금</td><td>' + lcNumInput('other03.holidayUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.holidayTimes', 40) + '</td><td class="lc-formula">' + fmtWon(o3.holidayUnit) + '원×' + o3.count + '명×' + o3.holidayTimes + '회(설날, 추석)</td><td>' + lcResultBox(fmtWon(lcRound(o3HolidayAmt))) + '</td></tr>'
+        + '<tr><td>복지포인트</td><td>' + lcNumInput('other03.welfarePointUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>1회</td><td class="lc-formula">' + fmtWon(o3.welfarePointUnit) + '원×' + o3.count + '명(연간 정액)</td><td>' + lcResultBox(fmtWon(lcRound(o3WelfarePointAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당', o3AllowanceTotal,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o3AllowanceTotal, 5)
-        + o3.familyUnit.map(function (f, i) { return '<tr><td>가족수당(' + f.label + ')</td><td>' + lcNumInput('other03.familyUnit.' + i + '.unit', 100) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.count', 50) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(f.unit * f.count * f.months))) + '</td></tr>'; }).join('')
-        + '<tr><td>생활임금보전수당</td><td>' + lcNumInput('other03.livingWageUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o3LivingWageAmt))) + '</td></tr>'
-        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other03.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o3AnnualLeaveAmt))) + '</td></tr>'
-        + '<tr><td>초과근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×1.5/209×30h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">단가×1.5/209×30h×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3OvertimeAmt))) + '</td></tr>'
-        + '<tr><td>야간근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×0.5/209×8h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">단가×0.5/209×8h×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o3NightworkAmt))) + '</td></tr>'
+        + o3.familyUnit.map(function (f, i) { return '<tr><td>가족수당(' + f.label + ')</td><td>' + lcNumInput('other03.familyUnit.' + i + '.unit', 100) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.count', 50) + '</td><td>' + lcNumInput('other03.familyUnit.' + i + '.months', 60) + '</td><td class="lc-formula">' + fmtWon(f.unit) + '원×' + f.count + '명×' + f.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(f.unit * f.count * f.months))) + '</td></tr>'; }).join('')
+        + '<tr><td>생활임금보전수당</td><td>' + lcNumInput('other03.livingWageUnit', 100) + '</td><td>' + lcNumInput('other03.count', 50) + '</td><td>' + lcNumInput('other03.months', 60) + '</td><td class="lc-formula">' + fmtWon(o3.livingWageUnit) + '원×' + o3.count + '명×' + o3.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(o3LivingWageAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other03.annualLeaveCount', 50) + '</td><td>-</td><td class="lc-formula">' + fmtWon(o3.ordinaryRate) + '원×8÷209×10일×' + o3.annualLeaveCount + '명</td><td>' + lcResultBox(fmtWon(lcRound(o3AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>초과근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×1.5/209×30h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">' + fmtWon(o3.ordinaryRate) + '원×1.5÷209×30h×70%×' + o3.otCount + '명×' + o3.otMonths + '월</td><td>' + lcResultBox(fmtWon(lcRound(o3OvertimeAmt))) + '</td></tr>'
+        + '<tr><td>야간근무수당</td><td><div>' + lcNumInput('other03.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×0.5/209×8h×70%</div></td><td>' + lcNumInput('other03.otCount', 50) + '</td><td>' + lcNumInput('other03.otMonths', 60) + '</td><td class="lc-formula">' + fmtWon(o3.ordinaryRate) + '원×0.5÷209×8h×70%×' + o3.otCount + '명×' + o3.otMonths + '월</td><td>' + lcResultBox(fmtWon(lcRound(o3NightworkAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + '<div style="margin-top:14px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);">'
@@ -10328,22 +10332,22 @@ function renderLaborCalc() {
   var section04 = '<div class="lc-section cat-temp" style="border-left-color:var(--navy-text)"><h3>04 기간제근로자등 보수</h3>'
     + lcAcc('기본급 <span class="lc-acc-sub" style="color:navy;">│ 생활임금, 최저임금의 118% 반영 (총인건비 인상률 적용 배제)</span>', o4BaseAmt,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td>기본급</td><td>' + lcNumInput('other04.baseRate', 110) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4BaseAmt))) + '</td></tr>'
+        + '<tr><td>기본급</td><td>' + lcNumInput('other04.baseRate', 110) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">' + fmtWon(o4.baseRate) + '원×' + o4.count + '명×' + o4.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(o4BaseAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('<span style="color:var(--danger);">공정수당 (신설)</span> <span class="lc-acc-sub" style="color:navy;">│ 1년 미만 근무자에게 계약 만료시 일시 지급 (월 기본급의 약 8.5~10% 수준)</span>', o4FairnessAmt,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>적용률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
-        + '<tr><td style="color:var(--text);font-weight:700;">공정수당 (의무)</td><td>' + lcNumInput('other04.baseRate', 110) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.fairnessPct', 55) + '%</td><td class="lc-formula">기본급×요율×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4FairnessAmt))) + '</td></tr>'
+        + '<tr><td style="color:var(--text);font-weight:700;">공정수당 (의무)</td><td>' + lcNumInput('other04.baseRate', 110) + '원</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.fairnessPct', 55) + '%</td><td class="lc-formula">' + fmtWon(o4.baseRate) + '원×' + o4.fairnessPct + '%×' + o4.count + '명</td><td>' + lcResultBox(fmtWon(lcRound(o4FairnessAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + lcAcc('수당', o4AllowanceTotal,
         '<table class="lc-table lc-table-6col"><thead><tr><th>구분</th><th>단가(원)</th><th>인원(명)</th><th>근무개월</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
         + lcSubtotalRow('합계', o4AllowanceTotal, 5)
-        + '<tr><td>정액급식비</td><td>' + lcNumInput('other04.mealUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4MealAmt))) + '</td></tr>'
-        + '<tr><td>교통보조비</td><td>' + lcNumInput('other04.transportUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4TransportAmt))) + '</td></tr>'
-        + '<tr><td>생활임금보전수당</td><td>' + lcNumInput('other04.livingWageUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">단가×인원×개월</td><td>' + lcResultBox(fmtWon(lcRound(o4LivingWageAmt))) + '</td></tr>'
-        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other04.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other04.count', 50) + '</td><td>-</td><td class="lc-formula">단가×8/209×10일×인원</td><td>' + lcResultBox(fmtWon(lcRound(o4AnnualLeaveAmt))) + '</td></tr>'
-        + '<tr><td>초과근무수당</td><td>' + lcNumInput('other04.ordinaryRate', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">(단가×1.5/209×30h)×인원×개월×70%</td><td>' + lcResultBox(fmtWon(lcRound(o4OvertimeAmt))) + '</td></tr>'
+        + '<tr><td>정액급식비</td><td>' + lcNumInput('other04.mealUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">' + fmtWon(o4.mealUnit) + '원×' + o4.count + '명×' + o4.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(o4MealAmt))) + '</td></tr>'
+        + '<tr><td>교통보조비</td><td>' + lcNumInput('other04.transportUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">' + fmtWon(o4.transportUnit) + '원×' + o4.count + '명×' + o4.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(o4TransportAmt))) + '</td></tr>'
+        + '<tr><td>생활임금보전수당</td><td>' + lcNumInput('other04.livingWageUnit', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">' + fmtWon(o4.livingWageUnit) + '원×' + o4.count + '명×' + o4.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(o4LivingWageAmt))) + '</td></tr>'
+        + '<tr><td>연차수당</td><td><div>' + lcNumInput('other04.ordinaryRate', 110, true) + '원</div><div class="lc-hint" style="margin:2px 0 0;">×8/209×10일</div></td><td>' + lcNumInput('other04.count', 50) + '</td><td>-</td><td class="lc-formula">' + fmtWon(o4.ordinaryRate) + '원×8÷209×10일×' + o4.count + '명</td><td>' + lcResultBox(fmtWon(lcRound(o4AnnualLeaveAmt))) + '</td></tr>'
+        + '<tr><td>초과근무수당</td><td>' + lcNumInput('other04.ordinaryRate', 100) + '</td><td>' + lcNumInput('other04.count', 50) + '</td><td>' + lcNumInput('other04.months', 60) + '</td><td class="lc-formula">' + fmtWon(o4.ordinaryRate) + '원×1.5÷209×30h×70%×' + o4.count + '명×' + o4.months + '월</td><td>' + lcResultBox(fmtWon(lcRound(o4OvertimeAmt))) + '</td></tr>'
         + '</tbody></table>',
         'var(--bg-hover)', 'var(--text)')
     + '</div>';
