@@ -10117,7 +10117,7 @@ function renderLaborCalc() {
     return '<tr><td>' + m.label + ' (' + m.pct + '%)</td>'
       + '<td>' + lcNumInput('merit.' + i + '.rate', 90, true) + '</td>'
       + '<td>' + lcNumInput('merit.' + i + '.count', 50) + '</td>'
-      + '<td class="lc-formula">' + fmtWon(m.rate) + '원×' + r.toFixed(3) + '×' + m.count + '명×2월×' + m.pct + '%</td>'
+      + '<td class="lc-formula">' + fmtWon(m.rate) + '원×' + r.toFixed(3) + '×' + m.count + '명×2회×' + m.pct + '%</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
   var meritBonusRows = LC.meritBonus.map(function (m, i) {
