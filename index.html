@@ -7231,10 +7231,10 @@ function renderDetail() {
     // 자체수익/보조금처럼 정원·현원 데이터가 전혀 없는 카드는 인원 텍스트 줄 자체를 표시하지 않는다.
     if (anyCapacity || anyCurrent) {
       var branches = LIBRARY_BRANCHES[b.name];
-      var suffixName = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : (namesOnly[0] || '');
       var totalLabel = anyCapacity ? ('정현원 ' + totalCap + '(' + totalCur + ')') : ('현원 ' + totalCur);
-      // 총계만 항상 노출하고, 팀별 세부내역은 호버 시에만 풍선으로 보여준다 (탭 옆 공간을 잡아먹지 않기 위함)
-      var detailText = (namesOnly.length <= 1) ? suffixName : numbered.join(', ');
+      // 팀이 1개뿐이어도 그 팀 자체의 정원(현원) 숫자를 보여준다 - 이름만 보여주면 몇명인지 알 수 없었음.
+      // LIBRARY_BRANCHES로 등록된 카드(팀 하나가 여러 실제 지점을 대표하는 경우)만 지점명 목록으로 대체.
+      var detailText = (branches && branches.length) ? branches.map(escapeHtml).join(', ') : numbered.join(', ');
       var infoIconHtml = detailText
         ? '<span class="headcount-info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>'
         : '';
