@@ -3522,7 +3522,8 @@ function renderDeptTabs() {
   if (!labelEl || !menuEl) return;
 
   // 우상단 배지 라벨은 부서명 대신 재원(출연금/위탁금)으로 표시한다 — 부서는 좌측 사이드바에서 이미 보인다.
-  labelEl.textContent = state.fund || state.dept;
+  // 다만 민간사업보조는 재원명 대신 소관부서명(체육진흥과)을 보여준다.
+  labelEl.textContent = (state.fund === '민간사업보조' ? state.dept : state.fund) || state.dept;
 
   var amtEl = document.getElementById('dept-select-amt');
   var pctWrapEl = document.getElementById('dept-select-pct');
@@ -3530,7 +3531,20 @@ function renderDeptTabs() {
   var fillEl = document.getElementById('dept-select-fill');
   if (amtEl) {
     var deptBiz = filteredBusinesses();
-    var requestedTotal = deptBiz.reduce(function (sum, b) { return sum + (b.amt || 0); }, 0);
+    // b.amt(business_cards.amt)는 "가장 최근에 반영된 연도"만 담아두는 단일 캐시값이라 연도 선택(특히 2027)에는
+    // 안 맞을 수 있다 - b.teams가 가리키는 TEAM_TREES(이미 state.selectedYear로 매핑됨)에서 직접 합산한다.
+    var requestedTotal = deptBiz.reduce(function (sum, b) {
+      var yearAmt = null;
+      if (b.teams && b.teams.length) {
+        var s = 0, has = false;
+        b.teams.forEach(function (t) {
+          var node = TEAM_TREES[t.treeKey];
+          if (node) { s += Number(node.amt26) || 0; has = true; }
+        });
+        if (has) yearAmt = s;
+      }
+      return sum + (yearAmt != null ? yearAmt : (b.amt || 0));
+    }, 0);
     // 우상단(시 편성액)과 분리해서, 업로드/다운로드 버튼 옆(재단 자체 영역)에 재단이 실제로 요구한 금액 합계를 따로 보여준다.
     // 표시 라벨은 "본예산 요구액"이지만 실제 값은 최종 회차(3회 추경)까지 누적한 합계여야 하므로,
     // 우선 본예산만으로 즉시 그려두고, 각 사업카드의 회차별 증분을 비동기로 더해 갱신한다.
@@ -3538,7 +3552,9 @@ function renderDeptTabs() {
     if (reqTotalEl) reqTotalEl.innerHTML = requestedTotal
       ? ((state.selectedYear || 2026) + '년 최종예산 요구액 <span class="drt-box"><span class="drt-live-dot"></span>' + fmtWon(requestedTotal) + '천원</span>')
       : '';
-    (function () {
+    // 회차별(추경) 누적 보정은 2026년 데이터에만 있다 - 2027년은 아직 본예산(base)뿐이라 이 보정을 돌리면
+    // computeCumulativeRoundTotal이 (2027엔 안 맞는) b.amt로 되돌려버린다. 그래서 2026년일 때만 돌린다.
+    if (state.selectedYear === 2026) (function () {
       var instKeyAtCall = nav.instKey, deptAtCall = state.dept, fundAtCall = state.fund;
       var inst = INSTITUTIONS.filter(function (i) { return i.key === instKeyAtCall; })[0];
       if (!inst || !deptBiz.length) return;
