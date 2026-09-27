@@ -1057,6 +1057,11 @@ tr.lvl-합계 td { font-weight: 800; font-size: 17px; background: rgba(255,255,2
 tr.lvl-합계 td.basis, tr.lvl-합계 td.num, tr.lvl-합계 td.num span { color: #E8B84B !important; }
 tr.lvl-합계 td:first-child { text-align: center; }
 tr.top-total td.num, tr.top-total td.num span { color: #E8B84B !important; }
+/* 사업명 글자색만 강조 (배경은 안 건드림) - review-color(확인용 배경 표시)와 별개 */
+.name-content.name-color-blue { color: #3B82F6; }
+.name-content.name-color-red { color: #EF4444; }
+.name-content.name-color-green { color: #22C55E; }
+.name-content.name-color-yellow { color: #EAB308; }
 tr.lvl-정책 td { font-weight: 700; color: rgba(255,255,255,.92); }
 tr.lvl-단위 td { font-weight: 600; color: rgba(255,255,255,.85); }
 tr.lvl-세부 td { font-weight: 500; color: rgba(255,255,255,.62); }
@@ -3238,7 +3243,7 @@ async function prefetchRoundsData(instId, business, rounds) {
 function buildTeamTrees(rows) {
   var byId = {};
   var yf = yearFields(state.selectedYear);
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, nameColor: r.name_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -6094,7 +6099,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   if (!skipSelf) {
     out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + personnelAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
       + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
-        + '<span class="name-content" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>'
+        + '<span class="name-content' + (node.nameColor ? ' name-color-' + node.nameColor : '') + '" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>'
         + cellCheckBtn + '</td>'
       + '<td class="num basis" data-field="calc">' + mismatchIcon + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
       + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
