@@ -2989,7 +2989,7 @@ table.summary tr.ov2-eb-section td {
               </svg>
             </button>
             <div class="download-menu" id="download-menu" style="display:none">
-              <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xls)</div>
+              <div class="download-menu-item" onclick="exportCurrentTreeExcel()">Excel (.xlsx)</div>
               <div class="download-menu-item" onclick="exportCurrentTreePdf()">PDF</div>
             </div>
           </div>
@@ -6618,46 +6618,31 @@ document.addEventListener('click', function (e) {
   if (!menu.contains(e.target) && e.target.id !== 'export-btn') menu.style.display = 'none';
 });
 
-// 엑셀 다운로드: 외부 라이브러리 없이, 엑셀이 바로 인식하는 HTML 테이블 기반 .xls 로 저장
-function exportCurrentTreeExcel() {
+// 엑셀 다운로드: 진짜 .xlsx 바이너리로 저장한다.
+// 예전엔 HTML 표를 .xls로 이름만 바꿔 저장했는데, 실제 파일 형식은 HTML이라 최신 엑셀이 열 때마다
+// "파일 형식과 확장자가 일치하지 않습니다" 경고를 띄웠다. 업로드 기능에 이미 있는 SheetJS(XLSX)를
+// 그대로 재사용해 실제 xlsx로 쓴다.
+async function exportCurrentTreeExcel() {
   document.getElementById('download-menu').style.display = 'none';
   var data = collectCurrentTreeRows();
   if (!data) { alert('내보낼 사업을 먼저 선택해주세요.'); return; }
+  var ok = await loadXLSX();
+  if (!ok) { alert('엑셀 라이브러리를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'); return; }
 
-  var tableRows = data.rows.map(function (r, i) {
-    var tag = i === 0 ? 'th' : 'td';
-    var cells = r.map(function (v, ci) {
-      var isNum = i > 0 && (ci === 2 || ci === 3 || ci === 4);
-      var style = isNum ? ' style="mso-number-format:\'#,##0\';text-align:right;"' : '';
-      var text = String(v == null ? '' : v);
-      // 계층 들여쓰기로 넣어둔 앞쪽 공백은 일반 HTML/엑셀 렌더링에서 그대로 접혀 사라진다.
-      // 접히지 않는 &nbsp;로 바꿔야 엑셀에서도 계층 구조가 들여쓰기로 보인다.
-      if (i > 0 && ci === 0) {
-        var indent = (text.match(/^ */) || [''])[0].length;
-        text = Array(indent + 1).join('&nbsp;') + escapeHtml(text.slice(indent));
-      } else {
-        text = escapeHtml(text);
-      }
-      return '<' + tag + style + '>' + text + '</' + tag + '>';
-    }).join('');
-    return '<tr>' + cells + '</tr>';
-  }).join('');
+  var ws = XLSX.utils.aoa_to_sheet(data.rows);
+  var range = XLSX.utils.decode_range(ws['!ref']);
+  for (var R = range.s.r + 1; R <= range.e.r; R++) {
+    [2, 3, 4].forEach(function (C) {
+      var addr = XLSX.utils.encode_cell({ r: R, c: C });
+      if (ws[addr] && typeof ws[addr].v === 'number') ws[addr].z = '#,##0';
+    });
+  }
+  ws['!cols'] = [{ wch: 42 }, { wch: 30 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 10 }];
 
-  var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">'
-    + '<head><meta charset="utf-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
-    + '<x:Name>' + escapeHtml(data.name) + '</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>'
-    + '</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head>'
-    + '<body><table border="1">' + tableRows + '</table></body></html>';
-
-  var blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = data.name + '_세부예산.xls';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  var sheetName = (data.name || '예산').replace(/[\\\/\?\*\[\]:]/g, ' ').slice(0, 31) || '예산';
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  XLSX.writeFile(wb, data.name + '_세부예산.xlsx');
 }
 
 // PDF 다운로드: 외부 라이브러리 없이, 새 창에서 인쇄용 화면을 열고 브라우저 인쇄(다른 이름으로 저장 > PDF) 유도
