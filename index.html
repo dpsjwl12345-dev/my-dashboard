@@ -6583,20 +6583,26 @@ function collectCurrentTreeRows() {
 
   var colLabels = getTreeColLabels();
   var rows = [['구분', '산출기초', colLabels[2], colLabels[3], '증감액', '증감률']];
-  function walk(node, depth) {
+  // 화면(renderTreeRows)과 같은 규칙으로 부기명 등 이름 없는 계층에 ◎/○/- 같은 불릿을 붙인다.
+  // 전에는 이 불릿 없이 node.name만 그대로 써서, 화면에는 보이는 부기명 표시가 다운로드에는 빠졌었다.
+  function walk(node, depth, parentLeafDepth) {
     var prefix = depth > 0 ? Array(depth + 1).join('  ') : '';
+    var isNamedLevel = LEVEL_BASE_DEPTH.hasOwnProperty(node.level);
+    var isBulletSemok = node.level === '세목' && !node.code;
+    var leafDepth = (isNamedLevel && !isBulletSemok) ? 0 : (parentLeafDepth || 0) + 1;
     var label = (node.level === '팀' ? node.name
       : node.level === '정책' ? node.name
       : node.level === '단위' ? node.name
       : node.level === '세부' ? node.name
-      : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' : '') + node.name
-      : node.name);
+      : (node.level === '목' || node.level === '세목') ? (node.code ? node.code + ' ' + node.name : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name))
+      : node.level === '부기명' ? bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name)
+      : bulletForLeafDepth(leafDepth) + stripLeadingMarker(node.name));
     var diff = (node.amt26 || 0) - (node.amt25 || 0);
     var pct = node.amt25 ? ((diff / node.amt25) * 100).toFixed(1) + '%' : '';
     rows.push([prefix + label, stripCalcEquals(node.calc), node.amt26 || 0, node.amt25 || 0, diff, pct]);
-    (node.children || []).forEach(function (c) { walk(c, depth + 1); });
+    (node.children || []).forEach(function (c) { walk(c, depth + 1, leafDepth); });
   }
-  trees.forEach(function (t) { walk(t, 0); });
+  trees.forEach(function (t) { walk(t, 0, 0); });
   return { name: b.name || '예산', rows: rows };
 }
 
