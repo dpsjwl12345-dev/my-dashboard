@@ -6623,7 +6623,16 @@ function exportCurrentTreeExcel() {
     var cells = r.map(function (v, ci) {
       var isNum = i > 0 && (ci === 2 || ci === 3 || ci === 4);
       var style = isNum ? ' style="mso-number-format:\'#,##0\';text-align:right;"' : '';
-      return '<' + tag + style + '>' + escapeHtml(String(v == null ? '' : v)) + '</' + tag + '>';
+      var text = String(v == null ? '' : v);
+      // 계층 들여쓰기로 넣어둔 앞쪽 공백은 일반 HTML/엑셀 렌더링에서 그대로 접혀 사라진다.
+      // 접히지 않는 &nbsp;로 바꿔야 엑셀에서도 계층 구조가 들여쓰기로 보인다.
+      if (i > 0 && ci === 0) {
+        var indent = (text.match(/^ */) || [''])[0].length;
+        text = Array(indent + 1).join('&nbsp;') + escapeHtml(text.slice(indent));
+      } else {
+        text = escapeHtml(text);
+      }
+      return '<' + tag + style + '>' + text + '</' + tag + '>';
     }).join('');
     return '<tr>' + cells + '</tr>';
   }).join('');
