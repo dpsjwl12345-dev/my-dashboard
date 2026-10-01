@@ -2535,6 +2535,33 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
 }
 /* 글자 수가 많은 탭에 폭을 더 준다 */
 label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] { flex: 1.4; }
+/* 도시공사 위탁금은 보수 계산 탭과 성격이 달라 탭바 밖에 따로 둔다 */
+.lc-corp-btn { all: unset; box-sizing: border-box; cursor: pointer; height: 50px; margin-left: 28px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text); font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; transition: background .2s, color .2s, border-color .2s; }
+.lc-corp-btn:hover { background: var(--bg-hover); }
+.lc-corp-btn:focus-visible { outline: 2px solid var(--navy-text); outline-offset: 2px; }
+.lc-corp-btn:active { transform: translateY(1px); }
+.lc-corp-btn.is-on { background: var(--navy-text); border-color: var(--navy-text); color: #10182E; }
+@media (max-width: 900px) { .lc-corp-btn { margin-left: 0; } }
+/* 도시공사 위탁금 단가 지침: 문서처럼 읽히도록 표 테두리 없이 분류별 묶음 */
+.cw-wrap { max-width: 1100px; color: var(--text); font-variant-numeric: tabular-nums; }
+.cw-intro { margin: 26px 0 0; }
+.cw-intro h2 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+.cw-sec { margin: 30px 0 10px; font-size: 16px; font-weight: 800; color: var(--navy-text); }
+.cw-rules { margin: 0; padding: 14px 18px 14px 40px; border-left: 3px solid var(--warning); background: var(--bg-hover); border-radius: 0 var(--r) var(--r) 0; font-size: 14px; line-height: 1.75; color: var(--text); }
+.cw-cat { margin-top: 36px; }
+.cw-cat h3 { margin: 0 0 6px; padding-bottom: 10px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); border-bottom: 2px solid var(--navy-text); }
+.cw-row { display: grid; grid-template-columns: 44px minmax(150px, 1.1fr) minmax(170px, 1.1fr) 2fr; gap: 16px; align-items: baseline; padding: 11px 10px; border-radius: var(--r); font-size: 14px; }
+.cw-row:not(.cw-row-head):hover { background: var(--bg-hover); }
+.cw-row-head { padding-top: 6px; padding-bottom: 4px; font-size: 12px; color: var(--text-soft); }
+.cw-row .r-no { color: var(--text-soft); }
+.cw-row .r-item { font-weight: 700; }
+.cw-row .r-std { font-size: 15px; font-weight: 800; color: var(--text); }
+.cw-row .r-how { color: var(--text-muted); line-height: 1.55; }
+@media (max-width: 760px) {
+  .cw-row { grid-template-columns: 40px 1fr; gap: 4px 12px; }
+  .cw-row-head { display: none; }
+  .cw-row .r-std, .cw-row .r-how { grid-column: 2; }
+}
 #lc-opt-labor:checked + label[for="lc-opt-labor"],
 #lc-opt-retire:checked + label[for="lc-opt-retire"],
 #lc-opt-eval:checked + label[for="lc-opt-eval"],
@@ -7851,6 +7878,59 @@ function lcSetView(view) {
   LC.view = view;
   renderLaborCalc();
 }
+
+// ---- 도시공사 위탁금: 체육시설 위탁금 단가 지침 (2027 본예산 요구 검토에서 시설 8곳 비교로 정한 기준) ----
+var CW_RULES = [
+  '같은 항목은 시설이 달라도 아래 기준 단가로 편성한다.',
+  '기준 단가를 넘는 부분은 감액한다.',
+  '면적, 규모 등으로 기준을 넘을 수밖에 없으면 견적서나 산출 근거를 붙인다. 근거가 없으면 기준 단가로 조정한다.',
+  '산식은 기준과 같은 단위(시간당, 1벌, 대당 월 등)로 적는다.'
+];
+var CW_CATEGORIES = [
+  { title: '강사료', types: [
+    { label: '수상안전요원 시급', std: '시간당 18,000원', how: '배치시간은 주 10~11시간 이내로 산정' },
+    { label: '수영강습 시급', std: '시간당 30,000원', how: '시급 × 인원 × 시간 × 주(월)' },
+    { label: '아쿠아로빅 시급', std: '시간당 57,000원', how: '시급 × 인원 × 시간 × 주(월)' },
+    { label: 'GX·다목적·체력단련 시급', std: '시간당 40,000원', how: '댄스, 요가, 그룹웨이트 등 프로그램실 강습 포함' },
+    { label: '시간강사 교통비', std: '편성하지 않음', how: '시간강사 교통비는 따로 계상하지 않음' }
+  ] },
+  { title: '피복비', types: [
+    { label: '근무복', std: '1벌 100,000원 이내', how: '1벌 단가 × 인원 × 지급 횟수' },
+    { label: '작업화·안전화', std: '1켤레 100,000원 이내', how: '1켤레 단가 × 인원 × 지급 횟수' }
+  ] },
+  { title: '유지관리비', types: [
+    { label: '청사소독', std: '1회 100만 원 이내', how: '1회 단가 × 횟수. 면적 때문에 넘으면 견적서 첨부' },
+    { label: '전기안전관리 대행', std: '월 90만 원 이내', how: '월 단가 × 12개월' },
+    { label: '소방 방화관리 대행', std: '월 33만 원 이내', how: '분기 계약도 월 단가로 환산해 비교' },
+    { label: '승강기 유지관리', std: '대당 월 16만 원', how: '대당 월 단가 × 대수 × 12개월. 대수를 반드시 적음' },
+    { label: '저수조 청소', std: '1회 170만 원 이내', how: '1회 단가 × 횟수' },
+    { label: '수영장 수질검사', std: '월 10만 원 이내', how: '월 단가 × 12개월. 저수조 수질검사와 구분해 편성' }
+  ] },
+  { title: '임차료', types: [
+    { label: '정수기', std: '대당 월 65,000원 이내', how: '대당 월 단가 × 대수 × 12개월' },
+    { label: '복합기', std: '대당 월 310,000원 이내', how: '대당 월 단가 × 대수 × 12개월. 대수는 설명자료와 일치' }
+  ] },
+  { title: '통신·수수료', types: [
+    { label: '전화·인터넷', std: '회선 수 기준 실비', how: '회선 종류와 수를 산식에 적음' },
+    { label: '신용카드 결제수수료', std: '결제액의 2.3%', how: '예상 결제액 × 요율. 정액으로 편성하지 않음' }
+  ] },
+  { title: '업무비', types: [
+    { label: '부서업무비', std: '부서당 1건, 정원 구간별 월액', how: '한 부서를 나눠 따로 편성하지 않음' },
+    { label: '정원가산업무비', std: '1인 월 45,320원', how: '정원 × 단가 × 12개월' }
+  ] }
+];
+function lcCorpSection() {
+  var rules = '<ol class="cw-rules">' + CW_RULES.map(function (r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ol>';
+  var cats = CW_CATEGORIES.map(function (cat, ci) {
+    return '<section class="cw-cat"><h3>' + (ci + 1) + '. ' + escapeHtml(cat.title) + '</h3>'
+      + '<div class="cw-rows"><div class="cw-row cw-row-head"><span></span><span>항목</span><span>기준 단가</span><span>산정 방법</span></div>'
+      + cat.types.map(function (t, ti) {
+        return '<div class="cw-row"><span class="r-no">' + (ci + 1) + '-' + (ti + 1) + '</span><span class="r-item">' + escapeHtml(t.label) + '</span><span class="r-std">' + escapeHtml(t.std) + '</span><span class="r-how">' + escapeHtml(t.how) + '</span></div>';
+      }).join('') + '</div></section>';
+  }).join('');
+  return '<div class="cw-wrap"><header class="cw-intro"><h2>화성도시공사 체육시설 위탁금 단가 지침</h2></header>'
+    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + cats + '</div>';
+}
 var lcLastFilterView = null;
 function lcPositionFilterIndicator() {
   var wrap = document.getElementById('firstFilter');
@@ -10464,8 +10544,9 @@ function renderLaborCalc() {
     + '<label class="option" for="lc-opt-eval">109 평가급</label>'
     + '<input ' + (LC.view === 'pension' ? 'checked' : '') + ' id="lc-opt-pension" name="lc-options" type="radio" onchange="lcSetView(\'pension\')" />'
     + '<label class="option" for="lc-opt-pension">304 연금</label>'
-    + '<span class="background"></span>'
-    + '</div>';
+    + '<span class="background"' + (LC.view === 'corp' ? ' style="opacity:0"' : '') + '></span>'
+    + '</div>'
+    + '<button type="button" class="lc-corp-btn' + (LC.view === 'corp' ? ' is-on' : '') + '" aria-pressed="' + (LC.view === 'corp') + '" onclick="lcSetView(\'corp\')">화성도시공사 위탁금</button>';
 
   // 서브탭별 고유색(rgb 성분) — 선택 캡슐과 아래 박스 좌측선(파스텔)에 동일하게 매칭
   var laborSubTabs = [
@@ -10493,6 +10574,7 @@ function renderLaborCalc() {
     : LC.view === 'eval' ? section07
     : LC.view === 'pension' ? section05
     : LC.view === 'final' ? lcFinalSection()
+    : LC.view === 'corp' ? lcCorpSection()
     : laborHtml;
   var showTotalWageExcludeHint = (LC.view === 'retire' || LC.view === 'eval' || LC.view === 'pension');
   var totalWageExcludeHint = showTotalWageExcludeHint ? '<div class="lc-raise-row lc-exclude-hint" style="width:500px;max-width:100%;box-sizing:border-box;margin:26px 0 16px;">※ 107 퇴직급여, 109 평가급, 304 연금부담금 등은 총인건비 인상률 적용 제외</div>' : '';
