@@ -2548,6 +2548,16 @@ label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] 
 .cw-intro h2 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
 .cw-sec { margin: 30px 0 10px; font-size: 16px; font-weight: 800; color: var(--navy-text); }
 .cw-rules { margin: 0; padding: 14px 18px 14px 40px; border-left: 3px solid var(--warning); background: var(--bg-hover); border-radius: 0 var(--r) var(--r) 0; font-size: 14px; line-height: 1.75; color: var(--text); }
+.cw-layout { display: grid; grid-template-columns: minmax(0, 1100px) minmax(260px, 340px); gap: 36px; align-items: start; }
+.cw-layout .cw-wrap { min-width: 0; }
+.cw-aside { position: sticky; top: 24px; margin-top: 26px; padding: 18px 20px; border-radius: var(--r); background: var(--bg-hover); border-left: 3px solid var(--navy-text); color: var(--text); font-size: 13.5px; line-height: 1.6; }
+.cw-aside h3 { margin: 0 0 12px; font-size: 16px; font-weight: 800; color: var(--navy-text); }
+.cw-aside h4 { margin: 14px 0 6px; font-size: 14px; font-weight: 800; color: var(--text); }
+.cw-aside section:first-of-type h4 { margin-top: 0; }
+.cw-aside ul { margin: 0; padding-left: 18px; }
+.cw-aside li { margin: 3px 0; }
+.cw-aside .cw-ref { color: var(--text-soft); font-size: 12.5px; white-space: nowrap; }
+@media (max-width: 1400px) { .cw-layout { grid-template-columns: minmax(0, 1fr); } .cw-aside { position: static; } }
 .cw-tabs { display: flex; flex-wrap: wrap; gap: 4px 26px; margin: 34px 0 0; }
 .cw-tabs + .cw-cat { margin-top: 22px; }
 .cw-cat { margin-top: 36px; }
@@ -7930,6 +7940,25 @@ var CW_CATEGORIES = [
     { label: '회의비 구분', std: '회의 장소 다과·식사는 회의비', how: '내부 직원끼리 회의는 회의비 사용 불가. 사내 고객 상담 다과는 부서업무비로 계상 (p.91)' }
   ] }
 ];
+var CW_GUIDES = [
+  { src: '2027 지방공기업 예산에 관한 공통기준', items: [
+    ['경상경비는 전년도 절감예산 수준으로 편성', 'p.78'],
+    ['증액은 법정경비, 노후 시설·장비 수선·교체, 인력증원 등 불가피한 경우만', 'p.78'],
+    ['전년도에 전용으로 감액 집행된 경비는 그만큼 감액 편성', 'p.78'],
+    ['복리후생비는 지방공무원 수준 기준, 경조사비·기념품 현금성 지급 금지', 'p.78~80'],
+    ['업무추진비·관서업무비·특정업무경비 기준 → 업무추진비 탭', 'p.90~95']
+  ] },
+  { src: '화성도시공사 내규', items: [
+    ['피복: "업무수행에 적합한 피복을 지급할 수 있다"(금액·횟수 규정 없음)', '복리후생규정 제9조'],
+    ['업무직 근무복: 예산 범위 내 지급', '업무직관리규정 제70조'],
+    ['직책급업무추진비 월 사장 65만·본부장 35만·2급 10만 원', '복리후생규정 시행내규 제3조의2'],
+    ['정액급식비 월 14만 원', '보수규정 제40조'],
+    ['평가급 2종(인센티브·자체평가급), 업무직도 대상', '보수규정 제53조, 업무직관리규정 제69조']
+  ] },
+  { src: '운영단가 출처', items: [
+    ['2027 본예산 요구 검토에서 체육시설 8곳 같은 항목 비교로 정한 기준', '']
+  ] }
+];
 var cwTab = 0;
 function cwSetTab(i) {
   cwTab = i;
@@ -7949,8 +7978,13 @@ function lcCorpSection() {
     + cat.types.map(function (t, ti) {
       return '<div class="cw-row"><span class="r-no">' + (ci + 1) + '-' + (ti + 1) + '</span><span class="r-item">' + escapeHtml(t.label) + '</span><span class="r-std">' + escapeHtml(t.std) + '</span><span class="r-how">' + escapeHtml(t.how) + '</span></div>';
     }).join('') + '</div></section>';
-  return '<div class="cw-wrap"><header class="cw-intro"><h2>화성도시공사 체육시설 운영단가</h2></header>'
-    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + tabs + body + '</div>';
+  var aside = '<aside class="cw-aside"><h3>적용 지침</h3>' + CW_GUIDES.map(function (g) {
+    return '<section><h4>' + escapeHtml(g.src) + '</h4><ul>' + g.items.map(function (it) {
+      return '<li>' + escapeHtml(it[0]) + (it[1] ? ' <span class="cw-ref">' + escapeHtml(it[1]) + '</span>' : '') + '</li>';
+    }).join('') + '</ul></section>';
+  }).join('') + '</aside>';
+  return '<div class="cw-layout"><div class="cw-wrap"><header class="cw-intro"><h2>화성도시공사 체육시설 운영단가</h2></header>'
+    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + tabs + body + '</div>' + aside + '</div>';
 }
 var lcLastFilterView = null;
 function lcPositionFilterIndicator() {
