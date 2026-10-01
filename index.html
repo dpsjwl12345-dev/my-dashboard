@@ -2548,6 +2548,8 @@ label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] 
 .cw-intro h2 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
 .cw-sec { margin: 30px 0 10px; font-size: 16px; font-weight: 800; color: var(--navy-text); }
 .cw-rules { margin: 0; padding: 14px 18px 14px 40px; border-left: 3px solid var(--warning); background: var(--bg-hover); border-radius: 0 var(--r) var(--r) 0; font-size: 14px; line-height: 1.75; color: var(--text); }
+.cw-tabs { display: flex; flex-wrap: wrap; gap: 4px 26px; margin: 34px 0 0; }
+.cw-tabs + .cw-cat { margin-top: 22px; }
 .cw-cat { margin-top: 36px; }
 .cw-cat h3 { margin: 0 0 6px; padding-bottom: 10px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); border-bottom: 2px solid var(--navy-text); }
 .cw-row { display: grid; grid-template-columns: 44px minmax(150px, 1.1fr) minmax(170px, 1.1fr) 2fr; gap: 16px; align-items: baseline; padding: 11px 10px; border-radius: var(--r); font-size: 14px; }
@@ -7918,7 +7920,7 @@ var CW_CATEGORIES = [
     { label: '부서업무비', std: '부서당 1건, 정원 구간별 월액', how: '한 부서를 나눠 따로 편성하지 않음' },
     { label: '정원가산업무비', std: '1인 월 45,320원', how: '정원 × 단가 × 12개월' }
   ] },
-  { title: '업무추진비 (2027 지방공기업 예산에 관한 공통기준 p.90~95, 지방공사·공단)', types: [
+  { title: '업무추진비 (2027 지방공기업 예산에 관한 공통기준 p.90~95, 지방공사·공단)', tab: '업무추진비', types: [
     { label: '사업업무추진비', std: '법인세법 손금인정 한도 내', how: '기본한도 연 1,200만 원 × 사업월수/12에 매출액 기준 한도를 더한 범위에서 전년도 경상경비 절감실적을 반영해 최대한 절감. 매출액은 과다 계상 금지. 임원 위주 집행을 억제하고 부서·사업 단위로 배분 (p.91)' },
     { label: '간담회 등 접대비', std: '1인 1회 5만 원 이하', how: '불가피하게 넘으면 증빙에 사유 명시. 청탁금지법 대상이면 그 법을 따름 (p.93)' },
     { label: '정원가산업무비', std: '1인당 연 80,000원 (정원 100명까지)', how: '정원 구간별 누적 산정: 101~300명 60,000원, 301~600명 45,000원, 601~800명 30,000원, 801명 이상 15,000원. 전년도 말 정원(정규직 + 1년 이상 비정규직) 기준, 본부·소속기관 단위 편성 (p.94)' },
@@ -7928,17 +7930,27 @@ var CW_CATEGORIES = [
     { label: '회의비 구분', std: '회의 장소 다과·식사는 회의비', how: '내부 직원끼리 회의는 회의비 사용 불가. 사내 고객 상담 다과는 부서업무비로 계상 (p.91)' }
   ] }
 ];
+var cwTab = 0;
+function cwSetTab(i) {
+  cwTab = i;
+  renderLaborCalc();
+}
 function lcCorpSection() {
   var rules = '<ol class="cw-rules">' + CW_RULES.map(function (r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ol>';
-  var cats = CW_CATEGORIES.map(function (cat, ci) {
-    return '<section class="cw-cat"><h3>' + (ci + 1) + '. ' + escapeHtml(cat.title) + '</h3>'
-      + '<div class="cw-rows"><div class="cw-row cw-row-head"><span></span><span>항목</span><span>기준 단가</span><span>산정 방법</span></div>'
-      + cat.types.map(function (t, ti) {
-        return '<div class="cw-row"><span class="r-no">' + (ci + 1) + '-' + (ti + 1) + '</span><span class="r-item">' + escapeHtml(t.label) + '</span><span class="r-std">' + escapeHtml(t.std) + '</span><span class="r-how">' + escapeHtml(t.how) + '</span></div>';
-      }).join('') + '</div></section>';
-  }).join('');
+  var tabs = '<div class="lc-subtoggle cw-tabs">' + CW_CATEGORIES.map(function (cat, ci) {
+    return '<div class="tab-group">'
+      + '<input type="radio" name="cw-tab" id="cw-tab-' + ci + '" ' + (cwTab === ci ? 'checked' : '') + ' onchange="cwSetTab(' + ci + ')" />'
+      + '<label for="cw-tab-' + ci + '"><span>' + escapeHtml(cat.tab || cat.title) + '</span></label>'
+      + '</div>';
+  }).join('') + '</div>';
+  var ci = cwTab, cat = CW_CATEGORIES[ci];
+  var body = '<section class="cw-cat"><h3>' + (ci + 1) + '. ' + escapeHtml(cat.title) + '</h3>'
+    + '<div class="cw-rows"><div class="cw-row cw-row-head"><span></span><span>항목</span><span>기준 단가</span><span>산정 방법</span></div>'
+    + cat.types.map(function (t, ti) {
+      return '<div class="cw-row"><span class="r-no">' + (ci + 1) + '-' + (ti + 1) + '</span><span class="r-item">' + escapeHtml(t.label) + '</span><span class="r-std">' + escapeHtml(t.std) + '</span><span class="r-how">' + escapeHtml(t.how) + '</span></div>';
+    }).join('') + '</div></section>';
   return '<div class="cw-wrap"><header class="cw-intro"><h2>화성도시공사 체육시설 운영단가</h2></header>'
-    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + cats + '</div>';
+    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + tabs + body + '</div>';
 }
 var lcLastFilterView = null;
 function lcPositionFilterIndicator() {
