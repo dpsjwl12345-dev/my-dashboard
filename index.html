@@ -2558,6 +2558,22 @@ label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] 
 .cw-aside li { margin: 3px 0; }
 .cw-aside .cw-ref { color: var(--text-soft); font-size: 12.5px; white-space: nowrap; }
 @media (max-width: 1400px) { .cw-layout { grid-template-columns: minmax(0, 1fr); } .cw-aside { position: static; } }
+.cw-cmp { margin-top: 48px; }
+.cw-cmp h3 { margin: 0 0 6px; padding-bottom: 10px; font-size: 18px; font-weight: 800; color: var(--text); border-bottom: 2px solid var(--navy-text); }
+.cw-cmp-note { margin: 8px 0 10px; font-size: 13px; color: var(--text-soft); }
+.cw-cmp-scroll { overflow-x: auto; }
+.cw-cmp table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 720px; }
+.cw-cmp th { text-align: left; font-size: 12.5px; font-weight: 700; color: var(--text-soft); padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.cw-cmp td { padding: 9px 10px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+.cw-cmp td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cw-cmp th:nth-child(3), .cw-cmp th:nth-child(4) { text-align: right; }
+.cw-cmp table { table-layout: fixed; }
+.cw-cmp th:nth-child(1) { width: 20%; } .cw-cmp th:nth-child(2) { width: 32%; } .cw-cmp th:nth-child(3) { width: 12%; } .cw-cmp th:nth-child(4) { width: 14%; }
+.cw-cmp td { overflow-wrap: anywhere; }
+.cw-cmp td:first-child { font-weight: 700; white-space: nowrap; }
+.cw-cmp td:last-child { color: var(--text-muted); }
+.cw-cmp tr.is-focus td { background: var(--bg-hover); font-weight: 700; }
+.cw-cmp tr.is-focus td:last-child { color: var(--warning); }
 .cw-tabs { display: flex; flex-wrap: wrap; gap: 4px 26px; margin: 34px 0 0; }
 .cw-tabs + .cw-cat { margin-top: 22px; }
 .cw-cat { margin-top: 36px; }
@@ -7959,6 +7975,31 @@ var CW_GUIDES = [
     ['2027 본예산 요구 검토에서 체육시설 8곳 같은 항목 비교로 정한 기준', '']
   ] }
 ];
+var CW_COMPARE = [
+  { title: '승강기 유지관리 — 시설별 산출 단가 (2027 요구)', note: '운영단가 기준: 대당 월 16만 원, 산식에 대수 기재', rows: [
+    ['동부권 체육시설', '120,000원 × 5개소 × 12개월', '7,200', '12만 원', ''],
+    ['동탄중앙어울림체육센터', '160,000원 × 2대 × 12개월', '3,840', '16만 원', ''],
+    ['서남부권 체육시설', '210,000원 × 5개소 × 12개월 / 210,000원 × 2대 × 12개월', '12,600 / 5,040', '21만 원', ''],
+    ['화성국민체육센터', '693,000원 × 2대 × 4분기', '5,544', '약 23만 원', ''],
+    ['반월체육센터', '300,000원 × 1대 × 12개월', '3,600', '30만 원', ''],
+    ['제부도 관광편의시설', '300,000원 × 12개월', '3,600', '—', '대수 미기재'],
+    ['화성남부국민체육센터', '330,000원 × 12개월', '3,960', '—', '대수 미기재'],
+    ['전곡항 마리나', '341,000원 × 1개소 × 12개월', '4,092', '약 34만 원', ''],
+    ['화성종합경기타운', '1,833,300원 × 12개월', '22,000', '—', '대수 미기재 · 계약방식(일반/종합) 확인']
+  ] },
+  { title: '소방시설 방화관리 — 시설별 산출 단가 (2027 요구)', note: '운영단가 기준: 월 33만 원 이내(소규모 시설 비교값, 대형 시설은 연면적 기준 산출근거 필요)', rows: [
+    ['반월체육센터', '270,000원 × 12개월', '3,240', '27만 원', ''],
+    ['전곡항 마리나', '278,500원 × 1개소 × 12개월', '3,342', '약 28만 원', ''],
+    ['서남부권 체육시설', '320,000원 × 12개월', '3,840', '32만 원', ''],
+    ['서남부권 실내게이트볼장', '55,250원 × 9개소 × 12개월', '5,967', '개소당 약 6만 원', ''],
+    ['서남부권 체육시설', '산식 없음', '21,196', '—', '산출근거 미기재'],
+    ['화성남부국민체육센터', '330,000원 × 12개월', '3,960', '33만 원', ''],
+    ['화성국민체육센터', '1,419,000원 × 4분기', '5,676', '약 47만 원', ''],
+    ['동탄중앙어울림체육센터', '500,000원 × 12개월', '6,000', '50만 원', ''],
+    ['동부권 체육시설', '산식 없음', '25,248', '—', '산출근거 미기재'],
+    ['화성종합경기타운', '42,000,000원 × 1식', '42,000', '350만 원', '용역 범위(업무대행/자체점검)·연면적 산출근거 확인']
+  ] }
+];
 var cwTab = 0;
 function cwSetTab(i) {
   cwTab = i;
@@ -7983,8 +8024,17 @@ function lcCorpSection() {
       return '<li>' + escapeHtml(it[0]) + (it[1] ? ' <span class="cw-ref">' + escapeHtml(it[1]) + '</span>' : '') + '</li>';
     }).join('') + '</ul></section>';
   }).join('') + '</aside>';
+  var compare = CW_COMPARE.map(function (c) {
+    return '<section class="cw-cmp"><h3>' + escapeHtml(c.title) + '</h3><p class="cw-cmp-note">' + escapeHtml(c.note) + ' · 단위: 천원</p>'
+      + '<div class="cw-cmp-scroll"><table><thead><tr><th>시설</th><th>산식</th><th>요구액</th><th>월 단가(대·개소당)</th><th>비고</th></tr></thead><tbody>'
+      + c.rows.map(function (r) {
+        return '<tr' + (r[0] === '화성종합경기타운' ? ' class="is-focus"' : '') + '>' + r.map(function (v, i) {
+          return '<td' + (i === 2 || i === 3 ? ' class="num"' : '') + '>' + escapeHtml(v) + '</td>';
+        }).join('') + '</tr>';
+      }).join('') + '</tbody></table></div></section>';
+  }).join('');
   return '<div class="cw-layout"><div class="cw-wrap"><header class="cw-intro"><h2>화성도시공사 체육시설 운영단가</h2></header>'
-    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + tabs + body + '</div>' + aside + '</div>';
+    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + tabs + body + compare + '</div>' + aside + '</div>';
 }
 var lcLastFilterView = null;
 function lcPositionFilterIndicator() {
