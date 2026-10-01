@@ -2576,6 +2576,9 @@ label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] 
 .cw-cmp tr.is-focus td:last-child { color: var(--warning); }
 .cw-tabs { display: flex; flex-wrap: wrap; gap: 4px 26px; margin: 34px 0 0; }
 .cw-tabs + .cw-cat { margin-top: 22px; }
+.cw-tabs.lc-subtoggle label { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 18px; font-weight: 500; color: #AEB9D3; padding-bottom: 12px; }
+.cw-tabs.lc-subtoggle label:hover { color: #E8EDF8; }
+.cw-tabs.lc-subtoggle input:checked + label { color: var(--warning); border-bottom-color: var(--warning); font-weight: 700; }
 .cw-cat { margin-top: 36px; }
 .cw-cat h3 { margin: 0 0 6px; padding-bottom: 10px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); border-bottom: 2px solid var(--navy-text); }
 .cw-row { display: grid; grid-template-columns: 44px minmax(150px, 1.1fr) minmax(170px, 1.1fr) 2fr; gap: 16px; align-items: baseline; padding: 11px 10px; border-radius: var(--r); font-size: 14px; }
@@ -8036,7 +8039,7 @@ function lcCorpSection() {
       return '<li>' + escapeHtml(it[0]) + (it[1] ? ' <span class="cw-ref">' + escapeHtml(it[1]) + '</span>' : '') + '</li>';
     }).join('') + '</ul></section>';
   }).join('') + '</aside>';
-  var compare = CW_COMPARE.map(function (c) {
+  var compare = cat.title !== '유지관리비' ? '' : CW_COMPARE.map(function (c) {
     return '<section class="cw-cmp"><h3>' + escapeHtml(c.title) + '</h3><p class="cw-cmp-note">' + escapeHtml(c.note) + ' · 단위: 천원</p>'
       + '<div class="cw-cmp-scroll"><table><thead><tr><th>시설</th><th>산식</th><th>요구액</th><th>월 단가(대·개소당)</th><th>비고</th></tr></thead><tbody>'
       + c.rows.map(function (r) {
