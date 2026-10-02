@@ -2555,7 +2555,7 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
 /* 글자 수가 많은 탭에 폭을 더 준다 */
 label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] { flex: 1.4; }
 /* 도시공사 위탁금은 보수 계산 탭과 성격이 달라 탭바 밖에 따로 둔다 */
-.lc-corp-btn { all: unset; box-sizing: border-box; cursor: pointer; height: 50px; margin-left: 28px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text); font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; transition: background .2s, color .2s, border-color .2s; }
+.lc-corp-btn { all: unset; box-sizing: border-box; cursor: pointer; min-height: 50px; text-align: center; justify-content: center; line-height: 1.3; margin-left: 28px; padding: 6px 24px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text); font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; transition: background .2s, color .2s, border-color .2s; }
 .lc-corp-btn:hover { background: var(--bg-hover); }
 .lc-corp-btn:focus-visible { outline: 2px solid var(--navy-text); outline-offset: 2px; }
 .lc-corp-btn:active { transform: translateY(1px); }
@@ -2600,13 +2600,13 @@ label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] 
 .cw-tabs.lc-subtoggle input:checked + label { color: var(--warning); border-bottom-color: var(--warning); font-weight: 700; }
 .cw-cat { margin-top: 36px; }
 .cw-cat h3 { margin: 0 0 6px; padding-bottom: 10px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); border-bottom: 2px solid var(--navy-text); }
-.cw-row { display: grid; grid-template-columns: 44px minmax(150px, 1.1fr) minmax(170px, 1.1fr) 2fr; gap: 16px; align-items: baseline; padding: 11px 10px; border-radius: var(--r); font-size: 14px; }
+.cw-row { display: grid; grid-template-columns: 44px minmax(150px, 1.1fr) minmax(170px, 1.1fr) 2fr; gap: 16px; align-items: baseline; padding: 11px 10px; border-radius: var(--r); font-size: 13px; }
 .cw-row:not(.cw-row-head):hover { background: var(--bg-hover); }
-.cw-row-head { padding-top: 6px; padding-bottom: 4px; font-size: 16px; font-weight: 700; color: var(--text-soft); }
+.cw-row-head { padding-top: 6px; padding-bottom: 4px; font-size: 15px; font-weight: 700; color: var(--text-soft); }
 .cw-row .r-no { color: var(--text-soft); }
-.cw-row .r-item { font-size: 18px; font-weight: 700; }
-.cw-row .r-std { font-size: 19px; font-weight: 800; color: var(--text); }
-.cw-row .r-how { font-size: 18px; color: var(--text-muted); line-height: 1.55; }
+.cw-row .r-item { font-size: 17px; font-weight: 700; }
+.cw-row .r-std { font-size: 18px; font-weight: 800; color: var(--text); }
+.cw-row .r-how { font-size: 17px; color: var(--text-muted); line-height: 1.55; }
 @media (max-width: 760px) {
   .cw-row { grid-template-columns: 40px 1fr; gap: 4px 12px; }
   .cw-row-head { display: none; }
@@ -8095,7 +8095,6 @@ function cwSetTab(i) {
   renderLaborCalc();
 }
 function lcCorpSection() {
-  var rules = '<ol class="cw-rules">' + CW_RULES.map(function (r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ol>';
   var tabs = '<div class="lc-subtoggle cw-tabs">' + CW_CATEGORIES.map(function (cat, ci) {
     return '<div class="tab-group">'
       + '<input type="radio" name="cw-tab" id="cw-tab-' + ci + '" ' + (cwTab === ci ? 'checked' : '') + ' onchange="cwSetTab(' + ci + ')" />'
@@ -8122,8 +8121,8 @@ function lcCorpSection() {
         }).join('') + '</tr>';
       }).join('') + '</tbody></table></div></section>';
   }).join('');
-  return '<div class="cw-layout"><div class="cw-wrap"><header class="cw-intro"><h2>화성도시공사 체육시설 운영단가</h2></header>'
-    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + tabs + body + compare + '</div>' + aside + '</div>';
+  return '<div class="cw-layout"><div class="cw-wrap">'
+    + tabs + body + compare + '</div>' + aside + '</div>';
 }
 var lcLastFilterView = null;
 function lcPositionFilterIndicator() {
@@ -10740,7 +10739,7 @@ function renderLaborCalc() {
     + '<label class="option" for="lc-opt-pension">304 연금</label>'
     + '<span class="background"' + (LC.view === 'corp' ? ' style="opacity:0"' : '') + '></span>'
     + '</div>'
-    + '<button type="button" class="lc-corp-btn' + (LC.view === 'corp' ? ' is-on' : '') + '" aria-pressed="' + (LC.view === 'corp') + '" onclick="lcSetView(\'corp\')">화성도시공사 위탁금</button>';
+    + '<button type="button" class="lc-corp-btn' + (LC.view === 'corp' ? ' is-on' : '') + '" aria-pressed="' + (LC.view === 'corp') + '" onclick="lcSetView(\'corp\')">화성도시공사 체육시설<br>운영단가</button>';
 
   // 서브탭별 고유색(rgb 성분) — 선택 캡슐과 아래 박스 좌측선(파스텔)에 동일하게 매칭
   var laborSubTabs = [
