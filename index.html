@@ -2555,7 +2555,7 @@ table.lc-table th.lc-th-formula { text-align: left; padding-left: 28px; }
 /* 글자 수가 많은 탭에 폭을 더 준다 */
 label[for="lc-opt-retire"], label[for="lc-opt-eval"], label[for="lc-opt-final"] { flex: 1.4; }
 /* 도시공사 위탁금은 보수 계산 탭과 성격이 달라 탭바 밖에 따로 둔다 */
-.lc-corp-btn { all: unset; box-sizing: border-box; cursor: pointer; height: 50px; margin-left: 28px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text); font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; transition: background .2s, color .2s, border-color .2s; }
+.lc-corp-btn { all: unset; box-sizing: border-box; cursor: pointer; min-height: 50px; text-align: center; justify-content: center; line-height: 1.3; margin-left: 28px; padding: 6px 24px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text); font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; transition: background .2s, color .2s, border-color .2s; }
 .lc-corp-btn:hover { background: var(--bg-hover); }
 .lc-corp-btn:focus-visible { outline: 2px solid var(--navy-text); outline-offset: 2px; }
 .lc-corp-btn:active { transform: translateY(1px); }
@@ -10739,7 +10739,7 @@ function renderLaborCalc() {
     + '<label class="option" for="lc-opt-pension">304 연금</label>'
     + '<span class="background"' + (LC.view === 'corp' ? ' style="opacity:0"' : '') + '></span>'
     + '</div>'
-    + '<button type="button" class="lc-corp-btn' + (LC.view === 'corp' ? ' is-on' : '') + '" aria-pressed="' + (LC.view === 'corp') + '" onclick="lcSetView(\'corp\')">화성도시공사 위탁금</button>';
+    + '<button type="button" class="lc-corp-btn' + (LC.view === 'corp' ? ' is-on' : '') + '" aria-pressed="' + (LC.view === 'corp') + '" onclick="lcSetView(\'corp\')">화성도시공사 체육시설<br>운영단가</button>';
 
   // 서브탭별 고유색(rgb 성분) — 선택 캡슐과 아래 박스 좌측선(파스텔)에 동일하게 매칭
   var laborSubTabs = [
