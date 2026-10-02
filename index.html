@@ -8095,7 +8095,6 @@ function cwSetTab(i) {
   renderLaborCalc();
 }
 function lcCorpSection() {
-  var rules = '<ol class="cw-rules">' + CW_RULES.map(function (r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ol>';
   var tabs = '<div class="lc-subtoggle cw-tabs">' + CW_CATEGORIES.map(function (cat, ci) {
     return '<div class="tab-group">'
       + '<input type="radio" name="cw-tab" id="cw-tab-' + ci + '" ' + (cwTab === ci ? 'checked' : '') + ' onchange="cwSetTab(' + ci + ')" />'
@@ -8123,7 +8122,7 @@ function lcCorpSection() {
       }).join('') + '</tbody></table></div></section>';
   }).join('');
   return '<div class="cw-layout"><div class="cw-wrap"><header class="cw-intro"><h2>화성도시공사 체육시설 운영단가</h2></header>'
-    + '<h3 class="cw-sec">공통 원칙</h3>' + rules + tabs + body + compare + '</div>' + aside + '</div>';
+    + tabs + body + compare + '</div>' + aside + '</div>';
 }
 var lcLastFilterView = null;
 function lcPositionFilterIndicator() {
