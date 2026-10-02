@@ -254,13 +254,13 @@ table.summary td.diff.down { color: #4A5578; }
 .hc-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 @media (max-width: 1200px) { .hc-card-grid { grid-template-columns: minmax(0, 1fr); } }
 .hc-card { background: var(--bg-card, var(--bg-hover)); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 18px 10px; }
-.hc-card-head { padding-bottom: 12px; border-bottom: 2px solid var(--navy-text); margin-bottom: 4px; }
-.hc-card-name { margin: 0; font-size: 18px; font-weight: 800; color: var(--text); }
-.hc-card-total { margin: 4px 0 2px; font-size: 26px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.hc-card-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding-bottom: 12px; border-bottom: 2px solid var(--navy-text); margin-bottom: 4px; }
+.hc-card-name { margin: 0; font-size: 18px; font-weight: 800; color: var(--text); white-space: nowrap; }
+.hc-card-total { margin: 0; font-size: 18px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .hc-card-total span, .hc-card-table td span { color: var(--text-muted); font-weight: 600; }
-.hc-card-split { margin: 0; font-size: 13.5px; color: var(--text-muted); }
+.hc-card-split { margin: 0; font-size: 14px; color: var(--text-muted); white-space: nowrap; }
 .hc-card-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
-.hc-card-table th { font-size: 12.5px; font-weight: 700; color: var(--text-soft); text-align: center; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+.hc-card-table th { font-size: 15px; font-weight: 700; color: var(--text-soft); text-align: center; padding: 8px 4px; border-bottom: 1px solid var(--border); }
 .hc-card-table th:first-child { text-align: left; }
 .hc-card-table td { padding: 8px 4px; border-bottom: 1px solid var(--border); text-align: center; font-variant-numeric: tabular-nums; color: var(--text); }
 .hc-card-table tr:last-child td { border-bottom: none; }
