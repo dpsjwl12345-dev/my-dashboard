@@ -8889,6 +8889,7 @@ function lcFinalSection() {
 
   if (f.instKey === 'hscf' && f.rulesOpen) {
   var rtab = f.rulesTab || 'labor';
+  if (rtab === 'welfare' && f.instKey !== 'hscf') rtab = 'labor';
   var rtabBtn = function (key, label) {
     var active = rtab === key;
     return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;">' + label + '</button>';
@@ -8907,6 +8908,13 @@ function lcFinalSection() {
       lcFinalRow(['기관성과급(제41조)', '시 또는 중앙부처 등 공인기관의 성과평가 결과에 따라 시장이 결정한 지급률을 개인별로 적용, 합산 총액 범위 내에서 결정'])
       + lcFinalRow(['개인성과급(제42조)', '기관장 제외 소속직원 근무성적평정 결과 반영. 개인·부서단위 3~5등급 좌우대칭 정규분포로 차등 지급 — 최고-최저 등급 지급률차 50% 이상, 최고등급 인원 20% 이내·최저등급 10% 이상 강제배분'])
       + lcFinalRow(['지급 제외(제42조①·⑤)', '휴직(공상휴직 제외)·직위해제·교육훈련파견·장기병가 기간은 일할계산 제외, 연도 중 입사자 제외, 연도 중 퇴사자는 일할계산 지급. 평가대상기간 중 중징계, 시효 5년 비위, 성폭력·성매매·성희롱·음주운전 징계 시 미지급']));
+  } else if (rtab === 'welfare') {
+    rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
+      lcFinalGroupRow('피복비', 2)
+      + lcFinalRow(['지급 요건(행안부 「2027년도 지방출자·출연기관 예산편성지침」 세부 집행요령 – 운영수당)', '업무상 제복 착용이 불가피한 경우에 한함. 개인에게 직접(현금) 지급 불가, 소속 임직원 외에는 지급 불가'])
+      + lcFinalRow(['편성 과목(「2027년도 화성시 출자·출연기관 예산편성 세부지침」 201-15 복리후생비)', '작업복·위생복·근무복 등 피복 구입 또는 제조경비, 안전모·안전화·작업화 등 개인장비 구입비 — 직원 복리후생 경비로만 편성'])
+      + lcFinalRow(['무기계약 근로자 피복비(같은 세부지침)', '현업부서 무기계약 근로자 피복비는 인건비가 아닌 201-15 복리후생비로 분리 편성'])
+      + lcFinalRow(['적용 사례 — 문화관광해설사 단체복·단화(2027)', '단체복 204천원×39명, 단화 62천원×39명 = 10,374천원을 301-14 기타보상금으로 편성. 해설사는 재단 소속 임직원이 아닌 위촉 활동가라 피복비 지급 대상이 아니고, 과목도 복리후생비가 아님 → 편성 불가']));
   } else {
     rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
       lcFinalGroupRow('기본급(연봉·봉급)', 2)
@@ -8935,13 +8943,14 @@ function lcFinalSection() {
       + lcFinalRow(['연봉제 대상자 수당 제외(제40조⑤)', '정근수당·정액급식비·명절휴가비·직급보조비·위험근무수당·특수업무수당 지급 안 함(가족수당·연차수당은 지급)']));
   }
   out += '<div style="margin:0 0 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);">'
-    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + rtabBtn('eval', '평가급') + '</div>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + rtabBtn('eval', '평가급') + rtabBtn('welfare', '복리후생') + '</div>'
     + '<div class="lc-rules-table">' + rtabTable + '</div>'
     + '</div>';
   }
 
   if (f.instKey === 'talent' && f.rulesOpen) {
   var rtab = f.rulesTab || 'labor';
+  if (rtab === 'welfare' && f.instKey !== 'hscf') rtab = 'labor';
   var rtabBtn = function (key, label) {
     var active = rtab === key;
     return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;">' + label + '</button>';
@@ -8996,6 +9005,7 @@ function lcFinalSection() {
 
   if (f.instKey === 'fc' && f.rulesOpen) {
   var rtab = f.rulesTab || 'labor';
+  if (rtab === 'welfare' && f.instKey !== 'hscf') rtab = 'labor';
   var rtabBtn = function (key, label) {
     var active = rtab === key;
     return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;">' + label + '</button>';
@@ -9052,6 +9062,7 @@ function lcFinalSection() {
 
   if (f.instKey === 'corp' && f.rulesOpen) {
   var rtab = f.rulesTab || 'labor';
+  if (rtab === 'welfare' && f.instKey !== 'hscf') rtab = 'labor';
   var rtabBtn = function (key, label) {
     var active = rtab === key;
     return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13px;font-weight:700;">' + label + '</button>';
@@ -9115,6 +9126,7 @@ function lcFinalSection() {
   // 보수규정이 따로 없고 사무국 운영규정 제5장(급여)\u00b7제7장(퇴직금)이 보수 근거다.
   if (f.instKey === 'sports' && f.rulesOpen) {
   var rtab = f.rulesTab || 'labor';
+  if (rtab === 'welfare' && f.instKey !== 'hscf') rtab = 'labor';
   var rtabBtn = function (key, label) {
     var active = rtab === key;
     return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13.5px;font-weight:700;">' + label + '</button>';
@@ -9185,6 +9197,7 @@ function lcFinalSection() {
   // 화성시장애인체육회 \u2014 「사무국 운영규정」(제정 2019.3.8. \u00b7 최종개정 2025.2.5.)
   if (f.instKey === 'disabledsports' && f.rulesOpen) {
   var rtab = f.rulesTab || 'labor';
+  if (rtab === 'welfare' && f.instKey !== 'hscf') rtab = 'labor';
   var rtabBtn = function (key, label) {
     var active = rtab === key;
     return '<button type="button" onclick="lcFinalSetRulesTab(\'' + key + '\')" style="padding:6px 14px;border-radius:999px;border:1px solid ' + (active ? 'var(--accent)' : 'var(--border-strong)') + ';background:' + (active ? 'var(--accent)' : 'var(--bg)') + ';color:' + (active ? '#fff' : 'var(--text)') + ';cursor:pointer;font-size:13.5px;font-weight:700;">' + label + '</button>';
