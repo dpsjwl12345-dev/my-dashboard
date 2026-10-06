@@ -269,9 +269,6 @@ table.summary td.diff.down { color: #4A5578; }
 .hc-card-table td.hc-empty { color: var(--text-soft); }
 .hc-card-table td.hc-short, .hc-card-table td.hc-short span { color: var(--danger); }
 .hc-card-table td.hc-over, .hc-card-table td.hc-over span { color: var(--warning); }
-.hc-card-grid.hc-grid-wide { grid-template-columns: minmax(0, 1fr); }
-.hc-card-table td.hc-fund { white-space: nowrap; font-size: 13px; color: var(--text-muted); }
-.hc-card-table tr.hc-sum td { font-weight: 800; background: var(--bg-hover); }
 .ov2-dept-box { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
 .ov2-subhead { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); margin: 0 0 10px; }
 .settle-kpi-card { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-radius: 16px; padding: 11px 14px; position: relative; overflow: hidden; background: var(--bg-hover); box-shadow: none; transition: transform .15s; }
@@ -5428,46 +5425,59 @@ var HSCF_FUND_HC_TOTAL = {
   '출연금': { total: [100, 100], g2: [5, 5], g3: [14, 15], g4: [11, 9], g5: [20, 21], g6: [36, 40], mu: [14, 10], temp: [13, 50] },
   '위탁금': { total: [308, 291], g2: [2, 2], g3: [20, 18], g4: [35, 32], g5: [59, 53], g6: [72, 68], mu: [120, 118], temp: [18, 91] }
 };
+// 인건비가 실제로 편성되는 단위로 묶는다: 출연금은 경영지원팀 「기관운영 인건비」에 본부 구분 없이 일괄 편성,
+// 위탁금은 위탁사업(예산서 카드)마다 그 시설 담당 팀 인건비를 편성한다.
+var HSCF_HC_UNIT = {
+  '시설체육운영팀': '동탄복합문화센터',
+  '예술의전당공연기획팀': '화성예술의전당', '예술의전당무대기술팀': '화성예술의전당', '예술의전당시설운영팀': '화성예술의전당',
+  '공연기획팀': '문화관광재단 공연장', '무대기술팀': '문화관광재단 공연장',
+  '미디어팀': '미디어센터', '생활문화팀': '생활문화센터'
+};
 function ov2HscfFundHcHtml() {
-  var KEYS = ['total', 'g2', 'g3', 'g4', 'g5', 'g6', 'mu'];
-  var add = function (acc, r) {
-    KEYS.forEach(function (k) { if (r[k]) { acc[k] = acc[k] || [0, 0]; acc[k][0] += r[k][0]; acc[k][1] += r[k][1]; } });
-    if (r.temp) { acc.temp = acc.temp || [0, 0]; acc.temp[0] += r.temp[0]; acc.temp[1] += r.temp[1]; }
-    return acc;
+  var sumGen = function (r) { var c = 0, n = 0; ['g2', 'g3', 'g4', 'g5', 'g6'].forEach(function (k) { if (r[k]) { c += r[k][0]; n += r[k][1]; } }); return [c, n]; };
+  var acc = function (o, r) {
+    var g = sumGen(r);
+    o.total[0] += r.total[0]; o.total[1] += r.total[1]; o.gen[0] += g[0]; o.gen[1] += g[1];
+    if (r.mu) { o.mu[0] += r.mu[0]; o.mu[1] += r.mu[1]; }
+    if (r.temp) { o.temp[0] += r.temp[0]; o.temp[1] += r.temp[1]; }
+    o.teams.push(r.team.replace(/^예술의전당/, '').replace(/팀$/, ''));
   };
+  var blank = function (label) { return { label: label, total: [0, 0], gen: [0, 0], mu: [0, 0], temp: [0, 0], teams: [] }; };
+  var chul = [], wita = [], idx = {};
+  HSCF_FUND_HC.forEach(function (g) {
+    g.rows.forEach(function (r) {
+      var key, list, label;
+      if (r.fund === '출연금') { key = 'C:' + g.head; list = chul; label = g.head; }
+      else if (g.head === '도서관본부') { key = 'W:도서관'; list = wita; label = '도서관(도서관정책과)'; }
+      else { label = HSCF_HC_UNIT[r.team] || r.team; key = 'W:' + label; list = wita; }
+      if (!idx[key]) { idx[key] = blank(label); list.push(idx[key]); }
+      acc(idx[key], r);
+    });
+  });
   var val = function (v) {
-    if (!v || (!v[0] && !v[1])) return '<td class="hc-empty">-</td>';
+    if (!v[0] && !v[1]) return '<td class="hc-empty">-</td>';
     var cls = v[1] < v[0] ? ' hc-short' : (v[1] > v[0] ? ' hc-over' : '');
     return '<td class="hc-num' + cls + '">' + v[0] + '<span>(' + v[1] + ')</span></td>';
   };
-  var temp = function (t) {
-    return t && (t[0] || t[1]) ? '<td class="hc-num">' + t[0] + '<span> / ' + t[1] + '</span></td>' : '<td class="hc-empty">-</td>';
-  };
-  var cells = function (r) { return KEYS.map(function (k) { return val(r[k]); }).join('') + temp(r.temp); };
-  var head = '<thead><tr><th>구분</th><th>재원</th><th>계</th><th>대표·2급</th><th>3급</th><th>4급</th><th>5급</th><th>6급</th><th>무기직</th><th>기간제<br><small>일반 / 단시간</small></th></tr></thead>';
-  var cards = HSCF_FUND_HC.map(function (g) {
-    var sub = {};
-    var rows = g.rows.map(function (r) {
-      add(sub, r);
-      return '<tr><td class="hc-dept">' + escapeHtml(r.team) + '</td><td class="hc-fund">' + r.fund + '</td>' + cells(r) + '</tr>';
+  var card = function (title, sub, list, T) {
+    var rows = list.map(function (o) {
+      var teams = o.label.indexOf('도서관') === 0 ? '12개관·본부 3팀' : o.teams.join('·');
+      return '<tr><td class="hc-dept">' + escapeHtml(o.label) + '<small>' + escapeHtml(teams) + '</small></td>'
+        + val(o.total) + val(o.gen) + val(o.mu)
+        + (o.temp[0] || o.temp[1] ? '<td class="hc-num">' + o.temp[0] + '<span> / ' + o.temp[1] + '</span></td>' : '<td class="hc-empty">-</td>') + '</tr>';
     }).join('');
-    return '<div class="hc-card">'
-      + '<div class="hc-card-head"><p class="hc-card-name">' + escapeHtml(g.head) + '</p>'
-      + '<p class="hc-card-total">' + sub.total[0] + '<span>(' + sub.total[1] + ')</span></p></div>'
-      + '<div class="table-scroll"><table class="hc-card-table">' + head + '<tbody>' + rows
-      + '<tr class="hc-sum"><td class="hc-dept">소계</td><td class="hc-fund"></td>' + cells(sub) + '</tr></tbody></table></div>'
-      + '</div>';
-  }).join('');
+    return '<div class="hc-card"><div class="hc-card-head"><p class="hc-card-name">' + title + '</p>'
+      + '<p class="hc-card-total">' + T.total[0] + '<span>(' + T.total[1] + ')</span></p>'
+      + '<p class="hc-card-split">' + sub + '</p></div>'
+      + '<table class="hc-card-table"><thead><tr><th>편성 단위</th><th>계</th><th>일반직</th><th>무기직</th><th>기간제<small> 일반/단시간</small></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  };
   var T = HSCF_FUND_HC_TOTAL;
-  var fundCard = '<div class="hc-card"><div class="hc-card-head"><p class="hc-card-name">재원별 총괄</p>'
-    + '<p class="hc-card-total">' + T['총계'].total[0] + '<span>(' + T['총계'].total[1] + ')</span></p></div>'
-    + '<div class="table-scroll"><table class="hc-card-table">' + head + '<tbody>'
-    + '<tr class="hc-sum"><td class="hc-dept">총계</td><td class="hc-fund"></td>' + cells(T['총계']) + '</tr>'
-    + ['출연금', '위탁금'].map(function (f) { return '<tr><td class="hc-dept">' + f + '</td><td class="hc-fund"></td>' + cells(T[f]) + '</tr>'; }).join('')
-    + '</tbody></table></div></div>';
-  return '<div class="ov2-corp-hc"><div class="section-title-row"><h2 class="section-heading section-heading-lg">본부별·재원별 정현원 <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">정원(현원) · 기준일 2026.8.31</span></h2></div>'
-    + '<div class="hc-card-grid hc-grid-wide">' + fundCard + cards + '</div>'
-    + '<p class="ov2-pbar-note">시설체육운영팀 무기직은 체육직 정원 14명·현원 13명 외 공무직 포함. 기간제는 정원 외(일반 / 단시간 현원). 재원별 총괄은 보고서 총괄표 수치이며, 팀별 상세를 합치면 출연금 6급 현원이 1명 적고 무기직 현원이 1명 많음(보고서 원문 그대로). 빨간색 = 결원, 노란색 = 정원 초과 현원.</p></div>';
+  return '<div class="ov2-corp-hc"><div class="section-title-row"><h2 class="section-heading section-heading-lg">재원별 인건비 편성 단위 정현원 <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">정원(현원) · 2026.8.31</span></h2></div>'
+    + '<div class="hc-card-grid">'
+    + card('출연금', '경영지원팀 기관운영 인건비에 일괄 편성', chul, T['출연금'])
+    + card('위탁금', '위탁사업(시설)별 인건비 편성', wita, T['위탁금'])
+    + '</div>'
+    + '<p class="ov2-pbar-note">무기직 = 체육직·공무직(시설체육운영팀은 체육직 14(13) 포함). 기간제는 정원 외 현원. 출처: 재단 「본부별·재원별 정현원 현황 보고」. 빨간색 = 결원, 노란색 = 정원 초과 현원.</p></div>';
 }
 
 function renderOv2Overview(instKey) {
