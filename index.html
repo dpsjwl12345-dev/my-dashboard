@@ -1885,7 +1885,8 @@ table.tree td.name-cell .cell-check-btn { position: static; margin-left: 4px; }
 table.tree tr.review-color-red td { background: rgba(214,69,90,.14); }
 table.tree tr.review-color-yellow td { background: rgba(224,179,48,.16); }
 table.tree tr.review-color-green td { background: rgba(22,146,79,.14); }
-table.tree tr.review-color-blue td { background: rgba(59,130,246,.14); }
+/* 파란색 = 조정예산 표시: 바탕은 그대로 두고 글자(항목명·산출식·금액·메모)만 파란색 */
+table.tree tr.review-color-blue td, table.tree tr.review-color-blue td .name-content, table.tree tr.review-color-blue td .calc-content, table.tree tr.review-color-blue td * { color: #2F7BF5 !important; }
 /* ===== 기준값 화면 — 재원 구분 머리 / 고용구분 띠 ===== */
 .lc-fund-head { margin: 22px 0 8px; padding: 9px 14px; border-radius: 10px; font-size: 16px; font-weight: 800;
   letter-spacing: -0.01em; color: var(--navy-text); background: rgba(59,130,246,.14);
