@@ -269,6 +269,9 @@ table.summary td.diff.down { color: #4A5578; }
 .hc-card-table td.hc-empty { color: var(--text-soft); }
 .hc-card-table td.hc-short, .hc-card-table td.hc-short span { color: var(--danger); }
 .hc-card-table td.hc-over, .hc-card-table td.hc-over span { color: var(--warning); }
+.hc-card-grid.hc-grid-wide { grid-template-columns: minmax(0, 1fr); }
+.hc-card-table td.hc-fund { white-space: nowrap; font-size: 13px; color: var(--text-muted); }
+.hc-card-table tr.hc-sum td { font-weight: 800; background: var(--bg-hover); }
 .ov2-dept-box { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
 .ov2-subhead { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); margin: 0 0 10px; }
 .settle-kpi-card { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-radius: 16px; padding: 11px 14px; position: relative; overflow: hidden; background: var(--bg-hover); box-shadow: none; transition: transform .15s; }
@@ -4717,11 +4720,11 @@ hscf: {
     ], note: '전문계약직(가급·나급, 체육직)은 별도 정원 없이 현원만 운영', hoverOnly: true, hoverTarget: '일반직' }
   ],
   byDept: [
-    { label: '대표이사 직속', current: 14, capacity: 14, diff: 0, teams: 4, subTeams: [
+    { label: '대표이사 직속', current: 15, capacity: 11, diff: 4, teams: 4, subTeams: [
       { name: '감사', current: 4, capacity: 3 },
       { name: '문화정책', current: 3, capacity: 4 },
-      { name: '안전관리', current: 4, capacity: 4 },
-      { name: '교육기획TF', current: 3, capacity: 3 }
+      { name: '안전관리', current: 5, capacity: 4 },
+      { name: '교육기획TF', current: 3, capacity: 0 }
     ] },
     { label: '경영기획본부', current: 77, capacity: 73, diff: 4, teams: 4, subTeams: [
       { name: '기획조정', current: 7, capacity: 7 },
@@ -5366,6 +5369,107 @@ function ov2CorpFacilityHcHtml() {
     + '<p class="ov2-pbar-note">일반직에 청원경찰 포함(마리나관리부 4명). 기간제는 정원 외. 빨간색 = 결원, 노란색 = 정원 초과 현원.</p></div>';
 }
 
+// 화성시문화관광재단 본부별·재원별 정현원 (기준일 2026.8.31, 출처: 재단 「본부별·재원별 정현원 현황 보고」)
+// 직급 칸은 [정원, 현원]. g2 = 대표이사 및 2급(행정), mu = 무기직(체육·공무), temp = 기간제 [일반, 단시간].
+var HSCF_FUND_HC = [
+  { head: '대표이사 직속', rows: [
+    { team: '감사팀', fund: '출연금', total: [3, 4], g3: [1, 2], g5: [1, 1], g6: [1, 1] },
+    { team: '문화정책팀', fund: '출연금', total: [4, 3], g3: [1, 0], g4: [1, 0], g5: [1, 2], g6: [1, 0], mu: [0, 1], temp: [1, 0] },
+    { team: '교육기획TF팀', fund: '출연금', total: [0, 3], g4: [0, 1], g5: [0, 1], g6: [0, 1], temp: [1, 0] },
+    { team: '안전관리팀', fund: '출연금', total: [4, 5], g3: [1, 1], g4: [1, 0], g5: [0, 1], g6: [1, 2], mu: [1, 1] }
+  ] },
+  { head: '경영기획본부', rows: [
+    { team: '기획조정팀', fund: '출연금', total: [7, 7], g2: [1, 1], g3: [1, 1], g5: [2, 2], g6: [2, 3], mu: [1, 0] },
+    { team: '경영지원팀', fund: '출연금', total: [18, 23], g2: [1, 1], g3: [2, 4], g4: [2, 4], g5: [4, 3], g6: [5, 7], mu: [4, 4] },
+    { team: '재무회계팀', fund: '출연금', total: [8, 9], g3: [1, 1], g4: [1, 0], g5: [2, 1], g6: [3, 5], mu: [1, 2] },
+    { team: '시설체육운영팀', fund: '위탁금', total: [40, 38], g3: [1, 1], g4: [2, 2], g5: [3, 4], g6: [5, 4], mu: [29, 27], temp: [7, 28] }
+  ] },
+  { head: '예술의전당본부', rows: [
+    { team: '예술의전당공연기획팀', fund: '위탁금', total: [12, 12], g2: [1, 1], g3: [1, 1], g4: [1, 1], g5: [1, 0], g6: [8, 7], mu: [0, 2], temp: [0, 4] },
+    { team: '예술의전당무대기술팀', fund: '위탁금', total: [11, 6], g3: [1, 1], g4: [4, 2], g5: [3, 0], g6: [3, 3] },
+    { team: '예술의전당시설운영팀', fund: '위탁금', total: [10, 6], g3: [1, 1], g4: [1, 1], g5: [4, 2], g6: [4, 2] }
+  ] },
+  { head: '예술진흥본부', rows: [
+    { team: '예술지원팀', fund: '출연금', total: [6, 6], g2: [1, 1], g3: [1, 1], g4: [0, 1], g5: [1, 0], g6: [2, 2], mu: [1, 1] },
+    { team: '예술기반팀', fund: '출연금', total: [5, 2], g3: [1, 0], g4: [1, 0], g5: [1, 2], g6: [1, 0], mu: [1, 0], temp: [1, 0] },
+    { team: '공연기획팀', fund: '위탁금', total: [12, 13], g3: [1, 1], g4: [1, 1], g5: [1, 1], g6: [4, 6], mu: [5, 4], temp: [2, 3] },
+    { team: '축제기획팀', fund: '출연금', total: [11, 8], g3: [1, 1], g4: [1, 1], g5: [2, 3], g6: [5, 3], mu: [2, 0], temp: [2, 0] },
+    { team: '무대기술팀', fund: '위탁금', total: [13, 12], g3: [1, 1], g4: [1, 1], g5: [5, 5], g6: [6, 5] }
+  ] },
+  { head: '문화진흥본부', rows: [
+    { team: '문화사업팀', fund: '출연금', total: [9, 6], g2: [1, 1], g3: [1, 1], g5: [2, 0], g6: [4, 4], mu: [1, 0], temp: [5, 50] },
+    { team: '전시기획팀', fund: '출연금', total: [8, 11], g3: [1, 1], g4: [1, 0], g5: [1, 2], g6: [3, 6], mu: [2, 2], temp: [3, 0] },
+    { team: '미디어팀', fund: '위탁금', total: [7, 6], g3: [1, 0], g4: [1, 0], g5: [1, 1], g6: [1, 2], mu: [3, 3], temp: [0, 3] },
+    { team: '생활문화팀', fund: '위탁금', total: [8, 7], g3: [1, 1], g4: [1, 1], g5: [1, 1], g6: [2, 1], mu: [3, 3] }
+  ] },
+  { head: '관광진흥본부', rows: [
+    { team: '관광기획전략팀', fund: '출연금', total: [9, 7], g2: [1, 1], g3: [1, 1], g4: [2, 1], g5: [1, 2], g6: [4, 2] },
+    { team: '관광콘텐츠팀', fund: '출연금', total: [8, 6], g3: [1, 1], g4: [1, 1], g5: [2, 1], g6: [4, 3] }
+  ] },
+  { head: '도서관본부', rows: [
+    { team: '도서관운영팀', fund: '위탁금', total: [6, 5], g2: [1, 1], g3: [1, 1], g4: [3, 2], g5: [1, 0], g6: [0, 1] },
+    { team: '도서관사업팀', fund: '위탁금', total: [5, 6], g3: [1, 1], g4: [1, 1], g5: [2, 2], g6: [1, 2], temp: [1, 0] },
+    { team: '도서관기술지원팀', fund: '위탁금', total: [12, 13], g3: [1, 1], g4: [3, 3], g5: [5, 6], g6: [3, 3] },
+    { team: '병점도서관', fund: '위탁금', total: [23, 22], g3: [1, 0], g4: [2, 3], g5: [5, 3], g6: [4, 5], mu: [11, 11], temp: [1, 6] },
+    { team: '봉담도서관', fund: '위탁금', total: [18, 17], g3: [1, 1], g4: [1, 1], g5: [2, 2], g6: [5, 4], mu: [9, 9], temp: [1, 5] },
+    { team: '삼괴도서관', fund: '위탁금', total: [18, 17], g3: [1, 1], g4: [2, 2], g5: [3, 2], g6: [5, 5], mu: [7, 7], temp: [1, 6] },
+    { team: '송산도서관', fund: '위탁금', total: [20, 19], g3: [1, 1], g4: [2, 1], g5: [4, 5], g6: [4, 4], mu: [9, 8], temp: [0, 5] },
+    { team: '태안도서관', fund: '위탁금', total: [23, 23], g3: [1, 1], g4: [2, 3], g5: [6, 5], g6: [4, 4], mu: [10, 10], temp: [1, 9] },
+    { team: '중앙이음터도서관', fund: '위탁금', total: [25, 24], g3: [1, 1], g4: [1, 1], g5: [5, 6], g6: [5, 3], mu: [13, 13], temp: [3, 8] },
+    { team: '왕배푸른숲도서관', fund: '위탁금', total: [19, 19], g3: [1, 1], g4: [2, 2], g5: [5, 5], g6: [3, 3], mu: [8, 8], temp: [0, 6] },
+    { team: '향남복합문화센터도서관', fund: '위탁금', total: [14, 14], g3: [1, 1], g4: [2, 2], g5: [1, 2], g6: [3, 2], mu: [7, 7], temp: [1, 4] },
+    { team: '봉담와우도서관', fund: '위탁금', total: [12, 12], g3: [1, 1], g4: [2, 2], g5: [1, 1], g6: [2, 2], mu: [6, 6], temp: [0, 4] }
+  ] }
+];
+// 보고서 「총괄 현황」 표 그대로. 상세 표를 합치면 6급 현원이 1명 적고 무기직 현원이 1명 많아(출연금, 문화정책팀으로 추정)
+// 재원별 총괄 카드는 상세 합계가 아니라 이 공식 수치를 쓴다.
+var HSCF_FUND_HC_TOTAL = {
+  '총계': { total: [408, 391], g2: [7, 7], g3: [34, 33], g4: [46, 41], g5: [79, 74], g6: [108, 108], mu: [134, 128], temp: [31, 141] },
+  '출연금': { total: [100, 100], g2: [5, 5], g3: [14, 15], g4: [11, 9], g5: [20, 21], g6: [36, 40], mu: [14, 10], temp: [13, 50] },
+  '위탁금': { total: [308, 291], g2: [2, 2], g3: [20, 18], g4: [35, 32], g5: [59, 53], g6: [72, 68], mu: [120, 118], temp: [18, 91] }
+};
+function ov2HscfFundHcHtml() {
+  var KEYS = ['total', 'g2', 'g3', 'g4', 'g5', 'g6', 'mu'];
+  var add = function (acc, r) {
+    KEYS.forEach(function (k) { if (r[k]) { acc[k] = acc[k] || [0, 0]; acc[k][0] += r[k][0]; acc[k][1] += r[k][1]; } });
+    if (r.temp) { acc.temp = acc.temp || [0, 0]; acc.temp[0] += r.temp[0]; acc.temp[1] += r.temp[1]; }
+    return acc;
+  };
+  var val = function (v) {
+    if (!v || (!v[0] && !v[1])) return '<td class="hc-empty">-</td>';
+    var cls = v[1] < v[0] ? ' hc-short' : (v[1] > v[0] ? ' hc-over' : '');
+    return '<td class="hc-num' + cls + '">' + v[0] + '<span>(' + v[1] + ')</span></td>';
+  };
+  var temp = function (t) {
+    return t && (t[0] || t[1]) ? '<td class="hc-num">' + t[0] + '<span> / ' + t[1] + '</span></td>' : '<td class="hc-empty">-</td>';
+  };
+  var cells = function (r) { return KEYS.map(function (k) { return val(r[k]); }).join('') + temp(r.temp); };
+  var head = '<thead><tr><th>구분</th><th>재원</th><th>계</th><th>대표·2급</th><th>3급</th><th>4급</th><th>5급</th><th>6급</th><th>무기직</th><th>기간제<br><small>일반 / 단시간</small></th></tr></thead>';
+  var cards = HSCF_FUND_HC.map(function (g) {
+    var sub = {};
+    var rows = g.rows.map(function (r) {
+      add(sub, r);
+      return '<tr><td class="hc-dept">' + escapeHtml(r.team) + '</td><td class="hc-fund">' + r.fund + '</td>' + cells(r) + '</tr>';
+    }).join('');
+    return '<div class="hc-card">'
+      + '<div class="hc-card-head"><p class="hc-card-name">' + escapeHtml(g.head) + '</p>'
+      + '<p class="hc-card-total">' + sub.total[0] + '<span>(' + sub.total[1] + ')</span></p></div>'
+      + '<div class="table-scroll"><table class="hc-card-table">' + head + '<tbody>' + rows
+      + '<tr class="hc-sum"><td class="hc-dept">소계</td><td class="hc-fund"></td>' + cells(sub) + '</tr></tbody></table></div>'
+      + '</div>';
+  }).join('');
+  var T = HSCF_FUND_HC_TOTAL;
+  var fundCard = '<div class="hc-card"><div class="hc-card-head"><p class="hc-card-name">재원별 총괄</p>'
+    + '<p class="hc-card-total">' + T['총계'].total[0] + '<span>(' + T['총계'].total[1] + ')</span></p></div>'
+    + '<div class="table-scroll"><table class="hc-card-table">' + head + '<tbody>'
+    + '<tr class="hc-sum"><td class="hc-dept">총계</td><td class="hc-fund"></td>' + cells(T['총계']) + '</tr>'
+    + ['출연금', '위탁금'].map(function (f) { return '<tr><td class="hc-dept">' + f + '</td><td class="hc-fund"></td>' + cells(T[f]) + '</tr>'; }).join('')
+    + '</tbody></table></div></div>';
+  return '<div class="ov2-corp-hc"><div class="section-title-row"><h2 class="section-heading section-heading-lg">본부별·재원별 정현원 <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">정원(현원) · 기준일 2026.8.31</span></h2></div>'
+    + '<div class="hc-card-grid hc-grid-wide">' + fundCard + cards + '</div>'
+    + '<p class="ov2-pbar-note">시설체육운영팀 무기직은 체육직 정원 14명·현원 13명 외 공무직 포함. 기간제는 정원 외(일반 / 단시간 현원). 재원별 총괄은 보고서 총괄표 수치이며, 팀별 상세를 합치면 출연금 6급 현원이 1명 적고 무기직 현원이 1명 많음(보고서 원문 그대로). 빨간색 = 결원, 노란색 = 정원 초과 현원.</p></div>';
+}
+
 function renderOv2Overview(instKey) {
   var d = OV2_DATA[instKey];
   var legacy = document.getElementById('overview-legacy-blocks');
@@ -5627,7 +5731,7 @@ function renderOv2Overview(instKey) {
 
   // 7) 지출총괄표는 위 incomeExpenseHtml 안에 이미 포함됨
 
-  var corpHcHtml = instKey === 'corp' ? ov2CorpFacilityHcHtml() : '';
+  var corpHcHtml = instKey === 'corp' ? ov2CorpFacilityHcHtml() : (instKey === 'hscf' ? ov2HscfFundHcHtml() : '');
   document.getElementById('overview-v2-slot').innerHTML = orgHtml + gradeHtml + deptPersonHtml + corpHcHtml + budgetCompareHtml + incomeExpenseHtml;
 }
 
