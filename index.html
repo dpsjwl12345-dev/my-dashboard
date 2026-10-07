@@ -5482,58 +5482,30 @@ function ov2HscfFundHcHtml() {
 }
 
 // 화성시인재육성재단 재원별·직급별 정현원 (출처: 재단 「(붙임1) 2027년 본예산(안) 인건비 산출 기초자료(현원)」)
-// [정원, 현원]. 일반직은 붙임1에 정원 칸이 비어 있어 현원만 있다(정원 null).
-// 출연금 = 경영기획본부·감사팀·교육협력지원본부·장학사업팀(소속별 구분 없이 합계만 제출).
-var TALENT_FUND_HC_COLS = ['출연금', '장학관(위탁)', '이음터(위탁)', '도서관(위탁)'];
+// 칸 = [정원, 현원]. 일반직은 붙임1 정원 칸이 공란이라 현원만(정원 null). 기간제 = [2027 채용, 2026 현원].
+var TALENT_FUND_HC_HEAD = [['일반직', ['3급', '4급', '5급', '6급']], ['계약직', ['대표', '가급', '나급']], ['무기계약', ['라급', '마급']], ['기간제', ['채용/현원']]];
 var TALENT_FUND_HC = [
-  { group: '일반직', rows: [
-    { label: '3급', v: [[null, 9], [null, 2], [null, 6], [null, 2]] },
-    { label: '4급', v: [[null, 13], [null, 3], [null, 13], [null, 4]] },
-    { label: '5급', v: [[null, 10], [null, 4], [null, 14], [null, 6]] },
-    { label: '6급', v: [[null, 19], [null, 2], [null, 20], [null, 8]] }
-  ] },
-  { group: '계약직', rows: [
-    { label: '대표이사', v: [[1, 0], null, null, null] },
-    { label: '가급', v: [[4, 3], [0, 0], [2, 2], null] },
-    { label: '나급', v: [[1, 2], null, null, null] }
-  ] },
-  { group: '무기계약직', rows: [
-    { label: '라급', v: [[0, 0], [1, 1], [0, 0], null] },
-    { label: '마급', v: [[0, 0], [9, 9], [0, 0], null] }
-  ] },
-  { group: '기간제(정원 외)', note: '2027 채용 / 2026 현원', rows: [
-    { label: '기간제', temp: true, v: [[2, 5], [0, 1], [7, 15], [12, 14]] }
-  ] }
+  { fund: '출연금', v: [[null, 9], [null, 13], [null, 10], [null, 19], [1, 0], [4, 3], [1, 2], null, null, [2, 5]] },
+  { fund: '장학관', v: [[null, 2], [null, 3], [null, 4], [null, 2], null, null, null, [1, 1], [9, 9], [0, 1]] },
+  { fund: '이음터', v: [[null, 6], [null, 13], [null, 14], [null, 20], null, [2, 2], null, null, null, [7, 15]] },
+  { fund: '도서관', v: [[null, 2], [null, 4], [null, 6], [null, 8], null, null, null, null, null, [12, 14]] }
 ];
 function ov2TalentFundHcHtml() {
   var cell = function (x, temp) {
     if (!x) return '<td class="hc-empty">-</td>';
-    if (temp) return '<td class="hc-num">' + x[0] + '<span> / ' + x[1] + '</span></td>';
-    if (x[0] == null) return '<td class="hc-num">-<span>(' + x[1] + ')</span></td>';
-    if (!x[0] && !x[1]) return '<td class="hc-empty">-</td>';
+    if (temp) return '<td class="hc-num">' + x[0] + '<span>/' + x[1] + '</span></td>';
+    if (x[0] == null) return '<td class="hc-num">' + x[1] + '</td>';
     var cls = x[1] < x[0] ? ' hc-short' : (x[1] > x[0] ? ' hc-over' : '');
     return '<td class="hc-num' + cls + '">' + x[0] + '<span>(' + x[1] + ')</span></td>';
   };
-  var sum = function (v) {
-    var cap = 0, cur = 0, capKnown = true, any = false;
-    v.forEach(function (x) { if (!x) return; any = true; if (x[0] == null) capKnown = false; else cap += x[0]; cur += x[1]; });
-    return any ? [capKnown ? cap : null, cur] : null;
-  };
-  var body = TALENT_FUND_HC.map(function (g) {
-    var head = '<tr><td class="hc-dept" colspan="' + (TALENT_FUND_HC_COLS.length + 2) + '" style="padding-top:12px;">' + escapeHtml(g.group)
-      + (g.note ? '<small>' + escapeHtml(g.note) + '</small>' : '') + '</td></tr>';
-    return head + g.rows.map(function (r) {
-      return '<tr><td class="hc-dept" style="font-weight:600;padding-left:14px;">' + escapeHtml(r.label) + '</td>'
-        + r.v.map(function (x) { return cell(x, r.temp); }).join('') + cell(sum(r.v), r.temp) + '</tr>';
-    }).join('');
+  var th1 = TALENT_FUND_HC_HEAD.map(function (h) { return '<th colspan="' + h[1].length + '">' + h[0] + '</th>'; }).join('');
+  var th2 = TALENT_FUND_HC_HEAD.map(function (h) { return h[1].map(function (c) { return '<th>' + c + '</th>'; }).join(''); }).join('');
+  var body = TALENT_FUND_HC.map(function (r) {
+    return '<tr><td class="hc-dept">' + r.fund + '</td>' + r.v.map(function (x, i) { return cell(x, i === r.v.length - 1); }).join('') + '</tr>';
   }).join('');
-  return '<div class="ov2-corp-hc"><div class="section-title-row"><h2 class="section-heading section-heading-lg">재원별·직급별 정현원 <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">정원(현원) · 2027 인건비 산출 기초자료</span></h2></div>'
-    + '<div class="hc-card"><table class="hc-card-table"><thead><tr><th>구분</th>'
-    + TALENT_FUND_HC_COLS.map(function (c) { return '<th>' + escapeHtml(c) + '</th>'; }).join('') + '<th>계</th></tr></thead><tbody>' + body + '</tbody></table></div>'
-    + '<p class="ov2-pbar-note">출연금은 경영기획본부·감사팀·교육협력지원본부·장학사업팀 합계(소속별 미제출, 영재교육원 미포함). 일반직은 정원 칸이 비어 있어 현원만 표시. '
-    + '현원에 휴·복직자 포함(출연금 4급 복직 2, 6급 휴·복직 3 / 이음터 4급 복직 4, 6급 복직 3 / 도서관 5급 복직 1). 신규채용 예정: 출연금 6급 1(경영기획본부), 이음터 6급 5. '
-    + '도서관 신규 개관 인력 별도: 중앙 9개월(사서 6·행정 1·공무직 10·주말기간제 5), 송린 5개월(사서 4·행정 1·공무직 5·주말기간제 3). '
-    + '출처: 재단 「(붙임1) 인건비 산출 기초자료(현원)」. 빨간색 = 결원, 노란색 = 정원 초과 현원.</p></div>';
+  return '<div class="ov2-corp-hc"><div class="section-title-row"><h2 class="section-heading section-heading-lg">재원별·직급별 정현원 <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">정원(현원) · 붙임1 기준</span></h2></div>'
+    + '<div class="hc-card" style="padding:10px 14px 4px;"><table class="hc-card-table"><thead><tr><th rowspan="2">재원</th>' + th1 + '</tr><tr>' + th2 + '</tr></thead><tbody>' + body + '</tbody></table></div>'
+    + '<p class="ov2-pbar-note">일반직은 정원 미제출로 현원만. 출연금 = 경영기획·감사·교육협력·장학사업팀 합계(영재교육원 제외). 출처: 재단 「(붙임1) 인건비 산출 기초자료(현원)」.</p></div>';
 }
 
 function renderOv2Overview(instKey) {
