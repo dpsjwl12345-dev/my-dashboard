@@ -269,6 +269,7 @@ table.summary td.diff.down { color: #4A5578; }
 .hc-card-table td.hc-empty { color: var(--text-soft); }
 .hc-card-table td.hc-short, .hc-card-table td.hc-short span { color: var(--danger); }
 .hc-card-table td.hc-over, .hc-card-table td.hc-over span { color: var(--warning); }
+.tl-hc-table { width: auto; font-size: 13px; } .tl-hc-table th, .tl-hc-table td { padding: 3px 9px; font-size: 13px; }
 .ov2-dept-box { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
 .ov2-subhead { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); margin: 0 0 10px; }
 .settle-kpi-card { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-radius: 16px; padding: 11px 14px; position: relative; overflow: hidden; background: var(--bg-hover); box-shadow: none; transition: transform .15s; }
@@ -5503,9 +5504,8 @@ function ov2TalentFundHcHtml() {
   var body = TALENT_FUND_HC.map(function (r) {
     return '<tr><td class="hc-dept">' + r.fund + '</td>' + r.v.map(function (x, i) { return cell(x, i === r.v.length - 1); }).join('') + '</tr>';
   }).join('');
-  return '<div class="ov2-corp-hc"><div class="section-title-row"><h2 class="section-heading section-heading-lg">재원별·직급별 정현원 <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">정원(현원) · 붙임1 기준</span></h2></div>'
-    + '<div class="hc-card" style="padding:10px 14px 4px;"><table class="hc-card-table"><thead><tr><th rowspan="2">재원</th>' + th1 + '</tr><tr>' + th2 + '</tr></thead><tbody>' + body + '</tbody></table></div>'
-    + '<p class="ov2-pbar-note">일반직은 정원 미제출로 현원만. 출연금 = 경영기획·감사·교육협력·장학사업팀 합계(영재교육원 제외). 출처: 재단 「(붙임1) 인건비 산출 기초자료(현원)」.</p></div>';
+  return '<div class="tl-hc"><p class="ov2-subhead" style="margin:16px 0 6px;">재원별·직급별 정현원 <span style="font-size:12px;font-weight:500;color:var(--text-soft);">정원(현원) · 일반직은 현원만 · 붙임1</span></p>'
+    + '<table class="hc-card-table tl-hc-table"><thead><tr><th rowspan="2">재원</th>' + th1 + '</tr><tr>' + th2 + '</tr></thead><tbody>' + body + '</tbody></table></div>';
 }
 
 function renderOv2Overview(instKey) {
