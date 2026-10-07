@@ -9137,6 +9137,25 @@ function lcFinalSection() {
       + lcFinalRow(['지급방법(제56조)', '「평정제도 운영내규」개인별 근무실적에 따라 지급. 휴직·직위해제·병가(평가기간 중 6일 초과분)·징계·공로연수 기간은 일할계산 제외'])
       + lcFinalRow(['지급률·등급(제56조⑥)', '지급률, 개인별 등급, 계산방식은 「지방출자출연기관 예산편성 운영지침」에 따라 대표이사가 정함 — hscf식 3~5등급 강제배분 같은 명문 규정은 이 규정 자체엔 없음'])
       + lcFinalRow(['지급시기(제57조)', '경영실적평가결과를 통보받은 날부터 3개월 이내 지급']));
+  } else if (rtab === 'lecture') {
+    // 이음터 행사운영비 강사료 산식 대조용 — 화성시 세부지침 p.76(지방자치인재개발원 기준 준용)
+    var lectureRow = function (g, first, extra) {
+      var won = function (n) { return n.toLocaleString() + '원'; };
+      return lcFinalRow([g, won(first), won(extra), won(first), won(first + extra), won(first + extra * 2)]);
+    };
+    rtabTable = lcFinalTable([{ t: '등급' }, { t: '최초 1시간' }, { t: '초과 매시간' }, { t: '1시간' }, { t: '2시간' }, { t: '3시간' }],
+      lectureRow('특1급', 400000, 300000)
+      + lectureRow('특2급', 300000, 200000)
+      + lectureRow('1급', 250000, 120000)
+      + lectureRow('2급', 150000, 80000)
+      + lectureRow('3급', 100000, 50000)
+      + lectureRow('4급', 80000, 40000)
+      + lectureRow('5급', 60000, 30000))
+      + '<p class="lc-hint" style="margin:10px 0 0;">· 근거: 「2027년도 화성시 출자·출연기관 예산편성 세부지침」 교육강사 수당(p.76) — 지방자치인재개발원 기준 준용<br>'
+      + '· 산식 표기: 2시간 = (최초 1시간+초과 1시간), 예) 3급 2시간 (100,000원+50,000원)×회수<br>'
+      + '· 강의시간: 최초 1시간 도달 시 1시간, 이후 30분 이상부터 1시간 인정(30분 미만 미포함)<br>'
+      + '· 공직자 등은 청탁금지법 상한·소속기관 행동강령 적용<br>'
+      + '· 2027 이음터 요구(늘봄·다원·동탄목동·동탄중앙·서연·송린·호연) 강사료 단가는 모두 위 기준과 일치 — 검토는 등급 부여 근거와 회수·인원(명) 산식으로</p>';
   } else {
     rtabTable = lcFinalTable([{ t: '구분' }, { t: '내용' }],
       lcFinalGroupRow('기본급(연봉·봉급)', 2)
@@ -9162,7 +9181,7 @@ function lcFinalSection() {
       + lcFinalRow(['직급보조비(제52조)', '[별표5] 대표이사·1급·특급 40만 / 2급·가급 25만 / 3급·나급 18.5만 / 4급 18만 / 5급·라급·6급·마급 17.5만']));
   }
   out += '<div style="margin:0 0 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-sm);">'
-    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + rtabBtn('eval', '평가급') + '</div>'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' + rtabBtn('labor', '인건비') + rtabBtn('retire', '퇴직금') + rtabBtn('eval', '평가급') + rtabBtn('lecture', '강사료') + '</div>'
     + '<div class="lc-rules-table">' + rtabTable + '</div>'
     + '</div>';
   }
