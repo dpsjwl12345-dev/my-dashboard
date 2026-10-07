@@ -270,6 +270,11 @@ table.summary td.diff.down { color: #4A5578; }
 .hc-card-table td.hc-short, .hc-card-table td.hc-short span { color: var(--danger); }
 .hc-card-table td.hc-over, .hc-card-table td.hc-over span { color: var(--warning); }
 .tl-hc-table { width: auto; font-size: 13px; } .tl-hc-table th, .tl-hc-table td { padding: 3px 9px; font-size: 13px; }
+.tl-hc-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+.tl-hc-note { flex: 1 1 320px; background: var(--bg-hover); border: 1px solid var(--border); border-left: 4px solid var(--warning); border-radius: 10px; padding: 10px 14px; font-size: 14.5px; line-height: 1.55; color: var(--text); }
+.tl-hc-note-title { margin: 0 0 4px; font-size: 15px; font-weight: 800; color: var(--text); }
+.tl-hc-note ul { margin: 0 0 8px; padding-left: 18px; }
+.tl-hc-note li { margin: 2px 0; }
 .ov2-dept-box { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
 .ov2-subhead { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); margin: 0 0 10px; }
 .settle-kpi-card { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-radius: 16px; padding: 11px 14px; position: relative; overflow: hidden; background: var(--bg-hover); box-shadow: none; transition: transform .15s; }
@@ -5504,8 +5509,22 @@ function ov2TalentFundHcHtml() {
   var body = TALENT_FUND_HC.map(function (r) {
     return '<tr><td class="hc-dept">' + r.fund + '</td>' + r.v.map(function (x, i) { return cell(x, i === r.v.length - 1); }).join('') + '</tr>';
   }).join('');
+  // 표 옆: 결원 인건비 편성 기준(화성시 세부지침 vs 행안부 지침)과 2027 검토 반영 내용
+  var note = '<div class="tl-hc-note">'
+    + '<p class="tl-hc-note-title">결원 인건비 편성 기준</p>'
+    + '<ul>'
+    + '<li><b>화성시 세부지침 p.65</b> — 정원·현원 중 적은 인원 + (정원−현원)×0.5. 신규자 1·2분기 80%, 3·4분기 50%</li>'
+    + '<li><b>행안부 지침</b> — 기준인원은 전년도 말 현원. 정원−현원 차이분(정원 대비 5% 이내)은 101목이 아니라 <b>801-02 봉급목적예비비</b>, 채용 시 전용해 집행(미채용 시 불용·반납)</li>'
+    + '<li><b>재단 결원율 9/173 = 5.2%</b> — 5% 초과분은 예비비로도 편성 불가, 조직진단 대상</li>'
+    + '</ul>'
+    + '<p class="tl-hc-note-title">2027 출연금 반영</p>'
+    + '<ul>'
+    + '<li>대표이사 정원1·현원0 → <b>0.5명</b>: 기본급 50,772 · 직급보조비 2,400 · 사회보험 6,361, 퇴직급여 0(1년 미만)</li>'
+    + '<li>6급 신규 1명(경영기획본부) → <b>80%</b>, 퇴직급여 제외</li>'
+    + '<li>미결: 대표이사 나머지 0.5명분 봉급목적예비비 이체 여부 · 나급 정원1·현원2(가급 정원 자리 채용인지 확인)</li>'
+    + '</ul></div>';
   return '<div class="tl-hc"><p class="ov2-subhead" style="margin:16px 0 6px;">재원별·직급별 정현원 <span style="font-size:12px;font-weight:500;color:var(--text-soft);">정원(현원) · 일반직은 현원만 · 붙임1</span></p>'
-    + '<table class="hc-card-table tl-hc-table"><thead><tr><th rowspan="2">재원</th>' + th1 + '</tr><tr>' + th2 + '</tr></thead><tbody>' + body + '</tbody></table></div>';
+    + '<div class="tl-hc-row"><table class="hc-card-table tl-hc-table"><thead><tr><th rowspan="2">재원</th>' + th1 + '</tr><tr>' + th2 + '</tr></thead><tbody>' + body + '</tbody></table>' + note + '</div></div>';
 }
 
 function renderOv2Overview(instKey) {
