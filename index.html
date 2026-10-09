@@ -6406,7 +6406,9 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     + '<path stroke-width="10" d="M16.5 36V4.5H58.5V36V53.75V54.9752L59.1862 55.9903L66.9674 67.5H8.03256L15.8138 55.9903L16.5 54.9752V53.75V36Z"></path>'
     + '</svg></label>';
   // 편성목(목) 이후부터는(세목·leaf) 들여쓰기를 더 늘리지 않고 그 자리에서 맞춘다 - 코드/불릿 표시로 이미 구분되니까
-  var indentDepth = Math.min(depth, LEVEL_BASE_DEPTH['목']);
+  // 단, 부기명 밑에 다시 나뉘는 줄(예: 정화조 청소비 → 동작나래관·도봉나래관)은 불릿만으로는 부기명과
+  // 구분이 잘 안 돼서, 부기명 1단계(○) 아래로 한 겹 내려갈 때마다 한 칸씩 더 들여쓴다.
+  var indentDepth = Math.min(depth, LEVEL_BASE_DEPTH['목']) + (cls === 'leaf' && leafDepth > 1 ? leafDepth - 1 : 0);
   if (!skipSelf) {
     out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + personnelAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
       + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
