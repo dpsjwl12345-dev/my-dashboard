@@ -754,7 +754,7 @@ tr.ov2-rev-group-row td:first-child { text-align: left !important; }
   transform: translateY(-50%); margin-left: 8px; z-index: 5;
   background: color-mix(in srgb, var(--accent-soft) 65%, transparent); border: 1px solid var(--border); border-radius: 6px;
   padding: 5px 14px; font-size: 13.5px; font-weight: 500; color: var(--text-muted);
-  white-space: normal; width: 560px; line-height: 1.5;
+  white-space: nowrap; width: max-content; line-height: 1.5; /* 세부내역은 줄바꿈 없이 한 줄로 */
   pointer-events: auto;
 }
 /* 세부내역을 정현원 배지 옆에 항상 같이 표출한다 - 더 이상 호버 전용 풍선이 아님 */
