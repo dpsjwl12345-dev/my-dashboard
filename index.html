@@ -1990,6 +1990,7 @@ table.tree tr.mismatch-only-hide { display: none; }
 table.tree tr.personnel-only-hide { display: none; }
 table.tree tr.new-only-hide { display: none; }
 .detail-filters.has-staff-summary { margin-left: 16px; }
+.detail-staff-summary-wrap { display: flex; flex-direction: column; gap: 4px; }
 .detail-staff-summary { display: flex; flex-wrap: nowrap; align-items: baseline; gap: 0 14px; font-size: 14.5px; color: #dfe6f0; white-space: nowrap; }
 .detail-staff-part + .detail-staff-part::before { content: "·"; margin-right: 14px; color: #7f8b9e; }
 .detail-staff-part b { color: #ffd67e; font-weight: 800; margin-right: 3px; }
@@ -4508,10 +4509,18 @@ function renderWitakDropdown(instKey) {
 // 예산서 화면 금액 옆에 띄우는 카드별 인력 요약 [굵게, 내용]. (2027 요구서·인력현황 기준)
 var CARD_STAFF_SUMMARY = {
   204: [
-    ['현원 15명', '(정원 16)'],
-    ['일반직 4', '(차장 1·사무원 3)'],
-    ['기간제 11', '(수영 3·헬스 2·안내 3·수질 3)'],
-    ['센터장', '사무국장 겸직']
+    [
+      ['현원 15명', '(정원 16)'],
+      ['일반직 4', '(차장 1·사무원 3)'],
+      ['기간제 11', '(수영 3·헬스 2·안내 3·수질 3)'],
+      ['센터장', '사무국장 겸직']
+    ],
+    [
+      ['강사(시간제·강사료)', ''],
+      ['수영강습 2', '(32,000원/시간)'],
+      ['수상안전요원 16', '(18,000원/시간)'],
+      ['아쿠아로빅 3', '(57,000원/시간, 2026 1명)']
+    ]
   ]
 };
 
@@ -7710,8 +7719,10 @@ function renderDetail() {
   // 인력 구성이 정리된 카드(예: 반다비체육센터 위탁)는 필터 토글 자리에 현원 요약을 보여준다.
   var staffSummary = CARD_STAFF_SUMMARY[b.id];
   var filtersInner = staffSummary
-    ? '<div class="detail-staff-summary">' + staffSummary.map(function (part) {
-        return '<span class="detail-staff-part"><b>' + escapeHtml(part[0]) + '</b> ' + escapeHtml(part[1]) + '</span>';
+    ? '<div class="detail-staff-summary-wrap">' + staffSummary.map(function (line) {
+        return '<div class="detail-staff-summary">' + line.map(function (part) {
+          return '<span class="detail-staff-part"><b>' + escapeHtml(part[0]) + '</b>' + (part[1] ? ' ' + escapeHtml(part[1]) : '') + '</span>';
+        }).join('') + '</div>';
       }).join('') + '</div>'
     : filterToggleHtml;
   var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters' + (staffSummary ? ' has-staff-summary' : '') + '">' + filtersInner + '</div>' + noteBtnHtml + '</div>';
