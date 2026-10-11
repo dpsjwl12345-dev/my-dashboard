@@ -1990,6 +1990,12 @@ table.tree tr.mismatch-only-hide { display: none; }
 table.tree tr.personnel-only-hide { display: none; }
 table.tree tr.new-only-hide { display: none; }
 .detail-filters.has-staff-summary { margin-left: 16px; }
+.detail-filters.has-inline-memo { flex: 1 1 auto; min-width: 0; margin-left: 24px; margin-right: 16px; }
+.detail-inline-memo { width: 100%; min-height: 38px; resize: none; overflow: hidden; box-sizing: border-box; padding: 8px 12px; border: 1px solid rgba(167,174,191,.22); border-radius: 8px; background: rgba(16,24,46,.35); color: #e6eef8; font: inherit; font-size: 14px; line-height: 1.5; transition: border-color .2s; }
+.detail-inline-memo::placeholder { color: var(--text-muted); }
+.detail-inline-memo:focus { outline: none; border-color: #ffd67e; }
+.detail-inline-memo.is-saving { border-color: rgba(255,214,126,.5); }
+.detail-inline-memo.is-saved { border-color: #5fd38d; }
 .detail-staff-summary-wrap { display: flex; flex-direction: column; gap: 4px; }
 .team-hc-line { margin-top: 2px; font-size: 13.5px; line-height: 1.5; white-space: normal; }
 .team-hc-total { color: #ffd67e; font-weight: 700; }
@@ -7293,6 +7299,26 @@ document.addEventListener('click', function (e) {
 });
 
 // 부서/사업 카드별 "중요사항" 메모 저장 (business_cards.note)
+function autosizeInlineMemo(el) {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+async function saveInlineCardMemo(id, el) {
+  var b = getBusiness(id);
+  if (!b || !el) return;
+  var newVal = el.value.trim();
+  if ((b.note || '') === newVal) return;
+  el.classList.add('is-saving');
+  var { error } = await db.from('business_cards').update({ note: newVal || null }).eq('id', id);
+  el.classList.remove('is-saving');
+  if (error) { alert('메모 저장 실패: ' + error.message); return; }
+  b.note = newVal;
+  el.classList.add('is-saved');
+  setTimeout(function () { el.classList.remove('is-saved'); }, 1200);
+}
+
 async function saveCardNote(id) {
   var b = getBusiness(id);
   var ta = document.getElementById('note-textarea-' + id);
@@ -7720,7 +7746,7 @@ function renderDetail() {
     + '<button type="button" class="note-save" onclick="saveCardNote(' + b.id + ')" title="저장"><svg viewBox="0 -0.5 25 25" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" d="M18.507 19.853V6.034C18.5116 5.49905 18.3034 4.98422 17.9283 4.60277C17.5532 4.22131 17.042 4.00449 16.507 4H8.50705C7.9721 4.00449 7.46085 4.22131 7.08577 4.60277C6.7107 4.98422 6.50252 5.49905 6.50705 6.034V19.853C6.45951 20.252 6.65541 20.6407 7.00441 20.8399C7.35342 21.039 7.78773 21.0099 8.10705 20.766L11.907 17.485C12.2496 17.1758 12.7705 17.1758 13.113 17.485L16.9071 20.767C17.2265 21.0111 17.6611 21.0402 18.0102 20.8407C18.3593 20.6413 18.5551 20.2522 18.507 19.853Z" clip-rule="evenodd" fill-rule="evenodd"></path></svg><span class="note-save-label">저장</span></button>'
     + '</div>'
     + '</div>';
-  var noteBtnHtml = '<div class="note-popover-wrap">' + noteToggleHtml + noteCountBadgeHtml + searchBoxHtml + notePopoverHtml + '</div>';
+  var noteBtnHtml = '<div class="note-popover-wrap">' + searchBoxHtml + '</div>';
 
   var teamTreesHtml = '';
   if (activeTeams && activeTeams.length) {
@@ -7756,8 +7782,14 @@ function renderDetail() {
           return '<span class="detail-staff-part"><b>' + escapeHtml(part[0]) + '</b>' + (part[1] ? ' ' + escapeHtml(part[1]) : '') + '</span>';
         }).join('') + '</div>';
       }).join('') + '</div>'
-    : filterToggleHtml;
-  var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters' + (staffSummary ? ' has-staff-summary' : '') + '">' + filtersInner + '</div>' + noteBtnHtml + '</div>';
+    : '';
+  // 필터 토글은 전부 없애고 그 자리에 바로 쓰는 메모칸을 둔다(business_cards.note, 칸을 벗어나면 저장).
+  var hasStaffSummary = !!(staffSummary && (staffSummary.rows || staffSummary.length));
+  if (!hasStaffSummary) {
+    filtersInner = '<textarea class="detail-inline-memo" id="inline-memo-' + b.id + '" rows="1" spellcheck="false" placeholder="메모"'
+      + ' oninput="autosizeInlineMemo(this)" onblur="saveInlineCardMemo(' + b.id + ', this)">' + escapeHtml(b.note || '') + '</textarea>';
+  }
+  var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters' + (hasStaffSummary ? ' has-staff-summary' : ' has-inline-memo') + '">' + filtersInner + '</div>' + noteBtnHtml + '</div>';
 
   var linesHtml = b.lines.length ? b.lines.map(function (l, i) {
     return '<tr>'
@@ -7779,6 +7811,7 @@ function renderDetail() {
     + teamTreesHtml
     + (teamTreesHtml ? '' : linesTable)
     + '</div>';
+  el.querySelectorAll('.detail-inline-memo').forEach(autosizeInlineMemo);
 
   if (teamTreesHtml) {
     applyTreeColWidths();
