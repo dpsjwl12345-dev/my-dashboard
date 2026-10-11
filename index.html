@@ -2377,6 +2377,32 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .lc-folder-btn.is-open .lc-folder .f-paper { transform: rotateX(-24deg); }
 .lc-folder-btn.is-open .lc-folder .f-front { transform: rotateX(-32deg); }
 .lc-section { background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--border-strong); border-radius: var(--r-lg); padding: 18px 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm); overflow-x: auto; }
+/* 109 평가급 탭 상단 — 2025년 경영평가 결과(바탕화면 「기관별 경영평가 결과 및 예산 산출 내역.xlsx」) */
+.ev-result { margin: 4px 0 18px; }
+.ev-result-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.ev-result-head h3 { margin: 0; font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); }
+.ev-result-head span { font-size: 13px; color: var(--text-soft); }
+.ev-row { display: grid; grid-template-columns: 170px 150px 150px minmax(0, 1fr) minmax(0, 1.25fr); gap: 18px; align-items: start; padding: 16px 0; border-top: 1px solid var(--border); }
+.ev-row:last-child { border-bottom: 1px solid var(--border); }
+.ev-row.is-head { padding: 8px 0; font-size: 12.5px; color: var(--text-soft); border-top: 0; }
+.ev-inst { font-size: 16px; font-weight: 700; color: var(--text); word-break: keep-all; }
+.ev-score { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 30px; font-weight: 800; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+.ev-score small { font-size: 14px; font-weight: 500; color: var(--text-soft); margin-left: 2px; }
+.ev-score.is-na { font-size: 14px; font-weight: 500; line-height: 1.4; color: var(--text-soft); }
+.ev-verdict { display: inline-block; font-size: 14px; font-weight: 800; padding: 3px 10px; border-radius: 6px; margin-bottom: 6px; }
+.ev-verdict.ok { color: var(--text-muted); background: var(--accent-soft); }
+.ev-verdict.bad { color: #fff; background: var(--danger); }
+.ev-verdict.na { color: var(--text-soft); background: transparent; border: 1px solid var(--border); }
+.ev-cut { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 26px; font-weight: 800; color: var(--danger); font-variant-numeric: tabular-nums; line-height: 1.15; margin-bottom: 4px; }
+.ev-cut small { font-size: 13px; font-weight: 600; margin-left: 6px; }
+.ev-detail { margin: 0; padding-left: 16px; font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+.ev-total { display: flex; justify-content: flex-end; align-items: baseline; gap: 12px; padding-top: 12px; font-size: 14px; color: var(--text-muted); }
+.ev-total b { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 22px; color: var(--danger); font-variant-numeric: tabular-nums; }
+@media (max-width: 980px) {
+  .ev-row { grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+  .ev-row.is-head { display: none; }
+  .ev-inst, .ev-row > .ev-col-wide { grid-column: 1 / -1; }
+}
 .lc-section > summary { cursor: pointer; list-style: none; font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 16px; font-weight: 800; color: var(--text); }
 .lc-section > summary::-webkit-details-marker { display: none; }
 .lc-section > summary::before { content: '▸ '; }
@@ -2952,13 +2978,6 @@ table.summary tr.ov2-eb-section td {
   <button type="button" class="labor-box animated-button" onclick="showLaborCalc()" id="labor-box" title="보수 통합 계산기" aria-label="보수 통합 계산기">
     <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path></svg>
     <span class="text">보수 통합 계산기</span>
-    <span class="circle"></span>
-    <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path></svg>
-  </button>
-
-  <button type="button" class="labor-box animated-button" onclick="showLcGuideModal()" id="lc-guide-box" title="개정사항" aria-label="개정사항">
-    <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path></svg>
-    <span class="text">개정사항</span>
     <span class="circle"></span>
     <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg"><path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path></svg>
   </button>
@@ -11059,7 +11078,7 @@ function renderLaborCalc() {
       + '<td class="lc-formula">' + (item.id === 'midResign' ? '산출 보수월액×확정 지급률×실제근무일수/365' : '연봉보수월액×개인별 평가등급별 지급률') + '</td>'
       + '<td>' + lcResultBox(fmtWon(lcRound(amt))) + '</td></tr>';
   }).join('');
-  var section07 = '<div class="lc-section" style="border-left-color:#C2699A;margin-top:12px;"><h3>218 평가급 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">│ 정관상 정원에 포함된 정규직이 지급 대상이나 무기계약직, 기간제근로자 등도 기관 경영평가 관련성 등을 종합적으로 고려하여 지급 가능</span></h3>'
+  var section07 = lcEvalResultHtml() + '<div class="lc-section" style="border-left-color:#C2699A;margin-top:12px;"><h3>218 평가급 <span class="lc-hint" style="margin:0;font-weight:400;display:inline;font-size:16px;color:navy;">│ 정관상 정원에 포함된 정규직이 지급 대상이나 무기계약직, 기간제근로자 등도 기관 경영평가 관련성 등을 종합적으로 고려하여 지급 가능</span></h3>'
     + '<table class="lc-table"><thead><tr><th>구분</th><th>보수월액</th><th>인원/식</th><th>평가 지급률</th><th class="lc-th-formula">산출식</th><th>예산액(천원)</th></tr></thead><tbody>'
     + evalRows
     + '</tbody></table>'
@@ -11127,6 +11146,48 @@ function renderLaborCalc() {
   el.innerHTML = topRow + totalWageExcludeHint + viewHtml;
   requestAnimationFrame(lcPositionFilterIndicator);
   requestAnimationFrame(lcPositionSubDesc);
+}
+// 2025년 경영평가 결과 — 바탕화면 「기관별 경영평가 결과 및 예산 산출 내역.xlsx」 원문 그대로(점수·판정·감액액). 평가급 지급률·총인건비 감액 반영의 근거.
+var LC_EVAL_RESULTS = [
+  { inst: '화성시인재육성재단', org: 92.22, head: 91.09,
+    perf: { verdict: '적정', cls: 'ok', score: '1.00점 만점', notes: ['S·A·B·C 4개 등급 구분', '최고 S등급 19.53%(25명 ≤20%), 최저 C등급 10.16%(13명 ≥10%)', '최고-최저 격차 51%p(≥50%p) 준수, 실링 준수'] },
+    wage: { verdict: '미준수', cls: 'bad', score: '0.00점 / 감액 대상', cut: 121596749, cutNote: '5.40% 초과', notes: ['인건비 인상 가능 한도 대비 121,596,749원(5.40%) 초과', '초과액 차년도 예산 편성 시 의무 감액'] } },
+  { inst: '화성시문화관광재단', org: 89.50, head: 90.46,
+    perf: { verdict: '적정', cls: 'ok', score: '1.00점 만점', notes: ['S·A·B·C 4개 등급 구분', '최고 S등급 19.52%(65명 ≤20%), 최저 C등급 10.51%(35명 ≥10%)', '최고-최저 원천지급률 차이 125%–75%로 50%p 충족, 실링 준수'] },
+    wage: { verdict: '준수', cls: 'ok', score: '1.50점 만점', notes: ['2년 만근자 216명, 인상률 4.11%(기준 4.40% 이내) 준수', '예산 감액 페널티 없음'] } },
+  { inst: '화성FC (시민프로축구단)', org: 75.99, head: 76.71,
+    perf: { verdict: '부적정', cls: 'bad', score: '0.00점', notes: ['최고 S등급 22.22%(2명)로 20% 이내 기준 초과(-0.5점)', '지급액 실링(11,809,418원) 대비 661,812원 실제 초과(-1.0점)'] },
+    wage: { verdict: '미준수', cls: 'bad', score: '0.00점 / 감액 대상', cut: 7820498, cutNote: '인상률 6.86%', notes: ['인상률 6.86%(한도 4.40% 대비 초과)', '초과액 차년도 예산 편성 시 의무 감액'] } },
+  { inst: '화성도시공사', org: null, orgNote: '지방공기업 평가 대상 (시 평가 제외)', head: 85.87,
+    perf: { verdict: '공기업 기준', cls: 'na', score: '', notes: ['행안부 지방공기업 경영평가 결과를 80점으로 환산하여 기관장 평가 반영'] },
+    wage: { verdict: '공기업 기준', cls: 'na', score: '', notes: ['지방공기업 예산편성 공통기준 적용'] } }
+];
+function lcEvalResultHtml() {
+  var score = function (v, na) {
+    return v == null ? '<div class="ev-score is-na">' + na + '</div>' : '<div class="ev-score">' + v.toFixed(2) + '<small>점</small></div>';
+  };
+  var detail = function (notes) { return '<ul class="ev-detail">' + notes.map(function (n) { return '<li>' + n + '</li>'; }).join('') + '</ul>'; };
+  var verdict = function (o) { return '<span class="ev-verdict ' + o.cls + '">' + o.verdict + (o.score ? ' · ' + o.score : '') + '</span>'; };
+  var cutSum = 0;
+  var rows = LC_EVAL_RESULTS.map(function (r) {
+    var w = r.wage;
+    if (w.cut) cutSum += w.cut;
+    return '<div class="ev-row">'
+      + '<div class="ev-inst">' + r.inst + '</div>'
+      + '<div>' + score(r.org, r.orgNote) + '</div>'
+      + '<div>' + score(r.head, '') + '</div>'
+      + '<div class="ev-col-wide">' + verdict(r.perf) + detail(r.perf.notes) + '</div>'
+      + '<div class="ev-col-wide">' + verdict(w)
+      + (w.cut ? '<div class="ev-cut">△' + w.cut.toLocaleString('ko-KR') + '원<small>' + w.cutNote + '</small></div>' : '')
+      + detail(w.notes) + '</div>'
+      + '</div>';
+  }).join('');
+  return '<section class="ev-result" aria-label="2025년 경영평가 결과">'
+    + '<div class="ev-result-head"><h3>2025년 경영평가 결과</h3><span>출처: 기관별 경영평가 결과 및 예산 산출 내역.xlsx</span></div>'
+    + '<div class="ev-row is-head"><div>기관</div><div>기관 평가점수</div><div>기관장 평가점수</div><div>성과급 운영</div><div>총인건비 준수 · 의무 감액</div></div>'
+    + rows
+    + '<div class="ev-total">2027 예산 의무 감액 합계 <b>△' + cutSum.toLocaleString('ko-KR') + '원</b></div>'
+    + '</section>';
 }
 function lcGuideCinemaHtml() {
   var items = [
