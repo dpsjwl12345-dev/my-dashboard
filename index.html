@@ -1991,6 +1991,9 @@ table.tree tr.personnel-only-hide { display: none; }
 table.tree tr.new-only-hide { display: none; }
 .detail-filters.has-staff-summary { margin-left: 16px; }
 .detail-staff-summary-wrap { display: flex; flex-direction: column; gap: 4px; }
+.team-hc-line { margin-top: 2px; font-size: 13.5px; line-height: 1.5; white-space: normal; }
+.team-hc-total { color: #ffd67e; font-weight: 700; }
+.team-hc-detail { color: #e6eef8; font-weight: 300; }
 .detail-staff-table-wrap { display: flex; flex-direction: column; gap: 6px; }
 .detail-staff-caption { font-size: 13px; color: #9fb0c8; }
 .detail-staff-table { border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
@@ -6490,7 +6493,15 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   if (!skipSelf) {
     out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + personnelAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
       + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
-        + '<span class="name-content' + (node.nameColor ? ' name-color-' + node.nameColor : '') + '" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>'
+        + (function () {
+          // 팀 행 이름에 "정현원3/4 3급 1/2·…"를 붙여 두면 팀명(파랑) 아래 줄에 정현원(노랑)·직급 상세(흰색 얇게)로 나눠 보여준다.
+          // 편집 가능한 부분은 팀명뿐이고, 저장할 때 data-hc-suffix로 뒷부분을 다시 붙인다.
+          var hc = node.level === '팀' ? /^(.*?)\s+(정현원\s*\S+)\s*(.*)$/.exec(node.name || '') : null;
+          if (!hc) return '<span class="name-content' + (node.nameColor ? ' name-color-' + node.nameColor : '') + '" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>';
+          var suffix = ' ' + hc[2] + (hc[3] ? ' ' + hc[3] : '');
+          return '<span class="name-content' + (node.nameColor ? ' name-color-' + node.nameColor : '') + '" contenteditable="true" spellcheck="false" data-field="name" data-hc-suffix="' + escapeHtml(suffix) + '">' + escapeHtml(hc[1]) + '</span>'
+            + '<div class="team-hc-line"><span class="team-hc-total">' + escapeHtml(hc[2]) + '</span>' + (hc[3] ? ' <span class="team-hc-detail">' + escapeHtml(hc[3]) + '</span>' : '') + '</div>';
+        })()
         + cellCheckBtn + '</td>'
       + '<td class="num basis" data-field="calc">' + mismatchIcon + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
       + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
@@ -7148,7 +7159,7 @@ async function saveBudgetRow(tr, btnEl) {
     return clone.textContent.trim();
   };
 
-  var rawName = stripBtnText(nameEl);
+  var rawName = stripBtnText(nameEl) + ((nameEl && nameEl.dataset && nameEl.dataset.hcSuffix) || '');
   var rawCalc = readCalcCellText(tr.querySelector('td[data-field="calc"]'));
   if (!rawCalc) rawCalc = node.calc || '';
   var rawAmt26 = stripBtnText(amt26El);
