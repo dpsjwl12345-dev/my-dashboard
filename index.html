@@ -2384,9 +2384,9 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .ev-result-head span { font-size: 13px; color: var(--text-soft); }
 .ev-row { display: grid; grid-template-columns: 170px 150px 150px minmax(0, 1fr) minmax(0, 1.25fr); gap: 18px; align-items: start; padding: 16px 0; border-top: 1px solid var(--border); }
 .ev-row:last-child { border-bottom: 1px solid var(--border); }
-.ev-row.is-head { padding: 8px 0; font-size: 12.5px; color: var(--text-soft); border-top: 0; }
+.ev-row.is-head { padding: 8px 0; font-size: 15px; font-weight: 600; color: var(--text-soft); border-top: 0; }
 .ev-inst { font-size: 16px; font-weight: 700; color: var(--text); word-break: keep-all; }
-.ev-score { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 30px; font-weight: 800; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+.ev-score { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 26px; font-weight: 800; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
 .ev-score small { font-size: 14px; font-weight: 500; color: var(--text-soft); margin-left: 2px; }
 .ev-score.is-na { font-size: 14px; font-weight: 500; line-height: 1.4; color: var(--text-soft); }
 .ev-verdict { display: inline-block; font-size: 14px; font-weight: 800; padding: 3px 10px; border-radius: 6px; margin-bottom: 6px; }
@@ -11183,7 +11183,7 @@ function lcEvalResultHtml() {
       + '</div>';
   }).join('');
   return '<section class="ev-result" aria-label="2025년 경영평가 결과">'
-    + '<div class="ev-result-head"><h3>2025년 경영평가 결과</h3><span>출처: 기관별 경영평가 결과 및 예산 산출 내역.xlsx</span></div>'
+    + '<div class="ev-result-head"><h3>2025년 경영평가 결과</h3></div>'
     + '<div class="ev-row is-head"><div>기관</div><div>기관 평가점수</div><div>기관장 평가점수</div><div>성과급 운영</div><div>총인건비 준수 · 의무 감액</div></div>'
     + rows
     + '<div class="ev-total">2027 예산 의무 감액 합계 <b>△' + cutSum.toLocaleString('ko-KR') + '원</b></div>'
