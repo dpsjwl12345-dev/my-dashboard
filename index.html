@@ -245,6 +245,14 @@ table.summary td.diff.down { color: #4A5578; }
 .ov2-kpi-row4 .settle-kpi-card { padding: 12px 10px; }
 .ov2-kpi-row4 .icon-badge, .ov2-kpi-row4 .icon-badge svg, .ov2-kpi-row4 .icon-badge img { width: 38px; height: 38px; }
 .ov2-kpi-row4 .label { font-size: 17px !important; }
+.ov2-rank-matrix { margin-top: 4px; }
+.ov2-rank-matrix table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.ov2-rank-matrix th { padding: 7px 6px; font-size: 13px; font-weight: 700; color: var(--text-muted, #9aa4b2); text-align: center; white-space: nowrap; border-bottom: 1px solid var(--border); }
+.ov2-rank-matrix td { padding: 6px; font-size: 14px; font-weight: 600; color: var(--text); text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.ov2-rank-matrix th:first-child, .ov2-rank-matrix td:first-child { text-align: left; padding-left: 2px; }
+.ov2-rank-matrix tr.total td { font-weight: 800; border-bottom: 0; border-top: 1px solid var(--border); }
+.ov2-rank-matrix-zero { color: var(--text-muted, #9aa4b2); opacity: 0.5; }
+.ov2-rank-matrix-note { margin: 8px 0 0; font-size: 12px; color: var(--text-muted, #9aa4b2); }
 .ov2-kpi-row4 .value { font-size: 18px !important; }
 .ov2-kpi-row4 .sub { font-size: 14px !important; }
 @media (max-width: 1400px) { .ov2-kpi-row4 { grid-template-columns: repeat(2, 1fr); } }
@@ -4513,6 +4521,7 @@ sports: {
       { label: '무기계약직(지도자)', current: 9 }
     ] }
   ],
+  rankMatrix: { ranks: ['사무차장', '과장', '사무원', '지도자'], note: '사무국장 1명 결원 · 지도자는 무기계약직' },
   byDept: [
     { label: '경영지원과', current: 4, subTeams: [ { name: '사무차장', current: 1 }, { name: '사무원', current: 3 } ] },
     { label: '대회운영과', current: 4, subTeams: [ { name: '과장', current: 1 }, { name: '사무원', current: 3 } ] },
@@ -5587,8 +5596,30 @@ function renderOv2Overview(instKey) {
       + (rankGroup.note ? '<p class="ov2-pbar-note">' + escapeHtml(rankGroup.note) + '</p>' : '') + capBreakdownBlockHtml + '</div>'
     : '';
 
+  // 사무국 구성(과 × 직급): 소관별 정현원의 과별 직급 인원을 한 표로. 직급별 막대가 없는 기관(체육회)의 카드 아래 빈자리에 둔다.
+  var rankMatrixHtml = '';
+  if (!rankHtml && d.rankMatrix && d.byDept && d.byDept.some(function (dept) { return dept.subTeams; })) {
+    var ranks = d.rankMatrix.ranks;
+    var countOf = function (dept, rank) {
+      var hit = (dept.subTeams || []).filter(function (t) { return t.name === rank; })[0];
+      return hit ? hit.current : 0;
+    };
+    var cell = function (n) { return n ? String(n) : '<span class="ov2-rank-matrix-zero">–</span>'; };
+    var headHtml = '<tr><th>구분</th>' + d.byDept.map(function (dept) { return '<th>' + escapeHtml(dept.label) + '</th>'; }).join('') + '<th>계</th></tr>';
+    var bodyHtml = ranks.map(function (rank) {
+      var total = d.byDept.reduce(function (sum, dept) { return sum + countOf(dept, rank); }, 0);
+      return '<tr><td>' + escapeHtml(rank) + '</td>' + d.byDept.map(function (dept) { return '<td>' + cell(countOf(dept, rank)) + '</td>'; }).join('') + '<td>' + cell(total) + '</td></tr>';
+    }).join('');
+    var grand = d.byDept.reduce(function (sum, dept) { return sum + dept.current; }, 0);
+    var totalHtml = '<tr class="total"><td>계</td>' + d.byDept.map(function (dept) { return '<td>' + dept.current + '</td>'; }).join('') + '<td>' + grand + '</td></tr>';
+    rankMatrixHtml = '<div class="ov2-rank-matrix">'
+      + '<table><thead>' + headHtml + '</thead><tbody>' + bodyHtml + totalHtml + '</tbody></table>'
+      + (d.rankMatrix.note ? '<p class="ov2-rank-matrix-note">' + escapeHtml(d.rankMatrix.note) + '</p>' : '')
+      + '</div>';
+  }
+
   var orgHtml = ovPersonnelSectionHtml(
-    '<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + rankHtml,
+    '<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + rankHtml + rankMatrixHtml,
     d.org.asOfDate
   );
   var gradeHtml = '';
