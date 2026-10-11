@@ -1998,9 +1998,12 @@ table.tree tr.new-only-hide { display: none; }
 .detail-staff-table td { padding: 4px 10px; color: #dfe6f0; text-align: center; white-space: nowrap; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .detail-staff-table td:first-child { text-align: left; color: #ffd67e; font-weight: 700; }
 .detail-staff-table tr.total td { font-weight: 800; border-bottom: 0; border-top: 1px solid rgba(255,255,255,0.12); }
-.detail-staff-summary { display: flex; flex-wrap: nowrap; align-items: baseline; gap: 0 14px; font-size: 14.5px; color: #dfe6f0; white-space: nowrap; }
-.detail-staff-part + .detail-staff-part::before { content: "·"; margin-right: 14px; color: #7f8b9e; }
-.detail-staff-part b { color: #ffd67e; font-weight: 800; margin-right: 3px; }
+/* 인력 요약은 정현원 뱃지 옆 세부내역(headcount-detail-pop)과 같은 모양으로 맞춘다 */
+.detail-staff-summary { display: inline-flex; flex-wrap: nowrap; align-items: baseline; gap: 0 12px; white-space: nowrap; width: max-content;
+  background: color-mix(in srgb, var(--accent-soft) 65%, transparent); border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 14px; font-size: 13.5px; font-weight: 500; color: var(--text-muted); line-height: 1.5; }
+.detail-staff-part + .detail-staff-part::before { content: "·"; margin-right: 12px; color: var(--text-muted); opacity: .6; }
+.detail-staff-part b { color: var(--text); font-weight: 700; margin-right: 3px; }
 .tree-filter-toggle { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--danger); flex: 0 0 auto; white-space: nowrap; }
 .tree-filter-toggle.personnel { color: var(--success); }
 .tree-filter-toggle.new { color: #5B6B8C; }
