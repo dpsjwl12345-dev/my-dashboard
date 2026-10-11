@@ -1989,7 +1989,9 @@ table.tree td.memo-cell .memo-req-badge { display: block; width: fit-content; ma
 table.tree tr.mismatch-only-hide { display: none; }
 table.tree tr.personnel-only-hide { display: none; }
 table.tree tr.new-only-hide { display: none; }
-.detail-staff-summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; font-size: 14.5px; color: #dfe6f0; }
+.detail-filters.has-staff-summary { margin-left: 16px; }
+.detail-staff-summary { display: flex; flex-wrap: nowrap; align-items: baseline; gap: 0 14px; font-size: 14.5px; color: #dfe6f0; white-space: nowrap; }
+.detail-staff-part + .detail-staff-part::before { content: "·"; margin-right: 14px; color: #7f8b9e; }
 .detail-staff-part b { color: #ffd67e; font-weight: 800; margin-right: 3px; }
 .tree-filter-toggle { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--danger); flex: 0 0 auto; white-space: nowrap; }
 .tree-filter-toggle.personnel { color: var(--success); }
@@ -4507,9 +4509,9 @@ function renderWitakDropdown(instKey) {
 var CARD_STAFF_SUMMARY = {
   204: [
     ['현원 15명', '(정원 16)'],
-    ['일반직 4', '차장(6급) 1 · 사무원(9급) 3'],
-    ['기간제 11', '수영지도자 3 · 헬스 2 · 안내 3 · 수질관리 3'],
-    ['센터장', '장애인체육회 사무국장 겸직']
+    ['일반직 4', '(차장 1·사무원 3)'],
+    ['기간제 11', '(수영 3·헬스 2·안내 3·수질 3)'],
+    ['센터장', '사무국장 겸직']
   ]
 };
 
@@ -7712,7 +7714,7 @@ function renderDetail() {
         return '<span class="detail-staff-part"><b>' + escapeHtml(part[0]) + '</b> ' + escapeHtml(part[1]) + '</span>';
       }).join('') + '</div>'
     : filterToggleHtml;
-  var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters">' + filtersInner + '</div>' + noteBtnHtml + '</div>';
+  var bottomRowHtml = '<div class="detail-summary-row">' + amtLine + '<div class="detail-filters' + (staffSummary ? ' has-staff-summary' : '') + '">' + filtersInner + '</div>' + noteBtnHtml + '</div>';
 
   var linesHtml = b.lines.length ? b.lines.map(function (l, i) {
     return '<tr>'
