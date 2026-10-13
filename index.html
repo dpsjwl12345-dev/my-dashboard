@@ -2398,13 +2398,17 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .ev-detail { margin: 0; padding-left: 16px; font-size: 13px; line-height: 1.6; color: var(--text-muted); }
 .ev-total { display: flex; justify-content: flex-end; align-items: baseline; gap: 12px; padding-top: 12px; font-size: 14px; color: var(--text-muted); }
 .ev-total b { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 22px; color: var(--danger); font-variant-numeric: tabular-nums; }
-.eb-row { grid-template-columns: 170px 220px 200px 130px minmax(0, 1fr); }
-.eb-line { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 6px; }
+.eb-row { grid-template-columns: 190px 270px 250px 160px minmax(0, 1fr); }
+.eb-row .ev-inst { font-size: 18px; }
+.eb-row.is-head { font-size: 16px; }
+.eb-row .ev-verdict { font-size: 16px; }
+.eb-row .ev-detail { font-size: 16px; line-height: 1.65; }
+.eb-line { font-size: 17px; color: var(--text-muted); line-height: 1.5; margin-bottom: 6px; }
 .eb-line b { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
-.eb-line small { display: block; font-size: 12.5px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
-.eb-who { display: inline-block; min-width: 44px; font-size: 13px; font-weight: 600; color: var(--text-soft); }
-.eb-amt { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 22px; font-weight: 800; line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; }
-.eb-prev { font-size: 12.5px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+.eb-line small { display: block; font-size: 15px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+.eb-who { display: inline-block; min-width: 56px; font-size: 15px; font-weight: 600; color: var(--text-soft); }
+.eb-amt { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 26px; font-weight: 800; line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; }
+.eb-prev { font-size: 15px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
 @media (max-width: 980px) {
   .ev-row { grid-template-columns: 1fr 1fr; gap: 10px 16px; }
   .ev-row.is-head { display: none; }
