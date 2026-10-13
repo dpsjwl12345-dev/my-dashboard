@@ -2398,6 +2398,13 @@ td[contenteditable="true"]:hover { background: #fffbea; cursor: text; }
 .ev-detail { margin: 0; padding-left: 16px; font-size: 13px; line-height: 1.6; color: var(--text-muted); }
 .ev-total { display: flex; justify-content: flex-end; align-items: baseline; gap: 12px; padding-top: 12px; font-size: 14px; color: var(--text-muted); }
 .ev-total b { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 22px; color: var(--danger); font-variant-numeric: tabular-nums; }
+.eb-row { grid-template-columns: 170px 220px 200px 130px minmax(0, 1fr); }
+.eb-line { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 6px; }
+.eb-line b { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
+.eb-line small { display: block; font-size: 12.5px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+.eb-who { display: inline-block; min-width: 44px; font-size: 13px; font-weight: 600; color: var(--text-soft); }
+.eb-amt { font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 22px; font-weight: 800; line-height: 1.1; color: var(--text); font-variant-numeric: tabular-nums; }
+.eb-prev { font-size: 12.5px; color: var(--text-soft); font-variant-numeric: tabular-nums; }
 @media (max-width: 980px) {
   .ev-row { grid-template-columns: 1fr 1fr; gap: 10px 16px; }
   .ev-row.is-head { display: none; }
@@ -11091,6 +11098,7 @@ function renderLaborCalc() {
     + '<li>특정 등급 집중 방지: 어느 하나의 특정 등급 인원 비율이 전체 배분 인원의 50%를 초과할 수 없습니다.</li>'
     + '</ol></div>'
     + '<div style="margin-top:14px;">' + lcEvalResultHtml() + '</div>'
+    + '<div style="margin-top:14px;">' + lcEvalBonus2027Html() + '</div>'
     + '</div>';
 
   var toggleHtml = '<div id="firstFilter" class="filter-switch">'
@@ -11158,6 +11166,52 @@ var LC_EVAL_RESULTS = [
     perf: { verdict: '공기업 기준', cls: 'na', score: '', notes: ['행안부 지방공기업 경영평가 결과를 80점으로 환산하여 기관장 평가 반영'] },
     wage: { verdict: '공기업 기준', cls: 'na', score: '', notes: ['지방공기업 예산편성 공통기준 적용'] } }
 ];
+// 2027 평가급(109) 검토 — 직전 3개년(2023~2025 실적) 평균점수(반올림, 복지재단 79점 사례)로 세부지침 p.72 지급률 산정, 마이대시보드 2027 요구액과 대조. 금액 천원.
+var LC_EVAL_BONUS_2027 = [
+  { inst: '화성시문화관광재단',
+    avg: [{ who: '직원', scores: '88.89 · 88.91 · 89.50', avg: '89.10 → 89점 (나)' }, { who: '기관장', scores: '89.92 · 88.66 · 90.46', avg: '89.68 → 90점 (가)' }],
+    rate: [{ who: '직원', req: '110%', std: '120%' }, { who: '기관장', req: '190%', std: '230%', note: '반올림 안 하면 나등급 200%' }],
+    req: 1611141, prev: 600000,
+    verdict: '지급률 지침 미달', cls: 'na',
+    notes: ['직원 17,400,000,000원 ÷ 12 × 110% = 1,595,000 / 기관장 101,937,000원 ÷ 12 × 190% = 16,141', '3개년 지급률 적용 시 1,740,000 + 19,538 = 1,759,538', '기준액 174억이 현원 몇 명분인지 산정근거 없음'] },
+  { inst: '화성시인재육성재단',
+    avg: [{ who: '직원', scores: '91.69 · 88.76 · 92.22', avg: '90.89 → 91점 (가)' }, { who: '기관장', scores: '94.22 · 91.83 · 91.09', avg: '92.38 → 92점 (가)' }],
+    rate: [{ who: '직원', req: '130%', std: '130%' }, { who: '기관장', req: '230%', std: '230%' }],
+    req: 758535, prev: 590720,
+    verdict: '지급률 일치', cls: 'ok',
+    notes: ['직급별 기준월액 × 인원 × 130%, 기관장 230% × 6/12월', '인원 165명 현원과 일치', '기준월액 근거만 확인 필요'] },
+  { inst: '화성FC',
+    avg: [{ who: '직원', scores: '78.22 · 78.53 · 75.99', avg: '77.58 → 78점 (라)' }, { who: '기관장', scores: '84.68 · 83.11 · 미실시', avg: '해당 없음' }],
+    rate: [{ who: '직원', req: '40%', std: '40%' }],
+    req: 17480, prev: 33600,
+    verdict: '편성 가능 여부 판단', cls: 'bad',
+    notes: ['3~6급 13명 × 40%', '2026 평가 성과급 운영 부적정(S등급 22.22%, 실링 661,812원 초과)', '행안부 지침: 차등 배분 위반 시 다음연도 성과급 예산편성 금지'] },
+  { inst: '화성도시공사',
+    avg: [{ who: '직원', scores: '행안부 평가', avg: '등급 미확인' }],
+    rate: [{ who: '경영·자체', req: '각 100%', std: '행안부 등급 기준' }],
+    req: 747256, prev: null,
+    verdict: '등급 확인 필요', cls: 'na',
+    notes: ['시설 10곳 합계, 경영평가급 + 자체평가급 2회(업무직은 경영평가급만)', '지방공기업 예산편성기준 직원 지급률: 가 200~180 · 나 150~131 · 다 100~80 · 라 50~30%', '2026 행안부 경영평가 등급 필요'] }
+];
+function lcEvalBonus2027Html() {
+  var fmt = function (n) { return n == null ? '—' : n.toLocaleString('ko-KR'); };
+  var rows = LC_EVAL_BONUS_2027.map(function (r) {
+    var avg = r.avg.map(function (a) { return '<div class="eb-line"><span class="eb-who">' + a.who + '</span><b>' + a.avg + '</b><small>' + a.scores + '</small></div>'; }).join('');
+    var rate = r.rate.map(function (a) { return '<div class="eb-line"><span class="eb-who">' + a.who + '</span>' + a.req + ' → <b>' + a.std + '</b>' + (a.note ? '<small>' + a.note + '</small>' : '') + '</div>'; }).join('');
+    return '<div class="ev-row eb-row">'
+      + '<div class="ev-inst">' + r.inst + '</div>'
+      + '<div>' + avg + '</div>'
+      + '<div>' + rate + '</div>'
+      + '<div><div class="eb-amt">' + fmt(r.req) + '</div><small class="eb-prev">2026 ' + fmt(r.prev) + '</small></div>'
+      + '<div class="ev-col-wide"><span class="ev-verdict ' + r.cls + '">' + r.verdict + '</span><ul class="ev-detail">' + r.notes.map(function (n) { return '<li>' + n + '</li>'; }).join('') + '</ul></div>'
+      + '</div>';
+  }).join('');
+  return '<section class="ev-result" aria-label="2027 평가급 검토">'
+    + '<div class="ev-result-head"><h3>2027 평가급 검토</h3><span>직전 3개년(2023~2025 실적) 평균점수 반올림 · 세부지침 p.72 · 단위 천원</span></div>'
+    + '<div class="ev-row eb-row is-head"><div>기관</div><div>3개년 평균</div><div>지급률 요구 → 지침</div><div>2027 요구액</div><div>판단</div></div>'
+    + rows
+    + '</section>';
+}
 function lcEvalResultHtml() {
   var score = function (v, na) {
     return v == null ? '<div class="ev-score is-na">' + na + '</div>' : '<div class="ev-score">' + v.toFixed(2) + '<small>점</small></div>';
