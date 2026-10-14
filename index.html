@@ -7008,6 +7008,11 @@ function collectCurrentTreeRows() {
 
   var colLabels = getTreeColLabels();
   var rows = [['구분', '산출기초', colLabels[2], colLabels[3], '증감액', '증감률']];
+  // 소관부서에 보낼 때 팀이 여러 개면 전체 합계를 엑셀에서 따로 더해야 했다 — 머리글 바로 밑에 팀 트리 합계를 넣는다.
+  var sumCur = 0, sumPrev = 0;
+  trees.forEach(function (t) { sumCur += Number(t.amt26) || 0; sumPrev += Number(t.amt25) || 0; });
+  var sumDiff = sumCur - sumPrev;
+  rows.push(['합계', '', sumCur, sumPrev, sumDiff, sumPrev ? ((sumDiff / sumPrev) * 100).toFixed(1) + '%' : '']);
   // 화면(renderTreeRows)과 같은 규칙으로 부기명 등 이름 없는 계층에 ◎/○/- 같은 불릿을 붙인다.
   // 전에는 이 불릿 없이 node.name만 그대로 써서, 화면에는 보이는 부기명 표시가 다운로드에는 빠졌었다.
   function walk(node, depth, parentLeafDepth) {
@@ -7076,8 +7081,8 @@ function exportCurrentTreePdf() {
   var data = collectCurrentTreeRows();
   if (!data) { alert('내보낼 사업을 먼저 선택해주세요.'); return; }
 
-  var bodyRows = data.rows.slice(1).map(function (r) {
-    return '<tr><td>' + escapeHtml(r[0]) + '</td><td>' + escapeHtml(r[1]) + '</td>'
+  var bodyRows = data.rows.slice(1).map(function (r, i) {
+    return '<tr' + (i === 0 ? ' class="total"' : '') + '><td>' + escapeHtml(r[0]) + '</td><td>' + escapeHtml(r[1]) + '</td>'
       + '<td class="num">' + fmtWon(r[2]) + '</td><td class="num">' + fmtWon(r[3]) + '</td>'
       + '<td class="num">' + fmtWon(r[4]) + '</td><td class="num">' + escapeHtml(r[5]) + '</td></tr>';
   }).join('');
@@ -7090,6 +7095,7 @@ function exportCurrentTreePdf() {
     + 'th,td{border:1px solid #ccc;padding:5px 7px;text-align:left;vertical-align:top;white-space:pre-line;}'
     + 'th{background:#f2f3f6;font-weight:700;}'
     + 'td.num,th.num{text-align:right;}'
+    + 'tr.total td{font-weight:700;background:#f8f9fb;}'
     + '</style></head><body>'
     + '<h1>' + escapeHtml(data.name) + ' 세부예산 (' + new Date().toLocaleDateString('ko-KR') + ')</h1>'
     + '<table><thead><tr><th>' + escapeHtml(data.rows[0][0]) + '</th><th>' + escapeHtml(data.rows[0][1]) + '</th>'
