@@ -6621,9 +6621,10 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
     out.push('<tr class="lvl-' + cls + hiddenCls + mismatchCls + reviewColorCls + '" data-id="' + node.id + '"' + mokAttr + detailAttr + mismatchAttr + personnelAttr + newAttr + ' data-search="' + escapeHtml(searchText.toLowerCase()) + '">'
       + '<td class="name-cell" data-field="name-wrap" style="padding-left:' + (8 + indentDepth * 14) + 'px">' + reviewDot + arrowHtml + ' ' + escapeHtml(namePrefix)
         + (function () {
-          // 팀 행 이름에 "정현원3/4 3급 1/2·…"를 붙여 두면 팀명(파랑) 아래 줄에 정현원(노랑)·직급 상세(흰색 얇게)로 나눠 보여준다.
-          // 편집 가능한 부분은 팀명뿐이고, 저장할 때 data-hc-suffix로 뒷부분을 다시 붙인다.
-          var hc = node.level === '팀' ? /^(.*?)\s+(정현원\s*\S+)\s*(.*)$/.exec(node.name || '') : null;
+          // 행 이름에 "정현원3/4 3급 1/2·…"를 붙여 두면 이름 아래 줄에 정현원(노랑)·직급 상세(흰색 얇게)로 나눠 보여준다.
+          // 팀 행뿐 아니라 인건비 보수·무기계약근로자보수 세목 행도 같은 형식으로 쓴다.
+          // 편집 가능한 부분은 앞 이름뿐이고, 저장할 때 data-hc-suffix로 뒷부분을 다시 붙인다.
+          var hc = /^(.*?)\s+(정현원\s*\S+)\s*(.*)$/.exec(node.name || '');
           if (!hc) return '<span class="name-content' + (node.nameColor ? ' name-color-' + node.nameColor : '') + '" contenteditable="true" spellcheck="false" data-field="name">' + escapeHtml(node.name || '') + '</span>';
           var suffix = ' ' + hc[2] + (hc[3] ? ' ' + hc[3] : '');
           return '<span class="name-content' + (node.nameColor ? ' name-color-' + node.nameColor : '') + '" contenteditable="true" spellcheck="false" data-field="name" data-hc-suffix="' + escapeHtml(suffix) + '">' + escapeHtml(hc[1]) + '</span>'
