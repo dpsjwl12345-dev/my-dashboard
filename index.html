@@ -1904,6 +1904,16 @@ table.tree tr.review-color-blue td, table.tree tr.review-color-blue td .name-con
 /* 빨간 글자 = 2027 검토 조정(산출식·금액을 빨간 글자로). 바탕 강조용 red와 구분 */
 table.tree tr.review-color-adj td, table.tree tr.review-color-adj td .name-content, table.tree tr.review-color-adj td .calc-content, table.tree tr.review-color-adj td * { color: #E5484D !important; font-weight: 700; }
 .review-color-dot.c-adj { background: #E5484D; }
+/* ===== 카드 옆 "관련 규정" 탭 — 박스 없이 제목·표 위계로만 ===== */
+.card-rules { padding: 14px 18px 24px; }
+.card-rules-source { margin: 0 0 6px; font-size: 13px; color: var(--text-soft); }
+.card-rules-title { margin: 22px 0 8px; font-size: 17px; font-weight: 800; color: var(--navy-text); }
+.card-rules-table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.55; }
+.card-rules-table th { text-align: left; font-size: 12.5px; font-weight: 700; color: var(--text-soft);
+  padding: 6px 10px; border-bottom: 2px solid var(--border-strong); }
+.card-rules-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.card-rules-table td.item { width: 190px; font-weight: 700; }
+.card-rules-table td.ref { width: 300px; color: var(--text-soft); }
 /* ===== 기준값 화면 — 재원 구분 머리 / 고용구분 띠 ===== */
 .lc-fund-head { margin: 22px 0 8px; padding: 9px 14px; border-radius: 10px; font-size: 16px; font-weight: 800;
   letter-spacing: -0.01em; color: var(--navy-text); background: rgba(59,130,246,.14);
@@ -3517,6 +3527,15 @@ async function loadInstBudgetData(inst) {
       teams: myTeams, lines: [] };
   });
 
+  // 화면 전용 "관련 규정" 탭 — DB 카드가 아니라, 규정 정리가 있는 카드 바로 뒤에 끼워 넣는 가상 탭(금액·트리 없음).
+  Object.keys(CARD_RULES_TABS).forEach(function (cardId) {
+    var idx = businesses.findIndex(function (b) { return b.id === Number(cardId); });
+    if (idx === -1) return;
+    var src = businesses[idx];
+    businesses.splice(idx + 1, 0, { id: -src.id, dept: src.dept, fundType: src.fundType, name: CARD_RULES_TABS[cardId].tabName,
+      amt: null, amt25: null, note: null, teams: [], lines: [], rulesOf: src.id });
+  });
+
   var deptSet = [];
   businesses.forEach(function (b) { if (b.dept && deptSet.indexOf(b.dept) === -1) deptSet.push(b.dept); });
 
@@ -4553,6 +4572,53 @@ function renderWitakDropdown(instKey) {
     return '<li class="witak-listitem witak-dept-heading" role="listitem">' + escapeHtml(dept) + '</li>' + itemsHtml;
   }).join('');
   list.innerHTML = html;
+}
+
+// 카드 옆 "관련 규정" 탭 내용. 키 = 원래 카드 id. 화성시체육회 홈페이지 「정관 및 제규정」(2026.9.17. 게시본) 원문에서 예산 줄과 닿는 조항만 뽑음.
+var CARD_RULES_TABS = {
+  200: {
+    tabName: '관련 규정',
+    source: '화성시체육회 홈페이지 「정관 및 제규정」 2026.9.17. 게시본',
+    groups: [
+      { title: '인건비', rows: [
+        ['정원', '사무국운영규정 별표2 (2026.9.17. 개정)', '정원 29명 — 사무국장 1(5급상당), 사무차장 1(6급상당), 과장 5(6∼7급), 대리·주임·사원 13(6∼9급), 생활체육지도자 9(무기계약)'],
+        ['보수 일반', '사무국운영규정 제28·30·34조', '「지방공무원 보수규정」·「지방공무원 수당 등에 관한 규정」 준용. 초과근무수당·연차보상비는 「근로기준법」'],
+        ['사무국장·사무차장', '사무국운영규정 제9조의1, 제29조②', '사무국장은 상근임원. 국장·차장 연봉제(임기제공무원 연봉 준용), 차장은 계약직일 때만'],
+        ['정근수당·가산금·가족수당', '사무국운영규정 제35·36·38조', '예산 범위 안에서 지방공무원 기준대로 지급'],
+        ['성과상여금', '사무국운영규정 제37조', '예산 범위 안에서 지급, 근무성적평정 바탕'],
+        ['시간외수당', '사무국운영규정 제17조②, 제40조', '예산 범위 안에서 지급, 보상휴가로 갈음 가능. 「근로기준법」 제56조'],
+        ['연차보상비', '사무국운영규정 제41조4호', '통상임금 × 잔여 연차일수'],
+        ['정액급식비·직급보조비·명절휴가비', '사무국운영규정 제41조', '실비변상 — 예산 범위 안에서 지방공무원 기준 준용'],
+        ['퇴직충당금', '사무국운영규정 제52조①⑤', '만 1년 이상 근속 시 지급, 월 급여총액의 1/12을 매월 적립'],
+        ['복지포인트', '맞춤형 복지제도 시행내규 제6조①, 제7조③⑤', '「화성시 공무원 후생복지에 관한 조례」 준용, 신규채용은 월할, 1점 = 1천원'],
+        ['건강검진·단체상해보험', '맞춤형 복지제도 시행내규 제9조②, 제12조② / 복리후생규정 제4조', '필수기본항목으로 복지점수와 별도 예산. 건강진단 연 1회 이상']
+      ] },
+      { title: '운영비', rows: [
+        ['국내여비', '사무국운영규정 제56조', '「화성시 지방공무원 여비 조례」 준용'],
+        ['운영수당(위원 수당)', '스포츠공정위원회 규정 제8조의2 / 회장선거관리규정 / 사무국운영규정 제2조의1⑤', '출석 위원에게 예산 범위 안에서 수당 지급. 채용 시험위원은 외부위원 과반'],
+        ['차량임차료·차량유지비', '공용차량관리 규정 제2조·제4조·제6조①·제9조·제10조 (2026.9.17. 제정)', '업무용 차량 정수 5대(임차차량 포함). 차량 예산은 차량총괄부서에 일괄 계상. 교체는 12만km+7년 또는 10년 경과. 임차는 경형·친환경차'],
+        ['업무추진비', '회계규정 제11조1호 / 종목단체(장) 및 임원회비 운영 규정 제3조6호 / 임직원 행동강령 제12조', '별도 집행기준 없음 — 정부·화성시 예산편성지침 준용. 회비(특별회계)로도 사무국 업무추진비 집행 가능. 목적 외 사용 금지'],
+        ['후생비·피복', '복리후생규정 제7·8조', '후생비는 예산 범위 안에서 명목·금액을 정해 지급, 피복 지급 가능']
+      ] },
+      { title: '예산 일반', rows: [
+        ['편성·집행', '회계규정 제9·10·11·16·17·41조', '예산 초과지출 불허, 목적 외 사용·관항 간 상호 사용 금지(부득이하면 시와 협의), 과목 유용은 시 승인. 그 밖에는 「지방재정법」 준용']
+      ] }
+    ]
+  }
+};
+function renderCardRulesTab(rules) {
+  if (!rules) return '';
+  return '<div class="detail-inner card-rules">'
+    + '<p class="card-rules-source">' + escapeHtml(rules.source) + '</p>'
+    + rules.groups.map(function (g) {
+        return '<h3 class="card-rules-title">' + escapeHtml(g.title) + '</h3>'
+          + '<table class="card-rules-table"><thead><tr><th>예산 항목</th><th>규정·조항</th><th>내용</th></tr></thead><tbody>'
+          + g.rows.map(function (r) {
+              return '<tr><td class="item">' + escapeHtml(r[0]) + '</td><td class="ref">' + escapeHtml(r[1]) + '</td><td>' + escapeHtml(r[2]) + '</td></tr>';
+            }).join('')
+          + '</tbody></table>';
+      }).join('')
+    + '</div>';
 }
 
 // 예산서 화면 금액 옆에 띄우는 카드별 인력 요약 [굵게, 내용]. (2027 요구서·인력현황 기준)
@@ -7650,6 +7716,12 @@ function renderDetail() {
     if (emptyBadge) emptyBadge.innerHTML = '';
     return;
   }
+  if (b.rulesOf) {
+    if (roundRow) roundRow.style.display = 'none';
+    if (badgeRow) badgeRow.style.display = 'none';
+    el.innerHTML = renderCardRulesTab(CARD_RULES_TABS[b.rulesOf]);
+    return;
+  }
   if (roundRow) roundRow.style.display = 'flex';
   if (badgeRow) badgeRow.style.display = 'flex';
   // SUPPORTED_YEARS(2026/2027) 외 연도는 실제 데이터가 없으므로, 탭·회차 선택은 그대로 두고 상세 영역만 안내 문구로 대체한다.
@@ -7860,7 +7932,7 @@ function renderDetail() {
 async function applyRound(round) {
   state.selectedRound = round;
   var b = getBusiness(state.selectedId);
-  if (!b) { renderDetail(); return; }
+  if (!b || b.rulesOf) { renderDetail(); return; } // 규정 탭은 회차 자료가 없다
 
   if (round === 'base') {
     state.roundData = null;
