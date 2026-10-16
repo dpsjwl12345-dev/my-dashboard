@@ -1027,6 +1027,10 @@ table.tree tr:last-child td { border-bottom: none; }
 table.tree td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table.tree td.num:last-child { text-align: center; }
 table.tree td.num.pct { text-align: center; }
+/* 기관 수정본 비교 열 — 예산액과 다르면 보라 글자 + 차이 (파란 글자=재단 조정분과 헷갈리지 않게) */
+table.tree td.rev-col { color: var(--text-muted); }
+table.tree td.rev-col.rev-diff { color: #9E75FF; font-weight: 700; }
+table.tree td.rev-col .rev-diff-amt { font-size: 12px; font-weight: 600; }
 table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; position: relative; }
 table.tree td[data-field] { position: relative; }
 table.tree td[contenteditable="true"]:hover { background: rgba(198,241,53,.10); box-shadow: inset 0 0 0 1px rgba(198,241,53,.35); }
@@ -3403,7 +3407,7 @@ async function prefetchRoundsData(instId, business, rounds) {
 function buildTeamTrees(rows) {
   var byId = {};
   var yf = yearFields(state.selectedYear);
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, nameColor: r.name_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, nameColor: r.name_color || null, rev: (yf.current === 'amt27' && r.amt27_rev != null) ? Number(r.amt27_rev) : null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -6633,6 +6637,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
         + cellCheckBtn + '</td>'
       + '<td class="num basis" data-field="calc">' + mismatchIcon + buildCalcContentHtml(stripCalcEquals(node.calc)) + '<span class="calc-live-badge"></span>' + cellCheckBtn + '</td>'
       + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt26">' + fmtWon(node.amt26) + cellCheckBtn + '</td>'
+      + revCellHtml(node)
       + '<td class="num" contenteditable="true" spellcheck="false" data-field="amt25">' + amt25Cell + cellCheckBtn + '</td>'
       // 예전엔 팀(트리 루트) 행만 증감액·증감률 칸을 비워둔 탓에, 팀이 하나뿐인 사업은 예산서 맨 윗칸(총액)이,
       // 합계 행이 붙는 사업은 두 번째 줄이 빈칸으로 나왔다. amt25는 buildTeamTrees의 rollupAmt가 자식 합으로
@@ -7473,10 +7478,28 @@ async function saveCardNote(id) {
 
 
 var treeInstanceCounter = 0;
+// 기관 수정본(budget_items.amt27_rev, 예: 도시공사 10/16 제출본)이 들어 있는 트리면 예산액 옆에 "수정본" 열을 하나 더 보여준다.
+// 기존 금액(amt27)은 그대로 두고 비교만 하는 열이라, 열 너비 저장(tcol-0~6 인덱스)과는 따로 tcol-rev로 둔다.
+var TREE_SHOW_REV = false;
+function treeHasRev(node) {
+  if (!node) return false;
+  if (node.rev != null) return true;
+  return (node.children || []).some(treeHasRev);
+}
+function revCellHtml(node) {
+  if (!TREE_SHOW_REV) return '';
+  if (node.rev == null) return '<td class="num rev-col"></td>';
+  var cur = Number(node.amt26) || 0;
+  var diff = node.rev - cur;
+  if (!diff) return '<td class="num rev-col">' + fmtWon(node.rev) + '</td>';
+  return '<td class="num rev-col rev-diff" title="예산액 대비 ' + (diff > 0 ? '+' : '△') + fmtWon(Math.abs(diff)) + '">' + fmtWon(node.rev)
+    + '<div class="rev-diff-amt">' + (diff > 0 ? '+' : '△') + fmtWon(Math.abs(diff)) + '</div></td>';
+}
 function renderTeamTreesCombined(trees, totalLabel) {
   var instId = 'tt' + (treeInstanceCounter++);
   var rows = [];
   var totalRowHtml = '';
+  TREE_SHOW_REV = trees.some(treeHasRev);
   var totalRowText = totalLabel ? (totalLabel + ' 합계') : '합계';
   if (trees.length > 1 || (trees.length === 1 && totalLabel)) {
     var sumAmt26 = trees.reduce(function (s, t) { return s + (t.amt26 || 0); }, 0);
@@ -7485,6 +7508,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
       + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> ' + escapeHtml(totalRowText) + '</td>'
       + '<td class="num basis"></td>'
       + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
+      + revCellHtml({ amt26: sumAmt26, rev: TREE_SHOW_REV ? trees.reduce(function (s, t) { return s + (t.rev || 0); }, 0) : null })
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
       + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
       + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
@@ -7547,7 +7571,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
   var groupsHtml = mokFilterAccordion('세부사업', detailItemsHtml) + mokFilterAccordion('통계목', mokItemsHtml);
 
   var treeColLabels = getTreeColLabels();
-  var colgroup = '<colgroup>' + treeColLabels.map(function (_, i) { return '<col class="tcol-' + i + '">'; }).join('') + '</colgroup>';
+  var colgroup = '<colgroup>' + treeColLabels.map(function (_, i) { return '<col class="tcol-' + i + '">' + (i === 2 && TREE_SHOW_REV ? '<col class="tcol-rev" style="width:9%">' : ''); }).join('') + '</colgroup>';
   var popover = '<div id="mokpop-' + instId + '" class="mok-filter-popover" style="display:none" onclick="event.stopPropagation()">'
     + '<input type="text" class="mok-filter-search" placeholder="세부사업·통계목 검색" oninput="filterMokPopSearch(\'' + instId + '\', this.value)">'
     + '<div class="mok-filter-actions"><button onclick="setAllMokFilter(\'' + instId + '\', true)">전체선택</button><button onclick="setAllMokFilter(\'' + instId + '\', false)">전체해제</button><button class="mok-filter-confirm" onclick="closeMokFilter(\'' + instId + '\')">확인</button></div>'
@@ -7566,7 +7590,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
     if (i === 1) {
       return '<th><span class="th-filter-label err-filter-label" onclick="toggleErrFilter(\'' + instId + '\', event)">' + label + ' <i class="filter-caret"><svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="44" d="M416 128L192 384l-96-96"></path></svg></i>' + errPopover + '</span>' + handle + '</th>';
     }
-    return '<th>' + label + handle + '</th>';
+    return '<th>' + label + handle + '</th>' + (i === 2 && TREE_SHOW_REV ? '<th class="rev-col">수정본</th>' : '');
   }).join('');
 
   var sportsCls = (typeof nav !== 'undefined' && (nav.instKey === 'sports' || nav.instKey === 'disabledsports') && nav.fund === '민간사업보조') ? ' sports-detail-highlight' : '';
