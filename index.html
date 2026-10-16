@@ -1028,9 +1028,16 @@ table.tree td.num { text-align: right; font-variant-numeric: tabular-nums; white
 table.tree td.num:last-child { text-align: center; }
 table.tree td.num.pct { text-align: center; }
 /* 기관 수정본 비교 열 — 예산액과 다르면 보라 글자 + 차이 (파란 글자=재단 조정분과 헷갈리지 않게) */
-table.tree td.rev-col { color: var(--text-muted); }
-table.tree td.rev-col.rev-diff { color: #9E75FF; font-weight: 700; }
+table.tree td.rev-col, table.tree tr td.rev-col * { color: var(--text-muted) !important; }
+table.tree td.rev-col.rev-diff, table.tree tr td.rev-col.rev-diff * { color: #9E75FF !important; font-weight: 700; }
+table.tree td.rev-col.rev-del, table.tree tr td.rev-col.rev-del * { color: #E6798A !important; }
 table.tree td.rev-col .rev-diff-amt { font-size: 12px; font-weight: 600; }
+table.tree td.rev-col .rev-calc { font-size: 11.5px; font-weight: 500; white-space: normal; text-align: left; margin-top: 2px; }
+table.tree td.rev-col.rev-del { color: #E6798A; font-weight: 700; text-align: center; }
+table.tree td.rev-col.rev-ungroup { color: var(--text-muted); font-size: 12px; text-align: center; }
+table.tree tr.rev-added-row td { background: rgba(158,117,255,.10); }
+table.tree tr.rev-added-row .name-cell { color: #9E75FF; font-weight: 600; }
+.rev-added-tag { display: inline-block; font-size: 11px; font-weight: 800; color: #fff; background: #9E75FF; border-radius: 4px; padding: 0 5px; margin-right: 2px; vertical-align: 1px; }
 table.tree td[contenteditable="true"] { cursor: text; border-radius: 4px; position: relative; }
 table.tree td[data-field] { position: relative; }
 table.tree td[contenteditable="true"]:hover { background: rgba(198,241,53,.10); box-shadow: inset 0 0 0 1px rgba(198,241,53,.35); }
@@ -3407,7 +3414,7 @@ async function prefetchRoundsData(instId, business, rounds) {
 function buildTeamTrees(rows) {
   var byId = {};
   var yf = yearFields(state.selectedYear);
-  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, nameColor: r.name_color || null, rev: (yf.current === 'amt27' && r.amt27_rev != null) ? Number(r.amt27_rev) : null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
+  rows.forEach(function (r) { byId[r.id] = { id: r.id, level: r.level, code: r.code, name: r.name, amt26: r[yf.current], amt25: r[yf.prior], calc: r.calc, memo: r.memo || null, reviewColor: r.review_color || null, nameColor: r.name_color || null, children: [], _parent_id: r.parent_id, _sort: r.sort_order }; });
   var roots = [];
   rows.forEach(function (r) {
     var node = byId[r.id];
@@ -6648,6 +6655,11 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
       + '</tr>');
   }
   if (node.children) node.children.forEach(function (c) { renderTreeRows(c, out, depth, nodePath, rowVisible && expanded, leafDepth); });
+  if (TREE_SHOW_REV && node.revAdded) {
+    var addLeafDepth = (isNamedLevel && !isBulletSemok) ? 1 : leafDepth + 1;
+    var addIndent = Math.min(depth + 1, LEVEL_BASE_DEPTH['목']) + (addLeafDepth > 1 ? addLeafDepth - 1 : 0);
+    node.revAdded.forEach(function (v) { renderRevAddedRows(v, out, addIndent, addLeafDepth, rowVisible && expanded); });
+  }
 }
 
 // 산출기초 불일치 항목만 보기 토글
@@ -7478,22 +7490,120 @@ async function saveCardNote(id) {
 
 
 var treeInstanceCounter = 0;
-// 기관 수정본(budget_items.amt27_rev, 예: 도시공사 10/16 제출본)이 들어 있는 트리면 예산액 옆에 "수정본" 열을 하나 더 보여준다.
-// 기존 금액(amt27)은 그대로 두고 비교만 하는 열이라, 열 너비 저장(tcol-0~6 인덱스)과는 따로 tcol-rev로 둔다.
+// ===== 기관 수정본 비교 (예: 도시공사 10/16 제출 수정본) =====
+// 수정본은 같은 사업카드의 round='rev' 트리로 따로 저장돼 있다. 2027 본예산 화면에서 그 트리를 받아와
+// 세부사업›목›세목 코드로 세목을 맞추고, 세목 안 항목(□/○/·)은 이름으로 맞춘다.
+//  - 맞춘 줄: 예산액 옆 "수정본" 칸에 수정본 금액(다르면 보라 + 차이), 산출기초가 바뀌었으면 수정본 산출식도 같이
+//  - 수정본에서 빠진 줄: "삭제"
+//  - 수정본에만 있는 줄: 그 자리 바로 아래에 "추가" 줄을 끼워 넣는다(DB 본예산 트리는 건드리지 않음)
 var TREE_SHOW_REV = false;
-function treeHasRev(node) {
-  if (!node) return false;
-  if (node.rev != null) return true;
-  return (node.children || []).some(treeHasRev);
+var REV_FETCHING = {};
+function revNorm(s) { return String(s || '').replace(/^[\s□○·\-ㆍ•◎]+/, '').replace(/\[안전\]/g, '').replace(/[\s·ㆍ,]/g, '').toLowerCase(); }
+function revCode(c) { return String(c || '').split('-').pop(); }
+function revCalcNorm(s) { return String(s || '').replace(/\s|=|원/g, '').replace(/[*×]/g, 'x'); }
+function revSemokMap(roots) {
+  var out = {}, moks = {};
+  (function walk(nodes, det, mok) {
+    nodes.forEach(function (c) {
+      if (c.level === '세부') walk(c.children || [], revNorm(c.name), null);
+      else if (c.level === '목') { moks[det + '|' + revCode(c.code)] = c; walk(c.children || [], det, revCode(c.code)); }
+      else if (c.level === '세목' && c.code) out[det + '|' + mok + '|' + revCode(c.code)] = c;
+      else walk(c.children || [], det, mok);
+    });
+  })(roots, '', null);
+  return { semoks: out, moks: moks };
 }
+function revClear(node) { delete node.revCmp; delete node.revAdded; (node.children || []).forEach(revClear); }
+function revMarkDeleted(node) { node.revCmp = { amt: 0, status: 'del' }; (node.children || []).forEach(revMarkDeleted); }
+function revSetCmp(b, v) {
+  var amtB = Number(b.amt26) || 0, amtV = Number(v.amt26) || 0;
+  var calcChanged = !!(v.calc || b.calc) && revCalcNorm(v.calc) !== revCalcNorm(b.calc);
+  b.revCmp = { amt: amtV, calc: v.calc || '', status: amtB === amtV ? 'same' : 'chg', calcChanged: calcChanged };
+}
+// 세목 하나 안에서 항목을 맞춘다. 수정본이 묶음 줄(□)을 없애고 항목을 한 층 올리는 식으로 구조를 바꾼 경우가 많아서
+// 같은 층끼리만 비교하지 않고, 세목 안 전체에서 이름이 같은 줄을 찾는다(같은 깊이·같은 부모 이름을 우선).
+function revCompareSemok(b, v) {
+  revSetCmp(b, v);
+  var bl = [], vl = [];
+  (function walk(n, d, parent, list) { (n.children || []).forEach(function (c) { list.push({ node: c, depth: d, parent: parent }); walk(c, d + 1, c, list); }); })(b, 1, b, bl);
+  (function walk(n, d, parent, list) { (n.children || []).forEach(function (c) { list.push({ node: c, depth: d, parent: parent }); walk(c, d + 1, c, list); }); })(v, 1, v, vl);
+  vl.forEach(function (x) { delete x.node._revMatch; });
+  bl.forEach(function (x) {
+    var key = revNorm(x.node.name), best = null, bestScore = -1;
+    vl.forEach(function (y) {
+      if (y.node._revMatch || revNorm(y.node.name) !== key) return;
+      var score = (y.depth === x.depth ? 2 : 0) + (revNorm(y.parent.name) === revNorm(x.parent.name) ? 1 : 0);
+      if (score > bestScore) { best = y; bestScore = score; }
+    });
+    if (best) { best.node._revMatch = x.node; revSetCmp(x.node, best.node); }
+  });
+  // 못 맞춘 본예산 줄: 하위에 맞춘 줄이 있으면 수정본에서 묶음만 없어진 것, 아니면 삭제
+  function hasMatchedDesc(n) { return (n.children || []).some(function (c) { return (c.revCmp && c.revCmp.status !== 'del' && c.revCmp.status !== 'ungroup') || hasMatchedDesc(c); }); }
+  bl.slice().reverse().forEach(function (x) {
+    if (x.node.revCmp) return;
+    x.node.revCmp = hasMatchedDesc(x.node) ? { amt: 0, status: 'ungroup' } : { amt: 0, status: 'del' };
+  });
+  // 수정본에만 있는 줄: 가장 가까운 "맞춘 상위 줄" 밑에 추가로 붙인다(맞춘 줄이 없으면 세목 밑)
+  vl.forEach(function (y) {
+    if (y.node._revMatch) return;
+    if (y.parent !== v && !y.parent._revMatch) return; // 상위 줄도 추가 줄이면 그 줄과 함께 그려진다
+    var host = y.parent === v ? b : y.parent._revMatch;
+    (host.revAdded = host.revAdded || []).push(y.node);
+  });
+}
+function revRollup(node) {
+  if (node.revCmp && node.level !== '팀' && node.level !== '정책' && node.level !== '단위' && node.level !== '세부' && node.level !== '목') return node.revCmp.amt;
+  // 맞춰 보지 못한 말단(코드 없는 세목 밑 등)은 비교 표시 없이 본예산 금액을 그대로 합에 넣는다
+  if (!node.children || !node.children.length) return Number(node.amt26) || 0;
+  var s = 0;
+  (node.children || []).forEach(function (c) { s += revRollup(c); });
+  (node.revAdded || []).forEach(function (a) { s += Number(a.amt26) || 0; });
+  node.revCmp = { amt: s, status: s === (Number(node.amt26) || 0) ? 'same' : 'chg' };
+  return s;
+}
+function annotateRevCompare(baseRoots, revRoots) {
+  baseRoots.forEach(revClear);
+  if (!revRoots.length) return;
+  var mb = revSemokMap(baseRoots), mv = revSemokMap(revRoots);
+  Object.keys(mb.semoks).forEach(function (k) {
+    if (mv.semoks[k]) revCompareSemok(mb.semoks[k], mv.semoks[k]);
+    else revMarkDeleted(mb.semoks[k]);
+  });
+  // 수정본에만 있는 세목은 같은 목 밑에 "추가" 줄로
+  Object.keys(mv.semoks).forEach(function (k) {
+    if (mb.semoks[k]) return;
+    var mokKey = k.split('|').slice(0, 2).join('|');
+    var mok = mb.moks[mokKey];
+    if (mok) (mok.revAdded = mok.revAdded || []).push(mv.semoks[k]);
+  });
+  baseRoots.forEach(revRollup);
+}
+function treeHasRev(node) { return !!(node && node.revCmp); }
 function revCellHtml(node) {
   if (!TREE_SHOW_REV) return '';
-  if (node.rev == null) return '<td class="num rev-col"></td>';
+  var c = node.revCmp;
+  if (!c) return '<td class="num rev-col"></td>';
+  if (c.status === 'del') return '<td class="num rev-col rev-del">삭제</td>';
+  if (c.status === 'ungroup') return '<td class="num rev-col rev-ungroup" title="수정본에서는 이 묶음 줄 없이 하위 항목만 있음">묶음 없음</td>';
   var cur = Number(node.amt26) || 0;
-  var diff = node.rev - cur;
-  if (!diff) return '<td class="num rev-col">' + fmtWon(node.rev) + '</td>';
-  return '<td class="num rev-col rev-diff" title="예산액 대비 ' + (diff > 0 ? '+' : '△') + fmtWon(Math.abs(diff)) + '">' + fmtWon(node.rev)
-    + '<div class="rev-diff-amt">' + (diff > 0 ? '+' : '△') + fmtWon(Math.abs(diff)) + '</div></td>';
+  var diff = c.amt - cur;
+  var calcHtml = c.calcChanged && c.calc ? '<div class="rev-calc">' + escapeHtml(stripCalcEquals(c.calc)) + '</div>' : '';
+  if (!diff) return '<td class="num rev-col' + (calcHtml ? ' rev-diff' : '') + '">' + fmtWon(c.amt) + calcHtml + '</td>';
+  return '<td class="num rev-col rev-diff">' + fmtWon(c.amt)
+    + '<div class="rev-diff-amt">' + (diff > 0 ? '+' : '△') + fmtWon(Math.abs(diff)) + '</div>' + calcHtml + '</td>';
+}
+// 수정본에만 있는 줄(과 그 하위 줄)을 본예산 줄 사이에 끼워 넣는다 — 예산액 칸은 비우고 수정본 칸에만 금액.
+function renderRevAddedRows(v, out, indentDepth, leafDepth, visible) {
+  var isSemok = v.level === '세목' && v.code;
+  var prefix = isSemok ? revCode(v.code) + ' ' : bulletForLeafDepth(leafDepth);
+  out.push('<tr class="lvl-' + (isSemok ? '세목' : 'leaf') + ' rev-added-row' + (visible ? '' : ' row-hidden-collapse') + '" data-search="' + escapeHtml(((v.name || '') + ' ' + (v.calc || '')).toLowerCase()) + '">'
+    + '<td class="name-cell" style="padding-left:' + (8 + indentDepth * 14) + 'px"><span class="rev-added-tag">추가</span> ' + escapeHtml(prefix + stripLeadingMarker(v.name || '')) + '</td>'
+    + '<td class="num basis">' + buildCalcContentHtml(stripCalcEquals(v.calc)) + '</td>'
+    + '<td class="num"></td>'
+    + '<td class="num rev-col rev-diff">' + fmtWon(Number(v.amt26) || 0) + '</td>'
+    + '<td class="num"></td><td class="num"></td><td class="num pct"></td><td class="memo-cell"></td>'
+    + '</tr>');
+  (v.children || []).forEach(function (c) { if (!c._revMatch) renderRevAddedRows(c, out, isSemok ? indentDepth : indentDepth + 1, isSemok ? 1 : leafDepth + 1, visible); });
 }
 function renderTeamTreesCombined(trees, totalLabel) {
   var instId = 'tt' + (treeInstanceCounter++);
@@ -7508,7 +7618,7 @@ function renderTeamTreesCombined(trees, totalLabel) {
       + '<td style="padding-left:8px"><span class="tgl" style="visibility:hidden">\u25B8</span> ' + escapeHtml(totalRowText) + '</td>'
       + '<td class="num basis"></td>'
       + '<td class="num">' + fmtWon(sumAmt26) + '</td>'
-      + revCellHtml({ amt26: sumAmt26, rev: TREE_SHOW_REV ? trees.reduce(function (s, t) { return s + (t.rev || 0); }, 0) : null })
+      + revCellHtml({ amt26: sumAmt26, revCmp: TREE_SHOW_REV ? { amt: trees.reduce(function (s, t) { return s + (t.revCmp ? t.revCmp.amt : 0); }, 0), status: 'chg' } : null })
       + '<td class="num">' + fmtWon(sumAmt25) + '</td>'
       + '<td class="num">' + fmtDiff(sumAmt26, sumAmt25) + '</td>'
       + '<td class="num pct">' + fmtPct(sumAmt26, sumAmt25) + '</td>'
@@ -7911,6 +8021,23 @@ function renderDetail() {
     if (trees.length) {
       var totalLabelForCard = (nav.instKey === 'hscf' && state.fund === '출연금') ? b.name
         : (nav.instKey === 'hscf' && b.name === '화성예술의전당') ? '예술의전당본부' : null;
+      // 2027 본예산 화면이면, 같은 사업카드에 기관 수정본(round='rev')이 있는지 확인해 줄 단위로 맞춰 둔다.
+      // 처음엔 수정본을 아직 안 받아왔으니 받아온 뒤 한 번 더 그린다.
+      if (state.selectedRound === 'base' && state.selectedYear === 2027) {
+        var revInst = INSTITUTIONS.filter(function (i) { return i.key === nav.instKey; })[0];
+        var revKey = revInst ? revInst.id + '|' + b.id + '|rev|2027' : null;
+        if (revKey && roundDataCache[revKey]) {
+          var rd = roundDataCache[revKey];
+          var revRoots = (rd.teams || []).map(function (t) { return rd.trees[t.treeKey]; }).filter(Boolean);
+          annotateRevCompare(trees, revRoots);
+        } else if (revInst && !REV_FETCHING[revKey]) {
+          REV_FETCHING[revKey] = true;
+          var revCardId = b.id;
+          fetchRoundData(revInst.id, b, 'rev').then(function (rdNew) {
+            if ((rdNew.teams || []).length && state.selectedId === revCardId && state.selectedRound === 'base' && state.selectedYear === 2027) renderDetail();
+          });
+        }
+      }
       teamTreesHtml = renderTeamTreesCombined(trees, totalLabelForCard);
     }
   }
