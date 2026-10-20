@@ -1915,6 +1915,30 @@ table.tree tr.review-color-blue td, table.tree tr.review-color-blue td .name-con
 /* 빨간 글자 = 2027 검토 조정(산출식·금액을 빨간 글자로). 바탕 강조용 red와 구분 */
 table.tree tr.review-color-adj td, table.tree tr.review-color-adj td .name-content, table.tree tr.review-color-adj td .calc-content, table.tree tr.review-color-adj td * { color: #E5484D !important; font-weight: 700; }
 .review-color-dot.c-adj { background: #E5484D; }
+.review-color-dot.c-orange { background: #E8833A; }
+.review-color-dot.c-purple { background: #9B6BDF; }
+.review-color-dot.c-sky { background: #3BA7D9; }
+.review-color-dot.c-gray { background: #8A8F98; }
+table.tree tr.review-color-orange td { background: rgba(232,131,58,.16); }
+table.tree tr.review-color-purple td { background: rgba(155,107,223,.15); }
+table.tree tr.review-color-sky td { background: rgba(59,167,217,.15); }
+table.tree tr.review-color-gray td { background: rgba(138,143,152,.18); }
+/* 글자색 표시 — 바탕은 그대로, 글자만 */
+.review-color-dot.c-tgreen { background: transparent; border: 2.5px solid #3CCB7F !important; }
+.review-color-dot.c-tpurple { background: transparent; border: 2.5px solid #A78BFA !important; }
+.review-color-dot.c-torange { background: transparent; border: 2.5px solid #F59E4B !important; }
+.review-color-dot.c-tgray { background: transparent; border: 2.5px solid #8A8F98 !important; }
+table.tree tr.review-color-tgreen td, table.tree tr.review-color-tgreen td * { color: #3CCB7F !important; font-weight: 700; }
+table.tree tr.review-color-tpurple td, table.tree tr.review-color-tpurple td * { color: #A78BFA !important; font-weight: 700; }
+table.tree tr.review-color-torange td, table.tree tr.review-color-torange td * { color: #F59E4B !important; font-weight: 700; }
+table.tree tr.review-color-tgray td, table.tree tr.review-color-tgray td * { color: #8A8F98 !important; }
+/* 색 고르기 팝업 */
+.review-color-pop { position: absolute; z-index: 9999; background: var(--bg-card); border: 1px solid var(--border-strong); border-radius: 6px; padding: 4px 6px; box-shadow: 0 4px 14px rgba(0,0,0,.25); font-size: 11px; line-height: 1.2; }
+.review-color-pop .rcp-row { display: flex; align-items: center; gap: 3px; padding: 2px 0; }
+.review-color-pop .rcp-label { width: 26px; opacity: .7; }
+.review-color-pop .review-color-dot { margin-right: 0; width: 14px; height: 14px; }
+.review-color-pop .rcp-none { cursor: pointer; padding: 0 4px; opacity: .7; }
+.review-color-pop .rcp-none:hover { opacity: 1; }
 /* ===== 카드 옆 "관련 규정" 탭 — 박스 없이 제목·표 위계로만 ===== */
 .card-rules { padding: 14px 18px 24px; }
 .card-rules-source { margin: 0 0 6px; font-size: 13px; color: var(--text-soft); }
@@ -1935,13 +1959,13 @@ table.tree tr.review-color-adj td, table.tree tr.review-color-adj td .name-conte
 table.lc-table tr.lc-grp th { text-align: left; background: var(--surface-2); padding: 7px 10px;
   border-top: 2px solid var(--border-strong); font-weight: 700; }
 table.lc-table tr.lc-grp.lc-emp-gen th { border-left: 5px solid #3B82F6; }
-table.lc-table tr.lc-grp.lc-emp-etc th { border-left: 5px solid #8B5CF6; }
+table.lc-table tr.lc-grp.lc-emp-etc th { border-left: 5px solid #A78BFA; }
 table.lc-table tr.lc-grp.lc-emp-perm th { border-left: 5px solid #16924F; }
 table.lc-table tr.lc-grp.lc-emp-tmp th { border-left: 5px solid #E08A20; }
 .lc-emp-tag { display: inline-block; margin-right: 8px; padding: 1px 8px; border-radius: 999px;
   font-size: 11.5px; font-weight: 700; color: #fff; }
 .lc-emp-gen .lc-emp-tag { background: #3B82F6; }
-.lc-emp-etc .lc-emp-tag { background: #8B5CF6; }
+.lc-emp-etc .lc-emp-tag { background: #A78BFA; }
 .lc-emp-perm .lc-emp-tag { background: #16924F; }
 .lc-emp-tmp .lc-emp-tag { background: #E08A20; }
 /* 요구액 / 검토액 대조 표 — 두 묶음을 배경으로 가르고 차액에 부호색을 준다 */
@@ -6488,26 +6512,65 @@ function onNameContentInput(el) {
   if (td) td.classList.add('cell-touched');
 }
 // 확인용 색 표시(하이라이트) - 산출기초/금액과 달리 검토 중 바로바로 켜고 끄는 용도라
-// 핀 체크 없이 클릭하는 즉시 저장한다. 순서: 없음 → 빨강 → 노랑 → 초록 → 파랑 → 없음.
-var REVIEW_COLOR_CYCLE = [null, 'red', 'yellow', 'green', 'blue'];
-async function cycleReviewColor(id, dotEl) {
+// 핀 체크 없이 고르는 즉시 저장한다. 동그라미를 누르면 색 고르기 팝업이 뜬다.
+// 바탕색: red·yellow·green·orange·purple·sky·gray / 글자색: blue(재단 조정)·adj(시 조정, 빨강)·tgreen·tpurple·torange·tgray
+var REVIEW_COLOR_BG = ['red', 'yellow', 'green', 'orange', 'purple', 'sky', 'gray'];
+var REVIEW_COLOR_TEXT = ['adj', 'blue', 'tgreen', 'tpurple', 'torange', 'tgray'];
+var REVIEW_COLOR_CYCLE = [null].concat(REVIEW_COLOR_BG, REVIEW_COLOR_TEXT);
+var REVIEW_COLOR_TITLE = { red: '빨강 바탕', yellow: '노랑 바탕', green: '초록 바탕', orange: '주황 바탕', purple: '보라 바탕', sky: '하늘 바탕', gray: '회색 바탕',
+  adj: '빨간 글자(시 조정)', blue: '파란 글자(기관 조정)', tgreen: '초록 글자', tpurple: '보라 글자', torange: '주황 글자', tgray: '회색 글자' };
+function closeReviewColorPop() {
+  var old = document.querySelector('.review-color-pop');
+  if (old) old.remove();
+  document.removeEventListener('mousedown', reviewColorPopOutside, true);
+}
+function reviewColorPopOutside(e) {
+  if (!e.target.closest('.review-color-pop')) closeReviewColorPop();
+}
+function cycleReviewColor(id, dotEl) {
+  closeReviewColorPop();
   var node = budgetItemIndex[id];
   if (!node) return;
-  var idx = REVIEW_COLOR_CYCLE.indexOf(node.reviewColor || null);
-  var next = REVIEW_COLOR_CYCLE[(idx + 1) % REVIEW_COLOR_CYCLE.length];
+  var cur = node.reviewColor || null;
+  function dots(list) {
+    return list.map(function (c) {
+      return '<span class="review-color-dot active c-' + c + '" data-c="' + c + '" title="' + REVIEW_COLOR_TITLE[c] + '"' + (c === cur ? ' style="outline:2px solid currentColor;outline-offset:1px"' : '') + '></span>';
+    }).join('');
+  }
+  var pop = document.createElement('div');
+  pop.className = 'review-color-pop';
+  pop.innerHTML = '<div class="rcp-row"><span class="rcp-label">바탕</span>' + dots(REVIEW_COLOR_BG) + '</div>'
+    + '<div class="rcp-row"><span class="rcp-label">글자</span>' + dots(REVIEW_COLOR_TEXT) + '</div>'
+    + '<div class="rcp-row"><span class="rcp-none" data-c="">색 없음</span></div>';
+  var r = dotEl.getBoundingClientRect();
+  pop.style.left = (r.left + window.scrollX) + 'px';
+  pop.style.top = (r.bottom + window.scrollY + 4) + 'px';
+  document.body.appendChild(pop);
+  pop.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-c]');
+    if (!t) return;
+    closeReviewColorPop();
+    setReviewColor(id, dotEl, t.getAttribute('data-c') || null);
+  });
+  setTimeout(function () { document.addEventListener('mousedown', reviewColorPopOutside, true); }, 0);
+}
+async function setReviewColor(id, dotEl, next) {
+  var node = budgetItemIndex[id];
+  if (!node) return;
   var prev = node.reviewColor || null;
+  if (prev === next) return;
   node.reviewColor = next; // 낙관적 업데이트: 먼저 화면부터 바꾸고, 실패하면 되돌린다.
   var tr = dotEl.closest('tr');
-  REVIEW_COLOR_CYCLE.forEach(function (c) { if (c) tr.classList.remove('review-color-' + c); });
-  if (next) tr.classList.add('review-color-' + next);
-  dotEl.className = 'review-color-dot' + (next ? ' active c-' + next : '');
-
+  function paint(c) {
+    REVIEW_COLOR_CYCLE.forEach(function (x) { if (x) tr.classList.remove('review-color-' + x); });
+    if (c) tr.classList.add('review-color-' + c);
+    dotEl.className = 'review-color-dot' + (c ? ' active c-' + c : '');
+  }
+  paint(next);
   var { error } = await db.from('budget_items').update({ review_color: next }).eq('id', id);
   if (error) {
     node.reviewColor = prev;
-    REVIEW_COLOR_CYCLE.forEach(function (c) { if (c) tr.classList.remove('review-color-' + c); });
-    if (prev) tr.classList.add('review-color-' + prev);
-    dotEl.className = 'review-color-dot' + (prev ? ' active c-' + prev : '');
+    paint(prev);
     alert('색 표시 저장 실패: ' + error.message);
   }
 }
@@ -6617,7 +6680,7 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   var isNew = node.amt25 != null && Number(node.amt25) === 0 && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
   var reviewColorCls = node.reviewColor ? ' review-color-' + node.reviewColor : '';
-  var reviewDot = '<span class="review-color-dot' + (node.reviewColor ? ' active c-' + node.reviewColor : '') + '" onclick="cycleReviewColor(' + node.id + ', this)" title="확인용 색 표시(클릭하면 색이 순서대로 바뀜)"></span>';
+  var reviewDot = '<span class="review-color-dot' + (node.reviewColor ? ' active c-' + node.reviewColor : '') + '" onclick="cycleReviewColor(' + node.id + ', this)" title="확인용 색 표시(클릭하면 색 고르기)"></span>';
   var cellCheckBtn = '<label class="cell-check-btn" title="눌러서 저장">'
     + '<input type="checkbox" onchange="saveBudgetCellEdit(' + node.id + ', this)">'
     + '<svg class="pin" viewBox="0 0 75 100" xmlns="http://www.w3.org/2000/svg">'
