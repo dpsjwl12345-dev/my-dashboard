@@ -522,6 +522,7 @@ table.fc-summary td .dot {
 .ov2-two-col.ov2-personnel-row { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
 .ov2-two-col.ov2-personnel-row-corp { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
 @media (max-width: 980px) { .ov2-two-col { grid-template-columns: 1fr; } }
+.ov2-personnel-panel { background: var(--bg-hover); border-radius: var(--r-lg); padding: 20px 20px 4px; margin-bottom: 4px; }
 
 .summary-box h3:has(+ .ov2-pbar-list) { margin-bottom: 4px; }
 .ov2-pbar-list { display: flex; flex-direction: column; gap: 6px; }
@@ -6155,7 +6156,7 @@ function renderOv2Overview(instKey) {
   // 7) 지출총괄표는 위 incomeExpenseHtml 안에 이미 포함됨
 
   var corpHcHtml = instKey === 'corp' ? ov2CorpFacilityHcHtml() : (instKey === 'hscf' ? '' : (instKey === 'talent' ? ov2TalentFundHcHtml() : ''));
-  document.getElementById('overview-v2-slot').innerHTML = orgHtml + gradeHtml + deptPersonHtml + corpHcHtml + budgetCompareHtml + incomeExpenseHtml;
+  document.getElementById('overview-v2-slot').innerHTML = '<div class="ov2-personnel-panel">' + orgHtml + gradeHtml + deptPersonHtml + corpHcHtml + '</div>' + budgetCompareHtml + incomeExpenseHtml;
 }
 
 function renderInstOverview(inst) {
