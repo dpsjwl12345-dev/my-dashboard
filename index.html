@@ -287,8 +287,9 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-seg button:hover { color: var(--text); }
 .hcs-seg button.on, .hcs-seg button.on:hover { box-shadow: inset 0 0 0 1.5px rgba(94,234,212,.55); background: rgba(94,234,212,.08); color: #5EEAD4; font-weight: 800; }
 .hcs-seg button:focus-visible { outline: 2px solid #7B9EFF; }
-.hcs-totline { margin: 0 0 14px; font-size: 16px; color: var(--text-muted); }
-.hcs-totline b { color: var(--text); font-size: 19px; margin: 0 4px 0 2px; font-variant-numeric: tabular-nums; }
+.hcs-head-l { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; min-width: 0; }
+.hcs-totline { margin: 0; padding: 5px 14px; border-radius: 999px; background: rgba(94,234,212,.08); border: 1px solid rgba(94,234,212,.28); font-size: 15px; color: var(--text-muted); }
+.hcs-totline b { color: var(--text); font-size: 17px; margin: 0 4px 0 2px; font-variant-numeric: tabular-nums; }
 .hcs-totline b.hc-short { color: var(--danger); }
 .hcs-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 24px; }
 .hcs-split > div { min-width: 0; overflow-x: auto; }
@@ -5808,9 +5809,9 @@ function ov2HscfHcDetailHtml() {
     return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + head1 + '<tbody>' + body + '</tbody></table></div>';
   };
   var all = T['총계'];
-  var fundView = '<p class="hcs-totline">계 <b>' + all.t[0] + '(' + all.t[1] + ')</b> · 일반직 <b>' + all.g[0] + '(' + all.g[1] + ')</b> · 무기직 <b>' + all.m[0] + '(' + all.m[1] + ')</b>'
-    + ' · 기간제 <b>' + all.p[0] + ' / ' + all.p[1] + '</b> · 결원 <b class="hc-short">' + (all.t[1] - all.t[0]) + '</b></p>'
-    + '<div class="hcs-split">' + fundTable('출연금', '기관운영 인건비 일괄 편성') + fundTable('위탁금', '시설·위탁사업별 편성') + '</div>';
+  var totline = '계 <b>' + all.t[0] + '(' + all.t[1] + ')</b> · 일반직 <b>' + all.g[0] + '(' + all.g[1] + ')</b> · 무기직 <b>' + all.m[0] + '(' + all.m[1] + ')</b>'
+    + ' · 기간제 <b>' + all.p[0] + ' / ' + all.p[1] + '</b> · 결원 <b class="hc-short">' + (all.t[1] - all.t[0]) + '</b>';
+  var fundView = '<div class="hcs-split">' + fundTable('출연금', '기관운영 인건비 일괄 편성') + fundTable('위탁금', '시설·위탁사업별 편성') + '</div>';
   // 소관별·직급별은 가로형(열 = 본부/직급)으로 눕혀 표가 화면 폭을 채우게 한다. 좁은 화면에선 가로 스크롤.
   var tempTxt = function (p) { return (p[0] || p[1]) ? p[0] + '<span> / ' + p[1] + '</span>' : '<span>-</span>'; };
   var hCols = [{ n: '계', o: all, total: true }].concat(heads.map(function (h) { return { n: h.n, o: h, sub: Object.keys(h.f).join('·') }; }));
@@ -5839,16 +5840,16 @@ function ov2HscfHcDetailHtml() {
     + '</tbody></table></div>';
   var views = [['fund', '재원별', fundView], ['head', '소관별', headView], ['grade', '직급별', gradeView]];
   return '<div class="hcs">'
-    + '<div class="hcs-head"><h2 class="section-heading section-heading-lg hcs-title">재원별 정현원</h2>'
+    + '<div class="hcs-head"><div class="hcs-head-l"><h2 class="section-heading section-heading-lg hcs-title">재원별 정현원</h2>'
+    + '<p class="hcs-totline" data-v="fund">' + totline + '</p></div>'
     + '<div class="hcs-seg" role="tablist">' + views.map(function (v, i) { return '<button type="button" role="tab" data-v="' + v[0] + '" data-t="' + v[1] + '"' + (i === 0 ? ' class="on"' : '') + ' onclick="selectHscfHcView(this)">' + v[1] + '</button>'; }).join('') + '</div></div>'
     + views.map(function (v, i) { return '<div class="hcs-view" data-v="' + v[0] + '"' + (i === 0 ? '' : ' style="display:none;"') + '>' + v[2] + '</div>'; }).join('')
-    + '<p class="ov2-pbar-note">무기직 = 체육직·공무직(시설체육운영팀은 체육직 14(13) 포함). 기간제는 정원 외 현원. 출처: 재단 「본부별·재원별 정현원 현황 보고」</p>'
     + '</div>';
 }
 function selectHscfHcView(btn) {
   var box = btn.closest('.hcs');
   box.querySelectorAll('.hcs-seg button').forEach(function (b) { b.classList.toggle('on', b === btn); });
-  box.querySelectorAll('.hcs-view').forEach(function (v) { v.style.display = v.getAttribute('data-v') === btn.getAttribute('data-v') ? '' : 'none'; });
+  box.querySelectorAll('.hcs-view, .hcs-totline').forEach(function (v) { v.style.display = v.getAttribute('data-v') === btn.getAttribute('data-v') ? '' : 'none'; });
   box.querySelector('.hcs-title').textContent = btn.getAttribute('data-t') + ' 정현원';
 }
 
@@ -5890,8 +5891,8 @@ function ov2TalentHcDetailHtml(byDept) {
     return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + unitHead + '<tbody>' + body + '</tbody></table></div>';
   };
   var all = tot['계'];
-  var fundView = '<p class="hcs-totline">현원 계 <b>' + headcount(all) + '</b> · 일반직 <b>' + sum(all.g) + '</b> · 계약직 <b>' + sum(all.c) + '</b> · 공무직 <b>0</b></p>'
-    + '<div class="hcs-split">' + fundTable('출연금', '기관운영 인건비') + fundTable('위탁금', '장학관·이음터·도서관') + '</div>';
+  var totline = '현원 계 <b>' + headcount(all) + '</b> · 일반직 <b>' + sum(all.g) + '</b> · 계약직 <b>' + sum(all.c) + '</b> · 공무직 <b>0</b>';
+  var fundView = '<div class="hcs-split">' + fundTable('출연금', '기관운영 인건비') + fundTable('위탁금', '장학관·이음터·도서관') + '</div>';
 
   var gapTd = function (cap, cur) {
     var d = cur - cap;
@@ -5937,7 +5938,8 @@ function ov2TalentHcDetailHtml(byDept) {
   var views = [['fund', '재원별', fundView], ['head', '소관별', headView], ['grade', '직급별', gradeView]];
   var def = 1;
   return '<div class="hcs">'
-    + '<div class="hcs-head"><h2 class="section-heading section-heading-lg hcs-title">' + views[def][1] + ' 정현원</h2>'
+    + '<div class="hcs-head"><div class="hcs-head-l"><h2 class="section-heading section-heading-lg hcs-title">' + views[def][1] + ' 정현원</h2>'
+    + '<p class="hcs-totline" data-v="fund"' + (views[def][0] === 'fund' ? '' : ' style="display:none;"') + '>' + totline + '</p></div>'
     + '<div class="hcs-seg" role="tablist">' + views.map(function (v, i) { return '<button type="button" role="tab" data-v="' + v[0] + '" data-t="' + v[1] + '"' + (i === def ? ' class="on"' : '') + ' onclick="selectHscfHcView(this)">' + v[1] + '</button>'; }).join('') + '</div></div>'
     + views.map(function (v, i) { return '<div class="hcs-view" data-v="' + v[0] + '"' + (i === def ? '' : ' style="display:none;"') + '>' + v[2] + '</div>'; }).join('')
     + '<div class="tl-hc-row" style="margin-top:12px;">' + note + '</div>'
