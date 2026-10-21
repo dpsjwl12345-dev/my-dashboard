@@ -75,6 +75,7 @@
   --bg: #14161C;
   --bg-card: #1E212B;
   --bg-hover: #262A36;
+  --bg-panel: #2B3040;
   --text: #E8EAF0;
   --text-muted: #A7AEBF;
   --text-soft: #8890A3;
@@ -522,7 +523,7 @@ table.fc-summary td .dot {
 .ov2-two-col.ov2-personnel-row { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
 .ov2-two-col.ov2-personnel-row-corp { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
 @media (max-width: 980px) { .ov2-two-col { grid-template-columns: 1fr; } }
-.ov2-personnel-panel { background: var(--bg-hover); border-radius: var(--r-lg); padding: 20px 20px 4px; margin-bottom: 4px; }
+.ov2-personnel-panel { background: var(--bg-panel); border: 1px solid var(--border-strong); border-radius: var(--r-lg); padding: 24px 24px 8px; margin-bottom: 12px; }
 
 .summary-box h3:has(+ .ov2-pbar-list) { margin-bottom: 4px; }
 .ov2-pbar-list { display: flex; flex-direction: column; gap: 6px; }
