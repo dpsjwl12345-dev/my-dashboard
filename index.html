@@ -76,7 +76,7 @@
   --bg-card: #1E212B;
   --bg-hover: #262A36;
   --bg-panel: #262F48;
-  --bg-panel-budget: #20333A;
+  --bg-panel-budget: #2A2C33;
   --text: #E8EAF0;
   --text-muted: #A7AEBF;
   --text-soft: #8890A3;
@@ -282,7 +282,8 @@ table.summary td.diff.down { color: #4A5578; }
 /* 문화관광재단 정현원 총괄 — 재원별(출연금 좌·위탁금 우)/소관별/직급별 전환 표. 계는 첫 행 */
 .hcs-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 26px 0 8px; }
 .hcs-head .section-heading { margin: 0; }
-.hcs-seg { display: inline-flex; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
+.hcs-head { flex-wrap: wrap; }
+.hcs-seg { flex-shrink: 0; white-space: nowrap; display: inline-flex; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
 .hcs-seg button { all: unset; cursor: pointer; font-size: 15px; font-weight: 600; color: var(--text-muted); padding: 6px 16px; border-radius: 6px; transition: background .15s, color .15s; }
 .hcs-seg button:hover { color: var(--text); }
 .hcs-seg button.on, .hcs-seg button.on:hover { box-shadow: inset 0 0 0 1.5px rgba(94,234,212,.55); background: rgba(94,234,212,.08); color: #5EEAD4; font-weight: 800; }
@@ -294,6 +295,8 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 24px; }
 .hcs-split > div { min-width: 0; overflow-x: auto; }
 .hcs-split .hcs-table th { white-space: normal; word-break: keep-all; vertical-align: bottom; }
+.hcs-split .hcs-table th, .hcs-split .hcs-table th:first-child { text-align: center; }
+.hcs-split .hcs-table th:first-child { color: var(--text); font-weight: 800; font-size: 17px; }
 .hcs-split .hcs-table th, .hcs-split .hcs-table td { padding-left: 6px; padding-right: 6px; }
 @media (max-width: 1100px) { .hcs-split { grid-template-columns: 1fr; } }
 .hcs-split h3 { margin: 0 0 6px; font-size: 18px; color: var(--text); }
@@ -533,7 +536,7 @@ table.fc-summary td .dot {
 .ov2-two-col.ov2-personnel-row-corp { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
 @media (max-width: 980px) { .ov2-two-col { grid-template-columns: 1fr; } }
 .ov2-personnel-panel { background: var(--bg-panel); border: 1px solid #3A4766; border-radius: var(--r-lg); padding: 24px 24px 8px; margin-bottom: 12px; }
-.ov2-budget-panel { background: var(--bg-panel-budget); border: 1px solid #33525A; border-radius: var(--r-lg); padding: 4px 24px 8px; margin-top: 20px; }
+.ov2-budget-panel { background: var(--bg-panel-budget); border: 1px solid #40434D; border-radius: var(--r-lg); padding: 4px 24px 8px; margin-top: 20px; }
 
 .summary-box h3:has(+ .ov2-pbar-list) { margin-bottom: 4px; }
 .ov2-pbar-list { display: flex; flex-direction: column; gap: 6px; }
@@ -5803,15 +5806,15 @@ function ov2HscfHcDetailHtml() {
       + '<td>' + pc(o.t) + '</td><td>' + pc(o.g) + '</td><td>' + pc(o.m) + '</td>'
       + '<td>' + ((o.p[0] || o.p[1]) ? o.p[0] + '<span> / ' + o.p[1] + '</span>' : '<span>-</span>') + '</td>' + gapTd(o.t) + '</tr>';
   };
-  var head1 = function (f) { return '<thead><tr><th>' + (f === '출연금' ? '소속' : '사업') + '</th><th>계</th><th>일반직</th><th>무기직</th><th>기간제<small> 일반/단시간</small></th><th>결원</th></tr></thead>'; };
-  var fundTable = function (f, sub) {
-    var body = row('hcs-total', '', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '12개관·본부 3팀' : ''); }).join('');
-    return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + head1(f) + '<tbody>' + body + '</tbody></table></div>';
+  var head1 = function (f) { return '<thead><tr><th>' + f + '</th><th>계</th><th>일반직</th><th>무기직</th><th>기간제<small> 일반/단시간</small></th><th>결원</th></tr></thead>'; };
+  var fundTable = function (f) {
+    var body = row('hcs-total', f === '출연금' ? '소속' : '사업', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '12개관·본부 3팀' : ''); }).join('');
+    return '<div><table class="hcs-table">' + head1(f) + '<tbody>' + body + '</tbody></table></div>';
   };
   var all = T['총계'];
   var totline = '계 <b>' + all.t[0] + '(' + all.t[1] + ')</b> · 일반직 <b>' + all.g[0] + '(' + all.g[1] + ')</b> · 무기직 <b>' + all.m[0] + '(' + all.m[1] + ')</b>'
     + ' · 기간제 <b>' + all.p[0] + ' / ' + all.p[1] + '</b> · 결원 <b class="hc-short">' + (all.t[1] - all.t[0]) + '</b>';
-  var fundView = '<div class="hcs-split">' + fundTable('출연금', '기관운영 인건비 일괄 편성') + fundTable('위탁금', '시설·위탁사업별 편성') + '</div>';
+  var fundView = '<div class="hcs-split">' + fundTable('출연금') + fundTable('위탁금') + '</div>';
   // 소관별·직급별은 가로형(열 = 본부/직급)으로 눕혀 표가 화면 폭을 채우게 한다. 좁은 화면에선 가로 스크롤.
   var tempTxt = function (p) { return (p[0] || p[1]) ? p[0] + '<span> / ' + p[1] + '</span>' : '<span>-</span>'; };
   var hCols = [{ n: '계', o: all, total: true }].concat(heads.map(function (h) { return { n: h.n, o: h, sub: Object.keys(h.f).join('·') }; }));
@@ -5885,14 +5888,14 @@ function ov2TalentHcDetailHtml(byDept) {
       + '<td>' + headcount(o) + '</td>' + o.g.map(function (v) { return '<td>' + n(v) + '</td>'; }).join('')
       + contractCell(o.c) + '<td><span>0</span></td></tr>';
   };
-  var unitHead = function (f) { return '<thead><tr><th>' + (f === '출연금' ? '소속' : '사업') + '</th><th>계</th>' + TALENT_HC_GRADES.map(function (g) { return '<th>' + g + '</th>'; }).join('') + '<th>계약직</th><th>공무직</th></tr></thead>'; };
-  var fundTable = function (f, sub) {
-    var body = unitRow('hcs-total', '', tot[f]) + TALENT_HC_UNITS.filter(function (u) { return u.fund === f; }).map(function (u) { return unitRow('hcs-unit', u.unit, u, u.sub); }).join('');
-    return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + unitHead(f) + '<tbody>' + body + '</tbody></table></div>';
+  var unitHead = function (f) { return '<thead><tr><th>' + f + '</th><th>계</th>' + TALENT_HC_GRADES.map(function (g) { return '<th>' + g + '</th>'; }).join('') + '<th>계약직</th><th>공무직</th></tr></thead>'; };
+  var fundTable = function (f) {
+    var body = unitRow('hcs-total', f === '출연금' ? '소속' : '사업', tot[f]) + TALENT_HC_UNITS.filter(function (u) { return u.fund === f; }).map(function (u) { return unitRow('hcs-unit', u.unit, u, u.sub); }).join('');
+    return '<div><table class="hcs-table">' + unitHead(f) + '<tbody>' + body + '</tbody></table></div>';
   };
   var all = tot['계'];
   var totline = '현원 계 <b>' + headcount(all) + '</b> · 일반직 <b>' + sum(all.g) + '</b> · 계약직 <b>' + sum(all.c) + '</b> · 공무직 <b>0</b>';
-  var fundView = '<div class="hcs-split">' + fundTable('출연금', '기관운영 인건비') + fundTable('위탁금', '장학관·이음터·도서관') + '</div>';
+  var fundView = '<div class="hcs-split">' + fundTable('출연금') + fundTable('위탁금') + '</div>';
 
   var gapTd = function (cap, cur) {
     var d = cur - cap;
