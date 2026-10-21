@@ -5548,7 +5548,11 @@ function ovPersonnelSectionHtml(personnelInnerHtml, asOfDate, title) {
   }
   return '<div class="ov-personnel-section">'
     + '<div class="section-title-row">'
-    +   '<h2 class="section-heading section-heading-lg">' + (title || '정현원 현황') + (asOfDate ? ' <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">(기준일: ' + escapeHtml(asOfDate) + ')</span>' : '') + '</h2>'
+    // 제목을 넘겨받는 화면(문화관광재단 정현원 총괄)은 기준일을 제목 줄 오른쪽 끝에 둔다
+    +   (title
+      ? '<h2 class="section-heading section-heading-lg">' + title + '</h2>'
+        + (asOfDate ? '<span class="ov-asof-label" style="margin-left:auto;font-size:13px;font-weight:400;color:var(--muted,#8a94a6);">(기준일: ' + escapeHtml(asOfDate) + ')</span>' : '')
+      : '<h2 class="section-heading section-heading-lg">정현원 현황' + (asOfDate ? ' <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">(기준일: ' + escapeHtml(asOfDate) + ')</span>' : '') + '</h2>')
     + '</div>'
     + '<div class="ov-year-panel" data-year="2026">' + personnelInnerHtml + '</div>'
     + '<div class="ov-year-panel" data-year="2027" style="display:none;"><div class="summary-box"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
