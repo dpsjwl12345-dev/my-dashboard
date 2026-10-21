@@ -295,7 +295,6 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-split h3 { margin: 0 0 6px; font-size: 18px; color: var(--text); }
 .hcs-split h3 small { margin-left: 8px; font-size: 13.5px; font-weight: 500; color: var(--text-soft); }
 .hcs-table { width: 100%; border-collapse: collapse; font-size: 15.5px; }
-.hcs-table.hcs-single { max-width: 900px; }
 .hcs-table th { font-size: 14.5px; font-weight: 600; color: var(--text-soft); text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
 .hcs-table th small { font-weight: 500; font-size: 12px; }
 .hcs-table td { padding: 6px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; color: var(--text); }
@@ -312,6 +311,7 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-table.hcs-wide td { text-align: center; }
 .hcs-table.hcs-wide th:first-child, .hcs-table.hcs-wide td:first-child { text-align: left; color: var(--text-soft); }
 .hcs-table.hcs-wide td.hcs-tcol { font-weight: 800; font-size: 16.5px; }
+.hcs .table-scroll { width: 100%; overflow-x: auto; }
 .tl-hc-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
 .tl-hc-note { flex: 1 1 320px; background: var(--bg-hover); border: 1px solid var(--border); border-left: 4px solid var(--warning); border-radius: 10px; padding: 10px 14px; font-size: 14.5px; line-height: 1.55; color: var(--text); }
 .tl-hc-note-title { margin: 0 0 4px; font-size: 15px; font-weight: 800; color: var(--text); }
@@ -5808,19 +5808,32 @@ function ov2HscfHcDetailHtml() {
   var fundView = '<p class="hcs-totline">계 <b>' + all.t[0] + '(' + all.t[1] + ')</b> · 일반직 <b>' + all.g[0] + '(' + all.g[1] + ')</b> · 무기직 <b>' + all.m[0] + '(' + all.m[1] + ')</b>'
     + ' · 기간제 <b>' + all.p[0] + ' / ' + all.p[1] + '</b> · 결원 <b class="hc-short">' + (all.t[1] - all.t[0]) + '</b></p>'
     + '<div class="hcs-split">' + fundTable('출연금', '기관운영 인건비 일괄 편성') + fundTable('위탁금', '시설·위탁사업별 편성') + '</div>';
-  var headView = '<table class="hcs-table hcs-single">' + head1 + '<tbody>' + row('hcs-total', '계', all)
-    + heads.map(function (h) { return row('hcs-unit', h.n, h, Object.keys(h.f).join('·')); }).join('') + '</tbody></table>';
+  // 소관별·직급별은 가로형(열 = 본부/직급)으로 눕혀 표가 화면 폭을 채우게 한다. 좁은 화면에선 가로 스크롤.
+  var tempTxt = function (p) { return (p[0] || p[1]) ? p[0] + '<span> / ' + p[1] + '</span>' : '<span>-</span>'; };
+  var hCols = [{ n: '계', o: all, total: true }].concat(heads.map(function (h) { return { n: h.n, o: h, sub: Object.keys(h.f).join('·') }; }));
+  var hRow = function (label, cell) {
+    return '<tr><td>' + label + '</td>' + hCols.map(function (c) { return cell(c); }).join('') + '</tr>';
+  };
+  var hNum = function (key) { return function (c) { return '<td' + (c.total ? ' class="hcs-tcol"' : '') + '>' + pc(c.o[key]) + '</td>'; }; };
+  var headView = '<div class="table-scroll"><table class="hcs-table hcs-wide"><thead><tr><th>구분</th>'
+    + hCols.map(function (c) { return '<th>' + escapeHtml(c.n) + (c.sub ? '<small>' + escapeHtml(c.sub) + '</small>' : '') + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + hRow('계', hNum('t')) + hRow('일반직', hNum('g')) + hRow('무기직', hNum('m'))
+    + hRow('기간제<small>일반/단시간</small>', function (c) { return '<td' + (c.total ? ' class="hcs-tcol"' : '') + '>' + tempTxt(c.o.p) + '</td>'; })
+    + hRow('결원', function (c) { return gapTd(c.o.t); })
+    + '</tbody></table></div>';
   var GRADES = [['g2', '2급', '대표이사 포함'], ['g3', '3급'], ['g4', '4급'], ['g5', '5급'], ['g6', '6급'], ['mu', '무기직']];
   var C = HSCF_FUND_HC_TOTAL;
-  var gradeRow = function (cls, name, sub, a, b, c) {
-    return '<tr class="' + cls + '"><td>' + name + (sub ? '<small>' + sub + '</small>' : '') + '</td><td>' + pc(a) + '</td><td>' + pc(b) + '</td><td>' + pc(c) + '</td>' + gapTd(a) + '</tr>';
+  var gradeRow = function (label, k) {
+    var x = C[k];
+    return '<tr><td>' + label + '</td><td class="hcs-tcol">' + pc(x.total) + '</td>'
+      + GRADES.map(function (g) { return '<td>' + pc(x[g[0]]) + '</td>'; }).join('') + '<td>' + tempTxt(x.temp) + '</td></tr>';
   };
-  var gradeView = '<table class="hcs-table hcs-single"><thead><tr><th>직급</th><th>계</th><th>출연금</th><th>위탁금</th><th>결원</th></tr></thead><tbody>'
-    + gradeRow('hcs-total', '계', '', C['총계'].total, C['출연금'].total, C['위탁금'].total)
-    + GRADES.map(function (g) { return gradeRow('hcs-unit', g[1], g[2], C['총계'][g[0]], C['출연금'][g[0]], C['위탁금'][g[0]]); }).join('')
-    + '<tr class="hcs-unit"><td>기간제<small>정원 외, 일반/단시간</small></td>'
-    + ['총계', '출연금', '위탁금'].map(function (k) { return '<td>' + C[k].temp[0] + '<span> / ' + C[k].temp[1] + '</span></td>'; }).join('') + '<td><span>-</span></td></tr>'
-    + '</tbody></table>';
+  var gradeView = '<div class="table-scroll"><table class="hcs-table hcs-wide"><thead><tr><th>구분</th><th>계</th>'
+    + GRADES.map(function (g) { return '<th>' + g[1] + (g[2] ? '<small>' + g[2] + '</small>' : '') + '</th>'; }).join('')
+    + '<th>기간제<small>정원 외, 일반/단시간</small></th></tr></thead><tbody>'
+    + gradeRow('계', '총계') + gradeRow('출연금', '출연금') + gradeRow('위탁금', '위탁금')
+    + '<tr><td>결원</td>' + gapTd(C['총계'].total) + GRADES.map(function (g) { return gapTd(C['총계'][g[0]]); }).join('') + '<td><span>-</span></td></tr>'
+    + '</tbody></table></div>';
   var views = [['fund', '재원별', fundView], ['head', '소관별', headView], ['grade', '직급별', gradeView]];
   return '<div class="hcs">'
     + '<div class="hcs-head"><h2 class="section-heading section-heading-lg hcs-title">재원별 정현원</h2>'
