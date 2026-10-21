@@ -6205,7 +6205,7 @@ function renderOv2Overview(instKey) {
   var bcCatLabels = ['인건비', '운영경비', '사업비'];
   var bcHeadCell = function (label, extraClass) {
     if (bcCatLabels.indexOf(label) !== -1) {
-      return '<th class="ov2-bc-cat"><span class="ov2-bc-pill">' + escapeHtml(label) + '</span></th>';
+      return '<th class="ov2-bc-cat"><span class="ov2-bc-pill navy">' + escapeHtml(label) + '</span></th>';
     }
     return '<th' + (extraClass ? ' class="' + extraClass + '"' : '') + '>' + escapeHtml(label) + '</th>';
   };
