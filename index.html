@@ -5803,10 +5803,10 @@ function ov2HscfHcDetailHtml() {
       + '<td>' + pc(o.t) + '</td><td>' + pc(o.g) + '</td><td>' + pc(o.m) + '</td>'
       + '<td>' + ((o.p[0] || o.p[1]) ? o.p[0] + '<span> / ' + o.p[1] + '</span>' : '<span>-</span>') + '</td>' + gapTd(o.t) + '</tr>';
   };
-  var head1 = '<thead><tr><th>구분</th><th>계</th><th>일반직</th><th>무기직</th><th>기간제<small> 일반/단시간</small></th><th>결원</th></tr></thead>';
+  var head1 = function (f) { return '<thead><tr><th>' + (f === '출연금' ? '소속' : '사업') + '</th><th>계</th><th>일반직</th><th>무기직</th><th>기간제<small> 일반/단시간</small></th><th>결원</th></tr></thead>'; };
   var fundTable = function (f, sub) {
-    var body = row('hcs-total', '계', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '12개관·본부 3팀' : ''); }).join('');
-    return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + head1 + '<tbody>' + body + '</tbody></table></div>';
+    var body = row('hcs-total', '', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '12개관·본부 3팀' : ''); }).join('');
+    return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + head1(f) + '<tbody>' + body + '</tbody></table></div>';
   };
   var all = T['총계'];
   var totline = '계 <b>' + all.t[0] + '(' + all.t[1] + ')</b> · 일반직 <b>' + all.g[0] + '(' + all.g[1] + ')</b> · 무기직 <b>' + all.m[0] + '(' + all.m[1] + ')</b>'
@@ -5885,10 +5885,10 @@ function ov2TalentHcDetailHtml(byDept) {
       + '<td>' + headcount(o) + '</td>' + o.g.map(function (v) { return '<td>' + n(v) + '</td>'; }).join('')
       + contractCell(o.c) + '<td><span>0</span></td></tr>';
   };
-  var unitHead = '<thead><tr><th>구분</th><th>계</th>' + TALENT_HC_GRADES.map(function (g) { return '<th>' + g + '</th>'; }).join('') + '<th>계약직</th><th>공무직</th></tr></thead>';
+  var unitHead = function (f) { return '<thead><tr><th>' + (f === '출연금' ? '소속' : '사업') + '</th><th>계</th>' + TALENT_HC_GRADES.map(function (g) { return '<th>' + g + '</th>'; }).join('') + '<th>계약직</th><th>공무직</th></tr></thead>'; };
   var fundTable = function (f, sub) {
-    var body = unitRow('hcs-total', '계', tot[f]) + TALENT_HC_UNITS.filter(function (u) { return u.fund === f; }).map(function (u) { return unitRow('hcs-unit', u.unit, u, u.sub); }).join('');
-    return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + unitHead + '<tbody>' + body + '</tbody></table></div>';
+    var body = unitRow('hcs-total', '', tot[f]) + TALENT_HC_UNITS.filter(function (u) { return u.fund === f; }).map(function (u) { return unitRow('hcs-unit', u.unit, u, u.sub); }).join('');
+    return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + unitHead(f) + '<tbody>' + body + '</tbody></table></div>';
   };
   var all = tot['계'];
   var totline = '현원 계 <b>' + headcount(all) + '</b> · 일반직 <b>' + sum(all.g) + '</b> · 계약직 <b>' + sum(all.c) + '</b> · 공무직 <b>0</b>';
