@@ -5937,8 +5937,6 @@ function ov2TalentHcDetailHtml(byDept) {
     + '<div class="hcs-head"><h2 class="section-heading section-heading-lg hcs-title">' + views[def][1] + ' 정현원</h2>'
     + '<div class="hcs-seg" role="tablist">' + views.map(function (v, i) { return '<button type="button" role="tab" data-v="' + v[0] + '" data-t="' + v[1] + '"' + (i === def ? ' class="on"' : '') + ' onclick="selectHscfHcView(this)">' + v[1] + '</button>'; }).join('') + '</div></div>'
     + views.map(function (v, i) { return '<div class="hcs-view" data-v="' + v[0] + '"' + (i === def ? '' : ' style="display:none;"') + '>' + v[2] + '</div>'; }).join('')
-    + '<p class="ov2-pbar-note">소관별 = 정원(현원), 시 설명자료(2026.8.31). 재원별·직급별 = 현원, 재단 「(붙임 2) 2027년 인건비 산출 자료」(신규 채용 제외, 정원 칸 없음). '
-    + '붙임 2 현원 ' + headcount(all) + '명은 8.31 현원 164명보다 15명 적다. 출연금 4개 구분과 장학본부(장학사업팀+장학관 29)는 8.31과 같고, 이음터·도서관 73명 vs 다원·서연송린이음터본부 88명에서만 차이 난다(공무직 미기재분으로 추정).</p>'
     + '<div class="tl-hc-row" style="margin-top:12px;">' + note + '</div>'
     + '</div>';
 }
