@@ -277,6 +277,33 @@ table.summary td.diff.down { color: #4A5578; }
 .hc-card-table td.hc-empty { color: var(--text-soft); }
 .hc-card-table td.hc-short, .hc-card-table td.hc-short span { color: var(--danger); }
 .hc-card-table td.hc-over, .hc-card-table td.hc-over span { color: var(--warning); }
+/* 문화관광재단 정현원 총괄 — 재원별(출연금 좌·위탁금 우)/소관별/직급별 전환 표. 계는 첫 행 */
+.hcs-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 26px 0 8px; }
+.hcs-head .section-heading { margin: 0; }
+.hcs-seg { display: inline-flex; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
+.hcs-seg button { all: unset; cursor: pointer; font-size: 13px; color: var(--text-muted); padding: 5px 14px; border-radius: 6px; }
+.hcs-seg button.on { background: rgba(255,255,255,.12); color: var(--text); font-weight: 700; }
+.hcs-seg button:focus-visible { outline: 2px solid #7B9EFF; }
+.hcs-totline { margin: 0 0 12px; font-size: 14px; color: var(--text-muted); }
+.hcs-totline b { color: var(--text); font-size: 16px; margin: 0 4px 0 2px; font-variant-numeric: tabular-nums; }
+.hcs-totline b.hc-short { color: var(--danger); }
+.hcs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+@media (max-width: 1100px) { .hcs-split { grid-template-columns: 1fr; } }
+.hcs-split h3 { margin: 0 0 4px; font-size: 16px; color: var(--text); }
+.hcs-split h3 small { margin-left: 6px; font-size: 12px; font-weight: 500; color: var(--text-soft); }
+.hcs-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.hcs-table.hcs-single { max-width: 820px; }
+.hcs-table th { font-size: 13px; font-weight: 600; color: var(--text-soft); text-align: right; padding: 4px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.hcs-table th small { font-weight: 500; font-size: 11px; }
+.hcs-table td { padding: 4px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; color: var(--text); }
+.hcs-table th:first-child, .hcs-table td:first-child { text-align: left; }
+.hcs-table td span { color: var(--text-muted); }
+.hcs-table td small { margin-left: 6px; font-size: 11.5px; color: var(--text-soft); }
+.hcs-table tr.hcs-total td { font-weight: 800; font-size: 14.5px; border-bottom: 1px solid var(--text-soft); }
+.hcs-table tr.hcs-unit td:first-child { padding-left: 22px; font-weight: 600; }
+.hcs-table td.hcs-gap { font-weight: 700; }
+.hcs-table td.hcs-gap.hc-short { color: var(--danger); }
+.hcs-table td.hcs-gap.hc-over { color: var(--warning); }
 .tl-hc-table { width: auto; font-size: 13px; } .tl-hc-table th, .tl-hc-table td { padding: 3px 9px; font-size: 13px; }
 .tl-hc-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
 .tl-hc-note { flex: 1 1 320px; background: var(--bg-hover); border: 1px solid var(--border); border-left: 4px solid var(--warning); border-radius: 10px; padding: 10px 14px; font-size: 14.5px; line-height: 1.55; color: var(--text); }
@@ -5505,7 +5532,7 @@ function ov2ExecutionByFundTable(rows) {
 
 // "정현원 현황" 제목 줄 우측에 연도 아코디언(2026/2027)을 붙인 섹션 HTML을 만든다.
 // 2027년엔 아직 실제 데이터가 없어 클릭하면 같은 자리에 빈 상태만 보여준다.
-function ovPersonnelSectionHtml(personnelInnerHtml, asOfDate) {
+function ovPersonnelSectionHtml(personnelInnerHtml, asOfDate, title) {
   var yearSlot = document.getElementById('ov-year-acc-slot');
   if (yearSlot) {
     yearSlot.innerHTML = '<div class="ov-year-acc">'
@@ -5521,7 +5548,7 @@ function ovPersonnelSectionHtml(personnelInnerHtml, asOfDate) {
   }
   return '<div class="ov-personnel-section">'
     + '<div class="section-title-row">'
-    +   '<h2 class="section-heading section-heading-lg">정현원 현황' + (asOfDate ? ' <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">(기준일: ' + escapeHtml(asOfDate) + ')</span>' : '') + '</h2>'
+    +   '<h2 class="section-heading section-heading-lg">' + (title || '정현원 현황') + (asOfDate ? ' <span class="ov-asof-label" style="font-size:0.55em;font-weight:400;color:var(--muted,#8a94a6);">(기준일: ' + escapeHtml(asOfDate) + ')</span>' : '') + '</h2>'
     + '</div>'
     + '<div class="ov-year-panel" data-year="2026">' + personnelInnerHtml + '</div>'
     + '<div class="ov-year-panel" data-year="2027" style="display:none;"><div class="summary-box"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
@@ -5711,6 +5738,89 @@ function ov2HscfFundHcHtml() {
     + '<p class="ov2-pbar-note">무기직 = 체육직·공무직(시설체육운영팀은 체육직 14(13) 포함). 기간제는 정원 외 현원. 출처: 재단 「본부별·재원별 정현원 현황 보고」. 빨간색 = 결원, 노란색 = 정원 초과 현원.</p></div>';
 }
 
+// 문화관광재단 정현원 총괄 아래 상세표 — 같은 HSCF_FUND_HC를 재원별(출연금 좌·위탁금 우)/소관별/직급별 세 가지로 묶어 버튼으로 전환한다.
+// 계는 항상 첫 행. 숫자는 정원(현원), 결원 열만 색(빨강 부족·노랑 초과).
+var HSCF_HC_HEAD = {
+  '시설체육운영팀': '경영기획본부', '예술의전당공연기획팀': '예술의전당본부', '예술의전당무대기술팀': '예술의전당본부', '예술의전당시설운영팀': '예술의전당본부',
+  '공연기획팀': '예술진흥본부', '무대기술팀': '예술진흥본부', '미디어팀': '문화진흥본부', '생활문화팀': '문화진흥본부'
+};
+function ov2HscfHcDetailHtml() {
+  var GK = ['g2', 'g3', 'g4', 'g5', 'g6'];
+  var blank = function (n) { return { n: n, t: [0, 0], g: [0, 0], m: [0, 0], p: [0, 0], f: {} }; };
+  var add = function (o, r) {
+    var gen = [0, 0];
+    GK.forEach(function (k) { if (r[k]) { gen[0] += r[k][0]; gen[1] += r[k][1]; } });
+    o.t[0] += r.total[0]; o.t[1] += r.total[1]; o.g[0] += gen[0]; o.g[1] += gen[1];
+    if (r.mu) { o.m[0] += r.mu[0]; o.m[1] += r.mu[1]; }
+    if (r.temp) { o.p[0] += r.temp[0]; o.p[1] += r.temp[1]; }
+    o.f[r.fund] = 1;
+  };
+  var fundUnits = { '출연금': [], '위탁금': [] }, heads = [], idx = {};
+  HSCF_FUND_HC.forEach(function (grp) {
+    grp.rows.forEach(function (r) {
+      var unit = r.fund === '출연금' ? grp.head : (grp.head === '도서관본부' ? '도서관' : (HSCF_HC_UNIT[r.team] || r.team));
+      var uk = 'U' + r.fund + unit;
+      if (!idx[uk]) { idx[uk] = blank(unit); fundUnits[r.fund].push(idx[uk]); }
+      add(idx[uk], r);
+      var head = HSCF_HC_HEAD[r.team] || grp.head;
+      if (!idx['H' + head]) { idx['H' + head] = blank(head); heads.push(idx['H' + head]); }
+      add(idx['H' + head], r);
+    });
+  });
+  var T = {};
+  Object.keys(HSCF_FUND_HC_TOTAL).forEach(function (k) {
+    var x = HSCF_FUND_HC_TOTAL[k], o = blank(k);
+    o.t = x.total; o.m = x.mu; o.p = x.temp;
+    GK.forEach(function (g) { o.g[0] += x[g][0]; o.g[1] += x[g][1]; });
+    T[k] = o;
+  });
+  var pc = function (v) { return (v[0] || v[1]) ? v[0] + '<span>(' + v[1] + ')</span>' : '<span>-</span>'; };
+  var gapTd = function (v) {
+    var d = v[1] - v[0];
+    return '<td class="hcs-gap' + (d < 0 ? ' hc-short' : (d > 0 ? ' hc-over' : '')) + '">' + (d === 0 ? '<span>0</span>' : (d > 0 ? '+' : '') + d) + '</td>';
+  };
+  var row = function (cls, name, o, sub) {
+    return '<tr class="' + cls + '"><td>' + escapeHtml(name) + (sub ? '<small>' + escapeHtml(sub) + '</small>' : '') + '</td>'
+      + '<td>' + pc(o.t) + '</td><td>' + pc(o.g) + '</td><td>' + pc(o.m) + '</td>'
+      + '<td>' + ((o.p[0] || o.p[1]) ? o.p[0] + '<span> / ' + o.p[1] + '</span>' : '<span>-</span>') + '</td>' + gapTd(o.t) + '</tr>';
+  };
+  var head1 = '<thead><tr><th>구분</th><th>계</th><th>일반직</th><th>무기직</th><th>기간제<small> 일반/단시간</small></th><th>결원</th></tr></thead>';
+  var fundTable = function (f, sub) {
+    var body = row('hcs-total', '계', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '12개관·본부 3팀' : ''); }).join('');
+    return '<div><h3>' + f + '<small>' + sub + '</small></h3><table class="hcs-table">' + head1 + '<tbody>' + body + '</tbody></table></div>';
+  };
+  var all = T['총계'];
+  var fundView = '<p class="hcs-totline">계 <b>' + all.t[0] + '(' + all.t[1] + ')</b> · 일반직 <b>' + all.g[0] + '(' + all.g[1] + ')</b> · 무기직 <b>' + all.m[0] + '(' + all.m[1] + ')</b>'
+    + ' · 기간제 <b>' + all.p[0] + ' / ' + all.p[1] + '</b> · 결원 <b class="hc-short">' + (all.t[1] - all.t[0]) + '</b></p>'
+    + '<div class="hcs-split">' + fundTable('출연금', '기관운영 인건비 일괄 편성') + fundTable('위탁금', '시설·위탁사업별 편성') + '</div>';
+  var headView = '<table class="hcs-table hcs-single">' + head1 + '<tbody>' + row('hcs-total', '계', all)
+    + heads.map(function (h) { return row('hcs-unit', h.n, h, Object.keys(h.f).join('·')); }).join('') + '</tbody></table>';
+  var GRADES = [['g2', '2급', '대표이사 포함'], ['g3', '3급'], ['g4', '4급'], ['g5', '5급'], ['g6', '6급'], ['mu', '무기직']];
+  var C = HSCF_FUND_HC_TOTAL;
+  var gradeRow = function (cls, name, sub, a, b, c) {
+    return '<tr class="' + cls + '"><td>' + name + (sub ? '<small>' + sub + '</small>' : '') + '</td><td>' + pc(a) + '</td><td>' + pc(b) + '</td><td>' + pc(c) + '</td>' + gapTd(a) + '</tr>';
+  };
+  var gradeView = '<table class="hcs-table hcs-single"><thead><tr><th>직급</th><th>계</th><th>출연금</th><th>위탁금</th><th>결원</th></tr></thead><tbody>'
+    + gradeRow('hcs-total', '계', '', C['총계'].total, C['출연금'].total, C['위탁금'].total)
+    + GRADES.map(function (g) { return gradeRow('hcs-unit', g[1], g[2], C['총계'][g[0]], C['출연금'][g[0]], C['위탁금'][g[0]]); }).join('')
+    + '<tr class="hcs-unit"><td>기간제<small>정원 외, 일반/단시간</small></td>'
+    + ['총계', '출연금', '위탁금'].map(function (k) { return '<td>' + C[k].temp[0] + '<span> / ' + C[k].temp[1] + '</span></td>'; }).join('') + '<td><span>-</span></td></tr>'
+    + '</tbody></table>';
+  var views = [['fund', '재원별', fundView], ['head', '소관별', headView], ['grade', '직급별', gradeView]];
+  return '<div class="hcs">'
+    + '<div class="hcs-head"><h2 class="section-heading section-heading-lg hcs-title">재원별 정현원</h2>'
+    + '<div class="hcs-seg" role="tablist">' + views.map(function (v, i) { return '<button type="button" role="tab" data-v="' + v[0] + '" data-t="' + v[1] + '"' + (i === 0 ? ' class="on"' : '') + ' onclick="selectHscfHcView(this)">' + v[1] + '</button>'; }).join('') + '</div></div>'
+    + views.map(function (v, i) { return '<div class="hcs-view" data-v="' + v[0] + '"' + (i === 0 ? '' : ' style="display:none;"') + '>' + v[2] + '</div>'; }).join('')
+    + '<p class="ov2-pbar-note">무기직 = 체육직·공무직(시설체육운영팀은 체육직 14(13) 포함). 기간제는 정원 외 현원. 출처: 재단 「본부별·재원별 정현원 현황 보고」</p>'
+    + '</div>';
+}
+function selectHscfHcView(btn) {
+  var box = btn.closest('.hcs');
+  box.querySelectorAll('.hcs-seg button').forEach(function (b) { b.classList.toggle('on', b === btn); });
+  box.querySelectorAll('.hcs-view').forEach(function (v) { v.style.display = v.getAttribute('data-v') === btn.getAttribute('data-v') ? '' : 'none'; });
+  box.querySelector('.hcs-title').textContent = btn.getAttribute('data-t') + ' 정현원';
+}
+
 // 화성시인재육성재단 재원별·직급별 정현원 (출처: 재단 「(붙임1) 2027년 본예산(안) 인건비 산출 기초자료(현원)」)
 // 칸 = [정원, 현원]. 일반직은 붙임1 정원 칸이 공란이라 현원만(정원 null). 기간제 = [2027 채용, 2026 현원].
 var TALENT_FUND_HC_HEAD = [['일반직', ['3급', '4급', '5급', '6급']], ['계약직', ['대표', '가급', '나급']], ['무기계약', ['라급', '마급']], ['기간제', ['채용/현원']]];
@@ -5823,14 +5933,17 @@ function renderOv2Overview(instKey) {
     d.org.asOfDate
   );
   var gradeHtml = '';
+  if (instKey === 'hscf') {
+    orgHtml = ovPersonnelSectionHtml('<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + ov2HscfHcDetailHtml(), d.org.asOfDate, '정현원 총괄');
+  }
 
   // 3) 소관별 정현원 - 정현원 현황과 나란히 배치해 높이를 맞추고 전체 섹션 높이를 줄임
-  var deptPersonHtml = '<div class="ov2-two-col ov2-personnel-combo">'
+  var deptPersonHtml = instKey === 'hscf' ? '' : '<div class="ov2-two-col ov2-personnel-combo">'
     + orgHtml
     + '<div class="ov2-dept-col"><div class="section-title-row"><h2 class="section-heading section-heading-lg">소관별 정현원</h2></div>'
     +   '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2026">' + ov2PersonnelVBarList(d.byDept) + '</div>' + '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
     + '</div>';
-  orgHtml = '';
+  if (instKey !== 'hscf') orgHtml = '';
 
   // 4) 총수입 총괄 / 총지출 총괄
   var revTotal26 = d.revenueItems.reduce(function (a, r) { return a + r.y26; }, 0);
@@ -6034,7 +6147,7 @@ function renderOv2Overview(instKey) {
 
   // 7) 지출총괄표는 위 incomeExpenseHtml 안에 이미 포함됨
 
-  var corpHcHtml = instKey === 'corp' ? ov2CorpFacilityHcHtml() : (instKey === 'hscf' ? ov2HscfFundHcHtml() : (instKey === 'talent' ? ov2TalentFundHcHtml() : ''));
+  var corpHcHtml = instKey === 'corp' ? ov2CorpFacilityHcHtml() : (instKey === 'hscf' ? '' : (instKey === 'talent' ? ov2TalentFundHcHtml() : ''));
   document.getElementById('overview-v2-slot').innerHTML = orgHtml + gradeHtml + deptPersonHtml + corpHcHtml + budgetCompareHtml + incomeExpenseHtml;
 }
 
