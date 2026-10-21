@@ -307,6 +307,11 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-table td.hcs-gap { font-weight: 700; }
 .hcs-table td.hcs-gap.hc-short { color: var(--danger); }
 .hcs-table td.hcs-gap.hc-over { color: var(--warning); }
+.hcs-table.hcs-wide th { text-align: center; white-space: normal; word-break: keep-all; line-height: 1.3; vertical-align: bottom; color: var(--text); font-weight: 700; }
+.hcs-table.hcs-wide th small { display: block; margin-top: 2px; font-weight: 500; color: var(--text-soft); }
+.hcs-table.hcs-wide td { text-align: center; }
+.hcs-table.hcs-wide th:first-child, .hcs-table.hcs-wide td:first-child { text-align: left; color: var(--text-soft); }
+.hcs-table.hcs-wide td.hcs-tcol { font-weight: 800; font-size: 16.5px; }
 .tl-hc-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
 .tl-hc-note { flex: 1 1 320px; background: var(--bg-hover); border: 1px solid var(--border); border-left: 4px solid var(--warning); border-radius: 10px; padding: 10px 14px; font-size: 14.5px; line-height: 1.55; color: var(--text); }
 .tl-hc-note-title { margin: 0 0 4px; font-size: 15px; font-weight: 800; color: var(--text); }
@@ -5876,24 +5881,27 @@ function ov2TalentHcDetailHtml(byDept) {
     var d = cur - cap;
     return '<td class="hcs-gap' + (d < 0 ? ' hc-short' : (d > 0 ? ' hc-over' : '')) + '">' + (d === 0 ? '<span>0</span>' : (d > 0 ? '+' : '') + d) + '</td>';
   };
-  var deptRow = function (cls, name, cap, cur, sub) {
-    return '<tr class="' + cls + '"><td>' + escapeHtml(name) + (sub ? '<small>' + escapeHtml(sub) + '</small>' : '') + '</td>'
-      + '<td>' + cap + '<span>(' + cur + ')</span></td>' + gapTd(cap, cur) + '</tr>';
-  };
-  var headView = '<table class="hcs-table hcs-single" style="max-width:620px;"><thead><tr><th>본부</th><th>정원(현원)</th><th>결원</th></tr></thead><tbody>'
-    + deptRow('hcs-total', '계', sum(byDept.map(function (x) { return x.capacity; })), sum(byDept.map(function (x) { return x.current; })))
-    + byDept.map(function (x) { return deptRow('hcs-unit', x.label, x.capacity, x.current, TALENT_DEPT_FUND[x.label]); }).join('')
+  // 소관별·직급별은 가로형(열 = 본부/직급)으로 눕혀 표가 화면 폭을 채우게 한다.
+  var cols = [{ label: '계', capacity: sum(byDept.map(function (x) { return x.capacity; })), current: sum(byDept.map(function (x) { return x.current; })), total: true }].concat(byDept);
+  var tcol = function (c) { return c.total ? ' class="hcs-tcol"' : ''; };
+  var headView = '<table class="hcs-table hcs-wide"><thead><tr><th>구분</th>'
+    + cols.map(function (c) { return '<th>' + escapeHtml(c.label) + (c.total ? '' : '<small>' + escapeHtml(TALENT_DEPT_FUND[c.label] || '') + '</small>') + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + '<tr><td>정원</td>' + cols.map(function (c) { return '<td' + tcol(c) + '>' + c.capacity + '</td>'; }).join('') + '</tr>'
+    + '<tr><td>현원</td>' + cols.map(function (c) { return '<td' + tcol(c) + '>' + c.current + '</td>'; }).join('') + '</tr>'
+    + '<tr><td>결원</td>' + cols.map(function (c) { return gapTd(c.capacity, c.current); }).join('') + '</tr>'
     + '</tbody></table>';
 
-  var F = ['계', '출연금', '위탁금'];
-  var gradeRow = function (cls, name, sub, vals) {
-    return '<tr class="' + cls + '"><td>' + name + (sub ? '<small>' + sub + '</small>' : '') + '</td>' + vals.map(function (v) { return '<td>' + n(v) + '</td>'; }).join('') + '</tr>';
+  var gradeHeads = TALENT_HC_GRADES.map(function (g) { return [g, '일반직']; })
+    .concat(TALENT_HC_CONTRACT.map(function (k) { return [k, '계약직']; }))
+    .concat([['공무직', '붙임 2 미기재']]);
+  var gradeRow = function (f) {
+    var o = tot[f];
+    return '<tr' + (f === '계' ? ' class="hcs-total"' : '') + '><td>' + f + '</td><td class="hcs-tcol">' + headcount(o) + '</td>'
+      + o.g.concat(o.c).map(function (v) { return '<td>' + n(v) + '</td>'; }).join('') + '<td>' + n(0) + '</td></tr>';
   };
-  var gradeView = '<table class="hcs-table hcs-single" style="max-width:620px;"><thead><tr><th>직급</th><th>계</th><th>출연금</th><th>위탁금</th></tr></thead><tbody>'
-    + gradeRow('hcs-total', '계', '', F.map(function (f) { return headcount(tot[f]); }))
-    + TALENT_HC_GRADES.map(function (g, i) { return gradeRow('hcs-unit', g, '', F.map(function (f) { return tot[f].g[i]; })); }).join('')
-    + TALENT_HC_CONTRACT.map(function (k, i) { return gradeRow('hcs-unit', '계약직 ' + k, '', F.map(function (f) { return tot[f].c[i]; })); }).join('')
-    + gradeRow('hcs-unit', '공무직', '붙임 2 미기재', [0, 0, 0])
+  var gradeView = '<table class="hcs-table hcs-wide"><thead><tr><th>재원</th><th>계</th>'
+    + gradeHeads.map(function (h) { return '<th>' + h[0] + '<small>' + h[1] + '</small></th>'; }).join('') + '</tr></thead><tbody>'
+    + ['계', '출연금', '위탁금'].map(gradeRow).join('')
     + '</tbody></table>';
 
   // 결원 인건비 편성 기준(화성시 세부지침 vs 행안부 지침)과 2027 검토 반영 내용
