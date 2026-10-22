@@ -329,6 +329,7 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-table.hcs-wide th small { display: block; margin-top: 2px; font-weight: 500; color: var(--text-soft); }
 .hcs-table.hcs-wide td { text-align: center; }
 .hcs-table.hcs-wide th:first-child, .hcs-table.hcs-wide td:first-child { text-align: left; color: var(--text-soft); }
+.hcs-table.hcs-bydept thead th:nth-child(n+3) { color: #D8C7A3; }
 .hcs-table.hcs-wide td.hcs-tcol { font-weight: 800; font-size: 18.5px; }
 .hcs .table-scroll { width: 100%; overflow-x: auto; }
 .tl-hc-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
@@ -5836,7 +5837,7 @@ function ov2HscfHcDetailHtml() {
     return '<tr><td>' + label + '</td>' + hCols.map(function (c) { return cell(c); }).join('') + '</tr>';
   };
   var hNum = function (key) { return function (c) { return '<td' + (c.total ? ' class="hcs-tcol"' : '') + '>' + pc(c.o[key]) + '</td>'; }; };
-  var headView = '<div class="table-scroll"><table class="hcs-table hcs-wide"><thead><tr><th>구분</th>'
+  var headView = '<div class="table-scroll"><table class="hcs-table hcs-wide hcs-bydept"><thead><tr><th>구분</th>'
     + hCols.map(function (c) { return '<th>' + escapeHtml(c.n) + (c.sub ? '<small>' + escapeHtml(c.sub) + '</small>' : '') + '</th>'; }).join('') + '</tr></thead><tbody>'
     + hRow('계', hNum('t')) + hRow('일반직', hNum('g')) + hRow('무기직', hNum('m'))
     + hRow('기간제', function (c) { return '<td' + (c.total ? ' class="hcs-tcol"' : '') + '>' + tempTxt(c.o.p) + '</td>'; })
@@ -5918,7 +5919,7 @@ function ov2TalentHcDetailHtml(byDept) {
   // 소관별·직급별은 가로형(열 = 본부/직급)으로 눕혀 표가 화면 폭을 채우게 한다.
   var cols = [{ label: '계', capacity: sum(byDept.map(function (x) { return x.capacity; })), current: sum(byDept.map(function (x) { return x.current; })), total: true }].concat(byDept);
   var tcol = function (c) { return c.total ? ' class="hcs-tcol"' : ''; };
-  var headView = '<table class="hcs-table hcs-wide"><thead><tr><th>구분</th>'
+  var headView = '<table class="hcs-table hcs-wide hcs-bydept"><thead><tr><th>구분</th>'
     + cols.map(function (c) { return '<th>' + escapeHtml(c.label) + (c.total ? '' : '<small>' + escapeHtml(TALENT_DEPT_FUND[c.label] || '') + '</small>') + '</th>'; }).join('') + '</tr></thead><tbody>'
     + '<tr><td>정원</td>' + cols.map(function (c) { return '<td' + tcol(c) + '>' + c.capacity + '</td>'; }).join('') + '</tr>'
     + '<tr><td>현원</td>' + cols.map(function (c) { return '<td' + tcol(c) + '>' + c.current + '</td>'; }).join('') + '</tr>'
