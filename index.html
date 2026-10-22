@@ -1154,6 +1154,8 @@ tr.top-total td.num, tr.top-total td.num span { color: #E8B84B !important; }
 /* 사업명 글자색만 강조 (배경은 안 건드림) - review-color(확인용 배경 표시)와 별개 */
 .name-content.name-color-blue { color: #3B82F6; }
 .name-content.name-color-red { color: #EF4444; }
+tr.val-red td[data-field="calc"], tr.val-red td[data-field="calc"] *,
+tr.val-red td[data-field="amt26"] { color: #EF4444 !important; }
 .name-content.name-color-green { color: #22C55E; }
 .name-content.name-color-yellow { color: #EAB308; }
 tr.lvl-정책 td { font-weight: 700; color: rgba(255,255,255,.92); }
@@ -6890,6 +6892,8 @@ function renderTreeRows(node, out, parentDepth, parentPath, parentVisible, paren
   var isNew = node.amt25 != null && Number(node.amt25) === 0 && (Number(node.amt26) || 0) > 0;
   var newAttr = isNew ? ' data-new="1"' : '';
   var reviewColorCls = node.reviewColor ? ' review-color-' + node.reviewColor : '';
+  // name_color가 'vred'면 항목명은 그대로 두고 산출기초·예산액만 빨간 글씨로 (수정본 변경분 표시용)
+  if (node.nameColor === 'vred') reviewColorCls += ' val-red';
   var reviewDot = '<span class="review-color-dot' + (node.reviewColor ? ' active c-' + node.reviewColor : '') + '" onclick="cycleReviewColor(' + node.id + ', this)" title="확인용 색 표시(클릭하면 색 고르기)"></span>';
   var cellCheckBtn = '<label class="cell-check-btn" title="눌러서 저장">'
     + '<input type="checkbox" onchange="saveBudgetCellEdit(' + node.id + ', this)">'
