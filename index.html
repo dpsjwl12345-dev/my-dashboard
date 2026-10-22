@@ -300,6 +300,8 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-split .hcs-table thead th:nth-child(n+3) { color: #D8C7A3; }
 .hcs-split .hcs-table { table-layout: fixed; }
 .hcs-split .hcs-table th:first-child { width: 27%; }
+.hcs-split .hcs-table.hcs-talent th:first-child { width: 21%; }
+.hcs-split .hcs-table.hcs-talent th:nth-child(7) { width: 17%; }
 .hcs-split .hcs-table th small, .hcs-split .hcs-table td small { display: block; margin-left: 0; }
 .hcs-split .hcs-table td small { font-size: 12.5px; white-space: normal; }
 .hcs-split .hcs-table td small.hcs-inline { display: inline; margin-left: 2px; }
@@ -5908,7 +5910,7 @@ function ov2TalentHcDetailHtml(byDept) {
   var unitHead = function (f) { return '<thead><tr><th>' + f + '</th><th>계</th>' + TALENT_HC_GRADES.map(function (g) { return '<th>' + g + '</th>'; }).join('') + '<th>계약직</th><th>공무직</th></tr></thead>'; };
   var fundTable = function (f) {
     var body = unitRow('hcs-total', '계', tot[f]) + TALENT_HC_UNITS.filter(function (u) { return u.fund === f; }).map(function (u) { return unitRow('hcs-unit', u.unit, u, u.sub); }).join('');
-    return '<div><table class="hcs-table">' + unitHead(f) + '<tbody>' + body + '</tbody></table></div>';
+    return '<div><table class="hcs-table hcs-talent">' + unitHead(f) + '<tbody>' + body + '</tbody></table></div>';
   };
   var all = tot['계'];
   var totline = '현원 계 <b>' + headcount(all) + '</b> · 일반직 <b>' + sum(all.g) + '</b> · 계약직 <b>' + sum(all.c) + '</b> · 공무직 <b>0</b>';
