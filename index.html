@@ -301,8 +301,8 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-split .hcs-table thead th:nth-child(n+3) { color: #D8C7A3; }
 .hcs-split .hcs-table { table-layout: fixed; }
 .hcs-split .hcs-table th:first-child { width: 27%; }
-.hcs-split .hcs-table.hcs-talent th:first-child { width: 18%; }
-.hcs-split .hcs-table.hcs-talent th:nth-child(7) { width: 22%; }
+.hcs-split .hcs-table.hcs-talent th:first-child { width: 21%; }
+.hcs-split .hcs-table.hcs-talent th:nth-child(7) { width: 20%; }
 .hcs-split .hcs-table.hcs-talent td:nth-child(7), .hcs-split .hcs-table.hcs-talent td:nth-child(7) small { white-space: nowrap; }
 .hcs-split.hcs-split-talent { gap: 14px; }
 .hcs-split .hcs-table th small, .hcs-split .hcs-table td small { display: block; margin-left: 0; }
@@ -335,7 +335,8 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-table.hcs-wide td { text-align: center; }
 .hcs-table.hcs-wide th:first-child, .hcs-table.hcs-wide td:first-child { text-align: left; color: var(--text-soft); }
 .hcs-table.hcs-bydept thead th:nth-child(n+3), .hcs-table.hcs-bygrade thead th:nth-child(n+3) { color: #D8C7A3; }
-.hcs-table.hcs-bygrade td.hcs-tcol, .hcs-table.hcs-bygrade tr.hcs-total td { font-weight: 400; }
+.hcs-table.hcs-wide.hcs-bygrade td.hcs-tcol, .hcs-table.hcs-wide.hcs-bygrade tr.hcs-total td { font-weight: 400; font-size: 17.5px; }
+.hcs-table.hcs-wide.hcs-bygrade th, .hcs-table.hcs-wide.hcs-bygrade td, .hcs-table.hcs-wide.hcs-bygrade th:first-child, .hcs-table.hcs-wide.hcs-bygrade td:first-child { text-align: center; vertical-align: middle; }
 .hcs-table.hcs-wide th small.hcs-inline { display: inline; margin: 0 0 0 2px; }
 .hcs-table.hcs-wide td.hcs-tcol { font-weight: 800; font-size: 18.5px; }
 .hcs .table-scroll { width: 100%; overflow-x: auto; }
@@ -5952,14 +5953,14 @@ function ov2TalentHcDetailHtml(byDept) {
 
   var gradeHeads = TALENT_HC_GRADES.map(function (g) { return [g, '일반직']; })
     .concat(TALENT_HC_CONTRACT.map(function (k) { return [k, '계약직']; }))
-    .concat([['공무직', '붙임 2 미기재']]);
+    .concat([['공무직', '']]);
   var gradeRow = function (f) {
     var o = tot[f];
     return '<tr' + (f === '계' ? ' class="hcs-total"' : '') + '><td>' + f + '</td><td class="hcs-tcol">' + headcount(o) + '</td>'
       + o.g.concat(o.c).map(function (v) { return '<td>' + n(v) + '</td>'; }).join('') + '<td>' + n(0) + '</td></tr>';
   };
   var gradeView = '<table class="hcs-table hcs-wide hcs-bygrade"><thead><tr><th>재원</th><th>계</th>'
-    + gradeHeads.map(function (h) { return '<th>' + h[0] + '<small>' + h[1] + '</small></th>'; }).join('') + '</tr></thead><tbody>'
+    + gradeHeads.map(function (h) { return '<th>' + h[0] + (h[1] ? '<small>' + h[1] + '</small>' : '') + '</th>'; }).join('') + '</tr></thead><tbody>'
     + ['계', '출연금', '위탁금'].map(gradeRow).join('')
     + '</tbody></table>';
 
