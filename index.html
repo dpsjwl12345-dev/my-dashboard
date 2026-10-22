@@ -302,6 +302,7 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-split .hcs-table th:first-child { width: 27%; }
 .hcs-split .hcs-table th small, .hcs-split .hcs-table td small { display: block; margin-left: 0; }
 .hcs-split .hcs-table td small { font-size: 12.5px; white-space: normal; }
+.hcs-split .hcs-table td small.hcs-inline { display: inline; margin-left: 2px; }
 .hcs-split .hcs-table td { text-align: center; }
 .hcs-split .hcs-table tr.hcs-unit td:first-child { text-align: left; white-space: normal; word-break: keep-all; }
 .hcs-split .hcs-table tr.hcs-total td:first-child { text-align: center; font-weight: 400; color: var(--text-muted); }
@@ -5815,13 +5816,13 @@ function ov2HscfHcDetailHtml() {
     return '<td class="hcs-gap' + (d < 0 ? ' hc-short' : (d > 0 ? ' hc-over' : '')) + '">' + (d === 0 ? '<span>0</span>' : (d > 0 ? '+' : '') + d) + '</td>';
   };
   var row = function (cls, name, o, sub) {
-    return '<tr class="' + cls + '"><td>' + escapeHtml(name) + (sub ? '<small>' + escapeHtml(sub) + '</small>' : '') + '</td>'
+    return '<tr class="' + cls + '"><td>' + escapeHtml(name) + (sub ? ' <small class="hcs-inline">' + escapeHtml(sub) + '</small>' : '') + '</td>'
       + '<td>' + pc(o.t) + '</td><td>' + pc(o.g) + '</td><td>' + pc(o.m) + '</td>'
       + '<td>' + ((o.p[0] || o.p[1]) ? o.p[0] + '<span> / ' + o.p[1] + '</span>' : '<span>-</span>') + '</td>' + gapTd(o.t) + '</tr>';
   };
   var head1 = function (f) { return '<thead><tr><th>' + f + '</th><th>계</th><th>일반직</th><th>무기직</th><th>기간제</th><th>결원</th></tr></thead>'; };
   var fundTable = function (f) {
-    var body = row('hcs-total', '계', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '12개관·본부 3팀' : ''); }).join('');
+    var body = row('hcs-total', '계', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '(12개관 본부3팀)' : ''); }).join('');
     return '<div><table class="hcs-table">' + head1(f) + '<tbody>' + body + '</tbody></table><p class="hcs-note">※ 기간제: 일반 / 단시간</p></div>';
   };
   var all = T['총계'];
