@@ -5660,7 +5660,9 @@ function ov2FcHcTableHtml(d) {
   };
   var inner = d.personnelGroups[0].rows, ranks = d.personnelGroups[1].rows;
   // 직렬별: 정원 내(정원 있는 줄)와 정원 외(sectionLabel 이후 현원만 있는 줄)
-  var inRows = inner.filter(function (r) { return r.capacity != null; });
+  // 직렬 목록엔 임원(대표이사·단장)이 없어 정원 합이 카드(19)보다 1 적다 → 직급별의 임원 줄을 앞에 붙이고, 정·현원 0인 직렬은 뺀다.
+  var exec = ranks.filter(function (r) { return /^임원/.test(r.label); }).map(function (r) { return { label: '임원', capacity: r.capacity, current: r.current }; });
+  var inRows = exec.concat(inner.filter(function (r) { return r.capacity != null && (r.capacity || r.current); }));
   var outRows = inner.filter(function (r) { return r.capacity == null; });
   var sum = function (rows, k) { return rows.reduce(function (a, r) { return a + (r[k] || 0); }, 0); };
   var inCap = sum(inRows, 'capacity'), inCur = sum(inRows, 'current'), outCur = sum(outRows, 'current');
@@ -5684,7 +5686,7 @@ function ov2FcHcTableHtml(d) {
     + '</tbody></table>';
   return '<div class="summary-box fc-hc"><h3>직렬별 정현원</h3><div class="table-scroll">' + kind + '</div>'
     + '<h3 style="margin-top:16px;">직급별 정현원</h3><div class="table-scroll">' + grade + '</div>'
-    + '<p class="hcs-note">※ 숫자는 정원(현원). 임원은 대표이사·단장, 가·나급은 전문계약직, 다~마급(일반계약직)은 정·현원 0이라 생략</p></div>';
+    + '<p class="hcs-note">※ 숫자는 정원(현원). 임원은 대표이사·단장, 가·나급은 전문계약직. 일반계약직·무기계약직(다~마급)은 정·현원 0이라 생략</p></div>';
 }
 
 function ov2CorpFacilityHcHtml() {
