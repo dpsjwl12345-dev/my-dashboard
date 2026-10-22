@@ -333,6 +333,12 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-table.hcs-wide th:first-child, .hcs-table.hcs-wide td:first-child { text-align: left; color: var(--text-soft); }
 .hcs-table.hcs-bydept thead th:nth-child(n+3), .hcs-table.hcs-bygrade thead th:nth-child(n+3) { color: #D8C7A3; }
 .hcs-table.hcs-bygrade td.hcs-tcol, .hcs-table.hcs-bygrade tr.hcs-total td { font-weight: 400; }
+.ds-org-wrap { margin-top: 18px; }
+.ds-org-wrap .summary-box { margin-bottom: 18px; }
+.hcs-table.ds-org th, .hcs-table.ds-org td, .hcs-table.ds-org td:first-child { text-align: center; vertical-align: middle; white-space: normal; word-break: keep-all; border: 1px solid var(--border); }
+.hcs-table.ds-org th { color: #D8C7A3; }
+.hcs-table.ds-org td small.hcs-inline { display: block; margin: 2px 0 0; font-size: 13.5px; color: var(--text-soft); }
+.hcs-table.ds-org td.ds-member { text-align: left; font-size: 15px; color: var(--text-soft); }
 .hcs-table.hcs-wide th small.hcs-inline { display: inline; margin: 0 0 0 2px; }
 .hcs-table.hcs-wide td.hcs-tcol { font-weight: 800; font-size: 18.5px; }
 .hcs .table-scroll { width: 100%; overflow-x: auto; }
@@ -5631,6 +5637,35 @@ var CORP_FACILITY_HC = [
   { dept: '동탄체육센터부', facility: '동탄중앙어울림체육센터', total: [19, 20], g3: [1, 1], g4: [2, 1], g5: [2, 2], g6: [0, 1], mu: [14, 15] },
   { dept: '반월체육센터부', facility: '반월체육센터', total: [20, 16], g3: [1, 1], g4: [2, 1], g5: [2, 1], g6: [0, 1], mu: [15, 12] }
 ];
+// 화성시장애인체육회 일반 현황·조직 구성 (출처: 「장애인체육회 현황」 hwpx, 2027 본예산 자료)
+function ov2DsportsOrgHtml() {
+  var dash = '<span>-</span>';
+  var c = function (v) { return v ? String(v) : dash; };
+  var general = '<table class="hcs-table hcs-wide ds-org"><thead><tr><th>단체명<small>(조직구성)</small></th><th>단체장<small>(성명)</small></th><th>직원수(명)</th><th>사무실주소<small>(소재지)</small></th><th>주요 내용</th></tr></thead><tbody>'
+    + '<tr><td rowspan="2">화성특례시 장애인체육회<small class="hcs-inline">(1국 2과 1센터)</small></td><td rowspan="2">장애인체육회장<small class="hcs-inline">(화성특례시장 정명근)</small></td><td>정원 17</td>'
+    + '<td rowspan="2">화성시 향남읍 향남로 470<small class="hcs-inline">화성종합경기타운</small></td><td rowspan="2">화성시 체육진흥 시책추진<small class="hcs-inline">(설립근거: 국민체육진흥법 제33조)</small></td></tr>'
+    + '<tr><td>현원 27</td></tr></tbody></table>';
+  // 행: [부서, [차장, 과장, 사무원, 지도자, 계약직]]. 경영기획과·체육지원과는 사무국 소속.
+  var R = [['경영기획과', [0, 1, 2, 6, 0]], ['체육지원과', [0, 0, 3, 0, 0]], ['반다비체육센터', [1, 0, 3, 0, 11]]];
+  var body = R.map(function (r, i) {
+    return '<tr>'
+      + (i === 0 ? '<td rowspan="2">사무국</td>' : '')
+      + (i === 2 ? '<td colspan="2">' + r[0] + '</td>' : '<td>' + r[0] + '</td>')
+      + (i === 0 ? '<td rowspan="3" class="hcs-tcol">27명</td><td rowspan="3">공석</td>' : '')
+      + r[1].map(function (v) { return '<td>' + c(v) + '</td>'; }).join('')
+      + (i === 0 ? '<td rowspan="3" class="ds-member">임원 25명<br>가맹단체 16단체</td>' : '')
+      + '</tr>';
+  }).join('');
+  var org = '<table class="hcs-table hcs-wide ds-org"><thead>'
+    + '<tr><th colspan="2" rowspan="2">구분</th><th colspan="7">재직현황</th><th rowspan="2">화성시체육회<small>가맹단체</small></th></tr>'
+    + '<tr><th>계</th><th>사무국장<small>(센터장)</small></th><th>차장</th><th>과장</th><th>사무원</th><th>지도자</th><th>계약직</th></tr>'
+    + '</thead><tbody>' + body + '</tbody></table>';
+  return '<div class="ds-org-wrap">'
+    + '<div class="section-title-row"><h2 class="section-heading section-heading-lg">일반 현황</h2></div><div class="summary-box"><div class="table-scroll">' + general + '</div></div>'
+    + '<div class="section-title-row"><h2 class="section-heading section-heading-lg">조직 구성</h2></div><div class="summary-box"><div class="table-scroll">' + org + '</div></div>'
+    + '</div>';
+}
+
 function ov2CorpFacilityHcHtml() {
   var gen = function (r) {
     var c = 0, n = 0, any = false;
@@ -6259,7 +6294,7 @@ function renderOv2Overview(instKey) {
 
   // 7) 지출총괄표는 위 incomeExpenseHtml 안에 이미 포함됨
 
-  var corpHcHtml = instKey === 'corp' ? ov2CorpFacilityHcHtml() : '';
+  var corpHcHtml = instKey === 'corp' ? ov2CorpFacilityHcHtml() : (instKey === 'dsports' ? ov2DsportsOrgHtml() : '');
   document.getElementById('overview-v2-slot').innerHTML = '<div class="ov2-personnel-panel">' + orgHtml + gradeHtml + deptPersonHtml + corpHcHtml + '</div>' + '<div class="ov2-budget-panel">' + budgetCompareHtml + incomeExpenseHtml + '</div>';
 }
 
