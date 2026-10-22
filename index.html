@@ -319,7 +319,7 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-note { margin: 6px 4px 0; font-size: 13px; color: var(--text-soft); text-align: right; }
 .hcs-table td span { color: var(--text-muted); }
 .hcs-table td small { margin-left: 6px; font-size: 14px; color: var(--text-soft); }
-.hcs-table tr.hcs-total td { font-weight: 800; font-size: 18.5px; border-bottom: 1px solid var(--text-soft); }
+.hcs-table tr.hcs-total td { font-weight: 800; font-size: 17.5px; border-bottom: 1px solid var(--text-soft); }
 .hcs-table tr.hcs-unit td:first-child { padding-left: 22px; font-weight: 600; }
 .hcs-table td.hcs-gap { font-weight: 700; }
 .hcs-table td.hcs-gap.hc-short { color: var(--danger); }
@@ -5821,7 +5821,7 @@ function ov2HscfHcDetailHtml() {
   };
   var head1 = function (f) { return '<thead><tr><th>' + f + '</th><th>계</th><th>일반직</th><th>무기직</th><th>기간제</th><th>결원</th></tr></thead>'; };
   var fundTable = function (f) {
-    var body = row('hcs-total', f === '출연금' ? '소속' : '사업', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '12개관·본부 3팀' : ''); }).join('');
+    var body = row('hcs-total', '계', T[f]) + fundUnits[f].map(function (u) { return row('hcs-unit', u.n, u, u.n === '도서관' ? '12개관·본부 3팀' : ''); }).join('');
     return '<div><table class="hcs-table">' + head1(f) + '<tbody>' + body + '</tbody></table><p class="hcs-note">※ 기간제: 일반 / 단시간</p></div>';
   };
   var all = T['총계'];
@@ -5903,7 +5903,7 @@ function ov2TalentHcDetailHtml(byDept) {
   };
   var unitHead = function (f) { return '<thead><tr><th>' + f + '</th><th>계</th>' + TALENT_HC_GRADES.map(function (g) { return '<th>' + g + '</th>'; }).join('') + '<th>계약직</th><th>공무직</th></tr></thead>'; };
   var fundTable = function (f) {
-    var body = unitRow('hcs-total', f === '출연금' ? '소속' : '사업', tot[f]) + TALENT_HC_UNITS.filter(function (u) { return u.fund === f; }).map(function (u) { return unitRow('hcs-unit', u.unit, u, u.sub); }).join('');
+    var body = unitRow('hcs-total', '계', tot[f]) + TALENT_HC_UNITS.filter(function (u) { return u.fund === f; }).map(function (u) { return unitRow('hcs-unit', u.unit, u, u.sub); }).join('');
     return '<div><table class="hcs-table">' + unitHead(f) + '<tbody>' + body + '</tbody></table></div>';
   };
   var all = tot['계'];
