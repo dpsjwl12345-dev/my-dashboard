@@ -330,6 +330,7 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-table.hcs-wide td { text-align: center; }
 .hcs-table.hcs-wide th:first-child, .hcs-table.hcs-wide td:first-child { text-align: left; color: var(--text-soft); }
 .hcs-table.hcs-bydept thead th:nth-child(n+3) { color: #D8C7A3; }
+.hcs-table.hcs-wide th small.hcs-inline { display: inline; margin: 0 0 0 2px; }
 .hcs-table.hcs-wide td.hcs-tcol { font-weight: 800; font-size: 18.5px; }
 .hcs .table-scroll { width: 100%; overflow-x: auto; }
 .tl-hc-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
@@ -5843,7 +5844,7 @@ function ov2HscfHcDetailHtml() {
     + hRow('기간제', function (c) { return '<td' + (c.total ? ' class="hcs-tcol"' : '') + '>' + tempTxt(c.o.p) + '</td>'; })
     + hRow('결원', function (c) { return gapTd(c.o.t); })
     + '</tbody></table></div>';
-  var GRADES = [['g2', '2급', '대표이사 포함'], ['g3', '3급'], ['g4', '4급'], ['g5', '5급'], ['g6', '6급'], ['mu', '무기직']];
+  var GRADES = [['g2', '2급', '대표이사포함'], ['g3', '3급'], ['g4', '4급'], ['g5', '5급'], ['g6', '6급'], ['mu', '무기직']];
   var C = HSCF_FUND_HC_TOTAL;
   var gradeRow = function (label, k) {
     var x = C[k];
@@ -5851,8 +5852,8 @@ function ov2HscfHcDetailHtml() {
       + GRADES.map(function (g) { return '<td>' + pc(x[g[0]]) + '</td>'; }).join('') + '<td>' + tempTxt(x.temp) + '</td></tr>';
   };
   var gradeView = '<div class="table-scroll"><table class="hcs-table hcs-wide"><thead><tr><th>구분</th><th>계</th>'
-    + GRADES.map(function (g) { return '<th>' + g[1] + (g[2] ? '<small>' + g[2] + '</small>' : '') + '</th>'; }).join('')
-    + '<th>기간제<small>정원 외</small></th></tr></thead><tbody>'
+    + GRADES.map(function (g) { return '<th>' + g[1] + (g[2] ? ' <small class="hcs-inline">(' + g[2] + ')</small>' : '') + '</th>'; }).join('')
+    + '<th>기간제 <small class="hcs-inline">(정원 외)</small></th></tr></thead><tbody>'
     + gradeRow('계', '총계') + gradeRow('출연금', '출연금') + gradeRow('위탁금', '위탁금')
     + '<tr><td>결원</td>' + gapTd(C['총계'].total) + GRADES.map(function (g) { return gapTd(C['총계'][g[0]]); }).join('') + '<td><span>-</span></td></tr>'
     + '</tbody></table></div>';
