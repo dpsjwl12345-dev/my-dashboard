@@ -5863,7 +5863,7 @@ function ov2HscfHcDetailHtml() {
   var views = [['fund', '재원별', fundView], ['head', '소관별', headView], ['grade', '직급별', gradeView]];
   return '<div class="hcs">'
     + '<div class="hcs-head"><div class="hcs-head-l"><h2 class="section-heading section-heading-lg hcs-title">재원별 정현원</h2>'
-    + '<p class="hcs-totline" data-v="fund">' + totline + '</p></div>'
+    + '<p class="hcs-totline" data-v="fund head grade">' + totline + '</p></div>'
     + '<div class="hcs-seg" role="tablist">' + views.map(function (v, i) { return '<button type="button" role="tab" data-v="' + v[0] + '" data-t="' + v[1] + '"' + (i === 0 ? ' class="on"' : '') + ' onclick="selectHscfHcView(this)">' + v[1] + '</button>'; }).join('') + '</div></div>'
     + views.map(function (v, i) { return '<div class="hcs-view" data-v="' + v[0] + '"' + (i === 0 ? '' : ' style="display:none;"') + '>' + v[2] + '</div>'; }).join('')
     + '</div>';
@@ -5871,7 +5871,9 @@ function ov2HscfHcDetailHtml() {
 function selectHscfHcView(btn) {
   var box = btn.closest('.hcs');
   box.querySelectorAll('.hcs-seg button').forEach(function (b) { b.classList.toggle('on', b === btn); });
-  box.querySelectorAll('.hcs-view, .hcs-totline').forEach(function (v) { v.style.display = v.getAttribute('data-v') === btn.getAttribute('data-v') ? '' : 'none'; });
+  box.querySelectorAll('.hcs-view').forEach(function (v) { v.style.display = v.getAttribute('data-v') === btn.getAttribute('data-v') ? '' : 'none'; });
+  // 합계 칩은 같은 수치를 쓰는 화면끼리 공유한다(data-v에 공백으로 여러 화면).
+  box.querySelectorAll('.hcs-totline').forEach(function (v) { v.style.display = v.getAttribute('data-v').split(' ').indexOf(btn.getAttribute('data-v')) >= 0 ? '' : 'none'; });
   box.querySelector('.hcs-title').textContent = btn.getAttribute('data-t') + ' 정현원';
 }
 
@@ -5961,7 +5963,9 @@ function ov2TalentHcDetailHtml(byDept) {
   var def = 1;
   return '<div class="hcs">'
     + '<div class="hcs-head"><div class="hcs-head-l"><h2 class="section-heading section-heading-lg hcs-title">' + views[def][1] + ' 정현원</h2>'
-    + '<p class="hcs-totline" data-v="fund"' + (views[def][0] === 'fund' ? '' : ' style="display:none;"') + '>' + totline + '</p></div>'
+    // 재원별·직급별은 붙임 2 현원, 소관별은 시 설명자료 정원(현원)이라 칩을 따로 둔다.
+    + '<p class="hcs-totline" data-v="fund grade"' + (views[def][0] === 'head' ? ' style="display:none;"' : '') + '>' + totline + '</p>'
+    + '<p class="hcs-totline" data-v="head"' + (views[def][0] === 'head' ? '' : ' style="display:none;"') + '>정원 <b>' + cols[0].capacity + '</b> · 현원 <b>' + cols[0].current + '</b> · 결원 <b class="hc-short">' + (cols[0].current - cols[0].capacity) + '</b></p></div>'
     + '<div class="hcs-seg" role="tablist">' + views.map(function (v, i) { return '<button type="button" role="tab" data-v="' + v[0] + '" data-t="' + v[1] + '"' + (i === def ? ' class="on"' : '') + ' onclick="selectHscfHcView(this)">' + v[1] + '</button>'; }).join('') + '</div></div>'
     + views.map(function (v, i) { return '<div class="hcs-view" data-v="' + v[0] + '"' + (i === def ? '' : ' style="display:none;"') + '>' + v[2] + '</div>'; }).join('')
     + '<div class="tl-hc-row" style="margin-top:12px;">' + note + '</div>'
