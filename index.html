@@ -3400,6 +3400,11 @@ function updateTopbarLogo(instKey, imgId, textId) {
     img.style.transformOrigin = '';
     img.style.transform = '';
   }
+  // 체육회 로고는 심볼만 있는 이미지라 장애인체육회 워드마크처럼 옆에 기관명을 붙인다
+  if (instKey === 'sports' && textLogo) {
+    textLogo.textContent = '화성시체육회';
+    textLogo.style.display = '';
+  }
 }
 
 // ============================================
