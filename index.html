@@ -5900,7 +5900,7 @@ function ov2TalentHcDetailHtml(byDept) {
     return '<td>' + n(sum(c)) + (parts.length ? ' <small class="hcs-inline">(' + parts.join('·') + ')</small>' : '') + '</td>';
   };
   var unitRow = function (cls, name, o, sub) {
-    return '<tr class="' + cls + '"><td>' + escapeHtml(name) + (sub ? '<small>' + escapeHtml(sub) + '</small>' : '') + '</td>'
+    return '<tr class="' + cls + '"><td>' + escapeHtml(name) + (sub ? '<small class="hcs-inline">(' + escapeHtml(sub) + ')</small>' : '') + '</td>'
       + '<td>' + headcount(o) + '</td>' + o.g.map(function (v) { return '<td>' + n(v) + '</td>'; }).join('')
       + contractCell(o.c) + '<td><span>0</span></td></tr>';
   };
