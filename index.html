@@ -253,7 +253,7 @@ table.summary td.diff.down { color: #4A5578; }
 .ov2-rank-matrix td { padding: 6px; font-size: 14px; font-weight: 600; color: var(--text); text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 .ov2-rank-matrix th:first-child, .ov2-rank-matrix td:first-child { text-align: left; padding-left: 2px; }
 .ov2-rank-matrix tr.total td { font-weight: 800; border-bottom: 1px solid var(--border); }
-.ov2-rank-matrix th:not(:first-child):not(:last-child) { color: #D8C7A3; }
+.ov2-rank-matrix th:nth-child(n+3) { color: #D8C7A3; }
 .ov2-rank-matrix-zero { color: var(--text-muted, #9aa4b2); opacity: 0.5; }
 .ov2-rank-matrix-note { margin: 8px 0 0; font-size: 12px; color: var(--text-muted, #9aa4b2); }
 .ov2-kpi-row4 .value { font-size: 18px !important; }
@@ -6042,21 +6042,22 @@ function renderOv2Overview(instKey) {
       return hit ? hit.current : 0;
     };
     var cell = function (n) { return n ? String(n) : '<span class="ov2-rank-matrix-zero">–</span>'; };
-    var headHtml = '<tr><th>구분</th>' + d.byDept.map(function (dept) { return '<th>' + escapeHtml(dept.label) + '</th>'; }).join('') + '<th>계</th></tr>';
+    var headHtml = '<tr><th>구분</th><th>계</th>' + d.byDept.map(function (dept) { return '<th>' + escapeHtml(dept.label) + '</th>'; }).join('') + '</tr>';
     var bodyHtml = ranks.map(function (rank) {
       var total = d.byDept.reduce(function (sum, dept) { return sum + countOf(dept, rank); }, 0);
-      return '<tr><td>' + escapeHtml(rank) + '</td>' + d.byDept.map(function (dept) { return '<td>' + cell(countOf(dept, rank)) + '</td>'; }).join('') + '<td>' + cell(total) + '</td></tr>';
+      return '<tr><td>' + escapeHtml(rank) + '</td><td>' + cell(total) + '</td>' + d.byDept.map(function (dept) { return '<td>' + cell(countOf(dept, rank)) + '</td>'; }).join('') + '</tr>';
     }).join('');
     var grand = d.byDept.reduce(function (sum, dept) { return sum + dept.current; }, 0);
-    var totalHtml = '<tr class="total"><td>계</td>' + d.byDept.map(function (dept) { return '<td>' + dept.current + '</td>'; }).join('') + '<td>' + grand + '</td></tr>';
+    var totalHtml = '<tr class="total"><td>계</td><td>' + grand + '</td>' + d.byDept.map(function (dept) { return '<td>' + dept.current + '</td>'; }).join('') + '</tr>';
     rankMatrixHtml = '<div class="ov2-rank-matrix">'
       + '<table><thead>' + headHtml + '</thead><tbody>' + totalHtml + bodyHtml + '</tbody></table>'
       + (d.rankMatrix.note ? '<p class="ov2-rank-matrix-note">' + escapeHtml(d.rankMatrix.note) + '</p>' : '')
       + '</div>';
   }
 
+  // 과×직급 표가 있는 기관(체육회·장애인체육회)은 그 표를 오른쪽 소관별 정현원 자리에 둔다(카드 목록 대신).
   var orgHtml = ovPersonnelSectionHtml(
-    '<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + rankHtml + rankMatrixHtml,
+    '<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + rankHtml,
     d.org.asOfDate
   );
   var gradeHtml = '';
@@ -6069,7 +6070,7 @@ function renderOv2Overview(instKey) {
   var deptPersonHtml = hcSummary ? '' : '<div class="ov2-two-col ov2-personnel-combo">'
     + orgHtml
     + '<div class="ov2-dept-col"><div class="section-title-row"><h2 class="section-heading section-heading-lg">소관별 정현원</h2></div>'
-    +   '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2026">' + ov2PersonnelVBarList(d.byDept) + '</div>' + '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
+    +   (rankMatrixHtml ? '<div class="ov-year-panel" data-year="2026">' + rankMatrixHtml + '</div>' : '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2026">' + ov2PersonnelVBarList(d.byDept) + '</div>') + '<div class="summary-box ov2-dept-box ov-year-panel" data-year="2027" style="display:none;"><div class="empty-state">데이터가 추가될 예정입니다.</div></div></div>'
     + '</div>';
   if (!hcSummary) orgHtml = '';
 
