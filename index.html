@@ -5651,6 +5651,42 @@ var CORP_FACILITY_HC = [
   { dept: '동탄체육센터부', facility: '동탄중앙어울림체육센터', total: [19, 20], g3: [1, 1], g4: [2, 1], g5: [2, 2], g6: [0, 1], mu: [14, 15] },
   { dept: '반월체육센터부', facility: '반월체육센터', total: [20, 16], g3: [1, 1], g4: [2, 1], g5: [2, 1], g6: [0, 1], mu: [15, 12] }
 ];
+// 화성FC 정현원 표 — OV2_DATA.fc.personnelGroups(정원 내 인력·직급별 현황)를 재단 정현원 총괄 표 형식으로.
+function ov2FcHcTableHtml(d) {
+  var pc = function (cap, cur) { return (cap || cur) ? cap + '<span>(' + cur + ')</span>' : '<span>-</span>'; };
+  var gap = function (cap, cur) {
+    var x = cur - cap;
+    return '<td class="hcs-gap' + (x < 0 ? ' hc-short' : (x > 0 ? ' hc-over' : '')) + '">' + (x === 0 ? '<span>0</span>' : (x > 0 ? '+' : '') + x) + '</td>';
+  };
+  var inner = d.personnelGroups[0].rows, ranks = d.personnelGroups[1].rows;
+  // 직렬별: 정원 내(정원 있는 줄)와 정원 외(sectionLabel 이후 현원만 있는 줄)
+  var inRows = inner.filter(function (r) { return r.capacity != null; });
+  var outRows = inner.filter(function (r) { return r.capacity == null; });
+  var sum = function (rows, k) { return rows.reduce(function (a, r) { return a + (r[k] || 0); }, 0); };
+  var inCap = sum(inRows, 'capacity'), inCur = sum(inRows, 'current'), outCur = sum(outRows, 'current');
+  var kind = '<table class="hcs-table hcs-wide hcs-bygrade"><thead><tr><th>구분</th><th>정원 내 계</th>'
+    + inRows.map(function (r) { return '<th>' + escapeHtml(r.label) + '</th>'; }).join('')
+    + '<th>정원 외 계</th>' + outRows.map(function (r) { return '<th>' + escapeHtml(r.label) + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + '<tr><td>정원(현원)</td><td class="hcs-tcol">' + pc(inCap, inCur) + '</td>'
+    + inRows.map(function (r) { return '<td>' + pc(r.capacity, r.current) + '</td>'; }).join('')
+    + '<td class="hcs-tcol">' + outCur + '</td>' + outRows.map(function (r) { return '<td>' + (r.current || '<span>-</span>') + '</td>'; }).join('') + '</tr>'
+    + '<tr><td>결원</td>' + gap(inCap, inCur) + inRows.map(function (r) { return gap(r.capacity, r.current); }).join('')
+    + '<td><span>-</span></td>' + outRows.map(function () { return '<td><span>-</span></td>'; }).join('') + '</tr>'
+    + '</tbody></table>';
+  // 직급별: 정원·현원이 모두 0인 직급(다~마급)은 뺀다
+  var shown = ranks.filter(function (r) { return r.capacity || r.current; });
+  var rCap = sum(shown, 'capacity'), rCur = sum(shown, 'current');
+  var label = function (l) { return escapeHtml(l.replace(/\(.*\)/, '')); };
+  var grade = '<table class="hcs-table hcs-wide hcs-bygrade"><thead><tr><th>구분</th><th>계</th>'
+    + shown.map(function (r) { return '<th>' + label(r.label) + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + '<tr><td>정원(현원)</td><td class="hcs-tcol">' + pc(rCap, rCur) + '</td>' + shown.map(function (r) { return '<td>' + pc(r.capacity, r.current) + '</td>'; }).join('') + '</tr>'
+    + '<tr><td>결원</td>' + gap(rCap, rCur) + shown.map(function (r) { return gap(r.capacity, r.current); }).join('') + '</tr>'
+    + '</tbody></table>';
+  return '<div class="summary-box fc-hc"><h3>직렬별 정현원</h3><div class="table-scroll">' + kind + '</div>'
+    + '<h3 style="margin-top:16px;">직급별 정현원</h3><div class="table-scroll">' + grade + '</div>'
+    + '<p class="hcs-note">※ 숫자는 정원(현원). 임원은 대표이사·단장, 가·나급은 전문계약직, 다~마급(일반계약직)은 정·현원 0이라 생략</p></div>';
+}
+
 function ov2CorpFacilityHcHtml() {
   var gen = function (r) {
     var c = 0, n = 0, any = false;
@@ -6032,7 +6068,9 @@ function renderOv2Overview(instKey) {
   // 내용이 중복돼서 더 이상 별도로 노출하지 않고, 실질적으로 더 중요한 "직급별 현황"(hoverOnly 그룹)만
   // 비중 막대 하나로 항상 보이게 바꿨다.
   var rankGroup = d.personnelGroups.filter(function (g) { return g.hoverOnly; })[0];
-  var rankHtml = rankGroup
+  // 화성FC는 직급별 막대 대신 재단 정현원 총괄과 같은 형식의 표(직렬별·직급별 정원(현원))로 보여준다.
+  if (instKey === 'fc') rankGroup = null;
+  var rankHtml = instKey === 'fc' ? ov2FcHcTableHtml(d) : rankGroup
     ? '<div class="summary-box"><h3>' + escapeHtml(rankGroup.title) + '</h3>' + buildPersonRankBar(rankGroup.rows)
       + (rankGroup.note ? '<p class="ov2-pbar-note">' + escapeHtml(rankGroup.note) + '</p>' : '') + capBreakdownBlockHtml + '</div>'
     : '';
