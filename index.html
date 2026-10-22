@@ -5853,11 +5853,11 @@ function ov2HscfHcDetailHtml() {
       + GRADES.map(function (g) { return '<td>' + pc(x[g[0]]) + '</td>'; }).join('') + '<td>' + tempTxt(x.temp) + '</td></tr>';
   };
   var gradeView = '<div class="table-scroll"><table class="hcs-table hcs-wide hcs-bygrade"><thead><tr><th>구분</th><th>계</th>'
-    + GRADES.map(function (g) { return '<th>' + g[1] + (g[2] ? ' <small class="hcs-inline">(' + g[2] + ')</small>' : '') + '</th>'; }).join('')
-    + '<th>기간제 <small class="hcs-inline">(정원 외)</small></th></tr></thead><tbody>'
+    + GRADES.map(function (g) { return '<th>' + g[1] + '</th>'; }).join('')
+    + '<th>기간제</th></tr></thead><tbody>'
     + gradeRow('계', '총계') + gradeRow('출연금', '출연금') + gradeRow('위탁금', '위탁금')
     + '<tr><td>결원</td>' + gapTd(C['총계'].total) + GRADES.map(function (g) { return gapTd(C['총계'][g[0]]); }).join('') + '<td><span>-</span></td></tr>'
-    + '</tbody></table></div>';
+    + '</tbody></table></div><p class="hcs-note">※ 2급은 대표이사 포함 · 기간제는 정원 외</p>';
   var views = [['fund', '재원별', fundView], ['head', '소관별', headView], ['grade', '직급별', gradeView]];
   return '<div class="hcs">'
     + '<div class="hcs-head"><div class="hcs-head-l"><h2 class="section-heading section-heading-lg hcs-title">재원별 정현원</h2>'
