@@ -5897,7 +5897,7 @@ function ov2TalentHcDetailHtml(byDept) {
 
   var contractCell = function (c) {
     var parts = TALENT_HC_CONTRACT.map(function (k, i) { return c[i] ? k.charAt(0) + c[i] : ''; }).filter(Boolean);
-    return '<td>' + n(sum(c)) + (parts.length ? '<small>' + parts.join('·') + '</small>' : '') + '</td>';
+    return '<td>' + n(sum(c)) + (parts.length ? ' <small class="hcs-inline">(' + parts.join('·') + ')</small>' : '') + '</td>';
   };
   var unitRow = function (cls, name, o, sub) {
     return '<tr class="' + cls + '"><td>' + escapeHtml(name) + (sub ? '<small>' + escapeHtml(sub) + '</small>' : '') + '</td>'
