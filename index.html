@@ -330,6 +330,7 @@ table.summary td.diff.down { color: #4A5578; }
 .hcs-table.hcs-wide td { text-align: center; }
 .hcs-table.hcs-wide th:first-child, .hcs-table.hcs-wide td:first-child { text-align: left; color: var(--text-soft); }
 .hcs-table.hcs-bydept thead th:nth-child(n+3) { color: #D8C7A3; }
+.hcs-table.hcs-bygrade td.hcs-tcol, .hcs-table.hcs-bygrade tr.hcs-total td { font-weight: 400; }
 .hcs-table.hcs-wide th small.hcs-inline { display: inline; margin: 0 0 0 2px; }
 .hcs-table.hcs-wide td.hcs-tcol { font-weight: 800; font-size: 18.5px; }
 .hcs .table-scroll { width: 100%; overflow-x: auto; }
@@ -5851,7 +5852,7 @@ function ov2HscfHcDetailHtml() {
     return '<tr><td>' + label + '</td><td class="hcs-tcol">' + pc(x.total) + '</td>'
       + GRADES.map(function (g) { return '<td>' + pc(x[g[0]]) + '</td>'; }).join('') + '<td>' + tempTxt(x.temp) + '</td></tr>';
   };
-  var gradeView = '<div class="table-scroll"><table class="hcs-table hcs-wide"><thead><tr><th>구분</th><th>계</th>'
+  var gradeView = '<div class="table-scroll"><table class="hcs-table hcs-wide hcs-bygrade"><thead><tr><th>구분</th><th>계</th>'
     + GRADES.map(function (g) { return '<th>' + g[1] + (g[2] ? ' <small class="hcs-inline">(' + g[2] + ')</small>' : '') + '</th>'; }).join('')
     + '<th>기간제 <small class="hcs-inline">(정원 외)</small></th></tr></thead><tbody>'
     + gradeRow('계', '총계') + gradeRow('출연금', '출연금') + gradeRow('위탁금', '위탁금')
@@ -5935,7 +5936,7 @@ function ov2TalentHcDetailHtml(byDept) {
     return '<tr' + (f === '계' ? ' class="hcs-total"' : '') + '><td>' + f + '</td><td class="hcs-tcol">' + headcount(o) + '</td>'
       + o.g.concat(o.c).map(function (v) { return '<td>' + n(v) + '</td>'; }).join('') + '<td>' + n(0) + '</td></tr>';
   };
-  var gradeView = '<table class="hcs-table hcs-wide"><thead><tr><th>재원</th><th>계</th>'
+  var gradeView = '<table class="hcs-table hcs-wide hcs-bygrade"><thead><tr><th>재원</th><th>계</th>'
     + gradeHeads.map(function (h) { return '<th>' + h[0] + '<small>' + h[1] + '</small></th>'; }).join('') + '</tr></thead><tbody>'
     + ['계', '출연금', '위탁금'].map(gradeRow).join('')
     + '</tbody></table>';
