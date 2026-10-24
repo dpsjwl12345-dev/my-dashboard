@@ -1703,6 +1703,15 @@ html.auth-locked body > *:not(#auth-modal) { visibility: hidden; }
 }
 .auth-modal.gate .auth-gate-head { display: block; white-space: nowrap; }
 .auth-modal.gate .auth-card { width: min(19em, calc(100vw - 32px)); padding: 22px 22px 18px; }
+/* 잠금 화면 LOGIN 버튼: 타이틀과 같은 블루 그라데이션으로 눈에 띄게 */
+.auth-modal.gate .auth-btn {
+  width: 8em; height: 2.4em; border: 0; color: #fff; font-size: 14px;
+  background: linear-gradient(90deg, #3457D5, #5B84FF, #7B9EFF, #5B84FF, #3457D5); background-size: 200% 100%;
+  box-shadow: 0 6px 18px rgba(91,132,255,.4); transition: background-position .6s ease, box-shadow .3s ease;
+}
+.auth-modal.gate .auth-btn:hover, .auth-modal.gate .auth-btn:focus-visible {
+  background-position: 100% 0; color: #fff; box-shadow: 0 0 22px rgba(123,158,255,.65);
+}
 /* 로그인 카드: Uiverse.io by reshades — 유리 카드 + 우상단 고정 블롭. 바탕은 대시보드 네이비(#10182E), 선·글자는 흰색, 강조는 형광 라임(#C6F135) */
 .auth-card {
   position: relative; isolation: isolate; overflow: hidden;
