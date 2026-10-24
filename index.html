@@ -1664,7 +1664,6 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   --auth-cream: #F9FAFB; --auth-fill: #C6F135; --auth-ink: #1F2937;
   cursor: pointer; position: relative; z-index: 10; isolation: isolate; overflow: hidden;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  margin: -70px 0 70px;
   padding: 8px 8px 8px 22px; font-family: 'Oswald', 'Pretendard', sans-serif; font-size: 18px; font-weight: 500;
   letter-spacing: .16em; text-transform: uppercase;
   color: var(--auth-ink); background-color: var(--auth-cream); border: 2px solid var(--auth-cream); border-radius: 9999px;
@@ -1672,6 +1671,8 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   transition: color .7s;
 }
+/* 첫 화면 우상단 고정 */
+.landing-hero > .auth-chip { position: absolute; top: 24px; right: 28px; }
 .auth-chip::before {
   content: ''; position: absolute; z-index: -10; left: -100%; width: 100%; aspect-ratio: 1;
   border-radius: 9999px; background-color: var(--auth-fill);
@@ -3194,13 +3195,13 @@ table.summary tr.ov2-eb-section td {
 
     <section class="panel" id="panel-dashboard">
       <div class="landing-hero">
+        <button type="button" class="auth-chip" id="auth-chip" onclick="authChipClick()"></button>
         <div class="landing-title-block">
         <p class="landing-subtitle-en landing-subtitle-top">Hwaseong Special City</p>
         <h1 class="landing-title"><span class="l1"><span class="lf-letter"><span class="lf-outline">화</span><span class="lf-fill" style="animation-delay:0.45s">화</span></span><span class="lf-letter"><span class="lf-outline">성</span><span class="lf-fill" style="animation-delay:0.48s">성</span></span><span class="lf-letter"><span class="lf-outline">시</span><span class="lf-fill" style="animation-delay:0.51s">시</span></span> <span class="lf-letter"><span class="lf-outline">공</span><span class="lf-fill" style="animation-delay:0.54s">공</span></span><span class="lf-letter"><span class="lf-outline">공</span><span class="lf-fill" style="animation-delay:0.57s">공</span></span><span class="lf-letter"><span class="lf-outline">기</span><span class="lf-fill" style="animation-delay:0.60s">기</span></span><span class="lf-letter"><span class="lf-outline">관</span><span class="lf-fill" style="animation-delay:0.63s">관</span></span></span><span class="l2"><span class="lf-letter"><span class="lf-outline">예</span><span class="lf-fill" style="animation-delay:0.66s">예</span></span><span class="lf-letter"><span class="lf-outline">산</span><span class="lf-fill" style="animation-delay:0.69s">산</span></span><span class="lf-letter"><span class="lf-outline">통</span><span class="lf-fill" style="animation-delay:0.72s">통</span></span><span class="lf-letter"><span class="lf-outline">합</span><span class="lf-fill" style="animation-delay:0.75s">합</span></span> <span class="lf-letter"><span class="lf-outline">대</span><span class="lf-fill" style="animation-delay:0.78s">대</span></span><span class="lf-letter"><span class="lf-outline">시</span><span class="lf-fill" style="animation-delay:0.81s">시</span></span><span class="lf-letter"><span class="lf-outline">보</span><span class="lf-fill" style="animation-delay:0.84s">보</span></span><span class="lf-letter"><span class="lf-outline">드</span><span class="lf-fill" style="animation-delay:0.87s">드</span></span></span></h1>
         <p class="landing-subtitle-en">Integrated Budget Dashboard</p>
         </div>
         <div class="landing-subjects-row">
-          <button type="button" class="auth-chip" id="auth-chip" onclick="authChipClick()"></button>
           <button type="button" class="gh-btn subj-btn-label"><span class="subj-btn-shine">예산재정과</span></button>
         </div>
         <div class="landing-grid" id="landing-grid"></div>
@@ -3466,6 +3467,9 @@ table.summary tr.ov2-eb-section td {
         return;
       }
       document.getElementById('auth-pw').value = '';
+      authSession = res.data.session;
+      authTouch(true);
+      renderAuthChip();
       closeAuthModal();
     };
     return m;
@@ -3486,8 +3490,40 @@ table.summary tr.ov2-eb-section td {
     if (authSession) db.auth.signOut();
     else openAuthModal();
   }
-  db.auth.onAuthStateChange(function (_event, session) { authSession = session; renderAuthChip(); });
-  db.auth.getSession().then(function (r) { authSession = r.data.session; renderAuthChip(); });
+  // 자동 로그아웃: 마지막 조작(클릭·키 입력·스크롤·마우스) 후 20분이 지나면 로그아웃. 탭을 닫았다 열어도 같은 기준.
+  var AUTH_IDLE_MS = 20 * 60 * 1000;
+  var AUTH_LAST_KEY = 'auth_last_active';
+  var authLastTouch = 0;
+  function authTouch(force) {
+    if (!authSession) return;
+    var now = Date.now();
+    if (!force && now - authLastTouch < 15000) return;
+    authLastTouch = now;
+    try { localStorage.setItem(AUTH_LAST_KEY, String(now)); } catch (e) {}
+  }
+  function authIdleExpired() {
+    var t = 0;
+    try { t = Number(localStorage.getItem(AUTH_LAST_KEY)) || 0; } catch (e) {}
+    return !t || Date.now() - t > AUTH_IDLE_MS;
+  }
+  function authCheckIdle() {
+    if (authSession && authIdleExpired()) db.auth.signOut();
+  }
+  ['click', 'keydown', 'scroll', 'mousemove', 'touchstart'].forEach(function (ev) {
+    window.addEventListener(ev, function () { authTouch(false); }, { passive: true, capture: true });
+  });
+  setInterval(authCheckIdle, 30000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) authCheckIdle(); });
+
+  db.auth.onAuthStateChange(function (event, session) {
+    authSession = session;
+    renderAuthChip();
+  });
+  db.auth.getSession().then(function (r) {
+    authSession = r.data.session;
+    if (authSession && authIdleExpired()) { authSession = null; db.auth.signOut(); }
+    renderAuthChip();
+  });
   document.addEventListener('DOMContentLoaded', renderAuthChip);
 </script>
 <script>
