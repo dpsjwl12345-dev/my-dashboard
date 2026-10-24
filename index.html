@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" class="auth-locked">
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1657,17 +1657,17 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .subj-btn-shine {
   color: #24292e;
 }
-/* 관리자 로그인 — 예산재정과 버튼 위 빈 공간. 보기는 누구나, 수정·삭제는 로그인한 편집자만 */
-/* 버튼 모양: Uiverse.io by nathAd17 — 크림 알약 + 화살표 원, 호버 시 왼쪽에서 색이 밀려 들어오고 화살표가 90도로 돈다.
-   색은 원본 그대로(gray-50 바탕, gray-800 화살표), 호버 채움만 브랜드 형광 라임(#C6F135) */
+/* 로그인 — 첫 화면은 누구나 보고, 그 안으로 들어가기(메뉴·기관 클릭)와 데이터 보기·수정은 로그인한 편집자만 */
+/* 버튼 모양: Uiverse.io by nathAd17 — 알약 + 화살표 원, 호버 시 왼쪽에서 색이 밀려 들어오고 화살표가 90도로 돈다.
+   바탕은 타이틀과 같은 블루 그라데이션(네이비 위에서 잘 보이게), 호버 채움은 브랜드 형광 라임(#C6F135) */
 .auth-chip {
   --auth-cream: #F9FAFB; --auth-fill: #C6F135; --auth-ink: #1F2937;
   cursor: pointer; position: relative; z-index: 10; isolation: isolate; overflow: hidden;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 8px 8px 8px 22px; font-family: 'Oswald', 'Pretendard', sans-serif; font-size: 18px; font-weight: 500;
   letter-spacing: .16em; text-transform: uppercase;
-  color: var(--auth-ink); background-color: var(--auth-cream); border: 2px solid var(--auth-cream); border-radius: 9999px;
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,.25), 0 8px 10px -6px rgba(0,0,0,.2);
+  color: #fff; background: linear-gradient(90deg, #3457D5, #5B84FF, #7B9EFF); border: 0; border-radius: 9999px;
+  box-shadow: 0 6px 18px rgba(91,132,255,.45);
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   transition: color .7s;
 }
@@ -1683,10 +1683,11 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .auth-chip:hover, .auth-chip:focus-visible { color: var(--auth-ink); box-shadow: 0 0 24px rgba(198,241,53,.55), 0 20px 25px -5px rgba(0,0,0,.25); outline: none; }
 .auth-chip .auth-arrow {
   width: 32px; height: 32px; padding: 8px; flex-shrink: 0; border-radius: 9999px;
-  border: 1px solid #374151; rotate: 45deg; transition: all .3s linear;
+  border: 1px solid rgba(255,255,255,.75); rotate: 45deg; transition: all .3s linear;
 }
-.auth-chip .auth-arrow path { fill: var(--auth-ink); }
+.auth-chip .auth-arrow path { fill: #fff; }
 .auth-chip:hover .auth-arrow, .auth-chip:focus-visible .auth-arrow { rotate: 90deg; background: var(--auth-cream); border-color: transparent; }
+.auth-chip:hover .auth-arrow path, .auth-chip:focus-visible .auth-arrow path { fill: var(--auth-ink); }
 .auth-chip .auth-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px rgba(22,146,79,.2); }
 /* 로그인 창: Login 버튼 바로 아래(화면 위쪽 가운데)에 작게 고정 */
 .auth-modal {
@@ -1694,24 +1695,6 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   padding: 84px 0 0 var(--auth-modal-shift, 0px); background: rgba(16,24,46,.35);
 }
 .auth-modal.open { display: flex; }
-/* 로그인 전 잠금 화면: 사이트 전체를 가리고 네이비 바탕 가운데에 로그인 창만 */
-html.auth-locked body > *:not(#auth-modal) { visibility: hidden; }
-.auth-modal.gate { background: var(--navy); align-items: center; justify-content: center; padding: 0 !important; }
-.auth-gate-head {
-  display: none; margin: 0 0 4px; text-align: center;
-  font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 15px; font-weight: 700; color: #F9FAFB;
-}
-.auth-modal.gate .auth-gate-head { display: block; white-space: nowrap; }
-.auth-modal.gate .auth-card { width: min(19em, calc(100vw - 32px)); padding: 22px 22px 18px; }
-/* 잠금 화면 LOGIN 버튼: 타이틀과 같은 블루 그라데이션으로 눈에 띄게 */
-.auth-modal.gate .auth-btn {
-  width: 8em; height: 2.4em; border: 0; color: #fff; font-size: 14px;
-  background: linear-gradient(90deg, #3457D5, #5B84FF, #7B9EFF, #5B84FF, #3457D5); background-size: 200% 100%;
-  box-shadow: 0 6px 18px rgba(91,132,255,.4); transition: background-position .6s ease, box-shadow .3s ease;
-}
-.auth-modal.gate .auth-btn:hover, .auth-modal.gate .auth-btn:focus-visible {
-  background-position: 100% 0; color: #fff; box-shadow: 0 0 22px rgba(123,158,255,.65);
-}
 /* 로그인 카드: Uiverse.io by reshades — 유리 카드 + 우상단 고정 블롭. 바탕은 대시보드 네이비(#10182E), 선·글자는 흰색, 강조는 형광 라임(#C6F135) */
 .auth-card {
   position: relative; isolation: isolate; overflow: hidden;
@@ -1737,13 +1720,15 @@ html.auth-locked body > *:not(#auth-modal) { visibility: hidden; }
 .auth-card input::placeholder { color: rgba(255,255,255,.55); }
 .auth-card input:focus { border-color: #C6F135; }
 .auth-err { min-height: 18px; margin: 0; text-align: center; font-size: 13px; color: #ff8a9a; }
+.auth-err.is-hint { color: #C6F135; }
 .auth-btn {
   margin: 0 auto; width: 7em; height: 2.1em; cursor: pointer;
   font-size: 13px; font-weight: 500; color: #F9FAFB;
-  background-color: #00000000; border: 1.5px solid #F9FAFB; border-radius: 9px;
+  background: linear-gradient(90deg, #3457D5, #5B84FF, #7B9EFF); border: 0; border-radius: 9px;
+  box-shadow: 0 4px 14px rgba(91,132,255,.4);
   transition: all .5s ease;
 }
-.auth-btn:hover, .auth-btn:focus-visible { background-color: #C6F135; border-color: #C6F135; color: #1F2937; box-shadow: 0 0 18px rgba(198,241,53,.5); outline: none; }
+.auth-btn:hover, .auth-btn:focus-visible { background: #C6F135; color: #1F2937; box-shadow: 0 0 18px rgba(198,241,53,.5); outline: none; }
 .auth-btn:disabled { opacity: .6; cursor: default; }
 .landing-btn-row { display: flex; justify-content: center; gap: 32px; margin-top: 72px; }
 .landing-settle-btn {
@@ -3461,7 +3446,6 @@ table.summary tr.ov2-eb-section td {
     m.className = 'auth-modal';
     m.innerHTML = '<form class="auth-card" id="auth-form" role="dialog" aria-modal="true" aria-label="Login">'
       + '<svg class="auth-blob" viewBox="0 0 200 200" aria-hidden="true"><path transform="translate(100 100)" d="M56.8,-23.9C61.7,-3.2,45.7,18.8,26.5,31.7C7.2,44.6,-15.2,48.2,-35.5,36.5C-55.8,24.7,-73.9,-2.6,-67.6,-25.2C-61.3,-47.7,-30.6,-65.6,-2.4,-64.8C25.9,-64.1,51.8,-44.7,56.8,-23.9Z"></path></svg>'
-      + '<p class="auth-gate-head">화성시 공공기관 예산통합 대시보드</p>'
       + '<input id="auth-email" type="email" autocomplete="username" value="' + AUTH_EDITOR_EMAIL + '" hidden>'
       + '<input id="auth-pw" type="password" placeholder="Password" aria-label="Password" autocomplete="current-password" required>'
       + '<p class="auth-err" id="auth-err" role="alert"></p>'
@@ -3474,7 +3458,7 @@ table.summary tr.ov2-eb-section td {
       e.preventDefault();
       var btn = document.getElementById('auth-submit');
       var err = document.getElementById('auth-err');
-      btn.disabled = true; err.textContent = '';
+      btn.disabled = true; err.textContent = ''; err.classList.remove('is-hint');
       var res = await db.auth.signInWithPassword({
         email: AUTH_EDITOR_EMAIL,
         password: document.getElementById('auth-pw').value
@@ -3487,27 +3471,18 @@ table.summary tr.ov2-eb-section td {
       document.getElementById('auth-pw').value = '';
       authSession = res.data.session;
       authTouch(true);
-      // 잠금 화면에서 로그인한 경우: 로그인 상태로 데이터를 처음부터 다시 불러온다.
-      if (document.documentElement.classList.contains('auth-locked')) { location.reload(); return; }
-      renderAuthChip();
-      closeAuthModal();
+      // 로그인 전에는 데이터를 못 읽었으므로 로그인 상태로 처음부터 다시 불러온다.
+      location.reload();
     };
     return m;
   }
-  function openAuthModal(gate) {
+  function openAuthModal(hint) {
     if (authSession) return;
     var m = ensureAuthModal();
-    if (gate) {
-      m.classList.add('gate');
-      m.style.paddingTop = '';
-      m.style.removeProperty('--auth-modal-shift');
-    }
+    var errEl = document.getElementById('auth-err');
+    errEl.classList.toggle('is-hint', !!hint);
+    errEl.textContent = hint || '';
     if (m.classList.contains('open')) return;
-    if (m.classList.contains('gate')) {
-      m.classList.add('open');
-      setTimeout(function () { document.getElementById('auth-pw').focus(); }, 0);
-      return;
-    }
     // Login 버튼이 보이면 그 바로 아래 가운데에 맞춘다(사이드바 폭만큼 화면 중심과 어긋나므로 계산).
     var chip = document.getElementById('auth-chip');
     var r = chip && chip.getBoundingClientRect();
@@ -3519,12 +3494,11 @@ table.summary tr.ov2-eb-section td {
       m.style.removeProperty('--auth-modal-shift');
     }
     m.classList.add('open');
-    document.getElementById('auth-err').textContent = '';
     setTimeout(function () { document.getElementById('auth-pw').focus(); }, 0);
   }
   function closeAuthModal() {
     var m = document.getElementById('auth-modal');
-    if (m && !m.classList.contains('gate')) m.classList.remove('open');
+    if (m) m.classList.remove('open');
   }
   function authChipClick() {
     if (authSession) db.auth.signOut();
@@ -3555,7 +3529,22 @@ table.summary tr.ov2-eb-section td {
   setInterval(authCheckIdle, 30000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) authCheckIdle(); });
 
-  // 로그인 전에는 사이트 전체를 잠근다(<html class="auth-locked">). 로그아웃·자동 로그아웃 시 새로고침해서 다시 잠근다.
+  // 로그인 전에는 첫 화면만 보인다. 메뉴·기관 카드 등 첫 화면에서 들어가는 클릭은 막고 로그인 창을 띄운다.
+  // (데이터 자체는 Supabase RLS가 막는다.) 로그아웃·자동 로그아웃 시 새로고침해서 첫 화면으로 돌린다.
+  function authGuardEvent(e) {
+    if (authSession) return;
+    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    var t = e.target;
+    if (!t || !t.closest || t.closest('#auth-chip, #auth-modal')) return;
+    if (!t.closest('.app')) return;
+    if (e.type === 'keydown' && !t.closest('[role="button"], button, a')) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    openAuthModal('로그인 후 이용할 수 있습니다.');
+  }
+  document.addEventListener('click', authGuardEvent, true);
+  document.addEventListener('keydown', authGuardEvent, true);
+
   db.auth.onAuthStateChange(function (event, session) {
     authSession = session;
     if (event === 'SIGNED_OUT') { location.reload(); return; }
@@ -3565,8 +3554,6 @@ table.summary tr.ov2-eb-section td {
     authSession = r.data.session;
     if (authSession && authIdleExpired()) { authSession = null; db.auth.signOut(); return; }
     renderAuthChip();
-    if (authSession) document.documentElement.classList.remove('auth-locked');
-    else openAuthModal(true);
   });
   document.addEventListener('DOMContentLoaded', renderAuthChip);
 </script>
