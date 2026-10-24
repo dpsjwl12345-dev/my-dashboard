@@ -254,6 +254,9 @@ table.summary td.diff.down { color: #4A5578; }
 .ov2-rank-matrix th:first-child, .ov2-rank-matrix td:first-child { text-align: left; padding-left: 2px; }
 .ov2-rank-matrix tr.total td { font-weight: 800; border-bottom: 1px solid var(--border); }
 .ov2-rank-matrix th:nth-child(n+3) { color: #D8C7A3; }
+/* 부서 칸이 적은 표(장애인체육회)는 글자 길이대로 칸이 벌어지지 않게 구분 칸만 고정하고 나머지를 똑같이 나눈다 */
+.ov2-rank-matrix-even table { table-layout: fixed; }
+.ov2-rank-matrix-even th:first-child { width: 84px; }
 .ov2-rank-matrix-zero { color: var(--text-muted, #9aa4b2); opacity: 0.5; }
 .ov2-rank-matrix-note { margin: 8px 0 0; font-size: 13px; color: var(--text-muted, #9aa4b2); }
 .ov2-kpi-row4 .value { font-size: 18px !important; }
@@ -6128,7 +6131,7 @@ function renderOv2Overview(instKey) {
     }).join('');
     var grand = d.byDept.reduce(function (sum, dept) { return sum + dept.current; }, 0);
     var totalHtml = '<tr class="total"><td>계</td><td>' + grand + '</td>' + d.byDept.map(function (dept) { return '<td>' + dept.current + '</td>'; }).join('') + '</tr>';
-    rankMatrixHtml = '<div class="ov2-rank-matrix">'
+    rankMatrixHtml = '<div class="ov2-rank-matrix' + (d.byDept.length <= 4 ? ' ov2-rank-matrix-even' : '') + '">'
       + '<table><thead>' + headHtml + '</thead><tbody>' + totalHtml + bodyHtml + '</tbody></table>'
       + (d.rankMatrix.note ? '<p class="ov2-rank-matrix-note">' + escapeHtml(d.rankMatrix.note) + '</p>' : '')
       + '</div>';
