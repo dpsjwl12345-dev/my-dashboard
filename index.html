@@ -1671,8 +1671,9 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   transition: color .7s;
 }
-/* 첫 화면 우상단 고정 */
-.landing-hero > .auth-chip { position: absolute; top: 24px; right: 28px; }
+/* 첫 화면 타이틀 위 가운데 고정, 작은 크기 */
+.landing-hero > .auth-chip { position: absolute; top: 22px; left: 50%; translate: -50% 0; padding: 2px 3px 2px 12px; font-size: 13px; line-height: 1; gap: 6px; }
+.landing-hero > .auth-chip .auth-arrow { width: 20px; height: 20px; padding: 5px; }
 .auth-chip::before {
   content: ''; position: absolute; z-index: -10; left: -100%; width: 100%; aspect-ratio: 1;
   border-radius: 9999px; background-color: var(--auth-fill);
@@ -1687,44 +1688,44 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .auth-chip .auth-arrow path { fill: var(--auth-ink); }
 .auth-chip:hover .auth-arrow, .auth-chip:focus-visible .auth-arrow { rotate: 90deg; background: var(--auth-cream); border-color: transparent; }
 .auth-chip .auth-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px rgba(22,146,79,.2); }
-/* 로그인 창: 화면 우상단(Login 버튼 아래)에 작게 고정 */
+/* 로그인 창: Login 버튼 바로 아래(화면 위쪽 가운데)에 작게 고정 */
 .auth-modal {
-  position: fixed; inset: 0; z-index: 10000; display: none; align-items: flex-start; justify-content: flex-end;
-  padding: 96px 40px 0 0; background: rgba(10,12,18,.35);
+  position: fixed; inset: 0; z-index: 10000; display: none; align-items: flex-start; justify-content: center;
+  padding: 84px 0 0 var(--auth-modal-shift, 0px); background: rgba(16,24,46,.35);
 }
 .auth-modal.open { display: flex; }
-/* 로그인 카드: Uiverse.io by reshades — 유리 카드 + 블롭이 뒤에서 떠다님. 색은 대시보드 카드(#1E212B) + 베이지(#D8C3A0) */
+/* 로그인 카드: Uiverse.io by reshades — 유리 카드 + 우상단 고정 블롭. 바탕은 대시보드 네이비(#10182E), 선·글자는 흰색, 강조는 형광 라임(#C6F135) */
 .auth-card {
   position: relative; isolation: isolate; overflow: hidden;
   display: flex; flex-direction: column; gap: 10px;
   width: min(15em, calc(100vw - 32px)); padding: 18px 18px 16px;
   font-family: 'Pretendard', sans-serif; color: #fff;
-  background: rgba(30,33,43,.55); border-radius: 16px; border: 1px solid rgba(216,195,160,.45);
+  background: rgba(16,24,46,.94); border-radius: 16px; border: 1px solid rgba(255,255,255,.16);
   box-shadow: 0 4px 30px rgba(0, 0, 0, .1);
   backdrop-filter: blur(8.2px); -webkit-backdrop-filter: blur(8.2px);
 }
 .auth-card .auth-title, .auth-btn { font-family: 'Oswald', 'Pretendard', sans-serif; letter-spacing: .16em; text-transform: uppercase; }
-.auth-card .auth-title { margin: 0 0 6px; text-align: center; font-size: 24px; font-weight: 500; color: #F2E8D6; }
+.auth-card .auth-title { margin: 0 0 6px; text-align: center; font-size: 24px; font-weight: 500; color: #F9FAFB; }
 .auth-card .auth-blob {
   position: absolute; z-index: -1; top: -70px; right: -70px; width: 180px; height: 180px;
   filter: blur(20px); opacity: .5; pointer-events: none;
 }
-.auth-card .auth-blob path { fill: #D8C3A0; }
+.auth-card .auth-blob path { fill: #C6F135; }
 .auth-card input {
   width: 100%; height: 2.4em; padding: 0 12px; font: inherit; font-size: 14px; color: #fff;
-  background: #00000000; border: 1px solid #D8C3A0; border-radius: 10px; outline: none;
+  background: #00000000; border: 1px solid rgba(249,250,251,.55); border-radius: 10px; outline: none;
   transition: all .6s ease;
 }
 .auth-card input::placeholder { color: rgba(255,255,255,.55); }
-.auth-card input:focus { border-color: #fff; }
+.auth-card input:focus { border-color: #C6F135; }
 .auth-err { min-height: 18px; margin: 0; text-align: center; font-size: 13px; color: #ff8a9a; }
 .auth-btn {
   margin: 0 auto; width: 8.5em; height: 2.3em; cursor: pointer;
-  font-size: 17px; font-weight: 500; color: #F2E8D6;
-  background-color: #00000000; border: .2em solid #D8C3A0; border-radius: 11px;
+  font-size: 17px; font-weight: 500; color: #F9FAFB;
+  background-color: #00000000; border: .2em solid #F9FAFB; border-radius: 11px;
   transition: all .5s ease;
 }
-.auth-btn:hover, .auth-btn:focus-visible { background-color: #D8C3A0; color: #1E212B; outline: none; }
+.auth-btn:hover, .auth-btn:focus-visible { background-color: #C6F135; border-color: #C6F135; color: #1F2937; box-shadow: 0 0 18px rgba(198,241,53,.5); outline: none; }
 .auth-btn:disabled { opacity: .6; cursor: default; }
 .landing-btn-row { display: flex; justify-content: center; gap: 32px; margin-top: 72px; }
 .landing-settle-btn {
@@ -3476,6 +3477,16 @@ table.summary tr.ov2-eb-section td {
     if (authSession) return;
     var m = ensureAuthModal();
     if (m.classList.contains('open')) return;
+    // Login 버튼이 보이면 그 바로 아래 가운데에 맞춘다(사이드바 폭만큼 화면 중심과 어긋나므로 계산).
+    var chip = document.getElementById('auth-chip');
+    var r = chip && chip.getBoundingClientRect();
+    if (r && r.width) {
+      m.style.paddingTop = Math.round(r.bottom + 10) + 'px';
+      m.style.setProperty('--auth-modal-shift', Math.max(0, Math.round(r.left + r.width / 2) * 2 - window.innerWidth) + 'px');
+    } else {
+      m.style.paddingTop = '';
+      m.style.removeProperty('--auth-modal-shift');
+    }
     m.classList.add('open');
     document.getElementById('auth-err').textContent = '';
     setTimeout(function () { document.getElementById('auth-pw').focus(); }, 0);
