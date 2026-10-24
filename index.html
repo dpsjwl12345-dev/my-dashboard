@@ -5120,6 +5120,7 @@ hscf: {
 corp: {
   name: '화성시도시공사',
   hideIncomeTitle: true,
+  hcNote: '숫자는 정원(현원). 직급별은 일반직과 계약직(괄호 안 상당 등급) 합계',
   org: {
     subtitle: '2 부사장 · 5본부 · 3실 · 9처 · 1단 · 47부',
     cards: [
@@ -5372,6 +5373,7 @@ talent: {
 fc: {
   name: '화성FC',
   hideIncomeTitle: true,
+  hcNote: '숫자는 정원(현원). 임원은 대표이사·단장, 가·나급은 전문계약직. 일반계약직·무기계약직(다~마급)은 정·현원 0이라 생략',
   org: {
     subtitle: '1국 · 1단 · 4팀',
     cards: [
@@ -5651,7 +5653,7 @@ var CORP_FACILITY_HC = [
   { dept: '동탄체육센터부', facility: '동탄중앙어울림체육센터', total: [19, 20], g3: [1, 1], g4: [2, 1], g5: [2, 2], g6: [0, 1], mu: [14, 15] },
   { dept: '반월체육센터부', facility: '반월체육센터', total: [20, 16], g3: [1, 1], g4: [2, 1], g5: [2, 1], g6: [0, 1], mu: [15, 12] }
 ];
-// 화성FC 정현원 표 — OV2_DATA.fc.personnelGroups(정원 내 인력·직급별 현황)를 재단 정현원 총괄 표 형식으로.
+// 화성FC·도시공사 정현원 표 — OV2_DATA[기관].personnelGroups(정원 내 인력·직급별 현황)와 byDept를 재단 정현원 총괄 표 형식으로.
 function ov2FcHcTableHtml(d) {
   var pc = function (cap, cur) { return (cap || cur) ? cap + '<span>(' + cur + ')</span>' : '<span>-</span>'; };
   var gap = function (cap, cur) {
@@ -5678,32 +5680,47 @@ function ov2FcHcTableHtml(d) {
   // 직급별: 정원·현원이 모두 0인 직급(다~마급)은 뺀다
   var shown = ranks.filter(function (r) { return r.capacity || r.current; });
   var rCap = sum(shown, 'capacity'), rCur = sum(shown, 'current');
-  var label = function (l) { return escapeHtml(l.replace(/\(.*\)/, '')); };
+  // 괄호 속 상당계급(도시공사 '1급(특급)')은 작은 글씨로 남기고, 긴 설명(FC '임원(대표이사·단장)')은 뺀다
+  var label = function (l) {
+    var m = l.match(/^(.*?)\((.*)\)$/);
+    if (!m) return escapeHtml(l);
+    return escapeHtml(m[1]) + (/급$/.test(m[2]) ? '<small>' + escapeHtml(m[2]) + '</small>' : '');
+  };
   var grade = '<table class="hcs-table hcs-wide hcs-bygrade"><thead><tr><th>구분</th><th>계</th>'
     + shown.map(function (r) { return '<th>' + label(r.label) + '</th>'; }).join('') + '</tr></thead><tbody>'
     + '<tr><td>정원(현원)</td><td class="hcs-tcol">' + pc(rCap, rCur) + '</td>' + shown.map(function (r) { return '<td>' + pc(r.capacity, r.current) + '</td>'; }).join('') + '</tr>'
     + '<tr><td>결원</td>' + gap(rCap, rCur) + shown.map(function (r) { return gap(r.capacity, r.current); }).join('') + '</tr>'
     + '</tbody></table>';
-  // 소관별: 팀별 정원 자료가 없어 현원만(합계 16 = 현원 카드). 계 열만 정원(현원)·결원.
+  // 소관별: 열 = 본부/팀. FC는 팀별 정원 자료가 없어 현원만, 도시공사는 본부별 정원(현원)·결원과 부 수.
   var depts = d.byDept || [];
+  var hasCap = depts.length && depts.every(function (x) { return x.capacity != null; });
+  var dCap = sum(depts, 'capacity'), dCur = sum(depts, 'current');
+  // 계는 정원 카드 기준. 소관 합계가 카드와 다르면(소관별 자료에 없는 인원) 차이를 따로 한 칸에 둔다.
+  var rest = hasCap && (dCap !== inCap || dCur !== inCur) ? [{ label: '소관 외', capacity: inCap - dCap, current: inCur - dCur, rest: true }] : [];
+  var cols = depts.concat(rest);
+  var hasTeams = depts.some(function (x) { return x.teams != null; });
   var headView = '<table class="hcs-table hcs-wide hcs-bydept"><thead><tr><th>구분</th><th>계</th>'
-    + depts.map(function (x) { return '<th>' + escapeHtml(x.label) + '</th>'; }).join('') + '</tr></thead><tbody>'
-    + '<tr><td>정원(현원)</td><td class="hcs-tcol">' + pc(inCap, inCur) + '</td>' + depts.map(function (x) { return '<td><span>-</span>(' + x.current + ')</td>'; }).join('') + '</tr>'
-    + '<tr><td>결원</td>' + gap(inCap, inCur) + depts.map(function () { return '<td><span>-</span></td>'; }).join('') + '</tr>'
-    + '</tbody></table><p class="hcs-note">※ 팀별 정원 자료 미확보 — 팀 칸은 현원만 표시</p>';
-  // 재단 정현원 총괄과 같은 틀: 제목 + 합계 칩 + [직렬별·소관별·직급별] 전환. 재원이 출연금 하나라 재원별 대신 직렬별.
+    + cols.map(function (x) { return '<th>' + escapeHtml(x.label) + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + '<tr><td>정원(현원)</td><td class="hcs-tcol">' + pc(inCap, inCur) + '</td>' + cols.map(function (x) { return '<td>' + (hasCap ? pc(x.capacity, x.current) : '<span>-</span>(' + x.current + ')') + '</td>'; }).join('') + '</tr>'
+    + '<tr><td>결원</td>' + gap(inCap, inCur) + cols.map(function (x) { return hasCap ? gap(x.capacity, x.current) : '<td><span>-</span></td>'; }).join('') + '</tr>'
+    + (hasTeams ? '<tr><td>부서 수</td><td class="hcs-tcol">' + sum(depts, 'teams') + '</td>' + cols.map(function (x) { return '<td>' + (x.teams != null ? x.teams + escapeHtml(x.teamsUnit || '팀') : '<span>-</span>') + '</td>'; }).join('') + '</tr>' : '')
+    + '</tbody></table>'
+    + (hasCap ? (rest.length ? '<p class="hcs-note">※ 계는 정원·현원 카드 기준. 소관 외 = 카드 총계 − 본부별 합계(소관별 자료에 없는 인원)</p>' : '') : '<p class="hcs-note">※ 팀별 정원 자료 미확보 — 팀 칸은 현원만 표시</p>');
+  // 재단 정현원 총괄과 같은 틀: 제목 + 합계 칩 + [직렬별·소관별·직급별] 전환. 재원별 대신 직렬별.
   var views = [['kind', '직렬별', '<div class="table-scroll">' + kind + '</div>'], ['head', '소관별', '<div class="table-scroll">' + headView + '</div>'], ['grade', '직급별', '<div class="table-scroll">' + grade + '</div>']];
   var def = 1;
-  var gen = inRows.filter(function (r) { return r.label === '일반직'; })[0] || { capacity: 0, current: 0 };
-  var pro = inRows.filter(function (r) { return /^전문계약직/.test(r.label); })[0] || { capacity: 0, current: 0 };
-  var totline = '계 <b>' + inCap + '(' + inCur + ')</b> · 일반직 <b>' + gen.capacity + '(' + gen.current + ')</b> · 전문계약직 <b>' + pro.capacity + '(' + pro.current + ')</b>'
+  // 합계 칩: 정원이 큰 직렬 둘(FC 일반직·전문계약직, 도시공사 일반직·무기계약직)을 원래 순서대로
+  var top2 = inRows.filter(function (r) { return r.label !== '임원'; }).slice().sort(function (a, b) { return b.capacity - a.capacity; }).slice(0, 2);
+  var major = inRows.filter(function (r) { return top2.indexOf(r) >= 0; });
+  var totline = '계 <b>' + inCap + '(' + inCur + ')</b>'
+    + major.map(function (r) { return ' · ' + escapeHtml(r.label.replace(/\(.*\)/, '')) + ' <b>' + r.capacity + '(' + r.current + ')</b>'; }).join('')
     + ' · 정원 외 <b>' + outCur + '</b> · 결원 <b class="hc-short">' + (inCur - inCap) + '</b>';
   return '<div class="hcs">'
     + '<div class="hcs-head"><div class="hcs-head-l"><h2 class="section-heading section-heading-lg hcs-title">' + views[def][1] + ' 정현원</h2>'
     + '<p class="hcs-totline" data-v="kind head grade">' + totline + '</p></div>'
     + '<div class="hcs-seg" role="tablist">' + views.map(function (v, i) { return '<button type="button" role="tab" data-v="' + v[0] + '" data-t="' + v[1] + '"' + (i === def ? ' class="on"' : '') + ' onclick="selectHscfHcView(this)">' + v[1] + '</button>'; }).join('') + '</div></div>'
     + views.map(function (v, i) { return '<div class="hcs-view" data-v="' + v[0] + '"' + (i === def ? '' : ' style="display:none;"') + '>' + v[2] + '</div>'; }).join('')
-    + '<p class="hcs-note">※ 숫자는 정원(현원). 임원은 대표이사·단장, 가·나급은 전문계약직. 일반계약직·무기계약직(다~마급)은 정·현원 0이라 생략</p>'
+    + '<p class="hcs-note">※ ' + escapeHtml(d.hcNote || '숫자는 정원(현원).') + '</p>'
     + '</div>';
 }
 
@@ -6123,7 +6140,7 @@ function renderOv2Overview(instKey) {
     d.org.asOfDate
   );
   var gradeHtml = '';
-  var hcSummary = instKey === 'hscf' || instKey === 'talent' || instKey === 'fc';
+  var hcSummary = instKey === 'hscf' || instKey === 'talent' || instKey === 'fc' || instKey === 'corp';
   if (hcSummary) {
     var hcDetail = instKey === 'hscf' ? ov2HscfHcDetailHtml() : instKey === 'talent' ? ov2TalentHcDetailHtml(d.byDept) : ov2FcHcTableHtml(d);
     orgHtml = ovPersonnelSectionHtml('<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + hcDetail, d.org.asOfDate, '정현원 총괄');
