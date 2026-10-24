@@ -1671,9 +1671,9 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   transition: color .7s;
 }
-/* 첫 화면 타이틀 위 가운데 고정, 작은 크기 */
-.landing-hero > .auth-chip { position: absolute; top: 22px; left: 50%; translate: -50% 0; padding: 2px 3px 2px 12px; font-size: 13px; line-height: 1; gap: 6px; }
-.landing-hero > .auth-chip .auth-arrow { width: 20px; height: 20px; padding: 5px; }
+/* 첫 화면 'Integrated Budget Dashboard' 문구 바로 아래, 작은 크기 */
+.landing-title-block > .auth-chip { display: flex; width: max-content; margin: -38px auto 12px; /* 부제의 아래 여백 48px 중 10px만 남김 */ padding: 2px 3px 2px 12px; font-size: 13px; line-height: 1; gap: 6px; }
+.landing-title-block > .auth-chip .auth-arrow { width: 20px; height: 20px; padding: 5px; }
 .auth-chip::before {
   content: ''; position: absolute; z-index: -10; left: -100%; width: 100%; aspect-ratio: 1;
   border-radius: 9999px; background-color: var(--auth-fill);
@@ -1720,9 +1720,9 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
 .auth-card input:focus { border-color: #C6F135; }
 .auth-err { min-height: 18px; margin: 0; text-align: center; font-size: 13px; color: #ff8a9a; }
 .auth-btn {
-  margin: 0 auto; width: 8.5em; height: 2.3em; cursor: pointer;
-  font-size: 17px; font-weight: 500; color: #F9FAFB;
-  background-color: #00000000; border: .2em solid #F9FAFB; border-radius: 11px;
+  margin: 0 auto; width: 7em; height: 2.1em; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: #F9FAFB;
+  background-color: #00000000; border: 1.5px solid #F9FAFB; border-radius: 9px;
   transition: all .5s ease;
 }
 .auth-btn:hover, .auth-btn:focus-visible { background-color: #C6F135; border-color: #C6F135; color: #1F2937; box-shadow: 0 0 18px rgba(198,241,53,.5); outline: none; }
@@ -3195,11 +3195,11 @@ table.summary tr.ov2-eb-section td {
 
     <section class="panel" id="panel-dashboard">
       <div class="landing-hero">
-        <button type="button" class="auth-chip" id="auth-chip" onclick="authChipClick()"></button>
         <div class="landing-title-block">
         <p class="landing-subtitle-en landing-subtitle-top">Hwaseong Special City</p>
         <h1 class="landing-title"><span class="l1"><span class="lf-letter"><span class="lf-outline">화</span><span class="lf-fill" style="animation-delay:0.45s">화</span></span><span class="lf-letter"><span class="lf-outline">성</span><span class="lf-fill" style="animation-delay:0.48s">성</span></span><span class="lf-letter"><span class="lf-outline">시</span><span class="lf-fill" style="animation-delay:0.51s">시</span></span> <span class="lf-letter"><span class="lf-outline">공</span><span class="lf-fill" style="animation-delay:0.54s">공</span></span><span class="lf-letter"><span class="lf-outline">공</span><span class="lf-fill" style="animation-delay:0.57s">공</span></span><span class="lf-letter"><span class="lf-outline">기</span><span class="lf-fill" style="animation-delay:0.60s">기</span></span><span class="lf-letter"><span class="lf-outline">관</span><span class="lf-fill" style="animation-delay:0.63s">관</span></span></span><span class="l2"><span class="lf-letter"><span class="lf-outline">예</span><span class="lf-fill" style="animation-delay:0.66s">예</span></span><span class="lf-letter"><span class="lf-outline">산</span><span class="lf-fill" style="animation-delay:0.69s">산</span></span><span class="lf-letter"><span class="lf-outline">통</span><span class="lf-fill" style="animation-delay:0.72s">통</span></span><span class="lf-letter"><span class="lf-outline">합</span><span class="lf-fill" style="animation-delay:0.75s">합</span></span> <span class="lf-letter"><span class="lf-outline">대</span><span class="lf-fill" style="animation-delay:0.78s">대</span></span><span class="lf-letter"><span class="lf-outline">시</span><span class="lf-fill" style="animation-delay:0.81s">시</span></span><span class="lf-letter"><span class="lf-outline">보</span><span class="lf-fill" style="animation-delay:0.84s">보</span></span><span class="lf-letter"><span class="lf-outline">드</span><span class="lf-fill" style="animation-delay:0.87s">드</span></span></span></h1>
         <p class="landing-subtitle-en">Integrated Budget Dashboard</p>
+        <button type="button" class="auth-chip" id="auth-chip" onclick="authChipClick()"></button>
         </div>
         <div class="landing-subjects-row">
           <button type="button" class="gh-btn subj-btn-label"><span class="subj-btn-shine">예산재정과</span></button>
