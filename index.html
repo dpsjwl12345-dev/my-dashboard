@@ -5708,7 +5708,7 @@ function ov2FcHcTableHtml(d) {
     + (hasCap ? (rest.length ? '<p class="hcs-note">※ 계는 정원·현원 카드 기준. 소관 외 = 카드 총계 − 본부별 합계(소관별 자료에 없는 인원)</p>' : '') : '<p class="hcs-note">※ 팀별 정원 자료 미확보 — 팀 칸은 현원만 표시</p>');
   // 재단 정현원 총괄과 같은 틀: 제목 + 합계 칩 + [직렬별·소관별·직급별] 전환. 재원별 대신 직렬별.
   var views = [['kind', '직렬별', '<div class="table-scroll">' + kind + '</div>'], ['head', '소관별', '<div class="table-scroll">' + headView + '</div>'], ['grade', '직급별', '<div class="table-scroll">' + grade + '</div>']];
-  var def = 1;
+  var def = 0;
   // 합계 칩: 정원이 큰 직렬 둘(FC 일반직·전문계약직, 도시공사 일반직·무기계약직)을 원래 순서대로
   var top2 = inRows.filter(function (r) { return r.label !== '임원'; }).slice().sort(function (a, b) { return b.capacity - a.capacity; }).slice(0, 2);
   var major = inRows.filter(function (r) { return top2.indexOf(r) >= 0; });
@@ -6053,7 +6053,7 @@ function ov2TalentHcDetailHtml(byDept) {
     + '<li>미결: 대표이사 나머지 0.5명분 봉급목적예비비 이체 여부 · 나급 정원1·현원2(가급 정원 자리 채용인지 확인)</li>'
     + '</ul></div>';
   var views = [['fund', '재원별', fundView], ['head', '소관별', headView], ['grade', '직급별', gradeView]];
-  var def = 1;
+  var def = 0;
   return '<div class="hcs">'
     + '<div class="hcs-head"><div class="hcs-head-l"><h2 class="section-heading section-heading-lg hcs-title">' + views[def][1] + ' 정현원</h2>'
     // 재원별·직급별은 붙임 2 현원, 소관별은 시 설명자료 정원(현원)이라 칩을 따로 둔다.
