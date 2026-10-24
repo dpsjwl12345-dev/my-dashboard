@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="auth-locked">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1694,6 +1694,15 @@ tr.row-hidden-collapse, tr.mok-hidden { display: none; }
   padding: 84px 0 0 var(--auth-modal-shift, 0px); background: rgba(16,24,46,.35);
 }
 .auth-modal.open { display: flex; }
+/* 로그인 전 잠금 화면: 사이트 전체를 가리고 네이비 바탕 가운데에 로그인 창만 */
+html.auth-locked body > *:not(#auth-modal) { visibility: hidden; }
+.auth-modal.gate { background: var(--navy); align-items: center; justify-content: center; padding: 0 !important; }
+.auth-gate-head {
+  display: none; margin: 0 0 4px; text-align: center;
+  font-family: 'GmarketSans', 'Pretendard', sans-serif; font-size: 15px; font-weight: 700; color: #F9FAFB;
+}
+.auth-modal.gate .auth-gate-head { display: block; white-space: nowrap; }
+.auth-modal.gate .auth-card { width: min(19em, calc(100vw - 32px)); padding: 22px 22px 18px; }
 /* 로그인 카드: Uiverse.io by reshades — 유리 카드 + 우상단 고정 블롭. 바탕은 대시보드 네이비(#10182E), 선·글자는 흰색, 강조는 형광 라임(#C6F135) */
 .auth-card {
   position: relative; isolation: isolate; overflow: hidden;
@@ -3443,6 +3452,7 @@ table.summary tr.ov2-eb-section td {
     m.className = 'auth-modal';
     m.innerHTML = '<form class="auth-card" id="auth-form" role="dialog" aria-modal="true" aria-label="Login">'
       + '<svg class="auth-blob" viewBox="0 0 200 200" aria-hidden="true"><path transform="translate(100 100)" d="M56.8,-23.9C61.7,-3.2,45.7,18.8,26.5,31.7C7.2,44.6,-15.2,48.2,-35.5,36.5C-55.8,24.7,-73.9,-2.6,-67.6,-25.2C-61.3,-47.7,-30.6,-65.6,-2.4,-64.8C25.9,-64.1,51.8,-44.7,56.8,-23.9Z"></path></svg>'
+      + '<p class="auth-gate-head">화성시 공공기관 예산통합 대시보드</p>'
       + '<input id="auth-email" type="email" autocomplete="username" value="' + AUTH_EDITOR_EMAIL + '" hidden>'
       + '<input id="auth-pw" type="password" placeholder="Password" aria-label="Password" autocomplete="current-password" required>'
       + '<p class="auth-err" id="auth-err" role="alert"></p>'
@@ -3468,15 +3478,27 @@ table.summary tr.ov2-eb-section td {
       document.getElementById('auth-pw').value = '';
       authSession = res.data.session;
       authTouch(true);
+      // 잠금 화면에서 로그인한 경우: 로그인 상태로 데이터를 처음부터 다시 불러온다.
+      if (document.documentElement.classList.contains('auth-locked')) { location.reload(); return; }
       renderAuthChip();
       closeAuthModal();
     };
     return m;
   }
-  function openAuthModal() {
+  function openAuthModal(gate) {
     if (authSession) return;
     var m = ensureAuthModal();
+    if (gate) {
+      m.classList.add('gate');
+      m.style.paddingTop = '';
+      m.style.removeProperty('--auth-modal-shift');
+    }
     if (m.classList.contains('open')) return;
+    if (m.classList.contains('gate')) {
+      m.classList.add('open');
+      setTimeout(function () { document.getElementById('auth-pw').focus(); }, 0);
+      return;
+    }
     // Login 버튼이 보이면 그 바로 아래 가운데에 맞춘다(사이드바 폭만큼 화면 중심과 어긋나므로 계산).
     var chip = document.getElementById('auth-chip');
     var r = chip && chip.getBoundingClientRect();
@@ -3493,7 +3515,7 @@ table.summary tr.ov2-eb-section td {
   }
   function closeAuthModal() {
     var m = document.getElementById('auth-modal');
-    if (m) m.classList.remove('open');
+    if (m && !m.classList.contains('gate')) m.classList.remove('open');
   }
   function authChipClick() {
     if (authSession) db.auth.signOut();
@@ -3524,14 +3546,18 @@ table.summary tr.ov2-eb-section td {
   setInterval(authCheckIdle, 30000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) authCheckIdle(); });
 
+  // 로그인 전에는 사이트 전체를 잠근다(<html class="auth-locked">). 로그아웃·자동 로그아웃 시 새로고침해서 다시 잠근다.
   db.auth.onAuthStateChange(function (event, session) {
     authSession = session;
+    if (event === 'SIGNED_OUT') { location.reload(); return; }
     renderAuthChip();
   });
   db.auth.getSession().then(function (r) {
     authSession = r.data.session;
-    if (authSession && authIdleExpired()) { authSession = null; db.auth.signOut(); }
+    if (authSession && authIdleExpired()) { authSession = null; db.auth.signOut(); return; }
     renderAuthChip();
+    if (authSession) document.documentElement.classList.remove('auth-locked');
+    else openAuthModal(true);
   });
   document.addEventListener('DOMContentLoaded', renderAuthChip);
 </script>
