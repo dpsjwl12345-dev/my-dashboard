@@ -249,13 +249,13 @@ table.summary td.diff.down { color: #4A5578; }
 .ov2-kpi-row4 .label { font-size: 17px !important; }
 .ov2-rank-matrix { margin-top: 4px; }
 .ov2-rank-matrix table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.ov2-rank-matrix th { padding: 7px 6px; font-size: 13px; font-weight: 700; color: var(--text-muted, #9aa4b2); text-align: center; white-space: nowrap; border-bottom: 1px solid var(--border); }
-.ov2-rank-matrix td { padding: 6px; font-size: 14px; font-weight: 600; color: var(--text); text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.ov2-rank-matrix th { padding: 8px 6px; font-size: 15px; font-weight: 700; color: var(--text-muted, #9aa4b2); text-align: center; white-space: nowrap; border-bottom: 1px solid var(--border); }
+.ov2-rank-matrix td { padding: 7px 6px; font-size: 16px; font-weight: 600; color: var(--text); text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 .ov2-rank-matrix th:first-child, .ov2-rank-matrix td:first-child { text-align: left; padding-left: 2px; }
 .ov2-rank-matrix tr.total td { font-weight: 800; border-bottom: 1px solid var(--border); }
 .ov2-rank-matrix th:nth-child(n+3) { color: #D8C7A3; }
 .ov2-rank-matrix-zero { color: var(--text-muted, #9aa4b2); opacity: 0.5; }
-.ov2-rank-matrix-note { margin: 8px 0 0; font-size: 12px; color: var(--text-muted, #9aa4b2); }
+.ov2-rank-matrix-note { margin: 8px 0 0; font-size: 13px; color: var(--text-muted, #9aa4b2); }
 .ov2-kpi-row4 .value { font-size: 18px !important; }
 .ov2-kpi-row4 .sub { font-size: 14px !important; }
 @media (max-width: 1400px) { .ov2-kpi-row4 { grid-template-columns: repeat(2, 1fr); } }
@@ -6135,8 +6135,10 @@ function renderOv2Overview(instKey) {
   }
 
   // 과×직급 표가 있는 기관(체육회·장애인체육회)은 그 표를 오른쪽 소관별 정현원 자리에 둔다(카드 목록 대신).
+  // 카드가 3장인 기관(체육회·장애인체육회)은 4칸 격자에 빈칸이 남지 않게 3칸으로 넓힌다
+  var kpiCols = d.org.cards.length < 4 ? ' style="grid-template-columns:repeat(' + d.org.cards.length + ',minmax(0,1fr));"' : '';
   var orgHtml = ovPersonnelSectionHtml(
-    '<div class="settle-kpi-grid ov2-kpi-row4">' + cardsHtml + '</div>' + rankHtml,
+    '<div class="settle-kpi-grid ov2-kpi-row4"' + kpiCols + '>' + cardsHtml + '</div>' + rankHtml,
     d.org.asOfDate
   );
   var gradeHtml = '';
